@@ -21,10 +21,10 @@ class Player extends TexturedModel {
         };
 
         int[] texcoords = {
-                1, 1,
-                1, 0,
+                0, 0,
                 0, 1,
-                0, 0
+                1, 0,
+                1, 1
         };
         this.setVertexArray(new VertexArray(vertices, indices, texcoords));
         this.setShader("src/main/java/shaders/player_shader");

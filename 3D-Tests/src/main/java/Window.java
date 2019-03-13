@@ -10,10 +10,12 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 class Window {
 
     private long window;
+    private boolean isFullscreen;
 
     Window(int width, int height, boolean fullscreen){
         int windowWidth = fullscreen ? 1920 : width;
         int windowHeight = fullscreen ? 1080 : height;
+        this.isFullscreen = fullscreen;
 
         if (!glfwInit()){
             throw new IllegalStateException("Couldn't init GLFW!");

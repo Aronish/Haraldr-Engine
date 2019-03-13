@@ -28,13 +28,13 @@ public class Input extends GLFWKeyCallback {
             Camera.velocity = 5.0d;
         }
         if(keys[GLFW_KEY_W]) {
-            Camera.calculateYPosition(false, deltaTime);
+            Camera.calculateYPosition(true, deltaTime);
         }
         if(keys[GLFW_KEY_A]) {
             Camera.calculateXPosition(false, deltaTime);
         }
         if(keys[GLFW_KEY_S]){
-            Camera.calculateYPosition(true, deltaTime);
+            Camera.calculateYPosition(false, deltaTime);
         }
         if(keys[GLFW_KEY_D]) {
             Camera.calculateXPosition(true, deltaTime);

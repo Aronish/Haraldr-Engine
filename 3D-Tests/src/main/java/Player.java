@@ -9,10 +9,10 @@ class Player extends TexturedModel {
 
     Player(){
         float[] vertices = {
-                0.5f, 0.5f, 1.0f,
-                0.5f, -0.5f, 1.0f,
-                -0.5f, 0.5f, 1.0f,
-                -0.5f, -0.5f, 1.0f
+                1f, 1f, -2.0f,
+                1f, -1f, -2.0f,
+                -1f, 1f, -2.0f,
+                -1f, -1f, -2.0f
         };
 
         int[] indices = {
@@ -29,7 +29,7 @@ class Player extends TexturedModel {
         this.setVertexArray(new VertexArray(vertices, indices, texcoords));
         this.setShader("src/main/java/shaders/player_shader");
         this.setTexture("src/main/resources/player.png");
-        this.updateMatrix(new Vector3f(), 0.0f, 2.0f);
+        this.updateMatrix(new Vector3f(), 0.0f, 1.0f);
         this.setMatrixLocation(true);
     }
 

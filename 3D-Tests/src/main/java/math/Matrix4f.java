@@ -38,12 +38,12 @@ public class Matrix4f {
 
     public Matrix4f MVP(Vector3f position, float angle, float scale){
         // Resolution must have the aspect ratio 16:9 as of now.
-        return orthographic(16f, -16f, 9f, -9f, 5f, -5f).multiply(Camera.viewMatrix).multiply(transform(position, angle, scale));
+        return orthographic(16f, -16f, 9f, -9f, -5f, 5f).multiply(Camera.viewMatrix).multiply(transform(position, angle, scale));
     }
 
     // Used for static objects (crosshairs, players, etc.)
     public Matrix4f MP(Vector3f position, float angle, float scale){
-        return orthographic(16f, -16f, 9f, -9f, 5f, -5f).multiply(transform(position, angle, scale));
+        return orthographic(16f, -16f, 9f, -9f, -5f, 5f).multiply(transform(position, angle, scale));
     }
 
     private Matrix4f transform(Vector3f position, float angle, float scale){

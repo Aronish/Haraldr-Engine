@@ -18,6 +18,7 @@ public class Main implements Runnable {
     private double frameRate;
     private TexturedModel world;
     private Player player;
+    private Obstacle obstacle;
 
     private void start() {
         main = new Thread(this, "main");
@@ -41,12 +42,14 @@ public class Main implements Runnable {
         new Camera(); //Just here to initialize
         world = new World();
         player = new Player();
+        obstacle = new Obstacle();
     }
 
     private void update(double deltaTime) {
         // Update transformations, states and other stuff here.
         {
             Input.moveCamera(deltaTime);
+            obstacle.updateMatrix(new Vector3f(), 0.0f, 1.0f);
             world.updateMatrix(new Vector3f(), 0.0f, 1.0f);
         }
         glfwPollEvents();
@@ -57,6 +60,7 @@ public class Main implements Runnable {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         { // Only Render Objects Here - Objects further back are rendered first
             world.render();
+            obstacle.render();
             player.render();
         }
         glfwSwapBuffers(window.getWindow());

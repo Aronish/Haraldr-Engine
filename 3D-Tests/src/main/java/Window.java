@@ -3,19 +3,18 @@ package main.java;
 import org.lwjgl.glfw.GLFWVidMode;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.opengl.GL11.GL_TRUE;
+import static org.lwjgl.opengl.GL46.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 class Window {
 
     private long window;
     private boolean isFullscreen;
+    private int windowWidth, windowHeight;
+    private GLFWVidMode vidmode;
 
     Window(int width, int height, boolean fullscreen){
-        int windowWidth = fullscreen ? 1920 : width;
-        int windowHeight = fullscreen ? 1080 : height;
-        this.isFullscreen = fullscreen;
+        isFullscreen = fullscreen;
 
         if (!glfwInit()){
             throw new IllegalStateException("Couldn't init GLFW!");
@@ -28,8 +27,12 @@ class Window {
         glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-        this.window = glfwCreateWindow(windowWidth, windowHeight, "FUCKYEAH", (fullscreen ? glfwGetPrimaryMonitor() : NULL), NULL);
-        if (this.window == NULL) {
+        this.vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        windowWidth = fullscreen ? this.vidmode.width() : width;
+        windowHeight = fullscreen ? this.vidmode.height() : height;
+
+        window = glfwCreateWindow(windowWidth, windowHeight, "OpenGL Game", (fullscreen ? glfwGetPrimaryMonitor() : NULL), NULL);
+        if (window == NULL) {
             glfwTerminate();
             throw new RuntimeException("Window failed to be created");
         }
@@ -38,13 +41,26 @@ class Window {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         }
 
-        glfwSetKeyCallback(this.window, new Input());
-        GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        glfwSetWindowPos(this.window, (vidmode.width() - windowWidth) / 2, (vidmode.height() - windowHeight) / 2);
-        glfwMakeContextCurrent(this.window);
+        glfwSetKeyCallback(window, new Input());
+        glfwSetWindowPos(window, (this.vidmode.width() - windowWidth) / 2, (this.vidmode.height() - windowHeight) / 2);
+        glfwMakeContextCurrent(window);
+    }
+
+    void changeFullscreen(){
+        if (isFullscreen){
+            isFullscreen = false;
+            glfwSetWindowMonitor(window, 0, this.vidmode.width() / 2 - this.windowWidth / 2, this.vidmode.height() / 2 - this.windowHeight / 2, this.windowWidth, this.windowHeight, 60);
+            glViewport(0, 0, this.windowWidth, this.windowHeight);
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }else{
+            isFullscreen = true;
+            glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, this.vidmode.width(), this.vidmode.height(), 60);
+            glViewport(0, 0, this.vidmode.width(), this.vidmode.height());
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        }
     }
 
     long getWindow(){
-        return this.window;
+        return window;
     }
 }

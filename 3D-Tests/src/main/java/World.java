@@ -26,7 +26,7 @@ class World extends TexturedModel {
         this.setVertexArray(new VertexArray(vertices, indices, texcoords));
         this.setShader("src/main/java/shaders/square_shader");
         this.setTexture("src/main/resources/grass.png");
-        this.updateMatrix(new Vector3f(), 0.0f, 1.0f);
+        this.updateMatrix(new Vector3f(), 0.0f, 5.0f);
         this.setMatrixLocation(false);
     }
 }

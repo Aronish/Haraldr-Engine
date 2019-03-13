@@ -30,6 +30,7 @@ public class TexturedModel{
         this.matrixLocation = glGetUniformLocation(this.shader.getShaderProgram(), (isStaticModel ? "MP" : "MVP"));
     }
 
+    //Redundant in class definition if used in main update loop.
     public void updateMatrix(Vector3f position, float rotation, float scale){
         this.matrix = new Matrix4f().MVP(position, rotation, scale);
     }

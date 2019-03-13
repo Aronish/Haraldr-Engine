@@ -13,7 +13,8 @@ public class Main implements Runnable {
 
     protected Thread main;
 
-    private long window;
+    static Window window;
+
     private double frameRate;
     private TexturedModel world;
     private Player player;
@@ -29,12 +30,12 @@ public class Main implements Runnable {
     }
 
     private void init() {
-        window = new Window(1280, 720, false).getWindow();
+        window = new Window(1280, 720, false);
         GL.createCapabilities();
         /*---OpenGL code won't work before this---*/
         glEnable(GL_DEPTH_TEST);
         glfwSwapInterval(1);// Enable v-sync
-        glfwShowWindow(window);
+        glfwShowWindow(window.getWindow());
 
         frameRate = 60;
         new Camera(); //Just here to initialize
@@ -43,26 +44,29 @@ public class Main implements Runnable {
     }
 
     private void update(double deltaTime) {
-        Input.moveCamera(deltaTime);
-        world.updateMatrix(new Vector3f(), 0.0f, 0.2f);
+        // Update transformations, states and other stuff here.
+        {
+            Input.moveCamera(deltaTime);
+            world.updateMatrix(new Vector3f(), 0.0f, 1.0f);
+        }
         glfwPollEvents();
     }
 
     private void render() {
         glClearColor(0.0f, 0.4f, 0.85f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        { // Render Objects Here - Objects further back are rendered first
+        { // Only Render Objects Here - Objects further back are rendered first
             world.render();
             player.render();
         }
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(window.getWindow());
     }
 
     private double dt = 1.0d / frameRate;
     private double currentTime = glfwGetTime();
 
     private void loop() {
-        while (!glfwWindowShouldClose(window)) {
+        while (!glfwWindowShouldClose(window.getWindow())) {
             double newTime = glfwGetTime();
             double frameTime = newTime - currentTime;
             currentTime = newTime;

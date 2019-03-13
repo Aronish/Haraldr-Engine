@@ -15,6 +15,9 @@ public class Input extends GLFWKeyCallback {
             if (key == GLFW_KEY_ESCAPE){
                 glfwSetWindowShouldClose(window, true);
             }
+            if (key == GLFW_KEY_F){
+                Main.window.changeFullscreen();
+            }
             keys[key] = true;
         }else if (action == GLFW_RELEASE){
             keys[key] = false;

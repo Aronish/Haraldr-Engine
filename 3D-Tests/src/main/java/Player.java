@@ -8,11 +8,16 @@ import main.java.math.Vector3f;
 class Player extends TexturedModel {
 
     Player(){
+        this(new Vector3f(), 0.0f, 1.0f);
+    }
+
+    Player(Vector3f position, float rotation, float scale){
+        super(position, rotation, scale);
         float[] vertices = {
-                1f, 1f, -2.0f,
-                1f, -1f, -2.0f,
-                -1f, 1f, -2.0f,
-                -1f, -1f, -2.0f
+                1f, 1f,
+                1f, -1f,
+                -1f, 1f,
+                -1f, -1f
         };
 
         int[] indices = {
@@ -29,12 +34,11 @@ class Player extends TexturedModel {
         this.setVertexArray(new VertexArray(vertices, indices, texcoords));
         this.setShader("src/main/java/shaders/player_shader");
         this.setTexture("src/main/resources/player.png");
-        this.updateMatrix(new Vector3f(), 0.0f, 1.0f);
-        this.setMatrixLocation(true);
+        this.setMatrixLocation();
     }
 
     @Override
-    public void updateMatrix(Vector3f position, float rotation, float scale) {
-        this.matrix = new Matrix4f().MP(position, rotation, scale);
+    protected void updateMatrix() {
+        this.matrix = new Matrix4f().MP(this.position, this.rotation, this.scale);
     }
 }

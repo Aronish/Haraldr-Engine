@@ -38,28 +38,28 @@ public class Matrix4f {
 
     public Matrix4f MVP(Vector3f position, float angle, float scale){
         // Resolution must have the aspect ratio 16:9 as of now.
-        return orthographic(16f, -16f, 9f, -9f, -5f, 5f).multiply(Camera.viewMatrix).multiply(transform(position, angle, scale));
+        return orthographic(16f, -16f, 9f, -9f, -5f, 5f).multiply(Camera.viewMatrix).multiply(transform(position, angle, scale, false));
     }
 
     // Used for static objects (crosshairs, players, etc.)
     public Matrix4f MP(Vector3f position, float angle, float scale){
-        return orthographic(16f, -16f, 9f, -9f, -5f, 5f).multiply(transform(position, angle, scale));
+        return orthographic(16f, -16f, 9f, -9f, -5f, 5f).multiply(transform(position, angle, scale, false));
     }
 
-    private Matrix4f transform(Vector3f position, float angle, float scale){
-        return translate(position, false).multiply(rotate(angle)).multiply(scale(scale));
+    public Matrix4f transform(Vector3f position, float angle, float scale, boolean isCamera){
+        return translate(position, isCamera).multiply(rotate(angle, isCamera)).multiply(scale(scale));
     }
 
     private Matrix4f scale(float scale){
         Matrix4f result = new Matrix4f();
         result.matrix[0] = scale;
         result.matrix[5] = scale;
-        result.matrix[10] = scale;
+        result.matrix[10] = 1.0f;
         result.matrix[15] = 1.0f;
         return result;
     }
 
-    public Matrix4f translate(Vector3f vector, boolean isCamera){
+    private Matrix4f translate(Vector3f vector, boolean isCamera){
         Matrix4f result = identity();
         if (isCamera){
             result.matrix[12] = -vector.x;
@@ -73,10 +73,16 @@ public class Matrix4f {
         return result;
     }
 
-    private Matrix4f rotate(float angle){
+    private Matrix4f rotate(float angle, boolean isCamera){
         Matrix4f result = identity();
-        float cosAngle = (float) Math.cos(angle);
-        float sinAngle = (float) Math.sin(angle);
+        float radians;
+        if (isCamera) {
+            radians = -(float) Math.toRadians(angle);
+        }else{
+            radians = (float) Math.toRadians(angle);
+        }
+        float cosAngle = (float) Math.cos(radians);
+        float sinAngle = (float) Math.sin(radians);
         result.matrix[0] = cosAngle;
         result.matrix[1] = sinAngle;
         result.matrix[4] = -sinAngle;

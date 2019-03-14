@@ -12,7 +12,43 @@ public class TexturedModel{
     private Texture texture;
     private int matrixLocation;
 
+    protected Vector3f position;
+    protected float rotation;
+    protected float scale;
     protected Matrix4f matrix;
+
+    public TexturedModel(Vector3f position, float rotation, float scale){
+        setPosition(position);
+        setRotation(rotation);
+        setScale(scale);
+        updateMatrix();
+    }
+
+    public void setPosition(Vector3f position){
+        this.position = position;
+        updateMatrix();
+    }
+
+    public void setRotation(float rotation){
+        this.rotation = rotation;
+        updateMatrix();
+    }
+
+    public void setScale(float scale){
+        this.scale = scale;
+        updateMatrix();
+    }
+
+    public void setAttributes(Vector3f position, float rotation, float scale){
+        setPosition(position);
+        setRotation(rotation);
+        setScale(scale);
+        updateMatrix();
+    }
+
+    protected void updateMatrix(){
+        this.matrix = new Matrix4f().MVP(this.position, this.rotation, this.scale);
+    }
 
     protected void setVertexArray(VertexArray array){
         this.vertexArray = array;
@@ -26,13 +62,8 @@ public class TexturedModel{
         this.texture = new Texture(filePath);
     }
 
-    protected void setMatrixLocation(boolean isStaticModel){
-        this.matrixLocation = glGetUniformLocation(this.shader.getShaderProgram(), (isStaticModel ? "MP" : "MVP"));
-    }
-
-    //Redundant in class definition if used in main update loop.
-    public void updateMatrix(Vector3f position, float rotation, float scale){
-        this.matrix = new Matrix4f().MVP(position, rotation, scale);
+    protected void setMatrixLocation(){
+        this.matrixLocation = glGetUniformLocation(this.shader.getShaderProgram(), "matrix");
     }
 
     private void setUniformMatrix(){

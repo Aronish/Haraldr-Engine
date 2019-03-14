@@ -5,22 +5,24 @@ import main.java.math.Vector3f;
 
 public class Camera{
 
-    private static Vector3f position;
     public static Matrix4f viewMatrix;
+    private static Vector3f position;
+    private static float rotation;
     static double velocity;
 
     Camera(){
-        this(new Vector3f(0.0f, 0.0f, 0.0f));
+        this(new Vector3f(0.0f, 0.0f, 0.0f), 0.0f);
     }
 
-    private Camera(Vector3f pos){
+    Camera(Vector3f pos, float rot){
         position = pos;
         velocity = 5.0f;
+        rotation = rot;
         calculateViewMatrix();
     }
 
     private static void calculateViewMatrix(){
-        viewMatrix = new Matrix4f().translate(position, true);
+        viewMatrix = new Matrix4f().transform(position, rotation, 1.0f, true);
     }
 
     static void calculateXPosition(boolean x, double deltaTime){

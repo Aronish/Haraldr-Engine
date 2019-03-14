@@ -34,7 +34,7 @@ public class Main implements Runnable {
         window = new Window(1280, 720, false);
         GL.createCapabilities();
         /*---OpenGL code won't work before this---*/
-        glEnable(GL_DEPTH_TEST);
+        //glEnable(GL_DEPTH_TEST);
         glfwSwapInterval(1);// Enable v-sync
         glfwShowWindow(window.getWindow());
 
@@ -49,8 +49,9 @@ public class Main implements Runnable {
         // Update transformations, states and other stuff here.
         {
             Input.moveCamera(deltaTime);
-            obstacle.updateMatrix(new Vector3f(), 0.0f, 1.0f);
-            world.updateMatrix(new Vector3f(), 0.0f, 1.0f);
+            player.setAttributes(new Vector3f(), 0.0f, 1.0f);
+            obstacle.setAttributes(new Vector3f(2.0f, 0.0f, 0.0f), 0.0f, 1.0f);
+            world.setAttributes(new Vector3f(), 0.0f, 1.0f);
         }
         glfwPollEvents();
     }
@@ -60,8 +61,8 @@ public class Main implements Runnable {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         { // Only Render Objects Here - Objects further back are rendered first
             world.render();
-            obstacle.render();
             player.render();
+            obstacle.render();
         }
         glfwSwapBuffers(window.getWindow());
     }

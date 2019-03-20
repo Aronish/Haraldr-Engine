@@ -17,8 +17,8 @@ public class Main implements Runnable {
 
     private double frameRate;
     private TexturedModel world;
-    private Player player;
-    private Obstacle obstacle;
+    private TexturedModel player;
+    private TexturedModel obstacle;
 
     private void start() {
         main = new Thread(this, "main");
@@ -49,9 +49,9 @@ public class Main implements Runnable {
         // Update transformations, states and other stuff here.
         {
             Input.moveCamera(deltaTime);
-            player.setAttributes(new Vector3f(), 0.0f, 1.0f);
-            obstacle.setAttributes(new Vector3f(2.0f, 0.0f, 0.0f), 0.0f, 1.0f);
-            world.setAttributes(new Vector3f(), 0.0f, 1.0f);
+            player.setAttributes(new Vector3f(), 0.0f, 2.0f);
+            obstacle.setAttributes(new Vector3f(), 0.0f, 2.0f);
+            world.setAttributes(new Vector3f(), 0.0f, 2.0f);
         }
         glfwPollEvents();
     }

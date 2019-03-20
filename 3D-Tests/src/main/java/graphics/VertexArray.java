@@ -5,6 +5,30 @@ import static org.lwjgl.opengl.GL46.*;
 public class VertexArray {
 
     private int vao, vbo, ebo, tbo, length;
+    private float width, height;
+
+    private static float[] defVertices = {
+            1.0f, 1.0f,     //Top-right
+            1.0f, 0.0f,     //Bottom-right
+            0.0f, 1.0f,     //Top-left
+            0.0f, 0.0f      //Bottom-left
+    };
+
+    private static int[] defIndices = {
+            0, 1, 2,
+            1, 3, 2
+    };
+
+    private static int[] defTexcoords = {
+            1, 1,
+            1, 0,
+            0, 1,
+            0, 0
+    };
+
+    public VertexArray(){
+        this(defVertices, defIndices, defTexcoords);
+    }
 
     public VertexArray(float[] vertices, int[] indices, int[] texcoords){
         this.vao = glGenVertexArrays();

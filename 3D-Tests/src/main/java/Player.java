@@ -1,7 +1,6 @@
 package main.java;
 
 import main.java.graphics.TexturedModel;
-import main.java.graphics.VertexArray;
 import main.java.math.Matrix4f;
 import main.java.math.Vector3f;
 
@@ -15,9 +14,9 @@ class Player extends TexturedModel {
         super(position, rotation, scale);
         float[] vertices = {
                 1f, 1f,
-                1f, -1f,
-                -1f, 1f,
-                -1f, -1f
+                1f, 0f,
+                0f, 1f,
+                0f, 0f
         };
 
         int[] indices = {
@@ -31,7 +30,7 @@ class Player extends TexturedModel {
                 1, 0,
                 1, 1
         };
-        this.setVertexArray(new VertexArray(vertices, indices, texcoords));
+        this.setVertexArray(vertices, indices, texcoords);
         this.setShader("src/main/java/shaders/player_shader");
         this.setTexture("src/main/resources/player.png");
         this.setMatrixLocation();

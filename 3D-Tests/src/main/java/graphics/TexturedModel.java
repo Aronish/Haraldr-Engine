@@ -17,6 +17,10 @@ public class TexturedModel{
     protected float scale;
     protected Matrix4f matrix;
 
+    public TexturedModel(){
+        this(new Vector3f(), 0.0f, 1.0f);
+    }
+
     public TexturedModel(Vector3f position, float rotation, float scale){
         setPosition(position);
         setRotation(rotation);
@@ -50,8 +54,12 @@ public class TexturedModel{
         this.matrix = new Matrix4f().MVP(this.position, this.rotation, this.scale);
     }
 
-    protected void setVertexArray(VertexArray array){
-        this.vertexArray = array;
+    protected void setVertexArray(float[] vertices, int[] indices, int[] texcoords){
+        this.vertexArray = new VertexArray(vertices, indices, texcoords);
+    }
+
+    protected void setVertexArray(){
+        this.vertexArray = new VertexArray();
     }
 
     protected void setShader(String shaderPath){

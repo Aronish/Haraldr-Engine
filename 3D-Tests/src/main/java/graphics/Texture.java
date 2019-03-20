@@ -7,15 +7,27 @@ import java.io.IOException;
 
 import static org.lwjgl.opengl.GL46.*;
 
+/**
+ * Class for handling the creation and loading of textures into OpenGl.
+ */
 class Texture {
 
     private int width, height;
     private int texture;
 
+    /**
+     * Constructor for the texture.
+     * @param path the path of the texture.
+     */
     Texture(String path){
         texture = load(path);
     }
 
+    /**
+     * Reads the pixel data of the picture and creates an OpenGL texture.
+     * @param path the path of the texture.
+     * @return the OpenGL texture ID.
+     */
     private int load(String path){
         int[] pixels = null;
         try{
@@ -50,10 +62,16 @@ class Texture {
         return result;
     }
 
+    /**
+     * Binds this texture for drawing.
+     */
     void bind(){
         glBindTexture(GL_TEXTURE_2D, this.texture);
     }
 
+    /**
+     * Unbinds this texture to avoid weird conflicts.
+     */
     void unbind(){
         glBindTexture(GL_TEXTURE_2D, 0);
     }

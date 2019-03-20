@@ -6,8 +6,6 @@ import main.java.graphics.TexturedModel;
 import main.java.math.Vector3f;
 import org.lwjgl.opengl.GL;
 
-import java.util.ArrayList;
-
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL46.*;
 
@@ -18,7 +16,6 @@ public class Main implements Runnable {
     static Window window;
 
     private double frameRate;
-    private ArrayList<TexturedModel> worldObjects;
     private TexturedModel world;
     private TexturedModel player;
     private TexturedModel obstacle;
@@ -34,7 +31,7 @@ public class Main implements Runnable {
     }
 
     private void init() {
-        window = new Window(640, 360, false);
+        window = new Window(1280, 720, false);
         GL.createCapabilities();
         /*---OpenGL code won't work before this---*/
         //glEnable(GL_DEPTH_TEST);
@@ -43,21 +40,21 @@ public class Main implements Runnable {
 
         frameRate = 60;
         new Camera(); //Just here to initialize
-        worldObjects = new ArrayList<>();
         world = new World();
-        worldObjects.add(world);
         obstacle = new Obstacle();
-        worldObjects.add(obstacle);
         player = new Player();
     }
 
     private void update(double deltaTime) {
-        // Update transformations, states and other stuff here.
+        // Update transformations, states and do collision detection here and so on. Basically everything except rendering.
         {
             Input.moveCamera(deltaTime);
             player.setAttributes(new Vector3f(), 0.0f, 2.0f);
-            obstacle.setAttributes(new Vector3f(), 0.0f, 2.0f);
+            obstacle.setAttributes(new Vector3f(3.0f, 2.0f, 0.0f), 0.0f, 2.0f);
             world.setAttributes(new Vector3f(), 0.0f, 2.0f);
+        }
+        if (checkCollision(obstacle)){
+            Camera.setPosition(new Vector3f());
         }
         glfwPollEvents();
     }
@@ -89,6 +86,12 @@ public class Main implements Runnable {
             render();
         }
         glfwTerminate();
+    }
+
+    private boolean checkCollision(TexturedModel object){
+        boolean collisionX = Camera.getPosition().x + 2.0f > object.getPosition().x && object.getPosition().x + object.getVertexArray().getWidth() > Camera.getPosition().x - 0.5f;
+        boolean collisionY = Camera.getPosition().y + 2.0f > object.getPosition().y && object.getPosition().y + object.getVertexArray().getHeight() > Camera.getPosition().y - 0.5f;
+        return collisionX && collisionY;
     }
 
     public static void main(String[] args) {

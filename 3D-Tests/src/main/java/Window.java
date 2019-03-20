@@ -6,6 +6,9 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL46.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+/**
+ * A class for handling window creation.
+ */
 class Window {
 
     private long window;
@@ -13,6 +16,13 @@ class Window {
     private int windowWidth, windowHeight;
     private GLFWVidMode vidmode;
 
+    /**
+     * Constructor with parameters for window width and height and whether is will be fullscreen upon creation.
+     * Creates a GLFW window and sets appropriate settings and attributes.
+     * @param width the window width, in pixels.
+     * @param height the window height, in pixels.
+     * @param fullscreen whether the window will be fullscreen upon creation.
+     */
     Window(int width, int height, boolean fullscreen){
         isFullscreen = fullscreen;
 
@@ -46,6 +56,9 @@ class Window {
         glfwMakeContextCurrent(window);
     }
 
+    /**
+     * Changes between fullscreen and windowed mode.
+     */
     void changeFullscreen(){
         if (isFullscreen){
             isFullscreen = false;
@@ -60,6 +73,10 @@ class Window {
         }
     }
 
+    /**
+     * Gets the window object ID.
+     * @return the window object ID.
+     */
     long getWindow(){
         return window;
     }

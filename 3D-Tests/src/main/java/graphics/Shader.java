@@ -5,14 +5,28 @@ import java.util.Scanner;
 
 import static org.lwjgl.opengl.GL46.*;
 
+/**
+ * Class for handling the creation and loading of shader files. Both vertex and fragment shaders.
+ */
 class Shader {
 
     private int shaderProgram;
 
+    /**
+     * Constructor with a parameter for the general shader file path.
+     * Both kinds of shaders must have the same name as the extensions are added afterwards for simplicity.
+     * @param generalShaderPath the general shader file path, with no extension.
+     */
     Shader(String generalShaderPath){
         this(generalShaderPath + ".vert", generalShaderPath + ".frag");
     }
 
+    /**
+     * Private constructor that takes in the different paths of the shader files. Reads the shader files, creates shaders
+     * and compiles them into a shader program.
+     * @param vertexShaderPath the path of the vertex shader.
+     * @param fragmentShaderPath the path of the fragment shader.
+     */
     private Shader(String vertexShaderPath, String fragmentShaderPath){
         int vertexShader = createShader(GL_VERTEX_SHADER, readShaderFile(vertexShaderPath));
         int fragmentShader = createShader(GL_FRAGMENT_SHADER, readShaderFile(fragmentShaderPath));
@@ -32,16 +46,31 @@ class Shader {
         glDeleteShader(fragmentShader);
     }
 
+    /**
+     * Creates a shader object for the specified shader type with the specified source code.
+     * @param shaderType an integer constant (usually from OpenGl), tells OpenGL what shader type to create.
+     * @param source the source code in a single string.
+     * @return the shader object ID.
+     */
     private int createShader(int shaderType, String source){
         int shader = glCreateShader(shaderType);
         glShaderSource(shader, source);
         return shader;
     }
 
+    /**
+     * Gets the shader program.
+     * @return the shader program (ID).
+     */
     int getShaderProgram(){
         return shaderProgram;
     }
 
+    /**
+     * Reads a shader file and creates a string with the source code.
+     * @param filePath the path of the file to be read.
+     * @return the source code string.
+     */
     private String readShaderFile(String filePath){
         File shaderFile = null;
         StringBuilder stringBuilder;
@@ -62,10 +91,16 @@ class Shader {
         return stringBuilder.toString();
     }
 
+    /**
+     * Uses the shader program, ready for drawing.
+     */
     void use(){
         glUseProgram(shaderProgram);
     }
 
+    /**
+     * Unuses the shader program to avoid weird conflicts.
+     */
     void unuse(){
         glUseProgram(0);
     }

@@ -3,6 +3,10 @@ package main.java;
 import main.java.math.Matrix4f;
 import main.java.math.Vector3f;
 
+/**
+ * A virtual camera for the game. Is essentially a normal object except that the transformation matrix is inverted.
+ * That matrix is then applied to all objects in the scene to make it appear as if the camera was moving.
+ */
 public class Camera{
 
     public static Matrix4f viewMatrix;
@@ -10,10 +14,18 @@ public class Camera{
     private static float rotation;
     static double velocity;
 
+    /**
+     * Default constructor if no arguments are provided.
+     */
     Camera(){
         this(new Vector3f(0.0f, 0.0f, 0.0f), 0.0f);
     }
 
+    /**
+     * Constructor with parameters for position and rotation.
+     * @param pos the position of the camera, an origin vector.
+     * @param rot the rotation of the camera around the z-axis, in degrees.
+     */
     Camera(Vector3f pos, float rot){
         position = pos;
         velocity = 5.0f;
@@ -21,10 +33,18 @@ public class Camera{
         calculateViewMatrix();
     }
 
+    /**
+     * Calculates a new view matrix (an inverted transformation matrix) from the current attribute values.
+     */
     private static void calculateViewMatrix(){
         viewMatrix = new Matrix4f().transform(position, rotation, 1.0f, true);
     }
 
+    /**
+     * Calculates the x position based on the velocity and delta time.
+     * @param x whether the camera should move towards the positive or negative direction. If true, towards positive.
+     * @param deltaTime the delta time from the update method in Main.
+     */
     static void calculateXPosition(boolean x, double deltaTime){
         if(x){
             position.x += velocity * deltaTime;
@@ -34,6 +54,11 @@ public class Camera{
         calculateViewMatrix();
     }
 
+    /**
+     * Calculates the y position based on the velocity and delta time.
+     * @param y whether the camera should move towards the positive or negative direction. If true, towards positive.
+     * @param deltaTime the delta time from the update method in Main.
+     */
     static void calculateYPosition(boolean y, double deltaTime){
         if(y){
             position.y += velocity * deltaTime;
@@ -43,8 +68,20 @@ public class Camera{
         calculateViewMatrix();
     }
 
-    static void setPos(Vector3f pos){
+    /**
+     * Sets the position of the camera.
+     * @param pos the new position vector.
+     */
+    static void setPosition(Vector3f pos){
         position = pos;
         calculateViewMatrix();
+    }
+
+    /**
+     * Gets the position of the camera.
+     * @return the position of the camera.
+     */
+    static Vector3f getPosition(){
+        return position;
     }
 }

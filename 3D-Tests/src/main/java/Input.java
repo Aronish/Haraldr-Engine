@@ -5,6 +5,9 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+/**
+ * Class for handling user input. Uses GLFWKeyCallback.
+ */
 public class Input extends GLFWKeyCallback {
 
     private static boolean[] keys = new boolean[65536];
@@ -24,6 +27,10 @@ public class Input extends GLFWKeyCallback {
         }
     }
 
+    /**
+     * Checks if any keys associated with movement are pressed. If so, the camera is moved accordingly.
+     * @param deltaTime the delta time gotten from the timing circuit in Main.
+     */
     static void moveCamera(double deltaTime){
         if(keys[GLFW_KEY_LEFT_SHIFT]){
             Camera.velocity = 10.0d;
@@ -43,7 +50,7 @@ public class Input extends GLFWKeyCallback {
             Camera.calculateXPosition(true, deltaTime);
         }
         if(keys[GLFW_KEY_R]){
-            Camera.setPos(new Vector3f(0.0f, 0.0f, 0.0f));
+            Camera.setPosition(new Vector3f(0.0f, 0.0f, 0.0f));
         }
     }
 }

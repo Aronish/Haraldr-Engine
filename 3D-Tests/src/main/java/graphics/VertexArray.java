@@ -37,6 +37,10 @@ public class VertexArray {
         this.tbo = glGenBuffers();
         this.length = indices.length;
 
+        this.width = vertices[0] - vertices[4];
+        this.height = vertices[1] - vertices[3];
+        System.out.println(this.width + " " + this.height);
+
         glBindVertexArray(this.vao);
 
         glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
@@ -54,6 +58,15 @@ public class VertexArray {
 
         glBindVertexArray(0);
     }
+
+    float getWidth(){
+        return this.width;
+    }
+
+    float getHeight(){
+        return this.height;
+    }
+
     void draw(){
         glDrawElements(GL_TRIANGLES, this.length, GL_UNSIGNED_INT, 0);
     }

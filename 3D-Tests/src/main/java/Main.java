@@ -6,6 +6,8 @@ import main.java.graphics.TexturedModel;
 import main.java.math.Vector3f;
 import org.lwjgl.opengl.GL;
 
+import java.util.ArrayList;
+
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL46.*;
 
@@ -16,6 +18,7 @@ public class Main implements Runnable {
     static Window window;
 
     private double frameRate;
+    private ArrayList<TexturedModel> worldObjects;
     private TexturedModel world;
     private TexturedModel player;
     private TexturedModel obstacle;
@@ -31,7 +34,7 @@ public class Main implements Runnable {
     }
 
     private void init() {
-        window = new Window(1280, 720, false);
+        window = new Window(640, 360, false);
         GL.createCapabilities();
         /*---OpenGL code won't work before this---*/
         //glEnable(GL_DEPTH_TEST);
@@ -40,9 +43,12 @@ public class Main implements Runnable {
 
         frameRate = 60;
         new Camera(); //Just here to initialize
+        worldObjects = new ArrayList<>();
         world = new World();
-        player = new Player();
+        worldObjects.add(world);
         obstacle = new Obstacle();
+        worldObjects.add(obstacle);
+        player = new Player();
     }
 
     private void update(double deltaTime) {

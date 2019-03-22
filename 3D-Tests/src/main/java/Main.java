@@ -49,18 +49,12 @@ public class Main implements Runnable {
     private void update(double deltaTime) {
         // Update transformations, states and do collision detection here and so on. Basically everything except rendering.
         Input.moveCameraAndPlayer(deltaTime, player);
-        if (checkCollision(player, obstacle) == Directions.WEST){
-            System.out.println("WEST");
-            float inside = (player.getPosition().x + player.getWidth()) - obstacle.getPosition().x;
-            player.addPosition(new Vector3f(-inside, 0.0f, 0.0f));
-            Camera.addPosition(new Vector3f(-inside, 0.0f, 0.0f));
-        }else if (checkCollision(player, obstacle) == Directions.EAST){
-            System.out.println("EAST");
-            /*
-            float inside = (obstacle.getPosition().x + obstacle.getWidth()) - player.getPosition().x;
-            player.addPosition(new Vector3f(-inside, 0.0f, 0.0f));
-            Camera.addPosition(new Vector3f(-inside, 0.0f, 0.0f));
-            */
+        {
+            boolean isCollision = checkCollision(player, obstacle);
+            if (isCollision){
+                doCollisionX(player, obstacle);
+                doCollisionY(player, obstacle);
+            }
         }
         player.setScale(2.0f);
         obstacle.setAttributes(new Vector3f(3.0f, 2.0f, 0.0f), 0.0f, 2.0f);
@@ -103,13 +97,33 @@ public class Main implements Runnable {
      * @param obj2 //TODO
      * @return //TODO
      */
-    private Directions checkCollision(TexturedModel obj1, TexturedModel obj2){
+    private boolean checkCollision(TexturedModel obj1, TexturedModel obj2){
         boolean collisionX = obj1.getPosition().x + obj1.getWidth() > obj2.getPosition().x && obj2.getPosition().x + obj2.getWidth() > obj1.getPosition().x;
         boolean collisionY = obj1.getPosition().y + obj1.getHeight() > obj2.getPosition().y && obj2.getPosition().y + obj2.getHeight() > obj1.getPosition().y;
-        if (collisionX && collisionY && obj1.getPosition().x < obj2.getPosition().x + obj2.getWidth() / 2) {
-            return Directions.WEST;
+        return collisionX && collisionY;
+    }
+
+    public void doCollisionX(TexturedModel obj1, TexturedModel obj2){
+        if (obj1.getPosition().x < obj2.getPosition().x + obj2.getWidth() / 2) {
+            float inside = (player.getPosition().x + player.getWidth()) - obstacle.getPosition().x;
+            player.addPosition(new Vector3f(-inside, 0.0f, 0.0f));
+            Camera.addPosition(new Vector3f(-inside, 0.0f, 0.0f));
         } else {
-            return Directions.EAST;
+            float inside = (obstacle.getPosition().x + obstacle.getWidth()) - player.getPosition().x;
+            player.addPosition(new Vector3f(inside, 0.0f, 0.0f));
+            Camera.addPosition(new Vector3f(inside, 0.0f, 0.0f));
+        }
+    }
+
+    public void doCollisionY(TexturedModel obj1, TexturedModel obj2){
+        if (obj1.getPosition().y < obj2.getPosition().y + obj2.getHeight() / 2){
+            float inside = (player.getPosition().y + player.getHeight()) - obstacle.getPosition().y;
+            player.addPosition(new Vector3f(0.0f, -inside, 0.0f));
+            Camera.addPosition(new Vector3f(0.0f, -inside, 0.0f));
+        }else{
+            float inside = (obstacle.getPosition().y + obstacle.getHeight()) - player.getPosition().y;
+            player.addPosition(new Vector3f(inside, 0.0f, 0.0f));
+            Camera.addPosition(new Vector3f(inside, 0.0f, 0.0f));
         }
     }
 

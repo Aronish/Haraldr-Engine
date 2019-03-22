@@ -29,7 +29,7 @@ class Player extends TexturedModel {
         this.velocity = 5.0d;
         this.setVertexArray();
         this.setShader("src/main/java/shaders/player_shader");
-        this.setTexture("src/main/resources/player.png");
+        this.setTexture("src/main/resources/black.png");
         this.setMatrixLocation();
     }
     /**

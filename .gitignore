@@ -2,7 +2,7 @@
 .idea/
 
 # out folder
-.out/
+out/
 
 # lwjgl libs
-.lwjgl/
+lwjgl/

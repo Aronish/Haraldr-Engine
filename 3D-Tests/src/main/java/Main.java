@@ -16,8 +16,8 @@ public class Main implements Runnable {
     static Window window;
 
     private double frameRate;
+    private Camera camera;
     private TexturedModel world;
-    private TexturedModel player;
     private TexturedModel obstacle;
 
     private void start() {
@@ -34,22 +34,20 @@ public class Main implements Runnable {
         window = new Window(1280, 720, false);
         GL.createCapabilities();
         /*---OpenGL code won't work before this---*/
-        //glEnable(GL_DEPTH_TEST);
+        //glEnable(GL_DEPTH_TEST); //zhcr
         glfwSwapInterval(1);// Enable v-sync
         glfwShowWindow(window.getWindow());
 
         frameRate = 60;
-        new Camera(); //Just here to initialize
+        camera = new Camera(); //Just here to initialize
         world = new World();
         obstacle = new Obstacle();
-        player = new Player();
     }
 
     private void update(double deltaTime) {
         // Update transformations, states and do collision detection here and so on. Basically everything except rendering.
         {
             Input.moveCamera(deltaTime);
-            player.setAttributes(new Vector3f(), 0.0f, 2.0f);
             obstacle.setAttributes(new Vector3f(3.0f, 2.0f, 0.0f), 0.0f, 2.0f);
             world.setAttributes(new Vector3f(), 0.0f, 2.0f);
         }
@@ -64,7 +62,6 @@ public class Main implements Runnable {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         { // Only Render Objects Here - Objects further back are rendered first
             world.render();
-            player.render();
             obstacle.render();
         }
         glfwSwapBuffers(window.getWindow());

@@ -1,8 +1,5 @@
 # .idea folder
 .idea/
 
-# out folder
-out/
-
-# lwjgl libs
 lwjgl/
+out/

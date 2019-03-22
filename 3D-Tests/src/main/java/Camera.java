@@ -1,5 +1,6 @@
 package main.java;
 
+import main.java.graphics.TexturedModel;
 import main.java.math.Matrix4f;
 import main.java.math.Vector3f;
 
@@ -9,10 +10,13 @@ import main.java.math.Vector3f;
  */
 public class Camera{
 
+
     public static Matrix4f viewMatrix;
     private static Vector3f position;
     private static float rotation;
     static double velocity;
+
+    static TexturedModel player;
 
     /**
      * Default constructor if no arguments are provided.
@@ -30,6 +34,7 @@ public class Camera{
         position = pos;
         velocity = 5.0f;
         rotation = rot;
+        player = new Player();
         calculateViewMatrix();
     }
 

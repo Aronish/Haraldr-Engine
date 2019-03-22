@@ -1,7 +1,6 @@
 package main.java;
 
 import main.java.graphics.TexturedModel;
-import main.java.math.Matrix4f;
 import main.java.math.Vector3f;
 
 /**
@@ -9,6 +8,8 @@ import main.java.math.Vector3f;
  * This is a static model and stays in place.
  */
 class Player extends TexturedModel {
+
+    private double velocity;
 
     /**
      * Default constructor if no arguments are provided.
@@ -25,35 +26,37 @@ class Player extends TexturedModel {
      */
     Player(Vector3f position, float rotation, float scale){
         super(position, rotation, scale);
-        float[] vertices = {
-                1f, 1f,
-                1f, 0f,
-                0f, 1f,
-                0f, 0f
-        };
-
-        int[] indices = {
-                0, 1, 2,
-                1, 3, 2
-        };
-
-        int[] texcoords = {
-                0, 0,
-                0, 1,
-                1, 0,
-                1, 1
-        };
-        this.setVertexArray(vertices, indices, texcoords);
+        this.velocity = 5.0d;
+        this.setVertexArray();
         this.setShader("src/main/java/shaders/player_shader");
         this.setTexture("src/main/resources/player.png");
         this.setMatrixLocation();
     }
+    /**
+     * Calculates the x position based on the velocity and delta time.
+     * @param x whether the player should move towards the positive or negative direction. If true, towards positive.
+     * @param deltaTime the delta time from the update method in Main.
+     */
+    public void calculateXPosition(boolean x, double deltaTime){
+        if(x){
+            this.position.x += this.velocity * deltaTime;
+        }else{
+            this.position.x -= this.velocity * deltaTime;
+        }
+        this.updateMatrix();
+    }
 
     /**
-     * An overridden method that sets a new matrix without the view matrix of the camera included.
+     * Calculates the y position based on the velocity and delta time.
+     * @param y whether the player should move towards the positive or negative direction. If true, towards positive.
+     * @param deltaTime the delta time from the update method in Main.
      */
-    @Override
-    protected void updateMatrix() {
-        this.matrix = new Matrix4f().MP(this.position, this.rotation, this.scale);
+    public void calculateYPosition(boolean y, double deltaTime){
+        if(y){
+            this.position.y += this.velocity * deltaTime;
+        }else{
+            this.position.y -= this.velocity * deltaTime;
+        }
+        this.updateMatrix();
     }
 }

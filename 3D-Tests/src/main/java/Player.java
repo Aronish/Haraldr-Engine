@@ -59,4 +59,12 @@ class Player extends TexturedModel {
         }
         this.updateMatrix();
     }
+
+    /**
+     * Set the velocity of this player.
+     * @param velocity the velocity to set.
+     */
+    public void setVelocity(double velocity){
+        this.velocity = velocity;
+    }
 }

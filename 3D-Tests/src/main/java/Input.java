@@ -30,27 +30,35 @@ public class Input extends GLFWKeyCallback {
     /**
      * Checks if any keys associated with movement are pressed. If so, the camera is moved accordingly.
      * @param deltaTime the delta time gotten from the timing circuit in Main.
+     * @param player the player that should move with the camera.
      */
-    static void moveCamera(double deltaTime){
+    static void moveCameraAndPlayer(double deltaTime, Player player){
         if(keys[GLFW_KEY_LEFT_SHIFT]){
             Camera.velocity = 10.0d;
+            player.setVelocity(10.0d);
         }else{
             Camera.velocity = 5.0d;
+            player.setVelocity(5.0d);
         }
         if(keys[GLFW_KEY_W]) {
             Camera.calculateYPosition(true, deltaTime);
+            player.calculateYPosition(true, deltaTime);
         }
         if(keys[GLFW_KEY_A]) {
             Camera.calculateXPosition(false, deltaTime);
+            player.calculateXPosition(false, deltaTime);
         }
         if(keys[GLFW_KEY_S]){
             Camera.calculateYPosition(false, deltaTime);
+            player.calculateYPosition(false, deltaTime);
         }
         if(keys[GLFW_KEY_D]) {
             Camera.calculateXPosition(true, deltaTime);
+            player.calculateXPosition(true, deltaTime);
         }
         if(keys[GLFW_KEY_R]){
-            Camera.setPosition(new Vector3f(0.0f, 0.0f, 0.0f));
+            Camera.setPosition(new Vector3f());
+            player.setPosition(new Vector3f());
         }
     }
 }

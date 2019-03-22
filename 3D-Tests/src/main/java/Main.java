@@ -17,6 +17,7 @@ public class Main implements Runnable {
 
     private double frameRate;
     private Camera camera;
+    private Player player;
     private TexturedModel world;
     private TexturedModel obstacle;
 
@@ -40,20 +41,30 @@ public class Main implements Runnable {
 
         frameRate = 60;
         camera = new Camera(); //Just here to initialize
+        player = new Player();
         world = new World();
         obstacle = new Obstacle();
     }
 
     private void update(double deltaTime) {
         // Update transformations, states and do collision detection here and so on. Basically everything except rendering.
-        {
-            Input.moveCamera(deltaTime);
-            obstacle.setAttributes(new Vector3f(3.0f, 2.0f, 0.0f), 0.0f, 2.0f);
-            world.setAttributes(new Vector3f(), 0.0f, 2.0f);
+        Input.moveCameraAndPlayer(deltaTime, player);
+        if (checkCollision(player, obstacle) == Directions.WEST){
+            System.out.println("WEST");
+            float inside = (player.getPosition().x + player.getWidth()) - obstacle.getPosition().x;
+            player.addPosition(new Vector3f(-inside, 0.0f, 0.0f));
+            Camera.addPosition(new Vector3f(-inside, 0.0f, 0.0f));
+        }else if (checkCollision(player, obstacle) == Directions.EAST){
+            System.out.println("EAST");
+            /*
+            float inside = (obstacle.getPosition().x + obstacle.getWidth()) - player.getPosition().x;
+            player.addPosition(new Vector3f(-inside, 0.0f, 0.0f));
+            Camera.addPosition(new Vector3f(-inside, 0.0f, 0.0f));
+            */
         }
-        if (checkCollision(obstacle)){
-            Camera.setPosition(new Vector3f());
-        }
+        player.setScale(2.0f);
+        obstacle.setAttributes(new Vector3f(3.0f, 2.0f, 0.0f), 0.0f, 2.0f);
+        world.setAttributes(new Vector3f(), 0.0f, 2.0f);
         glfwPollEvents();
     }
 
@@ -62,6 +73,7 @@ public class Main implements Runnable {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         { // Only Render Objects Here - Objects further back are rendered first
             world.render();
+            player.render();
             obstacle.render();
         }
         glfwSwapBuffers(window.getWindow());
@@ -85,13 +97,30 @@ public class Main implements Runnable {
         glfwTerminate();
     }
 
-    private boolean checkCollision(TexturedModel object){
-        boolean collisionX = Camera.getPosition().x + 2.0f > object.getPosition().x && object.getPosition().x + object.getVertexArray().getWidth() > Camera.getPosition().x - 0.5f;
-        boolean collisionY = Camera.getPosition().y + 2.0f > object.getPosition().y && object.getPosition().y + object.getVertexArray().getHeight() > Camera.getPosition().y - 0.5f;
-        return collisionX && collisionY;
+    /**
+     * Checks collision between two objects. Obj1 should ususally be the moving player.
+     * @param obj1 //TODO
+     * @param obj2 //TODO
+     * @return //TODO
+     */
+    private Directions checkCollision(TexturedModel obj1, TexturedModel obj2){
+        boolean collisionX = obj1.getPosition().x + obj1.getWidth() > obj2.getPosition().x && obj2.getPosition().x + obj2.getWidth() > obj1.getPosition().x;
+        boolean collisionY = obj1.getPosition().y + obj1.getHeight() > obj2.getPosition().y && obj2.getPosition().y + obj2.getHeight() > obj1.getPosition().y;
+        if (collisionX && collisionY && obj1.getPosition().x < obj2.getPosition().x + obj2.getWidth() / 2) {
+            return Directions.WEST;
+        } else {
+            return Directions.EAST;
+        }
     }
 
     public static void main(String[] args) {
         new Main().start();
+    }
+
+    public enum Directions{
+        NORTH,
+        EAST,
+        WEST,
+        SOUTH
     }
 }

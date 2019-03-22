@@ -51,6 +51,17 @@ public class TexturedModel{
     }
 
     /**
+     * //TODO
+     * @param position
+     */
+    public void addPosition(Vector3f position){
+        this.position.x += position.x;
+        this.position.y += position.y;
+        this.position.z += position.z;
+        updateMatrix();
+    }
+
+    /**
      * Sets the rotation around the z-axis of this object.
      * @param rotation the rotation, in degrees.
      */
@@ -152,6 +163,22 @@ public class TexturedModel{
      */
     public VertexArray getVertexArray(){
         return this.vertexArray;
+    }
+
+    /**
+     * Gets the real width with scale compensation.
+     * @return the real width.
+     */
+    public float getWidth(){
+        return getVertexArray().getWidth() * this.scale;
+    }
+
+    /**
+     * Gets the real height with scale compensation.
+     * @return the real height.
+     */
+    public float getHeight(){
+        return getVertexArray().getHeight() * this.scale;
     }
 
     /**

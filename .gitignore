@@ -1,5 +1,7 @@
 # .idea folder
 .idea/
 
-lwjgl/
-out/
+3D-Tests/out/
+
+3D-Tests/out/production/3D-Tests/main/java/
+*.class

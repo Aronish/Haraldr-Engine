@@ -17,9 +17,9 @@ public class TexturedModel{
     private int matrixLocation;
 
     protected Vector3f position;
-    protected float rotation;
-    protected float scale;
-    protected Matrix4f matrix;
+    private float rotation;
+    private float scale;
+    private Matrix4f matrix;
 
     /**
      * Default constructor if no arguments are provided.
@@ -51,8 +51,8 @@ public class TexturedModel{
     }
 
     /**
-     * //TODO
-     * @param position
+     * Adds a vector to the position of this object.
+     * @param position the vector to add to the position.
      */
     public void addPosition(Vector3f position){
         this.position.x += position.x;
@@ -65,7 +65,7 @@ public class TexturedModel{
      * Sets the rotation around the z-axis of this object.
      * @param rotation the rotation, in degrees.
      */
-    public void setRotation(float rotation){
+    private void setRotation(float rotation){
         this.rotation = rotation;
         updateMatrix();
     }
@@ -153,7 +153,7 @@ public class TexturedModel{
      * @return the position vector.
      */
     public Vector3f getPosition(){
-        return this.position;
+        return new Vector3f(this.position.x, this.position.y, this.position.z);
     }
 
     /**
@@ -161,7 +161,7 @@ public class TexturedModel{
      * Used to retrieve information about the vertices and rarely the indices and texture coordinates.
      * @return the vertex array object.
      */
-    public VertexArray getVertexArray(){
+    private VertexArray getVertexArray(){
         return this.vertexArray;
     }
 

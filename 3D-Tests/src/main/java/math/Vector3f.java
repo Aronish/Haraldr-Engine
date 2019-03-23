@@ -32,15 +32,6 @@ public class Vector3f {
         this.z = (float) z;
     }
 
-    /**
-     * Calculate the dot product between this vector and another vector.
-     * @param vector the other vector.
-     * @return the value of the dot product.
-     */
-    public float dotProduct(Vector3f vector){
-        return this.x * vector.x + this.y * vector.y + this.z * vector.z;
-    }
-
     public Vector3f normalize(){
         double sqX = Math.pow((double) this.x, 2);
         double sqY = Math.pow((double) this.y, 2);
@@ -48,5 +39,9 @@ public class Vector3f {
         double magnitude = Math.sqrt(sqX + sqY + sqZ);
         double norm = 1.0f / magnitude;
         return new Vector3f(this.x *= norm, this.y *= norm, this.z *= norm);
+    }
+
+    public void printVector(){
+        System.out.println("X: " + this.x + " Y: " + this.y + " Z: " + this.z);
     }
 }

@@ -6,8 +6,20 @@ import main.java.graphics.TexturedModel;
 import main.java.math.Vector3f;
 import org.lwjgl.opengl.GL;
 
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL46.*;
+import java.util.ArrayList;
+import java.util.Random;
+
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwShowWindow;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
+import static org.lwjgl.glfw.GLFW.glfwTerminate;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL46.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL46.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL46.glClear;
+import static org.lwjgl.opengl.GL46.glClearColor;
 
 public class Main implements Runnable {
 
@@ -19,7 +31,9 @@ public class Main implements Runnable {
     private Camera camera;
     private Player player;
     private TexturedModel world;
-    private TexturedModel obstacle;
+
+    private Random random;
+    private ArrayList<TexturedModel> objects;
 
     /**
      * Start a new thread with the game on it.
@@ -41,7 +55,7 @@ public class Main implements Runnable {
      * Initialize the game and all it's objects and scenes.
      */
     private void init() {
-        window = new Window(1280, 720, false);
+        window = new Window(1920, 1080, false);
         GL.createCapabilities();
         /*---OpenGL code won't work before this---*/
         //glEnable(GL_DEPTH_TEST); //zhcr
@@ -49,10 +63,17 @@ public class Main implements Runnable {
         glfwShowWindow(window.getWindow());
 
         frameRate = 60;
-        camera = new Camera(); //Just here to initialize
-        player = new Player();
+        objects = new ArrayList<>();
+        random = new Random();
+        camera = new Camera(new Vector3f(10.0f, 10.0f, 0.0f), 0.0f); //Just here to initialize
+        player = new Player(new Vector3f(10.0f, 10.0f, 0.0f), 0.0f, 1.0f);
         world = new World();
-        obstacle = new Obstacle();
+
+        for (int i = 0; i < 200; i++){
+            float randX = random.nextFloat() * 40;
+            float randY = random.nextFloat() * 40;
+            objects.add(new Obstacle(new Vector3f(randX, randY, 0.0f), 0.0f, 1.0f));
+        }
     }
 
     /**
@@ -60,20 +81,23 @@ public class Main implements Runnable {
      * @param deltaTime the delta time gotten from the timing circuit of the main loop. Used for physics.
      */
     private void update(double deltaTime) {
-        // Update transformations, states and do collision detection here and so on. Basically everything except rendering.
         Input.moveCameraAndPlayer(deltaTime, player);
-        {
-            boolean isCollision = checkCollision(player, obstacle);
-            if (isCollision){
-                EnumDirection direction = getCollisionDirection(player, obstacle);
-                if (direction != null) {
-                    doCollision(direction);
+        {//Collision Detection
+            for (TexturedModel object : objects) {
+                boolean isCollision = checkCollision(player, object);
+                if (isCollision) {
+                    EnumDirection direction = getCollisionDirection(player, object);
+                    if (direction != null) {
+                        doCollision(direction, object);
+                    }
                 }
             }
         }
-        player.setScale(2.0f);
-        obstacle.setAttributes(new Vector3f(3.0f, 2.0f, 0.0f), 0.0f, 2.0f);
-        world.setAttributes(new Vector3f(), 0.0f, 2.0f);
+        player.updateMatrix();
+        world.updateMatrix();
+        for (TexturedModel object : objects){
+            object.updateMatrix();
+        }
         glfwPollEvents();
     }
 
@@ -86,7 +110,9 @@ public class Main implements Runnable {
         { // Only Render Objects Here - Objects further back are rendered first
             world.render();
             player.render();
-            obstacle.render();
+            for (TexturedModel object : objects){
+                object.render();
+            }
         }
         glfwSwapBuffers(window.getWindow());
     }
@@ -155,26 +181,26 @@ public class Main implements Runnable {
      * Responds to a collision in the given direction.
      * @param direction the EnumDirection in which the collision happened.
      */
-    private void doCollision(EnumDirection direction){
+    private void doCollision(EnumDirection direction, TexturedModel object){
         float inside;
         switch (direction){
             case NORTH:
-                inside = (obstacle.getPosition().y + obstacle.getHeight()) - player.getPosition().y;
+                inside = (object.getPosition().y + object.getHeight()) - player.getPosition().y;
                 player.addPosition(new Vector3f(0.0f, inside, 0.0f));
                 Camera.addPosition(new Vector3f(0.0f , inside, 0.0f));
                 break;
             case EAST:
-                inside = (obstacle.getPosition().x + obstacle.getWidth()) - player.getPosition().x;
+                inside = (object.getPosition().x + object.getWidth()) - player.getPosition().x;
                 player.addPosition(new Vector3f(inside, 0.0f, 0.0f));
                 Camera.addPosition(new Vector3f(inside, 0.0f, 0.0f));
                 break;
             case WEST:
-                inside = (player.getPosition().x + player.getWidth()) - obstacle.getPosition().x;
+                inside = (player.getPosition().x + player.getWidth()) - object.getPosition().x;
                 player.addPosition(new Vector3f(-inside, 0.0f, 0.0f));
                 Camera.addPosition(new Vector3f(-inside, 0.0f, 0.0f));
                 break;
             case SOUTH:
-                inside = (player.getPosition().y + player.getHeight()) - obstacle.getPosition().y;
+                inside = (player.getPosition().y + player.getHeight()) - object.getPosition().y;
                 player.addPosition(new Vector3f(0.0f, -inside, 0.0f));
                 Camera.addPosition(new Vector3f(0.0f, -inside, 0.0f));
                 break;

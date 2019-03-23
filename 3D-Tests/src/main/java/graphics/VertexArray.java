@@ -1,6 +1,20 @@
 package main.java.graphics;
 
-import static org.lwjgl.opengl.GL46.*;
+import static org.lwjgl.opengl.GL46.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL46.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL46.GL_FLOAT;
+import static org.lwjgl.opengl.GL46.GL_INT;
+import static org.lwjgl.opengl.GL46.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL46.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL46.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL46.glBindBuffer;
+import static org.lwjgl.opengl.GL46.glBindVertexArray;
+import static org.lwjgl.opengl.GL46.glBufferData;
+import static org.lwjgl.opengl.GL46.glDrawElements;
+import static org.lwjgl.opengl.GL46.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL46.glGenBuffers;
+import static org.lwjgl.opengl.GL46.glGenVertexArrays;
+import static org.lwjgl.opengl.GL46.glVertexAttribPointer;
 
 /**
  * Class for handling buffers containing the vertex data of an object.

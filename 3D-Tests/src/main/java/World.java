@@ -24,9 +24,9 @@ class World extends TexturedModel {
     World(Vector3f position, float rotation, float scale){
         super(position, rotation, scale);
         float[] vertices = {
-                20.0f, 20.0f,
-                20.0f, 0.0f,
-                0.0f, 20.0f,
+                40.0f, 40.0f,
+                40.0f, 0.0f,
+                0.0f, 40.0f,
                 0.0f, 0.0f
         };
         int[] indices = {
@@ -34,9 +34,9 @@ class World extends TexturedModel {
                 1, 3, 2
         };
         int[] texcoords = {
-                20, 20,
-                20, 0,
-                0, 20,
+                40, 40,
+                40, 0,
+                0, 40,
                 0, 0
         };
         this.setVertexArray(vertices, indices, texcoords);

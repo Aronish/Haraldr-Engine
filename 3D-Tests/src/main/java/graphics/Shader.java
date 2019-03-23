@@ -3,7 +3,19 @@ package main.java.graphics;
 import java.io.File;
 import java.util.Scanner;
 
-import static org.lwjgl.opengl.GL46.*;
+import static org.lwjgl.opengl.GL46.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL46.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL46.glAttachShader;
+import static org.lwjgl.opengl.GL46.glCompileShader;
+import static org.lwjgl.opengl.GL46.glCreateProgram;
+import static org.lwjgl.opengl.GL46.glCreateShader;
+import static org.lwjgl.opengl.GL46.glDeleteShader;
+import static org.lwjgl.opengl.GL46.glGetProgramInfoLog;
+import static org.lwjgl.opengl.GL46.glGetShaderInfoLog;
+import static org.lwjgl.opengl.GL46.glLinkProgram;
+import static org.lwjgl.opengl.GL46.glShaderSource;
+import static org.lwjgl.opengl.GL46.glUseProgram;
+import static org.lwjgl.opengl.GL46.glValidateProgram;
 
 /**
  * Class for handling the creation and loading of shader files. Both vertex and fragment shaders.

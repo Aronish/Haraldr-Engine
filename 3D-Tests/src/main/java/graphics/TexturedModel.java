@@ -3,7 +3,8 @@ package main.java.graphics;
 import main.java.math.Matrix4f;
 import main.java.math.Vector3f;
 
-import static org.lwjgl.opengl.GL46.*;
+import static org.lwjgl.opengl.GL46.glGetUniformLocation;
+import static org.lwjgl.opengl.GL46.glUniformMatrix4fv;
 
 /**
  * A superclass containing common properties, setters and getters for game objects.
@@ -95,7 +96,7 @@ public class TexturedModel{
     /**
      * Updates the Model-View-Projection matrix with the current attribute values.
      */
-    protected void updateMatrix(){
+    public void updateMatrix(){
         this.matrix = new Matrix4f().MVP(this.position, this.rotation, this.scale);
     }
 

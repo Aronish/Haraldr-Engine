@@ -3,7 +3,6 @@ package main.java.graphics;
 import static org.lwjgl.opengl.GL46.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL46.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL46.GL_FLOAT;
-import static org.lwjgl.opengl.GL46.GL_INT;
 import static org.lwjgl.opengl.GL46.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL46.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL46.GL_UNSIGNED_INT;
@@ -36,11 +35,11 @@ public class VertexArray {
             1, 3, 2
     };
 
-    private static int[] defTexcoords = {
-            0, 0,
-            0, 1,
-            1, 0,
-            1, 1
+    private static float[] defTexcoords = {
+            0.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f
     };
 
     /**
@@ -56,7 +55,7 @@ public class VertexArray {
      * @param indices an array of integers, the indices which tells OpenGL in what order to draw the vertices.
      * @param texcoords an array of integers, the coordinates of the texture coordinates.
      */
-    public VertexArray(float[] vertices, int[] indices, int[] texcoords){
+    public VertexArray(float[] vertices, int[] indices, float[] texcoords){
         this.vao = glGenVertexArrays();
         this.vbo = glGenBuffers();
         this.ebo = glGenBuffers();
@@ -75,7 +74,7 @@ public class VertexArray {
 
         glBindBuffer(GL_ARRAY_BUFFER, this.tbo);
         glBufferData(GL_ARRAY_BUFFER, texcoords, GL_STATIC_DRAW);
-        glVertexAttribPointer(1, 2, GL_INT, false, 8, 0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, 8, 0);
         glEnableVertexAttribArray(1);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this.ebo);

@@ -58,20 +58,20 @@ public class Main implements Runnable {
         window = new Window(1920, 1080, false);
         GL.createCapabilities();
         /*---OpenGL code won't work before this---*/
-        //glEnable(GL_DEPTH_TEST); //zhcr
+        //glEnable(GL_DEPTH_TEST);
         glfwSwapInterval(1);// Enable v-sync
         glfwShowWindow(window.getWindow());
 
         frameRate = 60;
         objects = new ArrayList<>();
         random = new Random();
-        camera = new Camera(new Vector3f(10.0f, 10.0f, 0.0f), 0.0f); //Just here to initialize
-        player = new Player(new Vector3f(10.0f, 10.0f, 0.0f), 0.0f, 1.0f);
-        world = new World();
+        camera = new Camera(new Vector3f(), 0.0f, 1.0f); //Just here to initialize
+        player = new Player(new Vector3f(), 0.0f, 1.0f);
+        world = new World(100.0f);
 
-        for (int i = 0; i < 200; i++){
-            float randX = random.nextFloat() * 40;
-            float randY = random.nextFloat() * 40;
+        for (int i = 0; i < 100; i++){
+            float randX = random.nextFloat() * 100;
+            float randY = random.nextFloat() * 100;
             objects.add(new Obstacle(new Vector3f(randX, randY, 0.0f), 0.0f, 1.0f));
         }
     }
@@ -83,12 +83,14 @@ public class Main implements Runnable {
     private void update(double deltaTime) {
         Input.moveCameraAndPlayer(deltaTime, player);
         {//Collision Detection
-            for (TexturedModel object : objects) {
-                boolean isCollision = checkCollision(player, object);
-                if (isCollision) {
-                    EnumDirection direction = getCollisionDirection(player, object);
-                    if (direction != null) {
-                        doCollision(direction, object);
+            if (player.isMoving()) {
+                for (TexturedModel object : objects) {
+                    boolean isCollision = checkCollision(player, object);
+                    if (isCollision) {
+                        EnumDirection direction = getCollisionDirection(player, object);
+                        if (direction != null) {
+                            doCollision(direction, object);
+                        }
                     }
                 }
             }
@@ -98,6 +100,7 @@ public class Main implements Runnable {
         for (TexturedModel object : objects){
             object.updateMatrix();
         }
+        player.setIsMoving(false);
         glfwPollEvents();
     }
 
@@ -187,22 +190,22 @@ public class Main implements Runnable {
             case NORTH:
                 inside = (object.getPosition().y + object.getHeight()) - player.getPosition().y;
                 player.addPosition(new Vector3f(0.0f, inside, 0.0f));
-                Camera.addPosition(new Vector3f(0.0f , inside, 0.0f));
+                Camera.addPosition(new Vector3f(0.0f , inside * Camera.scale, 0.0f));
                 break;
             case EAST:
                 inside = (object.getPosition().x + object.getWidth()) - player.getPosition().x;
                 player.addPosition(new Vector3f(inside, 0.0f, 0.0f));
-                Camera.addPosition(new Vector3f(inside, 0.0f, 0.0f));
+                Camera.addPosition(new Vector3f(inside * Camera.scale, 0.0f, 0.0f));
                 break;
             case WEST:
                 inside = (player.getPosition().x + player.getWidth()) - object.getPosition().x;
                 player.addPosition(new Vector3f(-inside, 0.0f, 0.0f));
-                Camera.addPosition(new Vector3f(-inside, 0.0f, 0.0f));
+                Camera.addPosition(new Vector3f(-inside * Camera.scale, 0.0f, 0.0f));
                 break;
             case SOUTH:
                 inside = (player.getPosition().y + player.getHeight()) - object.getPosition().y;
                 player.addPosition(new Vector3f(0.0f, -inside, 0.0f));
-                Camera.addPosition(new Vector3f(0.0f, -inside, 0.0f));
+                Camera.addPosition(new Vector3f(0.0f, -inside * Camera.scale, 0.0f));
                 break;
         }
     }

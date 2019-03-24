@@ -12,13 +12,15 @@ public class Camera{
     public static Matrix4f viewMatrix;
     private static Vector3f position;
     private static float rotation;
+    private static double scaleSpeed;
+    static float scale;
     static double velocity;
 
     /**
      * Default constructor if no arguments are provided.
      */
     Camera(){
-        this(new Vector3f(0.0f, 0.0f, 0.0f), 0.0f);
+        this(new Vector3f(0.0f, 0.0f, 0.0f), 0.0f, 1.0f);
     }
 
     /**
@@ -26,10 +28,12 @@ public class Camera{
      * @param pos the position of the camera, an origin vector.
      * @param rot the rotation of the camera around the z-axis, in degrees.
      */
-    Camera(Vector3f pos, float rot){
+    Camera(Vector3f pos, float rot, float scal){
         position = pos;
-        velocity = 5.0f;
         rotation = rot;
+        scale = scal;
+        velocity = 5.0f * scale;
+        scaleSpeed = 0.5d;
         calculateViewMatrix();
     }
 
@@ -37,7 +41,7 @@ public class Camera{
      * Calculates a new view matrix (an inverted transformation matrix) from the current attribute values.
      */
     private static void calculateViewMatrix(){
-        viewMatrix = new Matrix4f().transform(position, rotation, 1.0f, true);
+        viewMatrix = new Matrix4f().transform(position, rotation, scale, true);
     }
 
     /**
@@ -64,6 +68,15 @@ public class Camera{
             position.y += velocity * deltaTime;
         }else{
             position.y -= velocity * deltaTime;
+        }
+        calculateViewMatrix();
+    }
+
+    static void calculateScale(boolean shouldIncrease, double deltaTime){
+        if (shouldIncrease){
+            scale += scaleSpeed * deltaTime;
+        }else{
+            scale -= scaleSpeed * deltaTime;
         }
         calculateViewMatrix();
     }

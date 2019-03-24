@@ -107,7 +107,7 @@ public class TexturedModel{
      * @param indices an array of integers, the indices which tells OpenGL in what order to draw the vertices.
      * @param texcoords an array of integers, the coordinates of the texture coordinates.
      */
-    protected void setVertexArray(float[] vertices, int[] indices, int[] texcoords){
+    protected void setVertexArray(float[] vertices, int[] indices, float[] texcoords){
         this.vertexArray = new VertexArray(vertices, indices, texcoords);
     }
 

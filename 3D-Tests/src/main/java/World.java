@@ -9,10 +9,17 @@ import main.java.math.Vector3f;
 class World extends TexturedModel {
 
     /**
+     * Constructor with one parameter for the size
+     * @param size the size of the world.
+     */
+    World(float size){
+        this(new Vector3f(), 0.0f, 1.0f, size);
+    }
+    /**
      * Default constructor if no arguments are provided.
      */
     World(){
-        this(new Vector3f(), 0.0f, 1.0f);
+        this(new Vector3f(), 0.0f, 1.0f, 1.0f);
     }
 
     /**
@@ -21,23 +28,23 @@ class World extends TexturedModel {
      * @param rotation the rotation around the z-axis, in degrees.
      * @param scale the scale multiplier of this object.
      */
-    World(Vector3f position, float rotation, float scale){
+    World(Vector3f position, float rotation, float scale, float size){
         super(position, rotation, scale);
         float[] vertices = {
-                40.0f, 40.0f,
-                40.0f, 0.0f,
-                0.0f, 40.0f,
-                0.0f, 0.0f
+                1.0f * size,    1.0f * size,
+                1.0f * size,    0.0f,
+                0.0f,           1.0f * size,
+                0.0f,           0.0f
         };
         int[] indices = {
                 0, 1, 2,
                 1, 3, 2
         };
-        int[] texcoords = {
-                40, 40,
-                40, 0,
-                0, 40,
-                0, 0
+        float[] texcoords = {
+                1 * size,   1 * size,
+                1 * size,   0.0f,
+                0.0f,       1 * size,
+                0.0f, 0.0f
         };
         this.setVertexArray(vertices, indices, texcoords);
         this.setShader("src/main/java/shaders/square_shader");

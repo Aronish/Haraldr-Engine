@@ -10,6 +10,7 @@ import main.java.math.Vector3f;
 class Player extends TexturedModel {
 
     private double velocity;
+    private boolean isMoving;
 
     /**
      * Default constructor if no arguments are provided.
@@ -27,6 +28,7 @@ class Player extends TexturedModel {
     Player(Vector3f position, float rotation, float scale){
         super(position, rotation, scale);
         this.velocity = 5.0d;
+        this.isMoving = false;
         this.setVertexArray();
         this.setShader("src/main/java/shaders/player_shader");
         this.setTexture("src/main/resources/player.png");
@@ -60,11 +62,25 @@ class Player extends TexturedModel {
         this.updateMatrix();
     }
 
+    public void setIsMoving(boolean isMoving){
+        this.isMoving = isMoving;
+    }
+
+    public boolean isMoving(){
+        return this.isMoving;
+    }
+
     /**
      * Set the velocity of this player.
      * @param velocity the velocity to set.
      */
     public void setVelocity(double velocity){
         this.velocity = velocity;
+    }
+
+    @Override
+    public void updateMatrix() {
+        super.updateMatrix();
+        setIsMoving(true);
     }
 }

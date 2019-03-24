@@ -5,11 +5,13 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
@@ -44,10 +46,10 @@ public class Input extends GLFWKeyCallback {
      */
     static void moveCameraAndPlayer(double deltaTime, Player player){
         if(keys[GLFW_KEY_LEFT_SHIFT]){
-            Camera.velocity = 10.0d;
-            player.setVelocity(10.0d);
+            Camera.velocity = 20.0d * Camera.scale;
+            player.setVelocity(20.0d);
         }else{
-            Camera.velocity = 5.0d;
+            Camera.velocity = 5.0d * Camera.scale;
             player.setVelocity(5.0d);
         }
         if(keys[GLFW_KEY_W]) {
@@ -69,6 +71,12 @@ public class Input extends GLFWKeyCallback {
         if(keys[GLFW_KEY_R]){
             Camera.setPosition(new Vector3f());
             player.setPosition(new Vector3f());
+        }
+        if(keys[GLFW_KEY_UP]){
+            Camera.calculateScale(true, deltaTime);
+        }
+        if(keys[GLFW_KEY_DOWN]){
+            Camera.calculateScale(false, deltaTime);
         }
     }
 }

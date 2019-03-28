@@ -9,6 +9,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_P;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
@@ -46,8 +47,8 @@ public class Input extends GLFWKeyCallback {
      */
     static void moveCameraAndPlayer(double deltaTime, Player player){
         if(keys[GLFW_KEY_LEFT_SHIFT]){
-            Camera.velocity = 20.0d * Camera.scale;
-            player.setVelocity(20.0d);
+            Camera.velocity = 10.0d * Camera.scale;
+            player.setVelocity(10.0d);
         }else{
             Camera.velocity = 5.0d * Camera.scale;
             player.setVelocity(5.0d);
@@ -77,6 +78,15 @@ public class Input extends GLFWKeyCallback {
         }
         if(keys[GLFW_KEY_DOWN]){
             Camera.calculateScale(false, deltaTime);
+        }
+        if(keys[GLFW_KEY_P]) {
+            if (player.isProoh) {
+                player.isProoh = false;
+                player.setTextureProoh();
+            }else{
+                player.isProoh = true;
+                player.setTexturePlayer();
+            }
         }
     }
 }

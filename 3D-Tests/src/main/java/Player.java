@@ -9,6 +9,7 @@ import main.java.math.Vector3f;
  */
 class Player extends TexturedModel {
 
+    public boolean isProoh;
     private double velocity;
     private boolean isMoving;
 
@@ -29,6 +30,7 @@ class Player extends TexturedModel {
         super(position, rotation, scale);
         this.velocity = 5.0d;
         this.isMoving = false;
+        this.isProoh = false;
         this.setVertexArray();
         this.setShader("src/main/java/shaders/player_shader");
         this.setTexture("src/main/resources/player.png");
@@ -76,6 +78,14 @@ class Player extends TexturedModel {
      */
     public void setVelocity(double velocity){
         this.velocity = velocity;
+    }
+
+    public void setTextureProoh(){
+        this.setTexture("src/main/resources/prooh.png");
+    }
+
+    public void setTexturePlayer(){
+        this.setTexture("src/main/resources/player.png");
     }
 
     @Override

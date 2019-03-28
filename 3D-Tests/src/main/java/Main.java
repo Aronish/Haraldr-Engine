@@ -70,8 +70,8 @@ public class Main implements Runnable {
         world = new World(100.0f);
 
         for (int i = 0; i < 100; i++){
-            float randX = random.nextFloat() * 100;
-            float randY = random.nextFloat() * 100;
+            float randX = random.nextFloat() * 20;
+            float randY = random.nextFloat() * 20;
             objects.add(new Obstacle(new Vector3f(randX, randY, 0.0f), 0.0f, 1.0f));
         }
     }

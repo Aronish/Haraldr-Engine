@@ -18,7 +18,7 @@ import static org.lwjgl.opengl.GL46.glVertexAttribPointer;
 /**
  * Class for handling buffers containing the vertex data of an object.
  */
-public class VertexArray {
+class VertexArray {
 
     private int vao, vbo, ebo, tbo, length;
     private float width, height;
@@ -36,16 +36,16 @@ public class VertexArray {
     };
 
     private static float[] defTexcoords = {
-            0.0f, 0.0f,
-            0.0f, 1.0f,
             1.0f, 0.0f,
-            1.0f, 1.0f
+            1.0f, 1.0f,
+            0.0f, 0.0f,
+            0.0f, 1.0f
     };
 
     /**
      * Default constructor if no arguments are provided. Uses the predefined data above.
      */
-    public VertexArray(){
+    VertexArray(){
         this(defVertices, defIndices, defTexcoords);
     }
 
@@ -55,7 +55,7 @@ public class VertexArray {
      * @param indices an array of integers, the indices which tells OpenGL in what order to draw the vertices.
      * @param texcoords an array of integers, the coordinates of the texture coordinates.
      */
-    public VertexArray(float[] vertices, int[] indices, float[] texcoords){
+    VertexArray(float[] vertices, int[] indices, float[] texcoords){
         this.vao = glGenVertexArrays();
         this.vbo = glGenBuffers();
         this.ebo = glGenBuffers();
@@ -87,7 +87,7 @@ public class VertexArray {
      * Gets the width of the object. Calculated from the vertex coordinates.
      * @return the width of the object.
      */
-    public float getWidth(){
+    float getWidth(){
         return this.width;
     }
 
@@ -95,7 +95,7 @@ public class VertexArray {
      * Gets the height of the object. Calculated from the vertex coordinates.
      * @return the height of the object.
      */
-    public float getHeight(){
+    float getHeight(){
         return this.height;
     }
 

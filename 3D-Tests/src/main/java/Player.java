@@ -9,7 +9,6 @@ import main.java.math.Vector3f;
  */
 class Player extends TexturedModel {
 
-    public boolean isProoh;
     private double velocity;
     private boolean isMoving;
 
@@ -30,7 +29,6 @@ class Player extends TexturedModel {
         super(position, rotation, scale);
         this.velocity = 5.0d;
         this.isMoving = false;
-        this.isProoh = false;
         this.setVertexArray();
         this.setShader("src/main/java/shaders/player_shader");
         this.setTexture("src/main/resources/player.png");
@@ -41,7 +39,7 @@ class Player extends TexturedModel {
      * @param x whether the player should move towards the positive or negative direction. If true, towards positive.
      * @param deltaTime the delta time from the update method in Main.
      */
-    public void calculateXPosition(boolean x, double deltaTime){
+    void calculateXPosition(boolean x, double deltaTime){
         if(x){
             this.position.x += this.velocity * deltaTime;
         }else{
@@ -55,7 +53,7 @@ class Player extends TexturedModel {
      * @param y whether the player should move towards the positive or negative direction. If true, towards positive.
      * @param deltaTime the delta time from the update method in Main.
      */
-    public void calculateYPosition(boolean y, double deltaTime){
+    void calculateYPosition(boolean y, double deltaTime){
         if(y){
             this.position.y += this.velocity * deltaTime;
         }else{
@@ -64,11 +62,11 @@ class Player extends TexturedModel {
         this.updateMatrix();
     }
 
-    public void setIsMoving(boolean isMoving){
+    void setIsMoving(boolean isMoving){
         this.isMoving = isMoving;
     }
 
-    public boolean isMoving(){
+    boolean isMoving(){
         return this.isMoving;
     }
 
@@ -76,16 +74,8 @@ class Player extends TexturedModel {
      * Set the velocity of this player.
      * @param velocity the velocity to set.
      */
-    public void setVelocity(double velocity){
+    void setVelocity(double velocity){
         this.velocity = velocity;
-    }
-
-    public void setTextureProoh(){
-        this.setTexture("src/main/resources/prooh.png");
-    }
-
-    public void setTexturePlayer(){
-        this.setTexture("src/main/resources/player.png");
     }
 
     @Override

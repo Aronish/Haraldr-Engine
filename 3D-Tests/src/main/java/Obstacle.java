@@ -9,11 +9,15 @@ class Obstacle extends TexturedModel {
         this(new Vector3f(), 0.0f, 1.0f);
     }
 
-    Obstacle(Vector3f position, float rotation, float scale){
+    Obstacle(Vector3f position){
+        this(position, 0.0f, 1.0f);
+    }
+
+    private Obstacle(Vector3f position, float rotation, float scale){
         super(position, rotation, scale);
         this.setVertexArray();
         this.setShader("src/main/java/shaders/square_shader");
-        this.setTexture("src/main/resources/black.png");
+        this.setTexture("src/main/resources/pixel_test.png");
         this.setMatrixLocation();
     }
 }

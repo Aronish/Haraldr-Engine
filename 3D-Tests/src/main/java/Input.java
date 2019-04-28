@@ -79,14 +79,5 @@ public class Input extends GLFWKeyCallback {
         if(keys[GLFW_KEY_DOWN]){
             Camera.calculateScale(false, deltaTime);
         }
-        if(keys[GLFW_KEY_P]) {
-            if (player.isProoh) {
-                player.isProoh = false;
-                player.setTextureProoh();
-            }else{
-                player.isProoh = true;
-                player.setTexturePlayer();
-            }
-        }
     }
 }

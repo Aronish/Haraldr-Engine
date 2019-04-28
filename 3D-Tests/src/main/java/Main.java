@@ -6,9 +6,6 @@ import main.java.graphics.TexturedModel;
 import main.java.math.Vector3f;
 import org.lwjgl.opengl.GL;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
@@ -30,10 +27,7 @@ public class Main implements Runnable {
     private double frameRate;
     private Camera camera;
     private Player player;
-    private TexturedModel world;
-
-    private Random random;
-    private ArrayList<TexturedModel> objects;
+    private World world;
 
     /**
      * Start a new thread with the game on it.
@@ -63,17 +57,9 @@ public class Main implements Runnable {
         glfwShowWindow(window.getWindow());
 
         frameRate = 60;
-        objects = new ArrayList<>();
-        random = new Random();
         camera = new Camera(new Vector3f(), 0.0f, 1.0f); //Just here to initialize
         player = new Player(new Vector3f(), 0.0f, 1.0f);
-        world = new World(100.0f);
-
-        for (int i = 0; i < 100; i++){
-            float randX = random.nextFloat() * 20;
-            float randY = random.nextFloat() * 20;
-            objects.add(new Obstacle(new Vector3f(randX, randY, 0.0f), 0.0f, 1.0f));
-        }
+        world = new World(new Vector3f(), 32.0f);
     }
 
     /**
@@ -83,22 +69,19 @@ public class Main implements Runnable {
     private void update(double deltaTime) {
         Input.moveCameraAndPlayer(deltaTime, player);
         {//Collision Detection
-            if (player.isMoving()) {
-                for (TexturedModel object : objects) {
-                    boolean isCollision = checkCollision(player, object);
-                    if (isCollision) {
-                        EnumDirection direction = getCollisionDirection(player, object);
-                        if (direction != null) {
-                            doCollision(direction, object);
-                        }
+            if (player.isMoving()){
+                for (Obstacle obstacle : world.getObstacles()){
+                    if (checkCollision(player, obstacle)){
+                        EnumDirection direction = getCollisionDirection(player, obstacle);
+                        doCollision(direction, obstacle);
                     }
                 }
             }
         }
         player.updateMatrix();
         world.updateMatrix();
-        for (TexturedModel object : objects){
-            object.updateMatrix();
+        for (Obstacle obstacle : world.getObstacles()){
+            obstacle.updateMatrix();
         }
         player.setIsMoving(false);
         glfwPollEvents();
@@ -112,10 +95,10 @@ public class Main implements Runnable {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         { // Only Render Objects Here - Objects further back are rendered first
             world.render();
-            player.render();
-            for (TexturedModel object : objects){
-                object.render();
+            for (Obstacle obstacle : world.getObstacles()){
+                obstacle.render();
             }
+            player.render();
         }
         glfwSwapBuffers(window.getWindow());
     }
@@ -177,12 +160,13 @@ public class Main implements Runnable {
         if (rightCollision < leftCollision && rightCollision < topCollision && rightCollision < bottomCollision ) {
             return EnumDirection.EAST;
         }
-        return null;
+        return EnumDirection.INVALIDDIR;
     }
 
     /**
-     * Responds to a collision in the given direction.
+     * Responds to a collision in the given direction. Collision response only applies to the player and camera.
      * @param direction the EnumDirection in which the collision happened.
+     * @param object the object in which the collision occurred.
      */
     private void doCollision(EnumDirection direction, TexturedModel object){
         float inside;
@@ -207,6 +191,8 @@ public class Main implements Runnable {
                 player.addPosition(new Vector3f(0.0f, -inside, 0.0f));
                 Camera.addPosition(new Vector3f(0.0f, -inside * Camera.scale, 0.0f));
                 break;
+            case INVALIDDIR:
+                System.out.println("INVALID");
         }
     }
 
@@ -218,6 +204,7 @@ public class Main implements Runnable {
         NORTH,
         EAST,
         WEST,
-        SOUTH
+        SOUTH,
+        INVALIDDIR
     }
 }

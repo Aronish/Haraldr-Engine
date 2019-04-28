@@ -1,5 +1,6 @@
 package main.java;
 
+import com.sun.istack.internal.NotNull;
 import main.java.math.Matrix4f;
 import main.java.math.Vector3f;
 
@@ -90,7 +91,7 @@ public class Camera{
         calculateViewMatrix();
     }
 
-    public static void addPosition(Vector3f pos){
+    static void addPosition(Vector3f pos){
         position.x += pos.x;
         position.y += pos.y;
         position.z += pos.z;

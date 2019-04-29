@@ -20,7 +20,7 @@ import static org.lwjgl.opengl.GL46.glValidateProgram;
 /**
  * Class for handling the creation and loading of shader files. Both vertex and fragment shaders.
  */
-class Shader {
+public class Shader {
 
     private int shaderProgram;
 
@@ -74,7 +74,7 @@ class Shader {
      * Gets the shader program.
      * @return the shader program (ID).
      */
-    int getShaderProgram(){
+    public int getShaderProgram(){
         return shaderProgram;
     }
 
@@ -106,14 +106,14 @@ class Shader {
     /**
      * Uses the shader program, ready for drawing.
      */
-    void use(){
+    public void use(){
         glUseProgram(shaderProgram);
     }
 
     /**
      * Unuses the shader program to avoid weird conflicts.
      */
-    void unuse(){
+    public void unuse(){
         glUseProgram(0);
     }
 }

@@ -1,13 +1,13 @@
 package main.java;
 
-import main.java.graphics.TexturedModel;
+import main.java.graphics.Models;
 import main.java.math.Vector3f;
-
+//TODO Fix JavaDoc
 /**
  * The player that is visible in the center of the screen.
  * This is a static model and stays in place.
  */
-class Player extends TexturedModel {
+class Player extends Entity {
 
     private double velocity;
     private boolean isMoving;
@@ -26,12 +26,9 @@ class Player extends TexturedModel {
      * @param scale the scale multiplier of this object.
      */
     Player(Vector3f position, float rotation, float scale){
-        super(position, rotation, scale);
+        super(Models.PLAYER, position, rotation, scale);
         this.velocity = 5.0d;
         this.isMoving = false;
-        this.setVertexArray();
-        this.setShader("src/main/java/shaders/player_shader");
-        this.setTexture("src/main/resources/player.png");
         this.setMatrixLocation();
     }
     /**

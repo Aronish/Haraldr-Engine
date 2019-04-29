@@ -2,7 +2,7 @@
 
 package main.java;
 
-import main.java.graphics.TexturedModel;
+import main.java.graphics.Models;
 import main.java.math.Vector3f;
 import org.lwjgl.opengl.GL;
 
@@ -21,12 +21,12 @@ import static org.lwjgl.opengl.GL46.glClearColor;
 public class Main implements Runnable {
 
     protected Thread main;
-
     static Window window;
 
     private double frameRate;
     private Camera camera;
     private Player player;
+    private float worldSize;
     private World world;
 
     /**
@@ -57,9 +57,11 @@ public class Main implements Runnable {
         glfwShowWindow(window.getWindow());
 
         frameRate = 60;
+        worldSize = 32.0f;
+        new Models(worldSize);
         camera = new Camera(new Vector3f(), 0.0f, 1.0f); //Just here to initialize
-        player = new Player(new Vector3f(), 0.0f, 1.0f);
-        world = new World(new Vector3f(), 32.0f);
+        player = new Player();
+        world = new World();
     }
 
     /**
@@ -69,21 +71,14 @@ public class Main implements Runnable {
     private void update(double deltaTime) {
         Input.moveCameraAndPlayer(deltaTime, player);
         {//Collision Detection
-            if (player.isMoving()){
-                for (Obstacle obstacle : world.getObstacles()){
-                    if (checkCollision(player, obstacle)){
-                        EnumDirection direction = getCollisionDirection(player, obstacle);
-                        doCollision(direction, obstacle);
-                    }
-                }
-            }
+
         }
-        player.updateMatrix();
-        world.updateMatrix();
+        player.setIsMoving(false);
+        player.updateMatrix(); //TODO Fix constant player matrix updates.
         for (Obstacle obstacle : world.getObstacles()){
             obstacle.updateMatrix();
         }
-        player.setIsMoving(false);
+        world.updateMatrix();
         glfwPollEvents();
     }
 
@@ -123,13 +118,14 @@ public class Main implements Runnable {
         }
         glfwTerminate();
     }
-
+    /*
     /**
      * Checks collision between two objects.
      * @param obj1 a TexturedModel object, obj1 should be the moving one if possible.
      * @param obj2 a preferrably static TexturedModel.
      * @return true if collision, false if not.
      */
+    /*
     private boolean checkCollision(TexturedModel obj1, TexturedModel obj2){
         boolean collisionX = obj1.getPosition().x + obj1.getWidth() > obj2.getPosition().x && obj2.getPosition().x + obj2.getWidth() > obj1.getPosition().x;
         boolean collisionY = obj1.getPosition().y + obj1.getHeight() > obj2.getPosition().y && obj2.getPosition().y + obj2.getHeight() > obj1.getPosition().y;
@@ -143,6 +139,7 @@ public class Main implements Runnable {
      * @return the EnumDirection in which the collision most likely happened, returns null if something went wrong.
      *         make sure you check for null.
      */
+    /*
     private EnumDirection getCollisionDirection(TexturedModel obj1, TexturedModel obj2){
         float topCollision = (obj2.getPosition().y + obj2.getHeight() - obj1.getPosition().y);
         float bottomCollision = (obj1.getPosition().y + obj1.getHeight() - obj2.getPosition().y);
@@ -168,34 +165,33 @@ public class Main implements Runnable {
      * @param direction the EnumDirection in which the collision happened.
      * @param object the object in which the collision occurred.
      */
+    /*
     private void doCollision(EnumDirection direction, TexturedModel object){
         float inside;
         switch (direction){
             case NORTH:
                 inside = (object.getPosition().y + object.getHeight()) - player.getPosition().y;
-                player.addPosition(new Vector3f(0.0f, inside, 0.0f));
-                Camera.addPosition(new Vector3f(0.0f , inside * Camera.scale, 0.0f));
+                player.addPosition(new Vector3f(0.0f, inside));
+                Camera.addPosition(new Vector3f(0.0f , inside * Camera.scale));
                 break;
             case EAST:
                 inside = (object.getPosition().x + object.getWidth()) - player.getPosition().x;
-                player.addPosition(new Vector3f(inside, 0.0f, 0.0f));
-                Camera.addPosition(new Vector3f(inside * Camera.scale, 0.0f, 0.0f));
+                player.addPosition(new Vector3f(inside, 0.0f));
+                Camera.addPosition(new Vector3f(inside * Camera.scale, 0.0f));
                 break;
             case WEST:
                 inside = (player.getPosition().x + player.getWidth()) - object.getPosition().x;
-                player.addPosition(new Vector3f(-inside, 0.0f, 0.0f));
-                Camera.addPosition(new Vector3f(-inside * Camera.scale, 0.0f, 0.0f));
+                player.addPosition(new Vector3f(-inside, 0.0f));
+                Camera.addPosition(new Vector3f(-inside * Camera.scale, 0.0f));
                 break;
             case SOUTH:
                 inside = (player.getPosition().y + player.getHeight()) - object.getPosition().y;
-                player.addPosition(new Vector3f(0.0f, -inside, 0.0f));
-                Camera.addPosition(new Vector3f(0.0f, -inside * Camera.scale, 0.0f));
+                player.addPosition(new Vector3f(0.0f, -inside));
+                Camera.addPosition(new Vector3f(0.0f, -inside * Camera.scale));
                 break;
-            case INVALIDDIR:
-                System.out.println("INVALID");
         }
     }
-
+    */
     public static void main(String[] args) {
         new Main().start();
     }

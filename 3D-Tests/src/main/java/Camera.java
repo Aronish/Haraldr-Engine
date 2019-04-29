@@ -21,7 +21,7 @@ public class Camera{
      * Default constructor if no arguments are provided.
      */
     Camera(){
-        this(new Vector3f(0.0f, 0.0f, 0.0f), 0.0f, 1.0f);
+        this(new Vector3f(), 0.0f, 1.0f);
     }
 
     /**

@@ -27,7 +27,7 @@ import static org.lwjgl.opengl.GL11.glTexParameteri;
 /**
  * Class for handling the creation and loading of textures into OpenGl.
  */
-class Texture {
+public class Texture {
 
     private int width, height;
     private int texture;
@@ -82,14 +82,14 @@ class Texture {
     /**
      * Binds this texture for drawing.
      */
-    void bind(){
+    public void bind(){
         glBindTexture(GL_TEXTURE_2D, this.texture);
     }
 
     /**
      * Unbinds this texture to avoid weird conflicts.
      */
-    void unbind(){
+    public void unbind(){
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 }

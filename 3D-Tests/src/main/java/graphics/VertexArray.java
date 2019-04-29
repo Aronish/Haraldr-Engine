@@ -18,7 +18,7 @@ import static org.lwjgl.opengl.GL46.glVertexAttribPointer;
 /**
  * Class for handling buffers containing the vertex data of an object.
  */
-class VertexArray {
+public class VertexArray {
 
     private int vao, vbo, ebo, tbo, length;
     private float width, height;
@@ -87,7 +87,7 @@ class VertexArray {
      * Gets the width of the object. Calculated from the vertex coordinates.
      * @return the width of the object.
      */
-    float getWidth(){
+    public float getWidth(){
         return this.width;
     }
 
@@ -95,28 +95,28 @@ class VertexArray {
      * Gets the height of the object. Calculated from the vertex coordinates.
      * @return the height of the object.
      */
-    float getHeight(){
+    public float getHeight(){
         return this.height;
     }
 
     /**
      * Invokes an OpenGL draw call to draw using the contents of the bound buffers.
      */
-    void draw(){
+    public void draw(){
         glDrawElements(GL_TRIANGLES, this.length, GL_UNSIGNED_INT, 0);
     }
 
     /**
      * Binds the VAO for setting the state or drawing.
      */
-    void bind(){
+    public void bind(){
         glBindVertexArray(this.vao);
     }
 
     /**
      * Unbinds the VAO to avoid weird conflicts.
      */
-    void unbind(){
+    public void unbind(){
         glBindVertexArray(0);
     }
 }

@@ -14,6 +14,10 @@ public class Vector3f {
         this(0.0f, 0.0f, 0.0f);
     }
 
+    public Vector3f(float x, float y){
+        this(x, y, 0.0f);
+    }
+
     /**
      * Sets the positions to the provided ones.
      * @param x the x position.

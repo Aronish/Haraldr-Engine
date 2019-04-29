@@ -1,7 +1,7 @@
 package main.java.graphics;
 
 public class Models {
-
+    //TODO Add JavaDoc
     public static final TexturedModel OBSTACLE = new TexturedModel("src/main/java/shaders/square_shader", "src/main/resources/pixel_test.png");
     public static final TexturedModel PLAYER = new TexturedModel("src/main/java/shaders/player_shader", "src/main/resources/player.png");
     private static TexturedModel WORLD = null;

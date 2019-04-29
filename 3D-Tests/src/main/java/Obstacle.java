@@ -4,7 +4,7 @@ import main.java.graphics.Models;
 import main.java.math.Vector3f;
 
 class Obstacle extends Entity {
-
+    //TODO Add JavaDoc
     Obstacle(){
         this(new Vector3f(), 0.0f, 1.0f);
     }

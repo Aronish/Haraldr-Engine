@@ -19,7 +19,7 @@ import static org.lwjgl.opengl.GL46.glClear;
 import static org.lwjgl.opengl.GL46.glClearColor;
 
 public class Main implements Runnable {
-
+    //TODO Fix JavaDoc
     protected Thread main;
     static Window window;
 
@@ -71,7 +71,13 @@ public class Main implements Runnable {
     private void update(double deltaTime) {
         Input.moveCameraAndPlayer(deltaTime, player);
         {//Collision Detection
-
+            if (player.isMoving()){
+                for (Obstacle obstacle : world.getObstacles()){
+                    if (checkCollision(player, obstacle)){
+                        doCollision(getCollisionDirection(player, obstacle), obstacle);
+                    }
+                }
+            }
         }
         player.setIsMoving(false);
         player.updateMatrix(); //TODO Fix constant player matrix updates.
@@ -118,15 +124,15 @@ public class Main implements Runnable {
         }
         glfwTerminate();
     }
-    /*
+
     /**
      * Checks collision between two objects.
      * @param obj1 a TexturedModel object, obj1 should be the moving one if possible.
      * @param obj2 a preferrably static TexturedModel.
      * @return true if collision, false if not.
      */
-    /*
-    private boolean checkCollision(TexturedModel obj1, TexturedModel obj2){
+
+    private boolean checkCollision(Entity obj1, Entity obj2){
         boolean collisionX = obj1.getPosition().x + obj1.getWidth() > obj2.getPosition().x && obj2.getPosition().x + obj2.getWidth() > obj1.getPosition().x;
         boolean collisionY = obj1.getPosition().y + obj1.getHeight() > obj2.getPosition().y && obj2.getPosition().y + obj2.getHeight() > obj1.getPosition().y;
         return collisionX && collisionY;
@@ -139,8 +145,8 @@ public class Main implements Runnable {
      * @return the EnumDirection in which the collision most likely happened, returns null if something went wrong.
      *         make sure you check for null.
      */
-    /*
-    private EnumDirection getCollisionDirection(TexturedModel obj1, TexturedModel obj2){
+
+    private EnumDirection getCollisionDirection(Entity obj1, Entity obj2){
         float topCollision = (obj2.getPosition().y + obj2.getHeight() - obj1.getPosition().y);
         float bottomCollision = (obj1.getPosition().y + obj1.getHeight() - obj2.getPosition().y);
         float leftCollision = (obj1.getPosition().x + obj1.getWidth()) - obj2.getPosition().x;
@@ -165,8 +171,8 @@ public class Main implements Runnable {
      * @param direction the EnumDirection in which the collision happened.
      * @param object the object in which the collision occurred.
      */
-    /*
-    private void doCollision(EnumDirection direction, TexturedModel object){
+
+    private void doCollision(EnumDirection direction, Entity object){
         float inside;
         switch (direction){
             case NORTH:
@@ -191,7 +197,7 @@ public class Main implements Runnable {
                 break;
         }
     }
-    */
+
     public static void main(String[] args) {
         new Main().start();
     }

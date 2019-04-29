@@ -17,7 +17,7 @@ class World extends Entity {
 
     private ArrayList<Obstacle> obstacles;
 
-    public World(){
+    World(){
         this(new Vector3f(), 0.0f, 1.0f);
     }
 
@@ -30,7 +30,7 @@ class World extends Entity {
     private World(Vector3f position, float rotation, float scale){
         super(Models.getWORLD(), position, rotation, scale);
         this.obstacles = new ArrayList<>();
-        generateWorld("src/main/resources/pixel_test_3.png");
+        generateWorld("src/main/resources/pixel_test_2.png");
     }
 
     private void generateWorld(String path){

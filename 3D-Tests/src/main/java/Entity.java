@@ -1,8 +1,10 @@
 package main.java;
-
+//TODO Fix JavaDoc
 import main.java.graphics.TexturedModel;
 import main.java.math.Matrix4f;
 import main.java.math.Vector3f;
+
+import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
@@ -12,31 +14,21 @@ import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
  */
 public class Entity {
 
-    private TexturedModel texturedModel;
-    Vector3f position;
-    private float rotation;
-    private float scale;
+    private HashMap<Integer, TexturedModel> texturedModels; // 0 = First
     private Matrix4f matrix;
     private int matrixLocation;
+    private float rotation;
+    private float scale;
 
-    /**
-     * Constructor without rotation and scale.
-     * @param texturedModel the textured model for this entity to render.
-     * @param position the initial position of this entity.
-     */
-    public Entity(TexturedModel texturedModel, Vector3f position){
-        this(texturedModel, position, 0.0f, 1.0f);
-    }
+    Vector3f position;
 
-    /**
-     * Constructor with rotation and scale as well.
-     * @param texturedModel the textured model for the entity to render.
-     * @param position the initial position of this entity.
-     * @param rotation the initial rotation of this entity.
-     * @param scale the initial scale of this entity.
-     */
-    public Entity(TexturedModel texturedModel, Vector3f position, float rotation, float scale){
-        this.texturedModel = texturedModel;
+    public Entity(Vector3f position, float rotation, float scale, TexturedModel ... texturedModels){
+        this.texturedModels = new HashMap<>();
+        int modelCount = 0;
+        for (TexturedModel texMod : texturedModels){
+            this.texturedModels.put(modelCount, texMod);
+            modelCount++;
+        }
         this.position = position;
         this.rotation = rotation;
         this.scale = scale;
@@ -88,11 +80,8 @@ public class Entity {
         this.matrix = new Matrix4f().MVP(this.position, this.rotation, this.scale);
     }
 
-    /**
-     * Gets the matrix location in the shader from OpenGL and stores the ID for later use.
-     */
-    void setMatrixLocation(){
-        this.matrixLocation = glGetUniformLocation(this.texturedModel.getShader().getShaderProgram(), "matrix");
+    public void setMatrixLocation(int id){
+        this.matrixLocation = glGetUniformLocation(this.texturedModels.get(id).getShader().getShaderProgram(), "matrix");
     }
 
     /**
@@ -111,26 +100,22 @@ public class Entity {
     }
 
     /**
-     * Gets the real width with scale compensation.
-     * @return the real width.
+     * Assumes all submodels are inside a single rectangle.
+     * @return
      */
     float getWidth(){
-        return this.texturedModel.getVertexArray().getWidth() * this.scale;
+        return this.texturedModels.get(0).getVertexArray().getWidth();
     }
 
     /**
-     * Gets the real height with scale compensation.
-     * @return the real height.
+     * Assumes all submodels are inside a single rectangle.
+     * @return
      */
     float getHeight(){
-        return this.texturedModel.getVertexArray().getHeight() * this.scale;
+        return this.texturedModels.get(0).getVertexArray().getHeight();
     }
 
-    /**
-     * Gets the TexturedModel.
-     * @return the TexturedModel.
-     */
-    public TexturedModel getTexturedModel(){
-        return this.texturedModel;
+    public HashMap<Integer, TexturedModel> getTexturedModels(){
+        return this.texturedModels;
     }
 }

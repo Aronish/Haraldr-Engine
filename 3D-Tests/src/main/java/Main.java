@@ -25,10 +25,8 @@ public class Main implements Runnable {
     static Window window;
 
     private double frameRate;
-    private Renderer renderer;
     private Camera camera;
     private Player player;
-    private float worldSize;
     private World world;
 
     /**
@@ -59,9 +57,7 @@ public class Main implements Runnable {
         glfwShowWindow(window.getWindow());
 
         frameRate = 60;
-        worldSize = 512.0f;
-        renderer = new Renderer();
-        new Models(worldSize);
+        new Models();
         camera = new Camera(new Vector3f(), 0.0f, 1.0f); //Just here to initialize
         player = new Player();
         world = new World();
@@ -75,18 +71,13 @@ public class Main implements Runnable {
         Input.moveCameraAndPlayer(deltaTime, player);
         {//Collision Detection
             if (player.isMoving()){
-                for (Obstacle obstacle : world.getObstacles()){
-                    if (checkCollision(player, obstacle)){
-                        doCollision(getCollisionDirection(player, obstacle), obstacle);
-                    }
+                if (checkCollision(player, world)){
+                    doCollision(getCollisionDirection(player, world), world);
                 }
             }
         }
         player.setIsMoving(false);
         player.updateMatrix(); //TODO Fix constant player matrix updates.
-        for (Obstacle obstacle : world.getObstacles()){
-            obstacle.updateMatrix();
-        }
         world.updateMatrix();
         glfwPollEvents();
     }
@@ -98,11 +89,8 @@ public class Main implements Runnable {
         glClearColor(0.0f, 0.4f, 0.85f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         { // Only Render Objects Here - Objects further back are rendered first
-            renderer.render(world);
-            for (Obstacle obstacle : world.getObstacles()){
-                renderer.render(obstacle);
-            }
-            renderer.render(player);
+            Renderer.render(world);
+            Renderer.render(player);
         }
         glfwSwapBuffers(window.getWindow());
     }
@@ -127,7 +115,7 @@ public class Main implements Runnable {
         }
         glfwTerminate();
     }
-
+    //TODO !!!! MAKE COLLISION WORK WITH CHANGED COORDINATE SYSTEM !!!! TODO\\---------------------------------------
     /**
      * Checks collision between two objects.
      * @param obj1 a TexturedModel object, obj1 should be the moving one if possible.

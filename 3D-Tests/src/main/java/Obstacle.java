@@ -1,5 +1,5 @@
 package main.java;
-
+//TODO Fix JavaDoc
 import main.java.graphics.Models;
 import main.java.math.Vector3f;
 
@@ -27,7 +27,6 @@ class Obstacle extends Entity {
      * @param scale the initial scale of this object.
      */
     private Obstacle(Vector3f position, float rotation, float scale){
-        super(Models.OBSTACLE, position, rotation, scale);
-        this.setMatrixLocation();
+        super(position, rotation, scale, Models.OBSTACLE);
     }
 }

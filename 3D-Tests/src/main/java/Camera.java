@@ -1,6 +1,5 @@
 package main.java;
 
-import com.sun.istack.internal.NotNull;
 import main.java.math.Matrix4f;
 import main.java.math.Vector3f;
 
@@ -76,7 +75,7 @@ public class Camera{
     static void calculateScale(boolean shouldIncrease, double deltaTime){
         if (shouldIncrease){
             scale += scaleSpeed * deltaTime;
-        }else{
+        }else {
             scale -= scaleSpeed * deltaTime;
         }
         calculateViewMatrix();

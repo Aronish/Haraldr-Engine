@@ -1,8 +1,8 @@
 package main.java;
-
+//TODO Fix JavaDoc and matrix locations.
 import main.java.graphics.Models;
 import main.java.math.Vector3f;
-//TODO Fix JavaDoc
+
 /**
  * The player that is visible in the center of the screen.
  * This is a static model and stays in place.
@@ -26,10 +26,9 @@ class Player extends Entity {
      * @param scale the scale multiplier of this object.
      */
     Player(Vector3f position, float rotation, float scale){
-        super(Models.PLAYER, position, rotation, scale);
+        super(position, rotation, scale, Models.PLAYER);
         this.velocity = 5.0d;
         this.isMoving = false;
-        this.setMatrixLocation();
     }
     /**
      * Calculates the x position based on the velocity and delta time.

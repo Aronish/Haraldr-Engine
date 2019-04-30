@@ -3,6 +3,7 @@
 package main.java;
 
 import main.java.graphics.Models;
+import main.java.graphics.Renderer;
 import main.java.math.Vector3f;
 import org.lwjgl.opengl.GL;
 
@@ -19,11 +20,12 @@ import static org.lwjgl.opengl.GL46.glClear;
 import static org.lwjgl.opengl.GL46.glClearColor;
 
 public class Main implements Runnable {
-    //TODO Fix JavaDoc
+
     protected Thread main;
     static Window window;
 
     private double frameRate;
+    private Renderer renderer;
     private Camera camera;
     private Player player;
     private float worldSize;
@@ -57,7 +59,8 @@ public class Main implements Runnable {
         glfwShowWindow(window.getWindow());
 
         frameRate = 60;
-        worldSize = 32.0f;
+        worldSize = 512.0f;
+        renderer = new Renderer();
         new Models(worldSize);
         camera = new Camera(new Vector3f(), 0.0f, 1.0f); //Just here to initialize
         player = new Player();
@@ -95,11 +98,11 @@ public class Main implements Runnable {
         glClearColor(0.0f, 0.4f, 0.85f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         { // Only Render Objects Here - Objects further back are rendered first
-            world.render();
+            renderer.render(world);
             for (Obstacle obstacle : world.getObstacles()){
-                obstacle.render();
+                renderer.render(obstacle);
             }
-            player.render();
+            renderer.render(player);
         }
         glfwSwapBuffers(window.getWindow());
     }

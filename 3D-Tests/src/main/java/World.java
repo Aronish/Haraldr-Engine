@@ -17,6 +17,9 @@ class World extends Entity {
 
     private ArrayList<Obstacle> obstacles;
 
+    /**
+     * Default constructor without parameters.
+     */
     World(){
         this(new Vector3f(), 0.0f, 1.0f);
     }
@@ -33,6 +36,10 @@ class World extends Entity {
         generateWorld("src/main/resources/pixel_test_2.png");
     }
 
+    /**
+     *  Reads the red channel in an image file and generates obtacles at the corresponding coordinates.
+     * @param path the file path to the generator map.
+     */
     private void generateWorld(String path){
         int width = 0, height = 0;
         BufferedImage image = null;
@@ -53,6 +60,10 @@ class World extends Entity {
         }
     }
 
+    /**
+     * Gets the list of obstacles in the world.
+     * @return the obstacle list.
+     */
     ArrayList<Obstacle> getObstacles(){
         return this.obstacles;
     }

@@ -1,9 +1,7 @@
 package main.java.graphics;
 
-//TODO Clean up JavaDoc
 /**
- * A superclass containing common properties, setters and getters for game objects.
- * Made for easy creation of new objects.
+ * Class for handling models for game objects.
  */
 public class TexturedModel{
 
@@ -11,13 +9,26 @@ public class TexturedModel{
     private Shader shader;
     private Texture texture;
 
-    public TexturedModel(String shaderPath, String texturePath){
+    /**
+     * Constructor with just the paths for the shader and texture.
+     * @param shaderPath the file path for the shaders.
+     * @param texturePath the file path for the texture.
+     */
+    TexturedModel(String shaderPath, String texturePath){
         setVertexArray();
         setShader(shaderPath);
         setTexture(texturePath);
     }
 
-    public TexturedModel(float[] vertices, int[] indices, float[] texcoords, String shaderPath, String texturePath){
+    /**
+     * Constructor with custom vertices, indices and texture coordinates.
+     * @param vertices the vertices of the model.
+     * @param indices the indices, the order to render the vertices in.
+     * @param texcoords the texture coordinates of the model.
+     * @param shaderPath the file path for the shaders.
+     * @param texturePath the file path for the texture.
+     */
+    TexturedModel(float[] vertices, int[] indices, float[] texcoords, String shaderPath, String texturePath){
         setVertexArray(vertices, indices, texcoords);
         setShader(shaderPath);
         setTexture(texturePath);
@@ -67,10 +78,18 @@ public class TexturedModel{
         return this.vertexArray;
     }
 
-    public Texture getTexture(){
+    /**
+     * Gets the texture.
+     * @return the texture.
+     */
+    Texture getTexture(){
         return this.texture;
     }
 
+    /**
+     * Gets the shader.
+     * @return the shader.
+     */
     public Shader getShader(){
         return this.shader;
     }

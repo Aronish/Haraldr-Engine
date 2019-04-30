@@ -102,21 +102,21 @@ public class VertexArray {
     /**
      * Invokes an OpenGL draw call to draw using the contents of the bound buffers.
      */
-    public void draw(){
+    void draw(){
         glDrawElements(GL_TRIANGLES, this.length, GL_UNSIGNED_INT, 0);
     }
 
     /**
      * Binds the VAO for setting the state or drawing.
      */
-    public void bind(){
+    void bind(){
         glBindVertexArray(this.vao);
     }
 
     /**
      * Unbinds the VAO to avoid weird conflicts.
      */
-    public void unbind(){
+    void unbind(){
         glBindVertexArray(0);
     }
 }

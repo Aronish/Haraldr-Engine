@@ -59,10 +59,19 @@ class Player extends Entity {
         this.updateMatrix();
     }
 
+    /**
+     * Sets the property isMoving to true. Used in collision detection to avoid calculating collisions
+     * when the player isn't moving.
+     * @param isMoving whether the player should be set as moving or not.
+     */
     void setIsMoving(boolean isMoving){
         this.isMoving = isMoving;
     }
 
+    /**
+     * Returns the moving state of the player.
+     * @return whether the player is moving or not.
+     */
     boolean isMoving(){
         return this.isMoving;
     }

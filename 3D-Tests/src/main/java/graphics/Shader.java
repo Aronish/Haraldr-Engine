@@ -113,7 +113,7 @@ public class Shader {
     /**
      * Unuses the shader program to avoid weird conflicts.
      */
-    public void unuse(){
+    void unuse(){
         glUseProgram(0);
     }
 }

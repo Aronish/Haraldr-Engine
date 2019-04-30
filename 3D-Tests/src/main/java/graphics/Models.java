@@ -1,15 +1,22 @@
 package main.java.graphics;
 
 public class Models {
-    //TODO Add JavaDoc
     public static final TexturedModel OBSTACLE = new TexturedModel("src/main/java/shaders/square_shader", "src/main/resources/pixel_test.png");
     public static final TexturedModel PLAYER = new TexturedModel("src/main/java/shaders/player_shader", "src/main/resources/player.png");
     private static TexturedModel WORLD = null;
 
+    /**
+     * Constructor to initalize all the models that have to be intialized at runtime.
+     * @param worldSize the size of the world model.
+     */
     public Models(float worldSize){
         initWorldModel(worldSize);
     }
 
+    /**
+     * Initialize the world model.
+     * @param worldSize the size of the world model.
+     */
     private void initWorldModel(float worldSize){
         float[] worldVertices = {
                 1.0f * worldSize,   1.0f * worldSize,
@@ -34,6 +41,10 @@ public class Models {
         }
     }
 
+    /**
+     * Gets the world model with a security check for null.
+     * @return the world model.
+     */
     public static TexturedModel getWORLD(){
         if(WORLD != null){
             return WORLD;

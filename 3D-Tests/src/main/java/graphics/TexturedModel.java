@@ -8,6 +8,7 @@ public class TexturedModel{
     private VertexArray vertexArray;
     private Shader shader;
     private Texture texture;
+    private float width, height;
 
     /**
      * Constructor with just the paths for the shader and texture.
@@ -18,6 +19,8 @@ public class TexturedModel{
         setVertexArray();
         setShader(shaderPath);
         setTexture(texturePath);
+        this.width = 1.0f;
+        this.height = 1.0f;
     }
 
     /**
@@ -28,10 +31,12 @@ public class TexturedModel{
      * @param shaderPath the file path for the shaders.
      * @param texturePath the file path for the texture.
      */
-    TexturedModel(float[] vertices, int[] indices, float[] texcoords, String shaderPath, String texturePath){
+    TexturedModel(float[] vertices, int[] indices, float[] texcoords, float width, float height, String shaderPath, String texturePath){
         setVertexArray(vertices, indices, texcoords);
         setShader(shaderPath);
         setTexture(texturePath);
+        this.width = width;
+        this.height = height;
     }
 
     /**
@@ -74,8 +79,16 @@ public class TexturedModel{
      * Used to retrieve information about the vertices and rarely the indices and texture coordinates.
      * @return the vertex array object.
      */
-    public VertexArray getVertexArray(){
+    VertexArray getVertexArray(){
         return this.vertexArray;
+    }
+
+    /**
+     * Gets the shader.
+     * @return the shader.
+     */
+    public Shader getShader(){
+        return this.shader;
     }
 
     /**
@@ -86,11 +99,11 @@ public class TexturedModel{
         return this.texture;
     }
 
-    /**
-     * Gets the shader.
-     * @return the shader.
-     */
-    public Shader getShader(){
-        return this.shader;
+    float getWidth(){
+        return this.width;
+    }
+
+    float getHeight(){
+        return this.height;
     }
 }

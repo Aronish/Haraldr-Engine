@@ -25,7 +25,7 @@ class Player extends Entity {
      * @param rotation the rotation around the z-axis, in degrees.
      * @param scale the scale multiplier of this object.
      */
-    Player(Vector3f position, float rotation, float scale){
+    private Player(Vector3f position, float rotation, float scale){
         super(position, rotation, scale, Models.PLAYER);
         this.velocity = 5.0d;
         this.isMoving = false;
@@ -36,6 +36,7 @@ class Player extends Entity {
      * @param deltaTime the delta time from the update method in Main.
      */
     void calculateXPosition(boolean x, double deltaTime){
+        setIsMoving(true);
         if(x){
             this.position.x += this.velocity * deltaTime;
         }else{
@@ -50,6 +51,7 @@ class Player extends Entity {
      * @param deltaTime the delta time from the update method in Main.
      */
     void calculateYPosition(boolean y, double deltaTime){
+        setIsMoving(true);
         if(y){
             this.position.y += this.velocity * deltaTime;
         }else{
@@ -83,9 +85,11 @@ class Player extends Entity {
         this.velocity = velocity;
     }
 
-    @Override
-    public void updateMatrix() {
-        super.updateMatrix();
-        setIsMoving(true);
+    float getWidth(){
+        return this.aabb.getWidth();
+    }
+
+    float getHeight(){
+        return this.aabb.getHeight();
     }
 }

@@ -18,10 +18,9 @@ import static org.lwjgl.opengl.GL46.glVertexAttribPointer;
 /**
  * Class for handling buffers containing the vertex data of an object.
  */
-public class VertexArray {
+class VertexArray {
 
-    private int vao, vbo, ebo, tbo, length;
-    private float width, height;
+    private int vao, length;
 
     private static float[] defVertices = {
             1.0f, 0.0f,     //Top-right
@@ -57,46 +56,27 @@ public class VertexArray {
      */
     VertexArray(float[] vertices, int[] indices, float[] texcoords){
         this.vao = glGenVertexArrays();
-        this.vbo = glGenBuffers();
-        this.ebo = glGenBuffers();
-        this.tbo = glGenBuffers();
+        int vbo = glGenBuffers();
+        int ebo = glGenBuffers();
+        int tbo = glGenBuffers();
         this.length = indices.length;
-
-        this.width = vertices[0] - vertices[4];
-        this.height = vertices[1] - vertices[3];
 
         glBindVertexArray(this.vao);
 
-        glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 8, 0);
         glEnableVertexAttribArray(0);
 
-        glBindBuffer(GL_ARRAY_BUFFER, this.tbo);
+        glBindBuffer(GL_ARRAY_BUFFER, tbo);
         glBufferData(GL_ARRAY_BUFFER, texcoords, GL_STATIC_DRAW);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, 8, 0);
         glEnableVertexAttribArray(1);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this.ebo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
 
         glBindVertexArray(0);
-    }
-
-    /**
-     * Gets the width of the object. Calculated from the vertex coordinates.
-     * @return the width of the object.
-     */
-    public float getWidth(){
-        return this.width;
-    }
-
-    /**
-     * Gets the height of the object. Calculated from the vertex coordinates.
-     * @return the height of the object.
-     */
-    public float getHeight(){
-        return this.height;
     }
 
     /**

@@ -1,5 +1,6 @@
 package main.java;
 
+import main.java.graphics.AABB;
 import main.java.graphics.Models;
 import main.java.math.Vector3f;
 
@@ -14,6 +15,10 @@ class World extends Entity {
         this(new Vector3f(), 0.0f, 1.0f);
     }
 
+    World(Vector3f position){
+        this(position, 0.0f, 1.0f);
+    }
+
     /**
      * Constructor with parameters for position, rotation and scale.
      * @param position the position of the object. An origin vector. Bottom left corner.
@@ -26,12 +31,7 @@ class World extends Entity {
     }
 
     @Override
-    float getWidth() {
-        return 20.0f;
-    }
-
-    @Override
-    float getHeight() {
-        return 22.0f;
+    protected void setAABB() {
+        this.aabb = new AABB(20.0f, 22.0f);
     }
 }

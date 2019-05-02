@@ -17,10 +17,10 @@ public class Models {
 
     private void initGrassLayer(){
         float[] vertices = {
-                grassLength, -1.0f,
-                grassLength, -grassDepth - 1.0f,
-                0.0f,        -1.0f,
-                0.0f,        -grassDepth - 1.0f
+                grassLength, 0.0f,
+                grassLength, -grassDepth,
+                0.0f,        0.0f,
+                0.0f,        -grassDepth
         };
         int[] indices = {
                 0, 1, 2,
@@ -33,7 +33,7 @@ public class Models {
                 0.0f,        grassDepth
         };
         if (GRASS_LAYER == null){
-            GRASS_LAYER = new TexturedModel(vertices, indices, texcoords, "src/main/java/shaders/square_shader", "src/main/resources/grass.png");
+            GRASS_LAYER = new TexturedModel(vertices, indices, texcoords, grassLength, grassDepth, "src/main/java/shaders/square_shader", "src/main/resources/grass.png");
         }else{
             System.out.println("[WARNING] Tried to initialize models more than once!");
         }
@@ -41,10 +41,10 @@ public class Models {
 
     private void initDirtLayer(){
         float[] vertices = {
-                dirtLength, -dirtDepth - grassDepth - 1.0f,
-                dirtLength, -1.0f,
-                0.0f,       -dirtDepth - grassDepth - 1.0f,
-                0.0f,       -1.0f
+                dirtLength, -dirtDepth - grassDepth,
+                dirtLength, 0.0f,
+                0.0f,       -dirtDepth - grassDepth,
+                0.0f,       0.0f
         };
         int[] indices = {
                 0, 1, 2,
@@ -57,7 +57,7 @@ public class Models {
                 0.0f,       dirtDepth + grassDepth
         };
         if (DIRT_LAYER == null){
-            DIRT_LAYER = new TexturedModel(vertices, indices, texcoords, "src/main/java/shaders/square_shader", "src/main/resources/dirt.png");
+            DIRT_LAYER = new TexturedModel(vertices, indices, texcoords, dirtLength, dirtDepth, "src/main/java/shaders/square_shader", "src/main/resources/dirt.png");
         }else{
             System.out.println("[WARNING] Tried to initialize models more than once!");
         }

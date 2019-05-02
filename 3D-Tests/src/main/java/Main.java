@@ -14,20 +14,17 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.opengl.GL46.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL46.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL46.glClear;
 import static org.lwjgl.opengl.GL46.glClearColor;
 
 public class Main implements Runnable {
 
-    protected Thread main;
-    static Window window;
-
     private double frameRate;
-    private Camera camera;
     private Player player;
     private World world;
+
+    protected Thread main;
+
+    static Window window;
 
     /**
      * Start a new thread with the game on it.
@@ -49,18 +46,19 @@ public class Main implements Runnable {
      * Initialize the game and all it's objects and scenes.
      */
     private void init() {
-        window = new Window(1920, 1080, false);
+        window = new Window(1280, 720, false);
         GL.createCapabilities();
         /*---OpenGL code won't work before this---*/
         //glEnable(GL_DEPTH_TEST);
         glfwSwapInterval(1);// Enable v-sync
         glfwShowWindow(window.getWindow());
+        glClearColor(0.0f, 0.6f, 0.75f, 1.0f);
 
         frameRate = 60;
         new Models();
-        camera = new Camera(new Vector3f(), 0.0f, 1.0f); //Just here to initialize
+        new Camera(); //Just here to initialize
         player = new Player();
-        world = new World();
+        world = new World(new Vector3f(0.0f, -1.0f));
     }
 
     /**
@@ -68,17 +66,20 @@ public class Main implements Runnable {
      * @param deltaTime the delta time gotten from the timing circuit of the main loop. Used for physics.
      */
     private void update(double deltaTime) {
-        Input.moveCameraAndPlayer(deltaTime, player);
+        Input.moveCameraAndPlayer(deltaTime, player, world);
         {//Collision Detection
             if (player.isMoving()){
-                if (checkCollision(player, world)){
-                    doCollision(getCollisionDirection(player, world), world);
+                if (checkCollision(world)){
+                    doCollision(getCollisionDirection(world), world);
+                    player.updateMatrix();
+                    world.updateMatrix();
                 }
             }
         }
+        if (player.isMoving()){
+            world.updateMatrix();
+        }
         player.setIsMoving(false);
-        player.updateMatrix(); //TODO Fix constant player matrix updates.
-        world.updateMatrix();
         glfwPollEvents();
     }
 
@@ -86,8 +87,7 @@ public class Main implements Runnable {
      * Renders all objects and scenes.
      */
     private void render() {
-        glClearColor(0.0f, 0.4f, 0.85f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        Renderer.clear();
         { // Only Render Objects Here - Objects further back are rendered first
             Renderer.render(world);
             Renderer.render(player);
@@ -115,33 +115,18 @@ public class Main implements Runnable {
         }
         glfwTerminate();
     }
-    //TODO !!!! MAKE COLLISION WORK WITH CHANGED COORDINATE SYSTEM !!!! TODO\\---------------------------------------
-    /**
-     * Checks collision between two objects.
-     * @param obj1 a TexturedModel object, obj1 should be the moving one if possible.
-     * @param obj2 a preferrably static TexturedModel.
-     * @return true if collision, false if not.
-     */
 
-    private boolean checkCollision(Entity obj1, Entity obj2){
-        boolean collisionX = obj1.getPosition().x + obj1.getWidth() > obj2.getPosition().x && obj2.getPosition().x + obj2.getWidth() > obj1.getPosition().x;
-        boolean collisionY = obj1.getPosition().y + obj1.getHeight() > obj2.getPosition().y && obj2.getPosition().y + obj2.getHeight() > obj1.getPosition().y;
+    private boolean checkCollision(Entity entity){
+        boolean collisionX = player.position.x + player.getWidth() > entity.position.x && entity.position.x + entity.getAABBs().getWidth() > player.position.x;
+        boolean collisionY = player.position.y - player.getHeight() < entity.position.y && entity.position.y - entity.getAABBs().getHeight() < player.position.y;
         return collisionX && collisionY;
     }
 
-    /**
-     * Gets the direction in which the collision must have happened.
-     * @param obj1 a TexturedModel object, obj1 should be the moving one if possible.
-     * @param obj2 a preferrably static TexturedModel.
-     * @return the EnumDirection in which the collision most likely happened, returns null if something went wrong.
-     *         make sure you check for null.
-     */
-
-    private EnumDirection getCollisionDirection(Entity obj1, Entity obj2){
-        float topCollision = (obj2.getPosition().y + obj2.getHeight() - obj1.getPosition().y);
-        float bottomCollision = (obj1.getPosition().y + obj1.getHeight() - obj2.getPosition().y);
-        float leftCollision = (obj1.getPosition().x + obj1.getWidth()) - obj2.getPosition().x;
-        float rightCollision = (obj2.getPosition().x + obj2.getWidth()) - obj1.getPosition().x;
+    private EnumDirection getCollisionDirection(Entity entity){
+        float topCollision = (entity.position.y - (player.position.y - player.getHeight()));
+        float bottomCollision = player.position.y - (entity.position.y - entity.aabb.getHeight());
+        float leftCollision = player.position.x + player.getWidth() - entity.position.x;
+        float rightCollision = entity.position.x + entity.aabb.getWidth() - player.position.x;
         if (topCollision < bottomCollision && topCollision < leftCollision && topCollision < rightCollision ) {
             return EnumDirection.NORTH;
         }
@@ -157,32 +142,26 @@ public class Main implements Runnable {
         return EnumDirection.INVALIDDIR;
     }
 
-    /**
-     * Responds to a collision in the given direction. Collision response only applies to the player and camera.
-     * @param direction the EnumDirection in which the collision happened.
-     * @param object the object in which the collision occurred.
-     */
-
-    private void doCollision(EnumDirection direction, Entity object){
+    private void doCollision(EnumDirection direction, Entity entity) {
         float inside;
-        switch (direction){
+        switch (direction) {
             case NORTH:
-                inside = (object.getPosition().y + object.getHeight()) - player.getPosition().y;
+                inside = entity.position.y - (player.position.y - player.getHeight());
                 player.addPosition(new Vector3f(0.0f, inside));
-                Camera.addPosition(new Vector3f(0.0f , inside * Camera.scale));
+                Camera.addPosition(new Vector3f(0.0f, inside * Camera.scale));
                 break;
             case EAST:
-                inside = (object.getPosition().x + object.getWidth()) - player.getPosition().x;
+                inside = entity.position.x + entity.aabb.getWidth() - player.position.x;
                 player.addPosition(new Vector3f(inside, 0.0f));
                 Camera.addPosition(new Vector3f(inside * Camera.scale, 0.0f));
                 break;
             case WEST:
-                inside = (player.getPosition().x + player.getWidth()) - object.getPosition().x;
+                inside = player.position.x + player.getWidth() - entity.position.x;
                 player.addPosition(new Vector3f(-inside, 0.0f));
                 Camera.addPosition(new Vector3f(-inside * Camera.scale, 0.0f));
                 break;
             case SOUTH:
-                inside = (player.getPosition().y + player.getHeight()) - object.getPosition().y;
+                inside = player.position.y - (entity.position.y - entity.aabb.getHeight());
                 player.addPosition(new Vector3f(0.0f, -inside));
                 Camera.addPosition(new Vector3f(0.0f, -inside * Camera.scale));
                 break;

@@ -28,7 +28,7 @@ public class Camera{
      * @param pos the position of the camera, an origin vector.
      * @param rot the rotation of the camera around the z-axis, in degrees.
      */
-    Camera(Vector3f pos, float rot, float scal){
+    private Camera(Vector3f pos, float rot, float scal){
         position = pos;
         rotation = rot;
         scale = scal;

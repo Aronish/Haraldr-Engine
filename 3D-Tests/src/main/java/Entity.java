@@ -1,5 +1,6 @@
 package main.java;
 //TODO Fix JavaDoc
+import main.java.graphics.AABB;
 import main.java.graphics.TexturedModel;
 import main.java.math.Matrix4f;
 import main.java.math.Vector3f;
@@ -20,15 +21,16 @@ public class Entity {
     private float rotation;
     private float scale;
 
+    AABB aabb;
+
     Vector3f position;
 
     public Entity(Vector3f position, float rotation, float scale, TexturedModel ... texturedModels){
         this.texturedModels = new HashMap<>();
-        int modelCount = 0;
-        for (TexturedModel texMod : texturedModels){
-            this.texturedModels.put(modelCount, texMod);
-            modelCount++;
+        for (int texMod = 0; texMod < texturedModels.length; texMod++){
+            this.texturedModels.put(texMod, texturedModels[texMod]);
         }
+        setAABB();
         this.position = position;
         this.rotation = rotation;
         this.scale = scale;
@@ -76,7 +78,7 @@ public class Entity {
     /**
      * Updates the Model-View-Projection matrix with the current attribute values.
      */
-    public void updateMatrix(){
+    void updateMatrix(){
         this.matrix = new Matrix4f().MVP(this.position, this.rotation, this.scale);
     }
 
@@ -91,6 +93,10 @@ public class Entity {
         glUniformMatrix4fv(this.matrixLocation, false, this.matrix.matrix);
     }
 
+    protected void setAABB(){
+        this.aabb = new AABB(1.0f, 1.0f);
+    }
+
     /**
      * Gets the position vector of this object.
      * @return the position vector.
@@ -99,23 +105,11 @@ public class Entity {
         return new Vector3f(this.position.x, this.position.y, this.position.z);
     }
 
-    /**
-     * Assumes all submodels are inside a single rectangle.
-     * @return
-     */
-    float getWidth(){
-        return this.texturedModels.get(0).getVertexArray().getWidth();
-    }
-
-    /**
-     * Assumes all submodels are inside a single rectangle.
-     * @return
-     */
-    float getHeight(){
-        return this.texturedModels.get(0).getVertexArray().getHeight();
-    }
-
     public HashMap<Integer, TexturedModel> getTexturedModels(){
         return this.texturedModels;
+    }
+
+    AABB getAABBs(){
+        return this.aabb;
     }
 }

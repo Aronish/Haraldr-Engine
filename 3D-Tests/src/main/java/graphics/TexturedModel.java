@@ -8,7 +8,6 @@ public class TexturedModel{
     private VertexArray vertexArray;
     private Shader shader;
     private Texture texture;
-    private float width, height;
 
     /**
      * Constructor with just the paths for the shader and texture.
@@ -19,8 +18,6 @@ public class TexturedModel{
         setVertexArray();
         setShader(shaderPath);
         setTexture(texturePath);
-        this.width = 1.0f;
-        this.height = 1.0f;
     }
 
     /**
@@ -35,8 +32,6 @@ public class TexturedModel{
         setVertexArray(vertices, indices, texcoords);
         setShader(shaderPath);
         setTexture(texturePath);
-        this.width = width;
-        this.height = height;
     }
 
     /**
@@ -97,13 +92,5 @@ public class TexturedModel{
      */
     Texture getTexture(){
         return this.texture;
-    }
-
-    float getWidth(){
-        return this.width;
-    }
-
-    float getHeight(){
-        return this.height;
     }
 }

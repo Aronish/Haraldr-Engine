@@ -16,14 +16,12 @@ import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 public class Entity {
 
     private HashMap<Integer, TexturedModel> texturedModels; // 0 = First
+    private Vector3f position;
     private Matrix4f matrix;
+    private AABB aabb;
     private int matrixLocation;
     private float rotation;
     private float scale;
-
-    AABB aabb;
-
-    Vector3f position;
 
     public Entity(Vector3f position, float rotation, float scale, TexturedModel ... texturedModels){
         this.texturedModels = new HashMap<>();
@@ -97,6 +95,10 @@ public class Entity {
         this.aabb = new AABB(1.0f, 1.0f);
     }
 
+    void setAABB(float width, float height){
+        this.aabb = new AABB(width, height);
+    }
+
     /**
      * Gets the position vector of this object.
      * @return the position vector.
@@ -109,7 +111,7 @@ public class Entity {
         return this.texturedModels;
     }
 
-    AABB getAABBs(){
+    AABB getAABB(){
         return this.aabb;
     }
 }

@@ -2,8 +2,8 @@ package main.java.graphics;
 //TODO Add JavaDoc
 public class Models {
 
-    private static final float grassLength = 20.0f, grassDepth = 2.0f;
-    private static final float dirtLength = 20.0f, dirtDepth = 20.0f;
+    private static final float grassLength = 50.0f, grassDepth = 2.0f;
+    private static final float dirtLength = 50.0f, dirtDepth = 20.0f;
 
     public static final TexturedModel OBSTACLE = new TexturedModel("src/main/java/shaders/square_shader", "src/main/resources/pixel_test.png");
     public static final TexturedModel PLAYER = new TexturedModel("src/main/java/shaders/player_shader", "src/main/resources/player.png");

@@ -55,10 +55,10 @@ public class Main implements Runnable {
         glClearColor(0.0f, 0.6f, 0.75f, 1.0f);
 
         frameRate = 60;
-        new Models();
-        new Camera(); //Just here to initialize
+        new Models(); //Just here to initialize
+        new Camera();
         player = new Player();
-        world = new World(new Vector3f(0.0f, -1.0f));
+        world = new World();
     }
 
     /**
@@ -68,7 +68,7 @@ public class Main implements Runnable {
     private void update(double deltaTime) {
         Input.moveCameraAndPlayer(deltaTime, player, world);
         {//Collision Detection
-            if (player.isMoving()){
+            if (Input.isStateChanging()){
                 if (checkCollision(world)){
                     doCollision(getCollisionDirection(world), world);
                     player.updateMatrix();
@@ -76,10 +76,11 @@ public class Main implements Runnable {
                 }
             }
         }
-        if (player.isMoving()){
+        if (Input.isStateChanging()){
+            player.updateMatrix();
             world.updateMatrix();
         }
-        player.setIsMoving(false);
+        Input.setStateChanging(false);
         glfwPollEvents();
     }
 
@@ -88,7 +89,7 @@ public class Main implements Runnable {
      */
     private void render() {
         Renderer.clear();
-        { // Only Render Objects Here - Objects further back are rendered first
+        {//Objects further back are rendered first
             Renderer.render(world);
             Renderer.render(player);
         }
@@ -117,16 +118,16 @@ public class Main implements Runnable {
     }
 
     private boolean checkCollision(Entity entity){
-        boolean collisionX = player.position.x + player.getWidth() > entity.position.x && entity.position.x + entity.getAABBs().getWidth() > player.position.x;
-        boolean collisionY = player.position.y - player.getHeight() < entity.position.y && entity.position.y - entity.getAABBs().getHeight() < player.position.y;
+        boolean collisionX = player.getPosition().x + player.getWidth() > entity.getPosition().x && entity.getPosition().x + entity.getAABB().getWidth() > player.getPosition().x;
+        boolean collisionY = player.getPosition().y - player.getHeight() < entity.getPosition().y && entity.getPosition().y - entity.getAABB().getHeight() < player.getPosition().y;
         return collisionX && collisionY;
     }
 
     private EnumDirection getCollisionDirection(Entity entity){
-        float topCollision = (entity.position.y - (player.position.y - player.getHeight()));
-        float bottomCollision = player.position.y - (entity.position.y - entity.aabb.getHeight());
-        float leftCollision = player.position.x + player.getWidth() - entity.position.x;
-        float rightCollision = entity.position.x + entity.aabb.getWidth() - player.position.x;
+        float topCollision = (entity.getPosition().y - (player.getPosition().y - player.getHeight()));
+        float bottomCollision = player.getPosition().y - (entity.getPosition().y - entity.getAABB().getHeight());
+        float leftCollision = player.getPosition().x + player.getWidth() - entity.getPosition().x;
+        float rightCollision = entity.getPosition().x + entity.getAABB().getWidth() - player.getPosition().x;
         if (topCollision < bottomCollision && topCollision < leftCollision && topCollision < rightCollision ) {
             return EnumDirection.NORTH;
         }
@@ -146,22 +147,22 @@ public class Main implements Runnable {
         float inside;
         switch (direction) {
             case NORTH:
-                inside = entity.position.y - (player.position.y - player.getHeight());
+                inside = entity.getPosition().y - (player.getPosition().y - player.getHeight());
                 player.addPosition(new Vector3f(0.0f, inside));
                 Camera.addPosition(new Vector3f(0.0f, inside * Camera.scale));
                 break;
             case EAST:
-                inside = entity.position.x + entity.aabb.getWidth() - player.position.x;
+                inside = entity.getPosition().x + entity.getAABB().getWidth() - player.getPosition().x;
                 player.addPosition(new Vector3f(inside, 0.0f));
                 Camera.addPosition(new Vector3f(inside * Camera.scale, 0.0f));
                 break;
             case WEST:
-                inside = player.position.x + player.getWidth() - entity.position.x;
+                inside = player.getPosition().x + player.getWidth() - entity.getPosition().x;
                 player.addPosition(new Vector3f(-inside, 0.0f));
                 Camera.addPosition(new Vector3f(-inside * Camera.scale, 0.0f));
                 break;
             case SOUTH:
-                inside = player.position.y - (entity.position.y - entity.aabb.getHeight());
+                inside = player.getPosition().y - (entity.getPosition().y - entity.getAABB().getHeight());
                 player.addPosition(new Vector3f(0.0f, -inside));
                 Camera.addPosition(new Vector3f(0.0f, -inside * Camera.scale));
                 break;

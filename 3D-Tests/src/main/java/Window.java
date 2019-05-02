@@ -24,7 +24,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowMonitor;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
-import static org.lwjgl.opengl.GL46.GL_FALSE;
+import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL46.GL_TRUE;
 import static org.lwjgl.opengl.GL46.glViewport;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -32,11 +32,11 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 /**
  * A class for handling window creation.
  */
-class Window {
+public class Window {
 
     private long window;
     private boolean isFullscreen;
-    private int windowWidth, windowHeight;
+    private static int windowWidth, windowHeight;
     private GLFWVidMode vidmode;
 
     /**
@@ -86,8 +86,8 @@ class Window {
     void changeFullscreen(){
         if (isFullscreen){
             isFullscreen = false;
-            glfwSetWindowMonitor(window, 0, this.vidmode.width() / 2 - this.windowWidth / 2, this.vidmode.height() / 2 - this.windowHeight / 2, this.windowWidth, this.windowHeight, 60);
-            glViewport(0, 0, this.windowWidth, this.windowHeight);
+            glfwSetWindowMonitor(window, 0, this.vidmode.width() / 2 - windowWidth / 2, this.vidmode.height() / 2 - windowHeight / 2, windowWidth, windowHeight, 60);
+            glViewport(0, 0, windowWidth, windowHeight);
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         }else{
             isFullscreen = true;

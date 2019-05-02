@@ -117,40 +117,12 @@
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
-    <navigator currentView="Scope" currentSubView="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope" proportions="" version="1">
+    <navigator proportions="" version="1">
       <showMembers PackagesPane="false" />
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="3D-Tests" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="C:\Users\Aron\Documents\GitHub\OpenGLGame\3D-Tests" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-            <path>
-              <item name="3D-Tests" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="C:\Users\Aron\Documents\GitHub\OpenGLGame\3D-Tests" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="3D-Tests" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="C:\Users\Aron\Documents\GitHub\OpenGLGame\3D-Tests" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="3D-Tests" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="C:\Users\Aron\Documents\GitHub\OpenGLGame\3D-Tests" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
+      <pane id="Scope" />
       <pane id="PackagesPane">
         <subPane>
           <expand>
@@ -400,9 +372,9 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49945828" weight="0.22068231" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49945828" visible="true" weight="0.1988273" />
       <window_info id="Structure" order="1" sideWeight="0.5005417" side_tool="true" weight="0.17004265" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />

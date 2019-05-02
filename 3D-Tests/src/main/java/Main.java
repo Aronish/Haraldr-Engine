@@ -1,5 +1,4 @@
 //java -cp "C:\Users\Aron\Documents\Java Projects\3D-Tests\lwjgl\*";"C:\Users\Aron\Documents\Java Projects\3D-Tests\src" main/Main
-
 package main.java;
 
 import main.java.graphics.Models;

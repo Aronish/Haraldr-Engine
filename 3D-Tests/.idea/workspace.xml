@@ -7,20 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1a46e096-f7ea-4b16-b902-0be2e29a0af2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Entity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Entity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Input.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Input.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Logger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Logger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Obstacle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Obstacle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Window.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Window.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/World.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/World.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/graphics/AABB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/graphics/AABB.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/graphics/Models.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/graphics/Models.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/graphics/Renderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/graphics/Renderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/graphics/Texture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/graphics/Texture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/math/Matrix4f.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/math/Matrix4f.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.gitignore.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore.gitignore" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="lwjgl/" />
@@ -35,22 +22,7 @@
     <option name="isMigrated" value="true" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/World.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="704">
-              <caret line="36" column="36" lean-forward="true" selection-start-line="36" selection-start-column="36" selection-end-line="36" selection-end-column="36" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#952#953#0" expanded="true" />
-                <element signature="e#995#996#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -404,7 +376,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49945828" visible="true" weight="0.15724947" />
       <window_info id="Structure" order="1" sideWeight="0.5005417" side_tool="true" weight="0.17004265" />
@@ -552,9 +523,6 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/math/Math.java" />
     <entry file="file://$PROJECT_DIR$/src/main/java/math/VectorMath.java" />
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_191/src.zip!/java/util/Random.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/resources/prooh.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_191/src.zip!/java/awt/image/ComponentColorModel.java" />
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_191/src.zip!/java/awt/image/ColorModel.java" />
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_191/src.zip!/java/awt/image/BufferedImage.java" />
@@ -810,6 +778,9 @@
           </folding>
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/prooh.png">
+      <provider selected="true" editor-type-id="images" />
     </entry>
   </component>
   <component name="masterDetails">

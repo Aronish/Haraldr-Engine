@@ -32,7 +32,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 /**
  * A class for handling window creation.
  */
-public class Window {
+class Window {
 
     private long window;
     private boolean isFullscreen;

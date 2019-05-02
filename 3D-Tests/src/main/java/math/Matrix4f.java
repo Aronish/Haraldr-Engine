@@ -1,8 +1,6 @@
 package main.java.math;
 
 import main.java.Camera;
-import main.java.Logger;
-import main.java.Window;
 
 /**
  * Math helper class for calculating 4x4 matrices.

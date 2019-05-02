@@ -83,10 +83,18 @@ public class Input extends GLFWKeyCallback {
         }
     }
 
+    /**
+     * Sets stateChanging to the specified value. When true, it tells the game that extra logic (matrices, etc.) should be computed.
+     * @param changing whether the state should be changing or not.
+     */
     static void setStateChanging(boolean changing){
         stateChanging = changing;
     }
 
+    /**
+     * Gets the state.
+     * @return whether the state is changing or not.
+     */
     static boolean isStateChanging(){
         return stateChanging;
     }

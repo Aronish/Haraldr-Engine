@@ -1,5 +1,5 @@
 package main.java;
-//TODO Fix JavaDoc
+
 import main.java.graphics.AABB;
 import main.java.graphics.TexturedModel;
 import main.java.math.Matrix4f;
@@ -11,7 +11,7 @@ import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 
 /**
- * Class that represents a base game object. Contains common properties and a textured model to render.
+ * Class that represents a base game object. Contains common properties and a TexturedModel's to render.
  */
 public class Entity {
 
@@ -23,6 +23,13 @@ public class Entity {
     private float rotation;
     private float scale;
 
+    /**
+     * Creates a new Entity with the specified properties.
+     * @param position the initial position of this Entity.
+     * @param rotation the initial rotation of this Entity.
+     * @param scale the initial scale of this Entity.
+     * @param texturedModels TexturedModel's that this Entity should contain. Variable amount.
+     */
     public Entity(Vector3f position, float rotation, float scale, TexturedModel ... texturedModels){
         this.texturedModels = new HashMap<>();
         for (int texMod = 0; texMod < texturedModels.length; texMod++){
@@ -80,6 +87,9 @@ public class Entity {
         this.matrix = new Matrix4f().MVP(this.position, this.rotation, this.scale);
     }
 
+    /**
+     * Retrieves the matrix location in the shader for the specified TexturedModel.
+     */
     public void setMatrixLocation(int id){
         this.matrixLocation = glGetUniformLocation(this.texturedModels.get(id).getShader().getShaderProgram(), "matrix");
     }
@@ -91,10 +101,18 @@ public class Entity {
         glUniformMatrix4fv(this.matrixLocation, false, this.matrix.matrix);
     }
 
+    /**
+     * Sets the AABB to 1x1.
+     */
     protected void setAABB(){
         this.aabb = new AABB(1.0f, 1.0f);
     }
 
+    /**
+     * Sets the AABB with custom dimensions.
+     * @param width the width.
+     * @param height the height.
+     */
     void setAABB(float width, float height){
         this.aabb = new AABB(width, height);
     }
@@ -107,10 +125,18 @@ public class Entity {
         return new Vector3f(this.position.x, this.position.y, this.position.z);
     }
 
+    /**
+     * Gets the TexturedModels.
+     * @return a HashMap<Integer, TexturedModel> with the TexturedModel's
+     */
     public HashMap<Integer, TexturedModel> getTexturedModels(){
         return this.texturedModels;
     }
 
+    /**
+     * Gets the AABB.
+     * @return the AABB.
+     */
     AABB getAABB(){
         return this.aabb;
     }

@@ -1,5 +1,4 @@
 //java -cp "C:\Users\Aron\Documents\Java Projects\3D-Tests\lwjgl\*";"C:\Users\Aron\Documents\Java Projects\3D-Tests\src" main/Main
-
 package main.java;
 
 import main.java.graphics.Models;
@@ -117,12 +116,22 @@ public class Main implements Runnable {
         glfwTerminate();
     }
 
+    /**
+     * Checks if the player model is overlapping another entity.
+     * @param entity the entity to check collision with.
+     * @return whether there was a collision or not.
+     */
     private boolean checkCollision(Entity entity){
         boolean collisionX = player.getPosition().x + player.getWidth() > entity.getPosition().x && entity.getPosition().x + entity.getAABB().getWidth() > player.getPosition().x;
         boolean collisionY = player.getPosition().y - player.getHeight() < entity.getPosition().y && entity.getPosition().y - entity.getAABB().getHeight() < player.getPosition().y;
         return collisionX && collisionY;
     }
 
+    /**
+     * Gets the direction in which the collision happened.
+     * @param entity the entity with which the collision happened.
+     * @return EnumDirection for collision. EnumDirection#INVALIDDIR if it fails.
+     */
     private EnumDirection getCollisionDirection(Entity entity){
         float topCollision = (entity.getPosition().y - (player.getPosition().y - player.getHeight()));
         float bottomCollision = player.getPosition().y - (entity.getPosition().y - entity.getAABB().getHeight());
@@ -143,6 +152,11 @@ public class Main implements Runnable {
         return EnumDirection.INVALIDDIR;
     }
 
+    /**
+     * Reacts to the collision with the specified entity in the direction that it happened.
+     * @param direction the direction for the collision.
+     * @param entity the entity with which the collision happened.
+     */
     private void doCollision(EnumDirection direction, Entity entity) {
         float inside;
         switch (direction) {

@@ -7,6 +7,7 @@ import main.java.math.Vector3f;
  * Main world object, on which everything should be located to be inside the world.
  */
 class World extends Entity {
+
     /**
      * Default constructor without parameters.
      */
@@ -28,6 +29,9 @@ class World extends Entity {
         super(position, rotation, scale, Models.getDIRT_LAYER(), Models.getGRASS_LAYER());
     }
 
+    /**
+     * Sets the initial bounding box to custom values. (Temporary).
+     */
     @Override
     protected void setAABB() {
         super.setAABB(50.0f, 22.0f);

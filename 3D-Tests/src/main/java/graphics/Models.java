@@ -1,5 +1,10 @@
 package main.java.graphics;
-//TODO Add JavaDoc
+
+import main.java.Logger;
+
+/**
+ * Container for all the TexturedModel's in the game.
+ */
 public class Models {
 
     private static final float grassLength = 50.0f, grassDepth = 2.0f;
@@ -10,11 +15,17 @@ public class Models {
     private static TexturedModel GRASS_LAYER = null;
     private static TexturedModel DIRT_LAYER = null;
 
+    /**
+     * Initializes the non-final models.
+     */
     public Models(){
         initGrassLayer();
         initDirtLayer();
     }
 
+    /**
+     * Initializes the grass layer model.
+     */
     private void initGrassLayer(){
         float[] vertices = {
                 grassLength, 0.0f,
@@ -35,10 +46,14 @@ public class Models {
         if (GRASS_LAYER == null){
             GRASS_LAYER = new TexturedModel(vertices, indices, texcoords, grassLength, grassDepth, "src/main/java/shaders/square_shader", "src/main/resources/grass.png");
         }else{
-            System.out.println("[WARNING] Tried to initialize models more than once!");
+            Logger.setWarningLevel();
+            Logger.log("Tried to initialize the models more than once!");
         }
     }
 
+    /**
+     * Initializes the dirt layer model. Is always below the grass layer.
+     */
     private void initDirtLayer(){
         float[] vertices = {
                 dirtLength, -dirtDepth - grassDepth,
@@ -59,7 +74,8 @@ public class Models {
         if (DIRT_LAYER == null){
             DIRT_LAYER = new TexturedModel(vertices, indices, texcoords, dirtLength, dirtDepth, "src/main/java/shaders/square_shader", "src/main/resources/dirt.png");
         }else{
-            System.out.println("[WARNING] Tried to initialize models more than once!");
+            Logger.setWarningLevel();
+            Logger.log("Tried to initialize the models more than once!");
         }
     }
 

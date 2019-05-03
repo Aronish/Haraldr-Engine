@@ -1,8 +1,11 @@
 package main.java;
-//TODO Fix JavaDoc
+
 import main.java.graphics.Models;
 import main.java.math.Vector3f;
 
+/**
+ * Simple 1x1 square Entity.
+ */
 class Obstacle extends Entity {
 
     /**

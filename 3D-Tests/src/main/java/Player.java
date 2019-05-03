@@ -1,11 +1,10 @@
 package main.java;
-//TODO Fix JavaDoc
+
 import main.java.graphics.Models;
 import main.java.math.Vector3f;
 
 /**
  * The player that is visible in the center of the screen.
- * This is a static model and stays in place.
  */
 class Player extends Entity {
 
@@ -64,10 +63,18 @@ class Player extends Entity {
         this.velocity = velocity;
     }
 
+    /**
+     * Gets the width of the AABB.
+     * @return the width.
+     */
     float getWidth(){
         return this.getAABB().getWidth();
     }
 
+    /**
+     * Gets the height of the AABB.
+     * @return the height.
+     */
     float getHeight(){
         return this.getAABB().getHeight();
     }

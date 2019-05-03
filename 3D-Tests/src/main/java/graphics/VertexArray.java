@@ -1,5 +1,6 @@
 package main.java.graphics;
 
+import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL46.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL46.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL46.GL_FLOAT;
@@ -83,7 +84,7 @@ class VertexArray {
      * Invokes an OpenGL draw call to draw using the contents of the bound buffers.
      */
     void draw(){
-        glDrawElements(GL_TRIANGLES, this.length, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_LINES, this.length, GL_UNSIGNED_INT, 0);
     }
 
     /**

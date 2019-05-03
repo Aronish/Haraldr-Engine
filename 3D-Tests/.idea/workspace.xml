@@ -7,7 +7,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1a46e096-f7ea-4b16-b902-0be2e29a0af2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/graphics/Models.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/graphics/Models.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/graphics/TexturedModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/graphics/TexturedModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/graphics/VertexArray.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/graphics/VertexArray.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="lwjgl/" />
@@ -22,15 +24,71 @@
     <option name="isMigrated" value="true" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/Main.java">
+    <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/graphics/TexturedModel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="594">
-              <caret line="27" column="7" lean-forward="true" selection-start-line="27" selection-start-column="7" selection-end-line="27" selection-end-column="7" />
+            <state relative-caret-position="500">
+              <caret line="33" column="32" lean-forward="true" selection-start-line="33" selection-start-column="32" selection-end-line="33" selection-end-column="32" />
+              <folding>
+                <element signature="docComment;class#TexturedModel#0" />
+                <element signature="docComment;method#TexturedModel#0;class#TexturedModel#0" />
+                <element signature="docComment;method#TexturedModel#1;class#TexturedModel#0" />
+                <element signature="docComment;method#setVertexArray#0;class#TexturedModel#0" />
+                <element signature="docComment;method#setVertexArray#1;class#TexturedModel#0" />
+                <element signature="docComment;method#setShader#0;class#TexturedModel#0" />
+                <element signature="docComment;method#setTexture#0;class#TexturedModel#0" />
+                <element signature="docComment;method#getVertexArray#0;class#TexturedModel#0" />
+                <element signature="e#2816#2817#0" expanded="true" />
+                <element signature="e#2855#2856#0" expanded="true" />
+                <element signature="docComment;method#getShader#0;class#TexturedModel#0" />
+                <element signature="docComment;method#getTexture#0;class#TexturedModel#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/graphics/VertexArray.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="500">
+              <caret line="82" column="7" lean-forward="true" selection-start-line="82" selection-start-column="7" selection-end-line="82" selection-end-column="7" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/Entity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="300">
+              <caret line="12" column="3" lean-forward="true" selection-start-line="12" selection-start-column="3" selection-end-line="12" selection-end-column="3" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#2582#2583#0" expanded="true" />
+                <element signature="e#2672#2673#0" expanded="true" />
+                <element signature="e#3096#3097#0" expanded="true" />
+                <element signature="e#3178#3179#0" expanded="true" />
+                <element signature="e#3254#3255#0" expanded="true" />
+                <element signature="e#3302#3303#0" expanded="true" />
+                <element signature="e#3473#3474#0" expanded="true" />
+                <element signature="e#3524#3525#0" expanded="true" />
+                <element signature="e#3653#3654#0" expanded="true" />
+                <element signature="e#3739#3740#0" expanded="true" />
+                <element signature="e#3926#3927#0" expanded="true" />
+                <element signature="e#3968#3969#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/graphics/Models.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="25">
+              <caret line="1" column="75" selection-start-line="1" selection-start-column="75" selection-end-line="1" selection-end-column="75" />
             </state>
           </provider>
         </entry>
@@ -101,11 +159,8 @@
         <option value="$PROJECT_DIR$/src/main/Logger.java" />
         <option value="$PROJECT_DIR$/src/main/java/Camera.java" />
         <option value="$PROJECT_DIR$/src/main/java/CollisionDetector.java" />
-        <option value="$PROJECT_DIR$/src/main/java/graphics/TexturedModel.java" />
-        <option value="$PROJECT_DIR$/src/main/java/graphics/VertexArray.java" />
         <option value="$PROJECT_DIR$/src/main/java/math/Matrix4f.java" />
         <option value="$PROJECT_DIR$/src/main/java/graphics/AABB.java" />
-        <option value="$PROJECT_DIR$/src/main/java/graphics/Models.java" />
         <option value="$PROJECT_DIR$/src/main/java/graphics/Renderer.java" />
         <option value="$PROJECT_DIR$/src/main/java/graphics/Texture.java" />
         <option value="$PROJECT_DIR$/src/main/java/Entity.java" />
@@ -116,6 +171,9 @@
         <option value="$PROJECT_DIR$/src/main/java/Window.java" />
         <option value="$PROJECT_DIR$/src/main/java/World.java" />
         <option value="$PROJECT_DIR$/src/main/java/Main.java" />
+        <option value="$PROJECT_DIR$/src/main/java/graphics/VertexArray.java" />
+        <option value="$PROJECT_DIR$/src/main/java/graphics/TexturedModel.java" />
+        <option value="$PROJECT_DIR$/src/main/java/graphics/Models.java" />
       </list>
     </option>
   </component>
@@ -138,42 +196,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="3D-Tests" type="58d84e3e:PackageViewProjectNode" />
-              <item name="3D-Tests" type="616d4139:PackageViewModuleNode" />
-            </path>
-            <path>
-              <item name="3D-Tests" type="58d84e3e:PackageViewProjectNode" />
-              <item name="3D-Tests" type="616d4139:PackageViewModuleNode" />
-              <item name="main" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="3D-Tests" type="58d84e3e:PackageViewProjectNode" />
-              <item name="3D-Tests" type="616d4139:PackageViewModuleNode" />
-              <item name="main" type="1f31426a:PackageElementNode" />
-              <item name="java" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="3D-Tests" type="58d84e3e:PackageViewProjectNode" />
-              <item name="3D-Tests" type="616d4139:PackageViewModuleNode" />
-              <item name="main" type="1f31426a:PackageElementNode" />
-              <item name="java" type="1f31426a:PackageElementNode" />
-              <item name="graphics" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="3D-Tests" type="58d84e3e:PackageViewProjectNode" />
-              <item name="3D-Tests" type="616d4139:PackageViewModuleNode" />
-              <item name="main" type="1f31426a:PackageElementNode" />
-              <item name="java" type="1f31426a:PackageElementNode" />
-              <item name="math" type="1f31426a:PackageElementNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -233,6 +255,42 @@
             <path>
               <item name="3D-Tests" type="b2602c69:ProjectViewProjectNode" />
               <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="PackagesPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="3D-Tests" type="58d84e3e:PackageViewProjectNode" />
+              <item name="3D-Tests" type="616d4139:PackageViewModuleNode" />
+            </path>
+            <path>
+              <item name="3D-Tests" type="58d84e3e:PackageViewProjectNode" />
+              <item name="3D-Tests" type="616d4139:PackageViewModuleNode" />
+              <item name="main" type="1f31426a:PackageElementNode" />
+            </path>
+            <path>
+              <item name="3D-Tests" type="58d84e3e:PackageViewProjectNode" />
+              <item name="3D-Tests" type="616d4139:PackageViewModuleNode" />
+              <item name="main" type="1f31426a:PackageElementNode" />
+              <item name="java" type="1f31426a:PackageElementNode" />
+            </path>
+            <path>
+              <item name="3D-Tests" type="58d84e3e:PackageViewProjectNode" />
+              <item name="3D-Tests" type="616d4139:PackageViewModuleNode" />
+              <item name="main" type="1f31426a:PackageElementNode" />
+              <item name="java" type="1f31426a:PackageElementNode" />
+              <item name="graphics" type="1f31426a:PackageElementNode" />
+            </path>
+            <path>
+              <item name="3D-Tests" type="58d84e3e:PackageViewProjectNode" />
+              <item name="3D-Tests" type="616d4139:PackageViewModuleNode" />
+              <item name="main" type="1f31426a:PackageElementNode" />
+              <item name="java" type="1f31426a:PackageElementNode" />
+              <item name="math" type="1f31426a:PackageElementNode" />
             </path>
           </expand>
           <select />
@@ -390,7 +448,7 @@
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49945828" visible="true" weight="0.15724947" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49945828" visible="true" weight="0.18176973" />
       <window_info id="Structure" order="1" sideWeight="0.5005417" side_tool="true" weight="0.17004265" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -596,25 +654,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/graphics/Models.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1144">
-          <caret line="52" lean-forward="true" selection-start-line="52" selection-end-line="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/graphics/Renderer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="13" column="7" lean-forward="true" selection-start-line="13" selection-start-column="7" selection-end-line="13" selection-end-column="7" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#381#382#0" expanded="true" />
-            <element signature="e#447#448#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/graphics/Shader.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="127">
@@ -641,16 +680,6 @@
             <element signature="e#3179#3180#0" expanded="true" />
             <element signature="e#3276#3277#0" expanded="true" />
             <element signature="e#3323#3324#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/graphics/VertexArray.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-907">
-          <caret line="18" column="70" selection-start-line="18" selection-start-column="70" selection-end-line="18" selection-end-column="70" />
-          <folding>
-            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -764,71 +793,6 @@
     <entry file="file://$PROJECT_DIR$/src/main/resources/prooh.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/Entity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="968">
-          <caret line="118" lean-forward="true" selection-start-line="118" selection-end-line="118" />
-          <folding>
-            <element signature="docComment;class#Entity#0" />
-            <element signature="docComment;method#Entity#0;class#Entity#0" />
-            <element signature="method#Entity#0;class#Entity#0" />
-            <element signature="e#1240#1320#1" />
-            <element signature="docComment;method#setPosition#0;class#Entity#0" />
-            <element signature="method#setPosition#0;class#Entity#0" />
-            <element signature="docComment;method#addPosition#0;class#Entity#0" />
-            <element signature="method#addPosition#0;class#Entity#0" />
-            <element signature="docComment;method#setRotation#0;class#Entity#0" />
-            <element signature="method#setRotation#0;class#Entity#0" />
-            <element signature="docComment;method#setScale#0;class#Entity#0" />
-            <element signature="method#setScale#0;class#Entity#0" />
-            <element signature="docComment;method#updateMatrix#0;class#Entity#0" />
-            <element signature="n#!!block;n#updateMatrix#0;n#Entity#0" />
-            <element signature="docComment;method#setMatrixLocation#0;class#Entity#0" />
-            <element signature="method#setMatrixLocation#0;class#Entity#0" />
-            <element signature="docComment;method#setUniformMatrix#0;class#Entity#0" />
-            <element signature="n#!!block;n#setUniformMatrix#0;n#Entity#0" />
-            <element signature="docComment;method#setAABB#0;class#Entity#0" />
-            <element signature="n#!!block;n#setAABB#0;n#Entity#0" />
-            <element signature="docComment;method#setAABB#1;class#Entity#0" />
-            <element signature="n#!!block;n#setAABB#1;n#Entity#0" />
-            <element signature="docComment;method#getPosition#0;class#Entity#0" />
-            <element signature="n#!!block;n#getPosition#0;n#Entity#0" />
-            <element signature="docComment;method#getTexturedModels#0;class#Entity#0" />
-            <element signature="n#!!block;n#getTexturedModels#0;n#Entity#0" />
-            <element signature="docComment;method#getAABB#0;class#Entity#0" />
-            <element signature="n#!!block;n#getAABB#0;n#Entity#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/graphics/TexturedModel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="638">
-          <caret line="79" lean-forward="true" selection-start-line="79" selection-end-line="79" />
-          <folding>
-            <element signature="docComment;class#TexturedModel#0" />
-            <element signature="docComment;method#TexturedModel#0;class#TexturedModel#0" />
-            <element signature="method#TexturedModel#0;class#TexturedModel#0" />
-            <element signature="docComment;method#TexturedModel#1;class#TexturedModel#0" />
-            <element signature="method#TexturedModel#1;class#TexturedModel#0" />
-            <element signature="docComment;method#setVertexArray#0;class#TexturedModel#0" />
-            <element signature="n#!!block;n#setVertexArray#0;n#TexturedModel#0" />
-            <element signature="docComment;method#setVertexArray#1;class#TexturedModel#0" />
-            <element signature="method#setVertexArray#1;class#TexturedModel#0" />
-            <element signature="docComment;method#setShader#0;class#TexturedModel#0" />
-            <element signature="n#!!block;n#setShader#0;n#TexturedModel#0" />
-            <element signature="docComment;method#setTexture#0;class#TexturedModel#0" />
-            <element signature="n#!!block;n#setTexture#0;n#TexturedModel#0" />
-            <element signature="docComment;method#getVertexArray#0;class#TexturedModel#0" />
-            <element signature="n#!!block;n#getVertexArray#0;n#TexturedModel#0" />
-            <element signature="docComment;method#getShader#0;class#TexturedModel#0" />
-            <element signature="n#!!block;n#getShader#0;n#TexturedModel#0" />
-            <element signature="docComment;method#getTexture#0;class#TexturedModel#0" />
-            <element signature="n#!!block;n#getTexture#0;n#TexturedModel#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="594">
@@ -836,6 +800,76 @@
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/graphics/Renderer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-48">
+          <caret line="13" column="7" lean-forward="true" selection-start-line="13" selection-start-column="7" selection-end-line="13" selection-end-column="7" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/graphics/TexturedModel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="500">
+          <caret line="33" column="32" lean-forward="true" selection-start-line="33" selection-start-column="32" selection-end-line="33" selection-end-column="32" />
+          <folding>
+            <element signature="docComment;class#TexturedModel#0" />
+            <element signature="docComment;method#TexturedModel#0;class#TexturedModel#0" />
+            <element signature="docComment;method#TexturedModel#1;class#TexturedModel#0" />
+            <element signature="docComment;method#setVertexArray#0;class#TexturedModel#0" />
+            <element signature="docComment;method#setVertexArray#1;class#TexturedModel#0" />
+            <element signature="docComment;method#setShader#0;class#TexturedModel#0" />
+            <element signature="docComment;method#setTexture#0;class#TexturedModel#0" />
+            <element signature="docComment;method#getVertexArray#0;class#TexturedModel#0" />
+            <element signature="e#2816#2817#0" expanded="true" />
+            <element signature="e#2855#2856#0" expanded="true" />
+            <element signature="docComment;method#getShader#0;class#TexturedModel#0" />
+            <element signature="docComment;method#getTexture#0;class#TexturedModel#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/graphics/VertexArray.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="500">
+          <caret line="82" column="7" lean-forward="true" selection-start-line="82" selection-start-column="7" selection-end-line="82" selection-end-column="7" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/Entity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="12" column="3" lean-forward="true" selection-start-line="12" selection-start-column="3" selection-end-line="12" selection-end-column="3" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2582#2583#0" expanded="true" />
+            <element signature="e#2672#2673#0" expanded="true" />
+            <element signature="e#3096#3097#0" expanded="true" />
+            <element signature="e#3178#3179#0" expanded="true" />
+            <element signature="e#3254#3255#0" expanded="true" />
+            <element signature="e#3302#3303#0" expanded="true" />
+            <element signature="e#3473#3474#0" expanded="true" />
+            <element signature="e#3524#3525#0" expanded="true" />
+            <element signature="e#3653#3654#0" expanded="true" />
+            <element signature="e#3739#3740#0" expanded="true" />
+            <element signature="e#3926#3927#0" expanded="true" />
+            <element signature="e#3968#3969#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/graphics/Models.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="25">
+          <caret line="1" column="75" selection-start-line="1" selection-start-column="75" selection-end-line="1" selection-end-column="75" />
         </state>
       </provider>
     </entry>

@@ -1,5 +1,5 @@
 package main.java.graphics;
-
+//TODO Improve creation of vertex data (length, depth, relative coords...).
 import main.java.Logger;
 
 /**
@@ -44,7 +44,7 @@ public class Models {
                 0.0f,        grassDepth
         };
         if (GRASS_LAYER == null){
-            GRASS_LAYER = new TexturedModel(vertices, indices, texcoords, grassLength, grassDepth, "src/main/java/shaders/square_shader", "src/main/resources/grass.png");
+            GRASS_LAYER = new TexturedModel(vertices, indices, texcoords, "src/main/java/shaders/square_shader", "src/main/resources/grass.png");
         }else{
             Logger.setWarningLevel();
             Logger.log("Tried to initialize the models more than once!");
@@ -57,9 +57,9 @@ public class Models {
     private void initDirtLayer(){
         float[] vertices = {
                 dirtLength, -dirtDepth - grassDepth,
-                dirtLength, 0.0f,
+                dirtLength, -grassDepth,
                 0.0f,       -dirtDepth - grassDepth,
-                0.0f,       0.0f
+                0.0f,       -grassDepth
         };
         int[] indices = {
                 0, 1, 2,
@@ -72,7 +72,7 @@ public class Models {
                 0.0f,       dirtDepth + grassDepth
         };
         if (DIRT_LAYER == null){
-            DIRT_LAYER = new TexturedModel(vertices, indices, texcoords, dirtLength, dirtDepth, "src/main/java/shaders/square_shader", "src/main/resources/dirt.png");
+            DIRT_LAYER = new TexturedModel(vertices, indices, texcoords, "src/main/java/shaders/square_shader", "src/main/resources/dirt.png");
         }else{
             Logger.setWarningLevel();
             Logger.log("Tried to initialize the models more than once!");

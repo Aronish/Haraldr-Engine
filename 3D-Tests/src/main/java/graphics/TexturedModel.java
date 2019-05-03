@@ -28,7 +28,7 @@ public class TexturedModel{
      * @param shaderPath the file path for the shaders.
      * @param texturePath the file path for the texture.
      */
-    TexturedModel(float[] vertices, int[] indices, float[] texcoords, float width, float height, String shaderPath, String texturePath){
+    TexturedModel(float[] vertices, int[] indices, float[] texcoords, String shaderPath, String texturePath){
         setVertexArray(vertices, indices, texcoords);
         setShader(shaderPath);
         setTexture(texturePath);

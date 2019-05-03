@@ -1,8 +1,10 @@
 //java -cp "C:\Users\Aron\Documents\Java Projects\3D-Tests\lwjgl\*";"C:\Users\Aron\Documents\Java Projects\3D-Tests\src" main/Main
 package main.java;
 
+import main.java.graphics.AABB;
 import main.java.graphics.Models;
 import main.java.graphics.Renderer;
+import main.java.graphics.TexturedModel;
 import main.java.math.Vector3f;
 import org.lwjgl.opengl.GL;
 
@@ -68,10 +70,11 @@ public class Main implements Runnable {
         Input.moveCameraAndPlayer(deltaTime, player, world);
         {//Collision Detection
             if (Input.isStateChanging()){
-                if (checkCollision(world)){
-                    doCollision(getCollisionDirection(world), world);
-                    player.updateMatrix();
-                    world.updateMatrix();
+                for (int texMod = 0; texMod < world.getTexturedModels().size(); texMod++){
+                    TexturedModel texturedModel = world.getTexturedModels().get(texMod);
+                    if (checkCollision(world, texturedModel)){
+                        doCollision(getCollisionDirection(texturedModel), texturedModel);
+                    }
                 }
             }
         }
@@ -116,27 +119,18 @@ public class Main implements Runnable {
         glfwTerminate();
     }
 
-    /**
-     * Checks if the player model is overlapping another entity.
-     * @param entity the entity to check collision with.
-     * @return whether there was a collision or not.
-     */
-    private boolean checkCollision(Entity entity){
-        boolean collisionX = player.getPosition().x + player.getWidth() > entity.getPosition().x && entity.getPosition().x + entity.getAABB().getWidth() > player.getPosition().x;
-        boolean collisionY = player.getPosition().y - player.getHeight() < entity.getPosition().y && entity.getPosition().y - entity.getAABB().getHeight() < player.getPosition().y;
+    //TODO RESOLVE BOUNDING BOX SHIFT
+    private boolean checkCollision(Entity entity, TexturedModel texturedModel){
+        boolean collisionX = player.getPosition().x + player.getWidth() > texturedModel.getRelativePosition().x && texturedModel.getRelativePosition().x + texturedModel.getAABB().getWidth() > player.getPosition().x;
+        boolean collisionY = player.getPosition().y - player.getHeight() < texturedModel.getRelativePosition().y && texturedModel.getRelativePosition().y - texturedModel.getAABB().getHeight() < player.getPosition().y;
         return collisionX && collisionY;
     }
 
-    /**
-     * Gets the direction in which the collision happened.
-     * @param entity the entity with which the collision happened.
-     * @return EnumDirection for collision. EnumDirection#INVALIDDIR if it fails.
-     */
-    private EnumDirection getCollisionDirection(Entity entity){
-        float topCollision = (entity.getPosition().y - (player.getPosition().y - player.getHeight()));
-        float bottomCollision = player.getPosition().y - (entity.getPosition().y - entity.getAABB().getHeight());
-        float leftCollision = player.getPosition().x + player.getWidth() - entity.getPosition().x;
-        float rightCollision = entity.getPosition().x + entity.getAABB().getWidth() - player.getPosition().x;
+    private EnumDirection getCollisionDirection(TexturedModel texturedModel){
+        float topCollision = (texturedModel.getRelativePosition().y - (player.getPosition().y - player.getHeight()));
+        float bottomCollision = player.getPosition().y - (texturedModel.getRelativePosition().y - texturedModel.getAABB().getHeight());
+        float leftCollision = player.getPosition().x + player.getWidth() - texturedModel.getRelativePosition().x;
+        float rightCollision = texturedModel.getRelativePosition().x + texturedModel.getAABB().getWidth() - player.getPosition().x;
         if (topCollision < bottomCollision && topCollision < leftCollision && topCollision < rightCollision ) {
             return EnumDirection.NORTH;
         }
@@ -152,31 +146,26 @@ public class Main implements Runnable {
         return EnumDirection.INVALIDDIR;
     }
 
-    /**
-     * Reacts to the collision with the specified entity in the direction that it happened.
-     * @param direction the direction for the collision.
-     * @param entity the entity with which the collision happened.
-     */
-    private void doCollision(EnumDirection direction, Entity entity) {
+    private void doCollision(EnumDirection direction, TexturedModel texturedModel) {
         float inside;
         switch (direction) {
             case NORTH:
-                inside = entity.getPosition().y - (player.getPosition().y - player.getHeight());
+                inside = texturedModel.getRelativePosition().y - (player.getPosition().y - player.getHeight());
                 player.addPosition(new Vector3f(0.0f, inside));
                 Camera.addPosition(new Vector3f(0.0f, inside * Camera.scale));
                 break;
             case EAST:
-                inside = entity.getPosition().x + entity.getAABB().getWidth() - player.getPosition().x;
+                inside = texturedModel.getRelativePosition().x + texturedModel.getAABB().getWidth() - player.getPosition().x;
                 player.addPosition(new Vector3f(inside, 0.0f));
                 Camera.addPosition(new Vector3f(inside * Camera.scale, 0.0f));
                 break;
             case WEST:
-                inside = player.getPosition().x + player.getWidth() - entity.getPosition().x;
+                inside = player.getPosition().x + player.getWidth() - texturedModel.getRelativePosition().x;
                 player.addPosition(new Vector3f(-inside, 0.0f));
                 Camera.addPosition(new Vector3f(-inside * Camera.scale, 0.0f));
                 break;
             case SOUTH:
-                inside = player.getPosition().y - (entity.getPosition().y - entity.getAABB().getHeight());
+                inside = player.getPosition().y - (texturedModel.getRelativePosition().y - texturedModel.getAABB().getHeight());
                 player.addPosition(new Vector3f(0.0f, -inside));
                 Camera.addPosition(new Vector3f(0.0f, -inside * Camera.scale));
                 break;

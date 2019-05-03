@@ -28,12 +28,4 @@ class World extends Entity {
     private World(Vector3f position, float rotation, float scale){
         super(position, rotation, scale, Models.getDIRT_LAYER(), Models.getGRASS_LAYER());
     }
-
-    /**
-     * Sets the initial bounding box to custom values. (Temporary).
-     */
-    @Override
-    protected void setAABB() {
-        super.setAABB(50.0f, 22.0f);
-    }
 }

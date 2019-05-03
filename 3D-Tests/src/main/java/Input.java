@@ -8,9 +8,11 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_L;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_T;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
@@ -24,6 +26,7 @@ public class Input extends GLFWKeyCallback {
 
     private static boolean[] keys = new boolean[65536];
     private static boolean stateChanging = false;
+    private static boolean shouldRenderLines = false;
 
     @Override
     public void invoke(long window, int key, int scancode, int action, int mods){
@@ -81,6 +84,12 @@ public class Input extends GLFWKeyCallback {
         if(keys[GLFW_KEY_DOWN]){
             Camera.calculateScale(false, deltaTime);
         }
+        if(keys[GLFW_KEY_L]){
+            shouldRenderLines = true;
+        }
+        if(keys[GLFW_KEY_T]){
+            shouldRenderLines = false;
+        }
     }
 
     /**
@@ -97,5 +106,9 @@ public class Input extends GLFWKeyCallback {
      */
     static boolean isStateChanging(){
         return stateChanging;
+    }
+
+    public static boolean shouldRenderLines(){
+        return shouldRenderLines;
     }
 }

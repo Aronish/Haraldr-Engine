@@ -1,6 +1,5 @@
 package main.java;
 
-import main.java.graphics.AABB;
 import main.java.graphics.TexturedModel;
 import main.java.math.Matrix4f;
 import main.java.math.Vector3f;
@@ -18,7 +17,6 @@ public class Entity {
     private HashMap<Integer, TexturedModel> texturedModels; // 0 = First
     private Vector3f position;
     private Matrix4f matrix;
-    private AABB aabb;
     private int matrixLocation;
     private float rotation;
     private float scale;
@@ -35,7 +33,6 @@ public class Entity {
         for (int texMod = 0; texMod < texturedModels.length; texMod++){
             this.texturedModels.put(texMod, texturedModels[texMod]);
         }
-        setAABB();
         this.position = position;
         this.rotation = rotation;
         this.scale = scale;
@@ -102,22 +99,6 @@ public class Entity {
     }
 
     /**
-     * Sets the AABB to 1x1.
-     */
-    protected void setAABB(){
-        this.aabb = new AABB(1.0f, 1.0f);
-    }
-
-    /**
-     * Sets the AABB with custom dimensions.
-     * @param width the width.
-     * @param height the height.
-     */
-    void setAABB(float width, float height){
-        this.aabb = new AABB(width, height);
-    }
-
-    /**
      * Gets the position vector of this object.
      * @return the position vector.
      */
@@ -131,13 +112,5 @@ public class Entity {
      */
     public HashMap<Integer, TexturedModel> getTexturedModels(){
         return this.texturedModels;
-    }
-
-    /**
-     * Gets the AABB.
-     * @return the AABB.
-     */
-    AABB getAABB(){
-        return this.aabb;
     }
 }

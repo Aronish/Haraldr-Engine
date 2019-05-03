@@ -1,13 +1,17 @@
 package main.java.graphics;
 
+import main.java.math.Vector3f;
+
 /**
  * Class for handling models for game objects.
  */
 public class TexturedModel{
 
+    private Vector3f relativePosition;
     private VertexArray vertexArray;
     private Shader shader;
     private Texture texture;
+    private AABB aabb;
 
     /**
      * Constructor with just the paths for the shader and texture.
@@ -28,10 +32,12 @@ public class TexturedModel{
      * @param shaderPath the file path for the shaders.
      * @param texturePath the file path for the texture.
      */
-    TexturedModel(float[] vertices, int[] indices, float[] texcoords, String shaderPath, String texturePath){
+    TexturedModel(float[] vertices, int[] indices, float[] texcoords, Vector3f relativePosition, float width, float height, String shaderPath, String texturePath){
         setVertexArray(vertices, indices, texcoords);
         setShader(shaderPath);
         setTexture(texturePath);
+        this.relativePosition = relativePosition;
+        this.aabb = new AABB(width, height);
     }
 
     /**
@@ -69,6 +75,10 @@ public class TexturedModel{
         this.texture = new Texture(filePath);
     }
 
+    public Vector3f getRelativePosition(){
+        return this.relativePosition;
+    }
+
     /**
      * Gets the vertex array of this object.
      * Used to retrieve information about the vertices and rarely the indices and texture coordinates.
@@ -92,5 +102,9 @@ public class TexturedModel{
      */
     Texture getTexture(){
         return this.texture;
+    }
+
+    public AABB getAABB(){
+        return this.aabb;
     }
 }

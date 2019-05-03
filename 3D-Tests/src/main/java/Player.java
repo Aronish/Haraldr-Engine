@@ -63,19 +63,11 @@ class Player extends Entity {
         this.velocity = velocity;
     }
 
-    /**
-     * Gets the width of the AABB.
-     * @return the width.
-     */
     float getWidth(){
-        return this.getAABB().getWidth();
+        return 1.0f;
     }
 
-    /**
-     * Gets the height of the AABB.
-     * @return the height.
-     */
     float getHeight(){
-        return this.getAABB().getHeight();
+        return 1.0f;
     }
 }

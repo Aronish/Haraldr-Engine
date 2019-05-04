@@ -35,22 +35,9 @@ public class Logger {
         logLevel = LogLevels.ERROR;
     }
 
-    /**
-     * Prints the log level and the provided message.
-     * @param message the log message.
-     */
-    public static void log(String message){
-        System.out.print(logLevel.toString() + " ");
+    public static <T> void log(T message){
+        System.out.print(logLevel.toString() + ": ");
         System.out.println(message);
-    }
-
-    /**
-     * Prints the log level and the provided boolean.
-     * @param bool the boolean to log.
-     */
-    public static void log(boolean bool){
-        System.out.print(logLevel.toString() + " ");
-        System.out.println(bool);
     }
 
     /**

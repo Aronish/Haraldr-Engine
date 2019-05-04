@@ -48,7 +48,7 @@ public class Vector3f {
     }
 
     /**
-     * Normalizes this vector.
+     * Normalizes the vector. ! NOT SURE THIS IS GOOD !
      * @return the normalized vector.
      */
     public Vector3f normalize(){
@@ -58,6 +58,11 @@ public class Vector3f {
         double magnitude = Math.sqrt(sqX + sqY + sqZ);
         double norm = 1.0f / magnitude;
         return new Vector3f(this.x *= norm, this.y *= norm, this.z *= norm);
+    }
+
+    public double getDistance(Vector3f other){
+        Vector3f between = new Vector3f(other.x - this.x, other.y - this.y);
+        return Math.sqrt(Math.pow(between.x, 2) + Math.pow(between.y, 2));
     }
 
     /**

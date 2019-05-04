@@ -110,7 +110,8 @@ public class VertexArray {
     }
 
     /**
-     * !!ONLY FOR LINES!!
+     * !!ONLY FOR LINES!! Updates the second vertex to which the line is drawn. The line's vertex buffer must be updated to render
+     * properly. //TODO CANNOT UPDATE THE VERTEX CORRECTLY (OPENGL RENDERING IS TOO ASYNC).
      * @param otherVertex the other vertex to draw the line to.
      */
     public void updateVertexData(float[] otherVertex){

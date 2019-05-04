@@ -6,21 +6,8 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a46e096-f7ea-4b16-b902-0be2e29a0af2" name="Default Changelist" comment="Fixed collision detection for entities with multiple TexturedModel's.&#10;Tried adding lines for distance visualization. Cannot update the other vertex&#10;dynamically!&#10;Bugs:&#10;-Collision may fail in corners.">
-      <change afterPath="$PROJECT_DIR$/src/main/java/Line.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/shaders/line_shader.frag" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/shaders/line_shader.vert" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Input.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Input.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Logger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Logger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/graphics/AABB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/graphics/AABB.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/graphics/Models.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/graphics/Models.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/graphics/Renderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/graphics/Renderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/graphics/TexturedModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/graphics/TexturedModel.java" afterDir="false" />
+    <list default="true" id="1a46e096-f7ea-4b16-b902-0be2e29a0af2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/src/main/java/graphics/VertexArray.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/graphics/VertexArray.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/math/Vector3f.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/math/Vector3f.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="lwjgl/" />
@@ -39,8 +26,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/graphics/VertexArray.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="113" column="63" selection-start-line="113" selection-start-column="63" selection-end-line="113" selection-end-column="63" />
+            <state relative-caret-position="459">
+              <caret line="113" column="91" selection-start-line="113" selection-start-column="91" selection-end-line="113" selection-end-column="91" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#4045#4046#0" expanded="true" />
@@ -464,7 +451,14 @@
       <option name="project" value="LOCAL" />
       <updated>1556782776135</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Fixed collision detection for entities with multiple TexturedModel's.&#10;Tried adding lines for distance visualization. Cannot update the other vertex&#10;dynamically!&#10;Bugs:&#10;-Collision may fail in corners.">
+      <created>1556987303531</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1556987303531</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -497,7 +491,7 @@
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.3286119" />
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50067115" side_tool="true" weight="0.35102925" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.7583965" />
-      <window_info active="true" anchor="bottom" id="Messages" order="10" visible="true" weight="0.312026" />
+      <window_info anchor="bottom" id="Messages" order="10" weight="0.312026" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="1" weight="0.24946696" />
       <window_info anchor="right" id="Palette" order="2" />
@@ -909,8 +903,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/graphics/VertexArray.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="113" column="63" selection-start-line="113" selection-start-column="63" selection-end-line="113" selection-end-column="63" />
+        <state relative-caret-position="459">
+          <caret line="113" column="91" selection-start-line="113" selection-start-column="91" selection-end-line="113" selection-end-column="91" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#4045#4046#0" expanded="true" />

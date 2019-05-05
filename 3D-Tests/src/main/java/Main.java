@@ -21,6 +21,7 @@ public class Main implements Runnable {
     private double frameRate;
     private Player player;
     private World world;
+    private World world2;
     private Line line;
 
     protected Thread main;
@@ -60,6 +61,7 @@ public class Main implements Runnable {
         new Camera();
         player = new Player();
         world = new World();
+        world2 = new World(new Vector3f(60.0f, 2.0f));
         TexturedModel temp = world.getTexturedModels().get(0);
         line = new Line(temp.getMiddle());
     }
@@ -81,10 +83,11 @@ public class Main implements Runnable {
             }
         }
         if (Input.isStateChanging()){
-            line.setOtherVertex(player.getPosition());
+            line.setOtherVertex(player.getMiddle());
             line.updateMatrix();
             player.updateMatrix();
             world.updateMatrix();
+            world2.updateMatrix();
         }
         Input.setStateChanging(false);
         glfwPollEvents();
@@ -97,6 +100,7 @@ public class Main implements Runnable {
         Renderer.clear();
         {//Objects further back are rendered first
             Renderer.render(world);
+            Renderer.render(world2);
             Renderer.render(player);
             Renderer.render(line);
         }

@@ -102,7 +102,7 @@ public class Entity {
      * Gets the position vector of this object.
      * @return the position vector.
      */
-    public Vector3f getPosition(){
+    Vector3f getPosition(){
         return new Vector3f(this.position.x, this.position.y, this.position.z);
     }
 

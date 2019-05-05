@@ -2,8 +2,6 @@ package main.java.graphics;
 
 import main.java.Entity;
 import main.java.Line;
-import main.java.Logger;
-import main.java.Player;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;

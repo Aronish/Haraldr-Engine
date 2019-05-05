@@ -11,13 +11,17 @@ public class Line extends Entity {
         this(new Vector3f(), new Vector3f());
     }
 
-    Line(Vector3f position, Vector3f otherVertex){
-        super(position, 0.0f, 1.0f, Models.getLINE());
-        //setOtherVertex(otherVertex);
+    Line(Vector3f position){
+        this(position, new Vector3f());
     }
 
-    private void setOtherVertex(Vector3f otherVertex){
-        this.otherVertex = otherVertex;
+    public Line(Vector3f position, Vector3f otherVertex){
+        super(position, 0.0f, 1.0f, Models.getLINE());
+        setOtherVertex(otherVertex.subtract(position));
+    }
+
+    void setOtherVertex(Vector3f otherVertex){
+        this.otherVertex = otherVertex.subtract(this.getPosition());
         updateVertexData();
     }
 

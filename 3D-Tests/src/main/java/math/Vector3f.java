@@ -47,6 +47,14 @@ public class Vector3f {
         this.z = (float) z;
     }
 
+    public Vector3f add(Vector3f other){
+        return new Vector3f(this.x + other.x, this.y + other.y, this.z + other.z);
+    }
+
+    public Vector3f subtract(Vector3f other){
+        return new Vector3f(this.x - other.x, this.y - other.y, this.z - other.z);
+    }
+
     /**
      * Normalizes the vector. ! NOT SURE THIS IS GOOD !
      * @return the normalized vector.
@@ -61,7 +69,7 @@ public class Vector3f {
     }
 
     public double getDistance(Vector3f other){
-        Vector3f between = new Vector3f(other.x - this.x, other.y - this.y);
+        Vector3f between = other.subtract(this);
         return Math.sqrt(Math.pow(between.x, 2) + Math.pow(between.y, 2));
     }
 

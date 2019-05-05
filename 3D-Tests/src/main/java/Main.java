@@ -60,7 +60,8 @@ public class Main implements Runnable {
         new Camera();
         player = new Player();
         world = new World();
-        line = new Line(new Vector3f(0.0f, 1.0f), new Vector3f(10.0f, 0.0f));
+        TexturedModel temp = world.getTexturedModels().get(0);
+        line = new Line(temp.getMiddle());
     }
 
     /**
@@ -79,9 +80,8 @@ public class Main implements Runnable {
                 }
             }
         }
-        Logger.setInfoLevel();
-        Logger.log("Distance Player - DirtMiddle: " + player.getPosition().getDistance(world.getTexturedModels().get(0).getAABB().getMiddle()));
         if (Input.isStateChanging()){
+            line.setOtherVertex(player.getPosition());
             line.updateMatrix();
             player.updateMatrix();
             world.updateMatrix();

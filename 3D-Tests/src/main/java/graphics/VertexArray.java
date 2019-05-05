@@ -4,6 +4,7 @@ import main.java.Logger;
 
 import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
+import static org.lwjgl.opengl.GL15.GL_STREAM_DRAW;
 import static org.lwjgl.opengl.GL15.glBufferSubData;
 import static org.lwjgl.opengl.GL46.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL46.GL_ELEMENT_ARRAY_BUFFER;
@@ -91,20 +92,20 @@ public class VertexArray {
             0, 1
         };
         this.vao = glGenVertexArrays();
-        int vbo = glGenBuffers();
+        this.vbo = glGenBuffers();
         int ebo = glGenBuffers();
         this.length = 2;
         this.renderMode = GL_LINES;
 
         glBindVertexArray(this.vao);
 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, vertices, GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STREAM_DRAW);
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 8, 0);
         glEnableVertexAttribArray(0);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STREAM_DRAW);
 
         glBindVertexArray(0);
     }
@@ -118,7 +119,7 @@ public class VertexArray {
         Logger.setInfoLevel();
         Logger.log(otherVertex[0] + " " + otherVertex[1]);
         glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, otherVertex);
+        glBufferSubData(GL_ARRAY_BUFFER, 8, otherVertex);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 

@@ -43,7 +43,7 @@ public class AABB {
         return this.height;
     }
 
-    public Vector3f getMiddle(){
+    protected Vector3f getMiddle(){
         return this.middle;
     }
 }

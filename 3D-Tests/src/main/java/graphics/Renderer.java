@@ -2,6 +2,8 @@ package main.java.graphics;
 
 import main.java.Entity;
 import main.java.Line;
+import main.java.Logger;
+import main.java.Player;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
@@ -40,7 +42,6 @@ public class Renderer {
         line.getTexturedModels().get(0).getShader().use();
         line.setMatrixLocation(0);
         line.setUniformMatrix();
-        line.getTexturedModels().get(0).getVertexArray().updateVertexData(new float[] {10.0f, 0.0f});
         line.getTexturedModels().get(0).getVertexArray().bind();
         line.getTexturedModels().get(0).getVertexArray().draw();
         line.getTexturedModels().get(0).getVertexArray().unbind();

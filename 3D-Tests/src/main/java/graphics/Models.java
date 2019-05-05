@@ -30,7 +30,7 @@ public class Models {
     public Models(){
         initGrassLayer(new Vector3f(), grassLength, grassDepth);
         initDirtLayer(new Vector3f(5.0f, -grassDepth), dirtLength, dirtDepth);
-        initLineModel(new Vector3f());
+        initLineModel(new Vector3f(0.5f, -0.5f));
     }
 
     private static HashMap<String, float[]> createVertexData(Vector3f relativePosition, float width, float height){

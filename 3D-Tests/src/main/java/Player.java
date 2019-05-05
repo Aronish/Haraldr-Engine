@@ -64,10 +64,10 @@ class Player extends Entity {
     }
 
     float getWidth(){
-        return 1.0f;
+        return getTexturedModels().get(0).getAABB().getWidth();
     }
 
     float getHeight(){
-        return 1.0f;
+        return getTexturedModels().get(0).getAABB().getHeight();
     }
 }

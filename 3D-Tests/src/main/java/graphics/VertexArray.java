@@ -1,8 +1,10 @@
 package main.java.graphics;
 
-import main.java.Input;
+import main.java.Logger;
 
 import static org.lwjgl.opengl.GL11.GL_LINES;
+import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBufferSubData;
 import static org.lwjgl.opengl.GL46.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL46.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL46.GL_FLOAT;
@@ -21,9 +23,10 @@ import static org.lwjgl.opengl.GL46.glVertexAttribPointer;
 /**
  * Class for handling buffers containing the vertex data of an object.
  */
-class VertexArray {
+public class VertexArray {
 
-    private int vao, length;
+    private int vao, vbo, length;
+    private int renderMode;
 
     private static float[] defVertices = {
             1.0f, 0.0f,     //Top-right
@@ -59,10 +62,11 @@ class VertexArray {
      */
     VertexArray(float[] vertices, int[] indices, float[] texcoords){
         this.vao = glGenVertexArrays();
-        int vbo = glGenBuffers();
+        this.vbo = glGenBuffers();
         int ebo = glGenBuffers();
         int tbo = glGenBuffers();
         this.length = indices.length;
+        this.renderMode = GL_TRIANGLES;
 
         glBindVertexArray(this.vao);
 
@@ -82,14 +86,47 @@ class VertexArray {
         glBindVertexArray(0);
     }
 
+    VertexArray(float[] vertices){
+        int[] indices = {
+            0, 1
+        };
+        this.vao = glGenVertexArrays();
+        int vbo = glGenBuffers();
+        int ebo = glGenBuffers();
+        this.length = 2;
+        this.renderMode = GL_LINES;
+
+        glBindVertexArray(this.vao);
+
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertices, GL_DYNAMIC_DRAW);
+        glVertexAttribPointer(0, 2, GL_FLOAT, false, 8, 0);
+        glEnableVertexAttribArray(0);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_DYNAMIC_DRAW);
+
+        glBindVertexArray(0);
+    }
+
+    /**
+     * !!ONLY FOR LINES!! Updates the second vertex to which the line is drawn. The line's vertex buffer must be updated to render
+     * properly. //TODO CANNOT UPDATE THE VERTEX CORRECTLY (OPENGL RENDERING IS TOO ASYNC).
+     * @param otherVertex the other vertex to draw the line to.
+     */
+    public void updateVertexData(float[] otherVertex){
+        Logger.setInfoLevel();
+        Logger.log(otherVertex[0] + " " + otherVertex[1]);
+        glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, otherVertex);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
     /**
      * Invokes an OpenGL draw call to draw using the contents of the bound buffers.
      */
     void draw(){
-        int renderMode = GL_TRIANGLES;
-        if (Input.shouldRenderLines())
-            renderMode = GL_LINES;
-        glDrawElements(renderMode, this.length, GL_UNSIGNED_INT, 0);
+        glDrawElements(this.renderMode, this.length, GL_UNSIGNED_INT, 0);
     }
 
     /**

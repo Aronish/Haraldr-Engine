@@ -1,9 +1,9 @@
 package main.java.graphics;
 
 import main.java.Entity;
+import main.java.Line;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 
 /**
@@ -15,7 +15,7 @@ public class Renderer {
      * Clears the buffer for the next render. Clear color is set in Main#init ATM.
      */
     public static void clear(){
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
     }
 
     /**
@@ -34,5 +34,16 @@ public class Renderer {
             entity.getTexturedModels().get(texMod).getVertexArray().unbind();
             entity.getTexturedModels().get(texMod).getShader().unuse();
         }
+    }
+
+    public static void render(Line line){
+        line.getTexturedModels().get(0).getShader().use();
+        line.setMatrixLocation(0);
+        line.setUniformMatrix();
+        line.getTexturedModels().get(0).getVertexArray().updateVertexData(new float[] {10.0f, 0.0f});
+        line.getTexturedModels().get(0).getVertexArray().bind();
+        line.getTexturedModels().get(0).getVertexArray().draw();
+        line.getTexturedModels().get(0).getVertexArray().unbind();
+        line.getTexturedModels().get(0).getShader().unuse();
     }
 }

@@ -1,7 +1,6 @@
 //java -cp "C:\Users\Aron\Documents\Java Projects\3D-Tests\lwjgl\*";"C:\Users\Aron\Documents\Java Projects\3D-Tests\src" main/Main
 package main.java;
 
-import main.java.graphics.AABB;
 import main.java.graphics.Models;
 import main.java.graphics.Renderer;
 import main.java.graphics.TexturedModel;
@@ -22,6 +21,7 @@ public class Main implements Runnable {
     private double frameRate;
     private Player player;
     private World world;
+    private Line line;
 
     protected Thread main;
 
@@ -60,6 +60,7 @@ public class Main implements Runnable {
         new Camera();
         player = new Player();
         world = new World();
+        line = new Line(new Vector3f(0.0f, 1.0f), new Vector3f(10.0f, 0.0f));
     }
 
     /**
@@ -73,12 +74,15 @@ public class Main implements Runnable {
                 for (int texMod = 0; texMod < world.getTexturedModels().size(); texMod++){
                     TexturedModel texturedModel = world.getTexturedModels().get(texMod);
                     if (checkCollision(world, texturedModel)){
-                        doCollision(getCollisionDirection(texturedModel), texturedModel);
+                        doCollision(getCollisionDirection(world, texturedModel), world, texturedModel);
                     }
                 }
             }
         }
+        Logger.setInfoLevel();
+        Logger.log("Distance Player - DirtMiddle: " + player.getPosition().getDistance(world.getTexturedModels().get(0).getAABB().getMiddle()));
         if (Input.isStateChanging()){
+            line.updateMatrix();
             player.updateMatrix();
             world.updateMatrix();
         }
@@ -94,6 +98,7 @@ public class Main implements Runnable {
         {//Objects further back are rendered first
             Renderer.render(world);
             Renderer.render(player);
+            Renderer.render(line);
         }
         glfwSwapBuffers(window.getWindow());
     }
@@ -119,53 +124,52 @@ public class Main implements Runnable {
         glfwTerminate();
     }
 
-    //TODO RESOLVE BOUNDING BOX SHIFT
     private boolean checkCollision(Entity entity, TexturedModel texturedModel){
-        boolean collisionX = player.getPosition().x + player.getWidth() > texturedModel.getRelativePosition().x && texturedModel.getRelativePosition().x + texturedModel.getAABB().getWidth() > player.getPosition().x;
-        boolean collisionY = player.getPosition().y - player.getHeight() < texturedModel.getRelativePosition().y && texturedModel.getRelativePosition().y - texturedModel.getAABB().getHeight() < player.getPosition().y;
+        boolean collisionX = player.getPosition().x + player.getWidth() > entity.getPosition().x + texturedModel.getRelativePosition().x && entity.getPosition().x + texturedModel.getRelativePosition().x + texturedModel.getAABB().getWidth() > player.getPosition().x;
+        boolean collisionY = player.getPosition().y - player.getHeight() < entity.getPosition().y + texturedModel.getRelativePosition().y && entity.getPosition().y + texturedModel.getRelativePosition().y - texturedModel.getAABB().getHeight() < player.getPosition().y;
         return collisionX && collisionY;
     }
 
-    private EnumDirection getCollisionDirection(TexturedModel texturedModel){
-        float topCollision = (texturedModel.getRelativePosition().y - (player.getPosition().y - player.getHeight()));
-        float bottomCollision = player.getPosition().y - (texturedModel.getRelativePosition().y - texturedModel.getAABB().getHeight());
-        float leftCollision = player.getPosition().x + player.getWidth() - texturedModel.getRelativePosition().x;
-        float rightCollision = texturedModel.getRelativePosition().x + texturedModel.getAABB().getWidth() - player.getPosition().x;
+    private EnumDirection getCollisionDirection(Entity entity, TexturedModel texturedModel){
+        float topCollision = (entity.getPosition().y + texturedModel.getRelativePosition().y) - (player.getPosition().y - player.getHeight());
+        float rightCollision = (entity.getPosition().x + texturedModel.getRelativePosition().x) + texturedModel.getAABB().getWidth() - player.getPosition().x;
+        float leftCollision = player.getPosition().x + player.getWidth() - (entity.getPosition().x + texturedModel.getRelativePosition().x);
+        float bottomCollision = player.getPosition().y - ((entity.getPosition().y + texturedModel.getRelativePosition().y) - texturedModel.getAABB().getHeight());
         if (topCollision < bottomCollision && topCollision < leftCollision && topCollision < rightCollision ) {
             return EnumDirection.NORTH;
-        }
-        if (bottomCollision < topCollision && bottomCollision < leftCollision && bottomCollision < rightCollision) {
-            return EnumDirection.SOUTH;
-        }
-        if (leftCollision < rightCollision && leftCollision < topCollision && leftCollision < bottomCollision) {
-            return EnumDirection.WEST;
         }
         if (rightCollision < leftCollision && rightCollision < topCollision && rightCollision < bottomCollision ) {
             return EnumDirection.EAST;
         }
+        if (leftCollision < rightCollision && leftCollision < topCollision && leftCollision < bottomCollision) {
+            return EnumDirection.WEST;
+        }
+        if (bottomCollision < topCollision && bottomCollision < leftCollision && bottomCollision < rightCollision) {
+            return EnumDirection.SOUTH;
+        }
         return EnumDirection.INVALIDDIR;
     }
 
-    private void doCollision(EnumDirection direction, TexturedModel texturedModel) {
+    private void doCollision(EnumDirection direction, Entity entity, TexturedModel texturedModel) {
         float inside;
         switch (direction) {
             case NORTH:
-                inside = texturedModel.getRelativePosition().y - (player.getPosition().y - player.getHeight());
+                inside = (entity.getPosition().y + texturedModel.getRelativePosition().y) - (player.getPosition().y - player.getHeight());
                 player.addPosition(new Vector3f(0.0f, inside));
                 Camera.addPosition(new Vector3f(0.0f, inside * Camera.scale));
                 break;
             case EAST:
-                inside = texturedModel.getRelativePosition().x + texturedModel.getAABB().getWidth() - player.getPosition().x;
+                inside = (entity.getPosition().x + texturedModel.getRelativePosition().x) + texturedModel.getAABB().getWidth() - player.getPosition().x;
                 player.addPosition(new Vector3f(inside, 0.0f));
                 Camera.addPosition(new Vector3f(inside * Camera.scale, 0.0f));
                 break;
             case WEST:
-                inside = player.getPosition().x + player.getWidth() - texturedModel.getRelativePosition().x;
+                inside = player.getPosition().x + player.getWidth() - (entity.getPosition().x + texturedModel.getRelativePosition().x);
                 player.addPosition(new Vector3f(-inside, 0.0f));
                 Camera.addPosition(new Vector3f(-inside * Camera.scale, 0.0f));
                 break;
             case SOUTH:
-                inside = player.getPosition().y - (texturedModel.getRelativePosition().y - texturedModel.getAABB().getHeight());
+                inside = player.getPosition().y - ((entity.getPosition().y + texturedModel.getRelativePosition().y) - texturedModel.getAABB().getHeight());
                 player.addPosition(new Vector3f(0.0f, -inside));
                 Camera.addPosition(new Vector3f(0.0f, -inside * Camera.scale));
                 break;

@@ -13,6 +13,11 @@ public class TexturedModel{
     private Texture texture;
     private AABB aabb;
 
+    TexturedModel(float[] vertices, String shaderPath){
+        setVertexArray(vertices);
+        setShader(shaderPath);
+    }
+
     /**
      * Constructor with just the paths for the shader and texture.
      * @param shaderPath the file path for the shaders.
@@ -22,6 +27,7 @@ public class TexturedModel{
         setVertexArray();
         setShader(shaderPath);
         setTexture(texturePath);
+        this.aabb = new AABB();
     }
 
     /**
@@ -45,6 +51,10 @@ public class TexturedModel{
      */
     private void setVertexArray(){
         this.vertexArray = new VertexArray();
+    }
+
+    private void setVertexArray(float[] indices){
+        this.vertexArray = new VertexArray(indices);
     }
 
     /**
@@ -84,7 +94,7 @@ public class TexturedModel{
      * Used to retrieve information about the vertices and rarely the indices and texture coordinates.
      * @return the vertex array object.
      */
-    VertexArray getVertexArray(){
+    public VertexArray getVertexArray(){
         return this.vertexArray;
     }
 

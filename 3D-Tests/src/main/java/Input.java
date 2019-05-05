@@ -26,7 +26,6 @@ public class Input extends GLFWKeyCallback {
 
     private static boolean[] keys = new boolean[65536];
     private static boolean stateChanging = false;
-    private static boolean shouldRenderLines = false;
 
     @Override
     public void invoke(long window, int key, int scancode, int action, int mods){
@@ -51,8 +50,8 @@ public class Input extends GLFWKeyCallback {
     static void moveCameraAndPlayer(double deltaTime, Player player, World world){
         setStateChanging(true);
         if(keys[GLFW_KEY_LEFT_SHIFT]){
-            Camera.velocity = 10.0d * Camera.scale;
-            player.setVelocity(10.0d);
+            Camera.velocity = 20.0d * Camera.scale;
+            player.setVelocity(20.0d);
         }else{
             Camera.velocity = 5.0d * Camera.scale;
             player.setVelocity(5.0d);
@@ -84,12 +83,6 @@ public class Input extends GLFWKeyCallback {
         if(keys[GLFW_KEY_DOWN]){
             Camera.calculateScale(false, deltaTime);
         }
-        if(keys[GLFW_KEY_L]){
-            shouldRenderLines = true;
-        }
-        if(keys[GLFW_KEY_T]){
-            shouldRenderLines = false;
-        }
     }
 
     /**
@@ -106,9 +99,5 @@ public class Input extends GLFWKeyCallback {
      */
     static boolean isStateChanging(){
         return stateChanging;
-    }
-
-    public static boolean shouldRenderLines(){
-        return shouldRenderLines;
     }
 }

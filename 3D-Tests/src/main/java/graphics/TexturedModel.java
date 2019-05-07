@@ -117,8 +117,4 @@ public class TexturedModel{
     public AABB getAABB(){
         return this.aabb;
     }
-
-    public Vector3f getMiddle(){
-        return this.aabb.getMiddle().add(this.relativePosition);
-    }
 }

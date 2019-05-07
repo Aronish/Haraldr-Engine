@@ -6,7 +6,7 @@ import main.java.math.Vector3f;
 /**
  * The player that is visible in the center of the screen.
  */
-public class Player extends Entity {
+class Player extends Entity {
 
     private double velocity;
 
@@ -71,7 +71,7 @@ public class Player extends Entity {
         return getTexturedModels().get(0).getAABB().getHeight();
     }
 
-    Vector3f getMiddle(){
-        return getTexturedModels().get(0).getMiddle();
+    Vector3f getMiddle() {
+        return getTexturedModels().get(0).getAABB().getMiddle();
     }
 }

@@ -24,7 +24,7 @@ public class AABB {
     AABB(float width, float height){
         this.width = width;
         this.height = height;
-        this.middle = new Vector3f(width / 2.0f, -(height / 2.0f));
+        this.middle = new Vector3f(width / 2.0f, -(height / 2.0f) - 1.0f);
     }
 
     /**
@@ -43,7 +43,7 @@ public class AABB {
         return this.height;
     }
 
-    Vector3f getMiddle(){
+    public Vector3f getMiddle(){
         return this.middle;
     }
 }

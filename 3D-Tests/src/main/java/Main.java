@@ -21,8 +21,8 @@ public class Main implements Runnable {
     private double frameRate;
     private Player player;
     private World world;
-    private World world2;
     private Line line;
+    private Line line2;
 
     protected Thread main;
 
@@ -61,9 +61,10 @@ public class Main implements Runnable {
         new Camera();
         player = new Player();
         world = new World();
-        world2 = new World(new Vector3f(60.0f, 2.0f));
         TexturedModel temp = world.getTexturedModels().get(0);
-        line = new Line(temp.getMiddle());
+        TexturedModel temp2 = world.getTexturedModels().get(1);
+        line = new Line(temp.getAABB().getMiddle(), temp.getRelativePosition());
+        line2 = new Line(temp2.getAABB().getMiddle(), temp2.getRelativePosition());
     }
 
     /**
@@ -71,25 +72,22 @@ public class Main implements Runnable {
      * @param deltaTime the delta time gotten from the timing circuit of the main loop. Used for physics.
      */
     private void update(double deltaTime) {
+        //Not sure if I need to check for player movement yet. (Well, obv. not with a game of this caliber but...)
         Input.moveCameraAndPlayer(deltaTime, player, world);
         {//Collision Detection
-            if (Input.isStateChanging()){
-                for (int texMod = 0; texMod < world.getTexturedModels().size(); texMod++){
-                    TexturedModel texturedModel = world.getTexturedModels().get(texMod);
-                    if (checkCollision(world, texturedModel)){
-                        doCollision(getCollisionDirection(world, texturedModel), world, texturedModel);
-                    }
+            for (int texMod = 0; texMod < world.getTexturedModels().size(); texMod++) {
+                TexturedModel texturedModel = world.getTexturedModels().get(texMod);
+                if (checkCollision(world, texturedModel)) {
+                    doCollision(getCollisionDirection(world, texturedModel), world, texturedModel);
                 }
             }
         }
-        if (Input.isStateChanging()){
-            line.setOtherVertex(player.getMiddle());
-            line.updateMatrix();
-            player.updateMatrix();
-            world.updateMatrix();
-            world2.updateMatrix();
-        }
-        Input.setStateChanging(false);
+        line.setOtherVertex(player.getPosition());
+        line.updateMatrix();
+        line2.setOtherVertex(player.getPosition());
+        line2.updateMatrix();
+        player.updateMatrix();
+        world.updateMatrix();
         glfwPollEvents();
     }
 
@@ -100,9 +98,9 @@ public class Main implements Runnable {
         Renderer.clear();
         {//Objects further back are rendered first
             Renderer.render(world);
-            Renderer.render(world2);
             Renderer.render(player);
             Renderer.render(line);
+            Renderer.render(line2);
         }
         glfwSwapBuffers(window.getWindow());
     }

@@ -23,7 +23,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 public class Input extends GLFWKeyCallback {
 
     private static boolean[] keys = new boolean[65536];
-    private static boolean stateChanging = false;
 
     @Override
     public void invoke(long window, int key, int scancode, int action, int mods){
@@ -46,7 +45,6 @@ public class Input extends GLFWKeyCallback {
      * @param player the player that should move with the camera.
      */
     static void moveCameraAndPlayer(double deltaTime, Player player, World world){
-        setStateChanging(true);
         if(keys[GLFW_KEY_LEFT_SHIFT]){
             Camera.velocity = 20.0d * Camera.scale;
             player.setVelocity(20.0d);
@@ -81,21 +79,5 @@ public class Input extends GLFWKeyCallback {
         if(keys[GLFW_KEY_DOWN]){
             Camera.calculateScale(false, deltaTime);
         }
-    }
-
-    /**
-     * Sets stateChanging to the specified value. When true, it tells the game that extra logic (matrices, etc.) should be computed.
-     * @param changing whether the state should be changing or not.
-     */
-    static void setStateChanging(boolean changing){
-        stateChanging = changing;
-    }
-
-    /**
-     * Gets the state.
-     * @return whether the state is changing or not.
-     */
-    static boolean isStateChanging(){
-        return stateChanging;
     }
 }

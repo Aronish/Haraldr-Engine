@@ -84,7 +84,7 @@ public class VertexArray {
         glBindVertexArray(0);
     }
 
-    VertexArray(float[] vertices){
+    public VertexArray(float[] vertices){ //LINE
         int[] indices = {
             0, 1
         };

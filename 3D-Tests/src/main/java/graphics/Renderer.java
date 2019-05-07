@@ -37,12 +37,12 @@ public class Renderer {
     }
 
     public static void render(Line line){
-        line.getTexturedModels().get(0).getShader().use();
-        line.setMatrixLocation(0);
+        line.getShader().use();
+        line.setMatrixLocation();
         line.setUniformMatrix();
-        line.getTexturedModels().get(0).getVertexArray().bind();
-        line.getTexturedModels().get(0).getVertexArray().draw();
-        line.getTexturedModels().get(0).getVertexArray().unbind();
-        line.getTexturedModels().get(0).getShader().unuse();
+        line.getVertexArray().bind();
+        line.getVertexArray().draw();
+        line.getVertexArray().unbind();
+        line.getShader().unuse();
     }
 }

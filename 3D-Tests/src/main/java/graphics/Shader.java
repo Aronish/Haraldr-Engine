@@ -29,7 +29,7 @@ public class Shader {
      * Both kinds of shaders must have the same name as the extensions are added afterwards for simplicity.
      * @param generalShaderPath the general shader file path, with no extension.
      */
-    Shader(String generalShaderPath){
+    public Shader(String generalShaderPath){
         this(generalShaderPath + ".vert", generalShaderPath + ".frag");
     }
 

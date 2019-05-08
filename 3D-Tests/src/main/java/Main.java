@@ -7,6 +7,7 @@ import main.java.graphics.TexturedModel;
 import main.java.level.Level;
 import main.java.level.Player;
 import main.java.level.World;
+import main.java.physics.CollisionDetector;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;

@@ -1,7 +1,7 @@
 package main.java.graphics;
 
 import main.java.level.Entity;
-import main.java.Line;
+import main.java.debug.Line;
 import main.java.level.World;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;

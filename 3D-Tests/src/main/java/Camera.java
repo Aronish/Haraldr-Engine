@@ -10,9 +10,9 @@ import main.java.math.Vector3f;
 public class Camera{
 
     public static Matrix4f viewMatrix;
+    public static float scale;
     private static Vector3f position;
     private static float rotation;
-    static float scale;
 
     private static final float MIN_SCALE = 0.25f;
     private static final double SCALE_SPEED = 1.0d;
@@ -30,7 +30,7 @@ public class Camera{
      * @param rot the rotation of the camera around the z-axis, in degrees.
      */
     private Camera(Vector3f pos, float rot, float scal){
-        position = pos;
+        position = pos.add(new Vector3f(0.5f, -0.5f));
         rotation = rot;
         scale = scal;
         calculateViewMatrix();
@@ -61,11 +61,11 @@ public class Camera{
      * @param pos the new position vector.
      */
     static void setPosition(Vector3f pos){
-        position = pos;
+        position = pos.add(new Vector3f(0.5f, -0.5f));
         calculateViewMatrix();
     }
 
-    static void addPosition(Vector3f pos){
+    public static void addPosition(Vector3f pos){
         position.x += pos.x;
         position.y += pos.y;
         position.z += pos.z;

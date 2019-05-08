@@ -1,26 +1,27 @@
-package main.java;
+package main.java.physics;
 
+import main.java.Camera;
 import main.java.graphics.TexturedModel;
 import main.java.level.Entity;
 import main.java.level.Level;
 import main.java.level.Player;
 import main.java.math.Vector3f;
 
-import static main.java.EnumDirection.EAST;
-import static main.java.EnumDirection.NORTH;
-import static main.java.EnumDirection.SOUTH;
-import static main.java.EnumDirection.WEST;
+import static main.java.physics.EnumDirection.EAST;
+import static main.java.physics.EnumDirection.NORTH;
+import static main.java.physics.EnumDirection.SOUTH;
+import static main.java.physics.EnumDirection.WEST;
 
-class CollisionDetector {
+public class CollisionDetector {
 
-    static boolean checkCollision(Level level, Entity entity, TexturedModel texturedModel){
+    public static boolean checkCollision(Level level, Entity entity, TexturedModel texturedModel){
         Player player = level.getPlayer();
         boolean collisionX = player.getPosition().x + player.getWidth() > entity.getPosition().x + texturedModel.getRelativePosition().x && entity.getPosition().x + texturedModel.getRelativePosition().x + texturedModel.getAABB().getWidth() > player.getPosition().x;
         boolean collisionY = player.getPosition().y - player.getHeight() < entity.getPosition().y + texturedModel.getRelativePosition().y && entity.getPosition().y + texturedModel.getRelativePosition().y - texturedModel.getAABB().getHeight() < player.getPosition().y;
         return collisionX && collisionY;
     }
 
-    static CollisionDataMap getCollisionDirection(Level level, Entity entity, TexturedModel texturedModel){
+    public static CollisionDataMap getCollisionDirection(Level level, Entity entity, TexturedModel texturedModel){
         Player player = level.getPlayer();
         float topCollision = (entity.getPosition().y + texturedModel.getRelativePosition().y) - (player.getPosition().y - player.getHeight());
         float rightCollision = (entity.getPosition().x + texturedModel.getRelativePosition().x) + texturedModel.getAABB().getWidth() - player.getPosition().x;
@@ -42,7 +43,7 @@ class CollisionDetector {
         return collisionDataMap;
     }
 
-    static void doCollision(CollisionDataMap collisionDataMap, Level level, Entity entity, TexturedModel texturedModel) {
+    public static void doCollision(CollisionDataMap collisionDataMap, Level level, Entity entity, TexturedModel texturedModel) {
         float inside = collisionDataMap.getInside();
         Player player = level.getPlayer();
         switch (collisionDataMap.getCollisionDirection()) {

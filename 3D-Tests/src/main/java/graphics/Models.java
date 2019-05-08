@@ -1,6 +1,6 @@
 package main.java.graphics;
 
-import main.java.Logger;
+import main.java.debug.Logger;
 import main.java.math.Vector3f;
 
 import java.util.HashMap;

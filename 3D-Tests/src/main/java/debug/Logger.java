@@ -1,4 +1,4 @@
-package main.java;
+package main.java.debug;
 
 /**
  * Logger with different log levels. Much nicer than println.

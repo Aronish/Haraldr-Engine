@@ -1,4 +1,4 @@
-package main.java;
+package main.java.debug;
 
 import main.java.graphics.Shader;
 import main.java.graphics.VertexArray;

@@ -16,11 +16,11 @@ public class Line {
     private Matrix4f matrix;
     private int matrixLocation;
 
-    Line(Vector3f position, Vector3f relativePosition){
+    public Line(Vector3f position, Vector3f relativePosition){
         this(position, relativePosition, new Vector3f());
     }
 
-    private Line(Vector3f position, Vector3f relativePosition, Vector3f otherVertex){
+    public Line(Vector3f position, Vector3f relativePosition, Vector3f otherVertex){
         position.printVector();
         this.vertexArray = new VertexArray(new float[] {position.x + relativePosition.x, position.y + relativePosition.y, 0.0f, 0.0f});
         setOtherVertex(otherVertex);
@@ -29,7 +29,7 @@ public class Line {
         updateMatrix();
     }
 
-    void setOtherVertex(Vector3f otherVertex){
+    public void setOtherVertex(Vector3f otherVertex){
         this.otherVertex = otherVertex;
         updateVertexData();
     }
@@ -41,7 +41,7 @@ public class Line {
     /**
      * Updates the Model-View-Projection matrix with the current attribute values.
      */
-    void updateMatrix(){
+    public void updateMatrix(){
         this.matrix = new Matrix4f().MVP(new Vector3f(), 0.0f, 1.0f);
     }
 

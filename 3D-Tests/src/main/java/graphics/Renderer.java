@@ -1,7 +1,8 @@
 package main.java.graphics;
 
-import main.java.Entity;
+import main.java.level.Entity;
 import main.java.Line;
+import main.java.level.World;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
@@ -44,5 +45,22 @@ public class Renderer {
         line.getVertexArray().draw();
         line.getVertexArray().unbind();
         line.getShader().unuse();
+    }
+
+    public static void render(World world){
+        for (int texMod = 0; texMod < world.getTexturedModels().size(); texMod++){
+            world.getTexturedModels().get(texMod).getShader().use();
+            world.setMatrixLocation(texMod);
+            world.setUniformMatrix();
+            world.getTexturedModels().get(texMod).getVertexArray().bind();
+            world.getTexturedModels().get(texMod).getTexture().bind();
+            world.getTexturedModels().get(texMod).getVertexArray().draw();
+            world.getTexturedModels().get(texMod).getTexture().unbind();
+            world.getTexturedModels().get(texMod).getVertexArray().unbind();
+            world.getTexturedModels().get(texMod).getShader().unuse();
+        }
+        for (Line line : world.getDebugLines()){
+            render(line);
+        }
     }
 }

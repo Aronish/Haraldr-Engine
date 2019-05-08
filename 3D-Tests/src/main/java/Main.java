@@ -4,6 +4,9 @@ package main.java;
 import main.java.graphics.Models;
 import main.java.graphics.Renderer;
 import main.java.graphics.TexturedModel;
+import main.java.level.Level;
+import main.java.level.Player;
+import main.java.level.World;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
@@ -15,7 +18,7 @@ import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL46.glClearColor;
 
-public class Main implements Runnable {
+class Main implements Runnable {
 
     private static double frameRate;
     private Level level;
@@ -77,7 +80,7 @@ public class Main implements Runnable {
     }
 
     /**
-     * Renders all objects and scenes.
+     * Render all objects and scenes.
      */
     private void render() {
         Renderer.clear();

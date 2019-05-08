@@ -1,4 +1,4 @@
-package main.java;
+package main.java.level;
 
 import main.java.graphics.Models;
 import main.java.math.Vector3f;

@@ -1,5 +1,7 @@
 package main.java;
 
+import main.java.level.Player;
+import main.java.level.World;
 import main.java.math.Vector3f;
 import org.lwjgl.glfw.GLFWKeyCallback;
 

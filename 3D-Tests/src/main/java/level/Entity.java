@@ -1,4 +1,4 @@
-package main.java;
+package main.java.level;
 
 import main.java.graphics.TexturedModel;
 import main.java.math.Matrix4f;
@@ -43,7 +43,7 @@ public class Entity {
      * Sets the position of this object.
      * @param position the position, represented with a vector from the world origin.
      */
-    void setPosition(Vector3f position){
+    public void setPosition(Vector3f position){
         this.position = position;
         updateMatrix();
     }
@@ -52,7 +52,7 @@ public class Entity {
      * Adds a vector to the position of this object.
      * @param position the vector to add to the position.
      */
-    void addPosition(Vector3f position){
+    public void addPosition(Vector3f position){
         this.position.x += position.x;
         this.position.y += position.y;
         this.position.z += position.z;
@@ -80,7 +80,7 @@ public class Entity {
     /**
      * Updates the Model-View-Projection matrix with the current attribute values.
      */
-    void updateMatrix(){
+    public void updateMatrix(){
         this.matrix = new Matrix4f().MVP(this.position, this.rotation, this.scale);
     }
 
@@ -102,7 +102,7 @@ public class Entity {
      * Gets the position vector of this object.
      * @return the position vector.
      */
-    Vector3f getPosition(){
+    public Vector3f getPosition(){
         return new Vector3f(this.position.x, this.position.y, this.position.z);
     }
 

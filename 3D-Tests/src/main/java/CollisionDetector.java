@@ -1,6 +1,9 @@
 package main.java;
 
 import main.java.graphics.TexturedModel;
+import main.java.level.Entity;
+import main.java.level.Level;
+import main.java.level.Player;
 import main.java.math.Vector3f;
 
 class CollisionDetector {

@@ -1,4 +1,4 @@
-package main.java;
+package main.java.level;
 
 import main.java.graphics.Models;
 import main.java.math.Vector3f;
@@ -6,7 +6,7 @@ import main.java.math.Vector3f;
 /**
  * The player that is visible in the center of the screen.
  */
-class Player extends Entity {
+public class Player extends Entity {
 
     private double velocity;
 
@@ -32,7 +32,7 @@ class Player extends Entity {
      * @param x whether the player should move towards the positive or negative direction. If true, towards positive.
      * @param deltaTime the delta time from the update method in Main.
      */
-    void calculateXPosition(boolean x, double deltaTime){
+    public void calculateXPosition(boolean x, double deltaTime){
         if(x){
             addPosition(new Vector3f((float) (this.velocity * deltaTime), 0.0f));
         }else{
@@ -46,7 +46,7 @@ class Player extends Entity {
      * @param y whether the player should move towards the positive or negative direction. If true, towards positive.
      * @param deltaTime the delta time from the update method in Main.
      */
-    void calculateYPosition(boolean y, double deltaTime){
+    public void calculateYPosition(boolean y, double deltaTime){
         if(y){
             addPosition(new Vector3f(0.0f, (float) (this.velocity * deltaTime)));
         }else{
@@ -59,19 +59,19 @@ class Player extends Entity {
      * Set the velocity of this player.
      * @param velocity the velocity to set.
      */
-    void setVelocity(double velocity){
+    public void setVelocity(double velocity){
         this.velocity = velocity;
     }
 
-    float getWidth(){
+    public float getWidth(){
         return getTexturedModels().get(0).getAABB().getWidth();
     }
 
-    float getHeight(){
+    public float getHeight(){
         return getTexturedModels().get(0).getAABB().getHeight();
     }
 
-    Vector3f getMiddle() {
+    public Vector3f getMiddle() {
         return getTexturedModels().get(0).getAABB().getMiddle();
     }
 }

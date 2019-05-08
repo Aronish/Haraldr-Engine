@@ -50,37 +50,38 @@ public class Input extends GLFWKeyCallback {
      */
     static void moveCameraAndPlayer(double deltaTime, Player player){
         if(keys[GLFW_KEY_LEFT_SHIFT]){
-            Camera.velocity = 10.0d * Camera.scale;
-            player.setVelocity(10.0d);
+            player.setVelocity(10.0d, 10.0d);
         }else{
-            Camera.velocity = 5.0d * Camera.scale;
-            player.setVelocity(5.0d);
+            player.setVelocity(5.0d, 5.0d);
         }
         if(keys[GLFW_KEY_W]) {
-            Camera.calculateYPosition(true, deltaTime);
             player.calculateYPosition(true, deltaTime);
+            Camera.setPosition(player.getPosition().multiply(Camera.scale));
         }
         if(keys[GLFW_KEY_A]) {
-            Camera.calculateXPosition(false, deltaTime);
             player.calculateXPosition(false, deltaTime);
+            Camera.setPosition(player.getPosition().multiply(Camera.scale));
         }
         if(keys[GLFW_KEY_S]){
-            Camera.calculateYPosition(false, deltaTime);
             player.calculateYPosition(false, deltaTime);
+            Camera.setPosition(player.getPosition().multiply(Camera.scale));
         }
         if(keys[GLFW_KEY_D]) {
-            Camera.calculateXPosition(true, deltaTime);
             player.calculateXPosition(true, deltaTime);
+            Camera.setPosition(player.getPosition().multiply(Camera.scale));
         }
         if(keys[GLFW_KEY_R]){
-            Camera.setPosition(new Vector3f());
             player.setPosition(new Vector3f());
+            Camera.scale = 1.0f;
+            Camera.setPosition(new Vector3f());
         }
         if(keys[GLFW_KEY_UP]){
             Camera.calculateScale(true, deltaTime);
+            Camera.setPosition(player.getPosition().multiply(Camera.scale));
         }
         if(keys[GLFW_KEY_DOWN]){
             Camera.calculateScale(false, deltaTime);
+            Camera.setPosition(player.getPosition().multiply(Camera.scale));
         }
         if(keys[GLFW_KEY_M]){
             setRenderDebug(true);
@@ -90,7 +91,7 @@ public class Input extends GLFWKeyCallback {
         }
     }
 
-    public static void setRenderDebug(boolean shouldRenderDebug){
+    private static void setRenderDebug(boolean shouldRenderDebug){
         renderDebug = shouldRenderDebug;
     }
 

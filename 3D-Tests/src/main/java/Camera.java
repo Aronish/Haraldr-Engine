@@ -12,9 +12,10 @@ public class Camera{
     public static Matrix4f viewMatrix;
     private static Vector3f position;
     private static float rotation;
-    private static double scaleSpeed;
     static float scale;
-    static double velocity;
+
+    private static final float MIN_SCALE = 0.25f;
+    private static final double SCALE_SPEED = 1.0d;
 
     /**
      * Default constructor if no arguments are provided.
@@ -32,8 +33,6 @@ public class Camera{
         position = pos;
         rotation = rot;
         scale = scal;
-        velocity = 5.0f * scale;
-        scaleSpeed = 0.5d;
         calculateViewMatrix();
     }
 
@@ -44,39 +43,15 @@ public class Camera{
         viewMatrix = new Matrix4f().transform(position, rotation, scale, true);
     }
 
-    /**
-     * Calculates the x position based on the velocity and delta time.
-     * @param x whether the camera should move towards the positive or negative direction. If true, towards positive.
-     * @param deltaTime the delta time from the update method in Main.
-     */
-    static void calculateXPosition(boolean x, double deltaTime){
-        if(x){
-            position.x += velocity * deltaTime;
-        }else{
-            position.x -= velocity * deltaTime;
-        }
-        calculateViewMatrix();
-    }
-
-    /**
-     * Calculates the y position based on the velocity and delta time.
-     * @param y whether the camera should move towards the positive or negative direction. If true, towards positive.
-     * @param deltaTime the delta time from the update method in Main.
-     */
-    static void calculateYPosition(boolean y, double deltaTime){
-        if(y){
-            position.y += velocity * deltaTime;
-        }else{
-            position.y -= velocity * deltaTime;
-        }
-        calculateViewMatrix();
-    }
-
     static void calculateScale(boolean shouldIncrease, double deltaTime){
         if (shouldIncrease){
-            scale += scaleSpeed * deltaTime;
+            scale += SCALE_SPEED * scale * deltaTime;
         }else {
-            scale -= scaleSpeed * deltaTime;
+            if (scale > MIN_SCALE){
+                scale -= SCALE_SPEED * scale * deltaTime;
+            }else{
+                scale = MIN_SCALE;
+            }
         }
         calculateViewMatrix();
     }
@@ -95,13 +70,5 @@ public class Camera{
         position.y += pos.y;
         position.z += pos.z;
         calculateViewMatrix();
-    }
-
-    /**
-     * Gets the position of the camera.
-     * @return the position of the camera.
-     */
-    static Vector3f getPosition(){
-        return position;
     }
 }

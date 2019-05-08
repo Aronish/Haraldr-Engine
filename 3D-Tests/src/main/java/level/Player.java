@@ -8,7 +8,7 @@ import main.java.math.Vector3f;
  */
 public class Player extends Entity {
 
-    private double velocity;
+    private double velocityX, velocityY;
 
     /**
      * Default constructor if no arguments are provided.
@@ -25,7 +25,8 @@ public class Player extends Entity {
      */
     private Player(Vector3f position, float rotation, float scale){
         super(position, rotation, scale, Models.PLAYER);
-        this.velocity = 5.0d;
+        this.velocityX = 5.0d;
+        this.velocityY = 5.0d;
     }
     /**
      * Calculates the x position based on the velocity and delta time.
@@ -34,9 +35,9 @@ public class Player extends Entity {
      */
     public void calculateXPosition(boolean x, double deltaTime){
         if(x){
-            addPosition(new Vector3f((float) (this.velocity * deltaTime), 0.0f));
+            addPosition(new Vector3f((float) (this.velocityX * deltaTime), 0.0f));
         }else{
-            addPosition(new Vector3f((float) -(this.velocity * deltaTime), 0.0f));
+            addPosition(new Vector3f((float) -(this.velocityX * deltaTime), 0.0f));
         }
         this.updateMatrix();
     }
@@ -48,19 +49,19 @@ public class Player extends Entity {
      */
     public void calculateYPosition(boolean y, double deltaTime){
         if(y){
-            addPosition(new Vector3f(0.0f, (float) (this.velocity * deltaTime)));
+            addPosition(new Vector3f(0.0f, (float) (this.velocityY * deltaTime)));
         }else{
-            addPosition(new Vector3f(0.0f, (float) -(this.velocity * deltaTime)));
+            addPosition(new Vector3f(0.0f, (float) -(this.velocityY * deltaTime)));
         }
         this.updateMatrix();
     }
 
     /**
      * Set the velocity of this player.
-     * @param velocity the velocity to set.
      */
-    public void setVelocity(double velocity){
-        this.velocity = velocity;
+    public void setVelocity(double velocityX, double velocityY){
+        this.velocityX = velocityX;
+        this.velocityY = velocityY;
     }
 
     public float getWidth(){

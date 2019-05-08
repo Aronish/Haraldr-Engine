@@ -17,7 +17,6 @@ public class Line {
     private int matrixLocation;
 
     public Line(Vector3f position, Vector3f relativePosition, Vector3f entityPosition, Vector3f otherVertex){
-        position.printVector();
         Vector3f actualPosition = position.add(entityPosition).add(relativePosition);
         this.vertexArray = new VertexArray(new float[] {actualPosition.x, actualPosition.y, 0.0f, 0.0f});
         setOtherVertex(otherVertex);

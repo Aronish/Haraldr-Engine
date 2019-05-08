@@ -55,6 +55,10 @@ public class Vector3f {
         return new Vector3f(this.x - other.x, this.y - other.y, this.z - other.z);
     }
 
+    public Vector3f multiply(float scalar){
+        return new Vector3f(this.x * scalar, this.y * scalar, this.z * scalar);
+    }
+
     /**
      * Normalizes the vector. ! NOT SURE THIS IS GOOD !
      * @return the normalized vector.

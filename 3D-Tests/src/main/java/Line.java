@@ -16,13 +16,10 @@ public class Line {
     private Matrix4f matrix;
     private int matrixLocation;
 
-    public Line(Vector3f position, Vector3f relativePosition){
-        this(position, relativePosition, new Vector3f());
-    }
-
-    public Line(Vector3f position, Vector3f relativePosition, Vector3f otherVertex){
+    public Line(Vector3f position, Vector3f relativePosition, Vector3f entityPosition, Vector3f otherVertex){
         position.printVector();
-        this.vertexArray = new VertexArray(new float[] {position.x + relativePosition.x, position.y + relativePosition.y, 0.0f, 0.0f});
+        Vector3f actualPosition = position.add(entityPosition).add(relativePosition);
+        this.vertexArray = new VertexArray(new float[] {actualPosition.x, actualPosition.y, 0.0f, 0.0f});
         setOtherVertex(otherVertex);
         setShader();
         setMatrixLocation();

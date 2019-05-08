@@ -37,7 +37,7 @@ public class Renderer {
         }
     }
 
-    public static void render(Line line){
+    private static void render(Line line){
         line.getShader().use();
         line.setMatrixLocation();
         line.setUniformMatrix();
@@ -47,18 +47,7 @@ public class Renderer {
         line.getShader().unuse();
     }
 
-    public static void render(World world){
-        for (int texMod = 0; texMod < world.getTexturedModels().size(); texMod++){
-            world.getTexturedModels().get(texMod).getShader().use();
-            world.setMatrixLocation(texMod);
-            world.setUniformMatrix();
-            world.getTexturedModels().get(texMod).getVertexArray().bind();
-            world.getTexturedModels().get(texMod).getTexture().bind();
-            world.getTexturedModels().get(texMod).getVertexArray().draw();
-            world.getTexturedModels().get(texMod).getTexture().unbind();
-            world.getTexturedModels().get(texMod).getVertexArray().unbind();
-            world.getTexturedModels().get(texMod).getShader().unuse();
-        }
+    public static void renderDebugLines(World world){
         for (Line line : world.getDebugLines()){
             render(line);
         }

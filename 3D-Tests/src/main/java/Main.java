@@ -64,14 +64,15 @@ class Main implements Runnable {
      * @param deltaTime the delta time gotten from the timing circuit of the main loop. Used for physics.
      */
     private void update(double deltaTime) {
-        World world = level.getWorld();
         Player player = level.getPlayer();
-        Input.moveCameraAndPlayer(deltaTime, player, world);
+        Input.moveCameraAndPlayer(deltaTime, player);
         {//Collision Detection
-            for (int texMod = 0; texMod < world.getTexturedModels().size(); texMod++) {
-                TexturedModel texturedModel = world.getTexturedModels().get(texMod);
-                if (CollisionDetector.checkCollision(level, world, texturedModel)) {
-                    CollisionDetector.doCollision(CollisionDetector.getCollisionDirection(level, world, texturedModel), level, world, texturedModel);
+            for (World world : level.getWorlds()) {
+                for (int texMod = 0; texMod < world.getTexturedModels().size(); texMod++) {
+                    TexturedModel texturedModel = world.getTexturedModels().get(texMod);
+                    if (CollisionDetector.checkCollision(level, world, texturedModel)) {
+                        CollisionDetector.doCollision(CollisionDetector.getCollisionDirection(level, world, texturedModel), level, world, texturedModel);
+                    }
                 }
             }
         }

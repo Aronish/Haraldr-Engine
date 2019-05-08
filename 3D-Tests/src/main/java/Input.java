@@ -1,7 +1,6 @@
 package main.java;
 
 import main.java.level.Player;
-import main.java.level.World;
 import main.java.math.Vector3f;
 import org.lwjgl.glfw.GLFWKeyCallback;
 
@@ -46,7 +45,7 @@ public class Input extends GLFWKeyCallback {
      * @param deltaTime the delta time gotten from the timing circuit in Main.
      * @param player the player that should move with the camera.
      */
-    static void moveCameraAndPlayer(double deltaTime, Player player, World world){
+    static void moveCameraAndPlayer(double deltaTime, Player player){
         if(keys[GLFW_KEY_LEFT_SHIFT]){
             Camera.velocity = 20.0d * Camera.scale;
             player.setVelocity(20.0d);
@@ -73,7 +72,6 @@ public class Input extends GLFWKeyCallback {
         if(keys[GLFW_KEY_R]){
             Camera.setPosition(new Vector3f());
             player.setPosition(new Vector3f());
-            world.updateMatrix();
         }
         if(keys[GLFW_KEY_UP]){
             Camera.calculateScale(true, deltaTime);

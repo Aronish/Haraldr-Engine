@@ -33,7 +33,7 @@ public class World extends Entity {
         super(position, rotation, scale, Models.getDIRT_LAYER(), Models.getGRASS_LAYER());
         this.debugLines = new ArrayList<>();
         for (TexturedModel texturedModel : super.getTexturedModels().values()){
-            this.debugLines.add(new Line(texturedModel.getAABB().getMiddle(), texturedModel.getRelativePosition(), playerPosition));
+            this.debugLines.add(new Line(texturedModel.getAABB().getMiddle(), texturedModel.getRelativePosition(), super.getPosition(), playerPosition));
         }
     }
 

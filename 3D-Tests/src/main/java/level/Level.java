@@ -27,6 +27,8 @@ public class Level {
     public void renderLevel(){
         Renderer.render(this.world);
         Renderer.render(this.world2);
+        Renderer.renderDebugLines(this.world);
+        Renderer.renderDebugLines(this.world2);
         Renderer.render(this.player);
     }
 
@@ -36,5 +38,10 @@ public class Level {
 
     public Player getPlayer(){
         return this.player;
+    }
+
+    //TEMP
+    public World[] getWorlds(){
+        return new World[] {this.world, this.world2};
     }
 }

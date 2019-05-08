@@ -1,5 +1,6 @@
 package main.java.level;
 
+import main.java.Input;
 import main.java.graphics.Renderer;
 import main.java.math.Vector3f;
 
@@ -27,8 +28,10 @@ public class Level {
     public void renderLevel(){
         Renderer.render(this.world);
         Renderer.render(this.world2);
-        Renderer.renderDebugLines(this.world);
-        Renderer.renderDebugLines(this.world2);
+        if (Input.shouldRenderDebug()){
+            Renderer.renderDebugLines(this.world);
+            Renderer.renderDebugLines(this.world2);
+        }
         Renderer.render(this.player);
     }
 

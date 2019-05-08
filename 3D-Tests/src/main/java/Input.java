@@ -10,6 +10,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_N;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
@@ -24,6 +26,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 public class Input extends GLFWKeyCallback {
 
     private static boolean[] keys = new boolean[65536];
+    private static boolean renderDebug = false;
 
     @Override
     public void invoke(long window, int key, int scancode, int action, int mods){
@@ -47,8 +50,8 @@ public class Input extends GLFWKeyCallback {
      */
     static void moveCameraAndPlayer(double deltaTime, Player player){
         if(keys[GLFW_KEY_LEFT_SHIFT]){
-            Camera.velocity = 20.0d * Camera.scale;
-            player.setVelocity(20.0d);
+            Camera.velocity = 10.0d * Camera.scale;
+            player.setVelocity(10.0d);
         }else{
             Camera.velocity = 5.0d * Camera.scale;
             player.setVelocity(5.0d);
@@ -79,5 +82,19 @@ public class Input extends GLFWKeyCallback {
         if(keys[GLFW_KEY_DOWN]){
             Camera.calculateScale(false, deltaTime);
         }
+        if(keys[GLFW_KEY_M]){
+            setRenderDebug(true);
+        }
+        if(keys[GLFW_KEY_N]){
+            setRenderDebug(false);
+        }
+    }
+
+    public static void setRenderDebug(boolean shouldRenderDebug){
+        renderDebug = shouldRenderDebug;
+    }
+
+    public static boolean shouldRenderDebug(){
+        return renderDebug;
     }
 }

@@ -6,6 +6,11 @@ import main.java.level.Level;
 import main.java.level.Player;
 import main.java.math.Vector3f;
 
+import static main.java.EnumDirection.EAST;
+import static main.java.EnumDirection.NORTH;
+import static main.java.EnumDirection.SOUTH;
+import static main.java.EnumDirection.WEST;
+
 class CollisionDetector {
 
     static boolean checkCollision(Level level, Entity entity, TexturedModel texturedModel){
@@ -15,48 +20,45 @@ class CollisionDetector {
         return collisionX && collisionY;
     }
 
-    static EnumDirection getCollisionDirection(Level level, Entity entity, TexturedModel texturedModel){
+    static CollisionDataMap getCollisionDirection(Level level, Entity entity, TexturedModel texturedModel){
         Player player = level.getPlayer();
         float topCollision = (entity.getPosition().y + texturedModel.getRelativePosition().y) - (player.getPosition().y - player.getHeight());
         float rightCollision = (entity.getPosition().x + texturedModel.getRelativePosition().x) + texturedModel.getAABB().getWidth() - player.getPosition().x;
         float leftCollision = player.getPosition().x + player.getWidth() - (entity.getPosition().x + texturedModel.getRelativePosition().x);
         float bottomCollision = player.getPosition().y - ((entity.getPosition().y + texturedModel.getRelativePosition().y) - texturedModel.getAABB().getHeight());
+        CollisionDataMap collisionDataMap = new CollisionDataMap();
         if (topCollision < bottomCollision && topCollision < leftCollision && topCollision < rightCollision ) {
-            return EnumDirection.NORTH;
+            collisionDataMap.setData(NORTH, topCollision);
         }
         if (rightCollision < leftCollision && rightCollision < topCollision && rightCollision < bottomCollision ) {
-            return EnumDirection.EAST;
+            collisionDataMap.setData(EAST, rightCollision);
         }
         if (leftCollision < rightCollision && leftCollision < topCollision && leftCollision < bottomCollision) {
-            return EnumDirection.WEST;
+            collisionDataMap.setData(WEST, leftCollision);
         }
         if (bottomCollision < topCollision && bottomCollision < leftCollision && bottomCollision < rightCollision) {
-            return EnumDirection.SOUTH;
+            collisionDataMap.setData(SOUTH, bottomCollision);
         }
-        return EnumDirection.INVALIDDIR;
+        return collisionDataMap;
     }
 
-    static void doCollision(EnumDirection direction, Level level, Entity entity, TexturedModel texturedModel) {
-        float inside;
+    static void doCollision(CollisionDataMap collisionDataMap, Level level, Entity entity, TexturedModel texturedModel) {
+        float inside = collisionDataMap.getInside();
         Player player = level.getPlayer();
-        switch (direction) {
+        switch (collisionDataMap.getCollisionDirection()) {
             case NORTH:
-                inside = (entity.getPosition().y + texturedModel.getRelativePosition().y) - (player.getPosition().y - player.getHeight());
                 player.addPosition(new Vector3f(0.0f, inside));
                 Camera.addPosition(new Vector3f(0.0f, inside * Camera.scale));
                 break;
             case EAST:
-                inside = (entity.getPosition().x + texturedModel.getRelativePosition().x) + texturedModel.getAABB().getWidth() - player.getPosition().x;
                 player.addPosition(new Vector3f(inside, 0.0f));
                 Camera.addPosition(new Vector3f(inside * Camera.scale, 0.0f));
                 break;
             case WEST:
-                inside = player.getPosition().x + player.getWidth() - (entity.getPosition().x + texturedModel.getRelativePosition().x);
                 player.addPosition(new Vector3f(-inside, 0.0f));
                 Camera.addPosition(new Vector3f(-inside * Camera.scale, 0.0f));
                 break;
             case SOUTH:
-                inside = player.getPosition().y - ((entity.getPosition().y + texturedModel.getRelativePosition().y) - texturedModel.getAABB().getHeight());
                 player.addPosition(new Vector3f(0.0f, -inside));
                 Camera.addPosition(new Vector3f(0.0f, -inside * Camera.scale));
                 break;

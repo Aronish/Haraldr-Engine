@@ -1,6 +1,6 @@
 //java -cp "C:\Users\Aron\Documents\Java Projects\3D-Tests\lwjgl\*";"C:\Users\Aron\Documents\Java Projects\3D-Tests\src" main/Main
 package main.java;
-
+//TODO Start development on physics engine. Gravity is most important.
 import main.java.graphics.Models;
 import main.java.graphics.Renderer;
 import main.java.graphics.TexturedModel;
@@ -50,7 +50,7 @@ class Main implements Runnable {
         /*---OpenGL code won't work before this---*/
         glfwSwapInterval(1);
         glfwShowWindow(window.getWindow());
-        glClearColor(0.0f, 0.6f, 0.75f, 1.0f);
+        glClearColor(0.2f, 0.6f, 0.65f, 1.0f);
 
         frameRate = 60;
         new CollisionDetector();

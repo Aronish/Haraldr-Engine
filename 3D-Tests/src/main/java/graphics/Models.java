@@ -27,7 +27,7 @@ public class Models {
      * Initializes the non-final models.
      */
     public Models(){
-        initGrassLayer(new Vector3f(0.0f, 10.0f), grassLength, grassDepth);
+        initGrassLayer(new Vector3f(), grassLength, grassDepth);
         initDirtLayer(new Vector3f(0.0f, -grassDepth), dirtLength, dirtDepth);
     }
 

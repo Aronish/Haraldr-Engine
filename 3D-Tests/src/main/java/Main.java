@@ -4,7 +4,6 @@ package main.java;
 import main.java.graphics.Models;
 import main.java.graphics.Renderer;
 import main.java.graphics.TexturedModel;
-import main.java.math.Vector3f;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
@@ -18,14 +17,9 @@ import static org.lwjgl.opengl.GL46.glClearColor;
 
 public class Main implements Runnable {
 
-    private double frameRate;
-    private Player player;
-    private World world;
-    private Line line;
-    private Line line2;
-
+    private static double frameRate;
+    private Level level;
     protected Thread main;
-
     static Window window;
 
     /**
@@ -51,20 +45,15 @@ public class Main implements Runnable {
         window = new Window(1280, 720, false);
         GL.createCapabilities();
         /*---OpenGL code won't work before this---*/
-        //glEnable(GL_DEPTH_TEST);
-        glfwSwapInterval(1);// Enable v-sync
+        glfwSwapInterval(1);
         glfwShowWindow(window.getWindow());
         glClearColor(0.0f, 0.6f, 0.75f, 1.0f);
 
         frameRate = 60;
-        new Models(); //Just here to initialize
+        new CollisionDetector();
+        new Models();
         new Camera();
-        player = new Player();
-        world = new World();
-        TexturedModel temp = world.getTexturedModels().get(0);
-        TexturedModel temp2 = world.getTexturedModels().get(1);
-        line = new Line(temp.getAABB().getMiddle(), temp.getRelativePosition());
-        line2 = new Line(temp2.getAABB().getMiddle(), temp2.getRelativePosition());
+        level = new Level();
     }
 
     /**
@@ -72,22 +61,18 @@ public class Main implements Runnable {
      * @param deltaTime the delta time gotten from the timing circuit of the main loop. Used for physics.
      */
     private void update(double deltaTime) {
-        //Not sure if I need to check for player movement yet. (Well, obv. not with a game of this caliber but...)
+        World world = level.getWorld();
+        Player player = level.getPlayer();
         Input.moveCameraAndPlayer(deltaTime, player, world);
         {//Collision Detection
             for (int texMod = 0; texMod < world.getTexturedModels().size(); texMod++) {
                 TexturedModel texturedModel = world.getTexturedModels().get(texMod);
-                if (checkCollision(world, texturedModel)) {
-                    doCollision(getCollisionDirection(world, texturedModel), world, texturedModel);
+                if (CollisionDetector.checkCollision(level, world, texturedModel)) {
+                    CollisionDetector.doCollision(CollisionDetector.getCollisionDirection(level, world, texturedModel), level, world, texturedModel);
                 }
             }
         }
-        line.setOtherVertex(player.getPosition());
-        line.updateMatrix();
-        line2.setOtherVertex(player.getPosition());
-        line2.updateMatrix();
-        player.updateMatrix();
-        world.updateMatrix();
+        level.updateLevel();
         glfwPollEvents();
     }
 
@@ -96,12 +81,7 @@ public class Main implements Runnable {
      */
     private void render() {
         Renderer.clear();
-        {//Objects further back are rendered first
-            Renderer.render(world);
-            Renderer.render(player);
-            Renderer.render(line);
-            Renderer.render(line2);
-        }
+        level.renderLevel();
         glfwSwapBuffers(window.getWindow());
     }
 
@@ -126,67 +106,7 @@ public class Main implements Runnable {
         glfwTerminate();
     }
 
-    private boolean checkCollision(Entity entity, TexturedModel texturedModel){
-        boolean collisionX = player.getPosition().x + player.getWidth() > entity.getPosition().x + texturedModel.getRelativePosition().x && entity.getPosition().x + texturedModel.getRelativePosition().x + texturedModel.getAABB().getWidth() > player.getPosition().x;
-        boolean collisionY = player.getPosition().y - player.getHeight() < entity.getPosition().y + texturedModel.getRelativePosition().y && entity.getPosition().y + texturedModel.getRelativePosition().y - texturedModel.getAABB().getHeight() < player.getPosition().y;
-        return collisionX && collisionY;
-    }
-
-    private EnumDirection getCollisionDirection(Entity entity, TexturedModel texturedModel){
-        float topCollision = (entity.getPosition().y + texturedModel.getRelativePosition().y) - (player.getPosition().y - player.getHeight());
-        float rightCollision = (entity.getPosition().x + texturedModel.getRelativePosition().x) + texturedModel.getAABB().getWidth() - player.getPosition().x;
-        float leftCollision = player.getPosition().x + player.getWidth() - (entity.getPosition().x + texturedModel.getRelativePosition().x);
-        float bottomCollision = player.getPosition().y - ((entity.getPosition().y + texturedModel.getRelativePosition().y) - texturedModel.getAABB().getHeight());
-        if (topCollision < bottomCollision && topCollision < leftCollision && topCollision < rightCollision ) {
-            return EnumDirection.NORTH;
-        }
-        if (rightCollision < leftCollision && rightCollision < topCollision && rightCollision < bottomCollision ) {
-            return EnumDirection.EAST;
-        }
-        if (leftCollision < rightCollision && leftCollision < topCollision && leftCollision < bottomCollision) {
-            return EnumDirection.WEST;
-        }
-        if (bottomCollision < topCollision && bottomCollision < leftCollision && bottomCollision < rightCollision) {
-            return EnumDirection.SOUTH;
-        }
-        return EnumDirection.INVALIDDIR;
-    }
-
-    private void doCollision(EnumDirection direction, Entity entity, TexturedModel texturedModel) {
-        float inside;
-        switch (direction) {
-            case NORTH:
-                inside = (entity.getPosition().y + texturedModel.getRelativePosition().y) - (player.getPosition().y - player.getHeight());
-                player.addPosition(new Vector3f(0.0f, inside));
-                Camera.addPosition(new Vector3f(0.0f, inside * Camera.scale));
-                break;
-            case EAST:
-                inside = (entity.getPosition().x + texturedModel.getRelativePosition().x) + texturedModel.getAABB().getWidth() - player.getPosition().x;
-                player.addPosition(new Vector3f(inside, 0.0f));
-                Camera.addPosition(new Vector3f(inside * Camera.scale, 0.0f));
-                break;
-            case WEST:
-                inside = player.getPosition().x + player.getWidth() - (entity.getPosition().x + texturedModel.getRelativePosition().x);
-                player.addPosition(new Vector3f(-inside, 0.0f));
-                Camera.addPosition(new Vector3f(-inside * Camera.scale, 0.0f));
-                break;
-            case SOUTH:
-                inside = player.getPosition().y - ((entity.getPosition().y + texturedModel.getRelativePosition().y) - texturedModel.getAABB().getHeight());
-                player.addPosition(new Vector3f(0.0f, -inside));
-                Camera.addPosition(new Vector3f(0.0f, -inside * Camera.scale));
-                break;
-        }
-    }
-
     public static void main(String[] args) {
         new Main().start();
-    }
-
-    public enum EnumDirection {
-        NORTH,
-        EAST,
-        WEST,
-        SOUTH,
-        INVALIDDIR
     }
 }

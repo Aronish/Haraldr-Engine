@@ -5,6 +5,7 @@ import main.java.math.Vector3f;
 
 /**
  * Main world object, on which everything should be located to be inside the world.
+ * For future development style, this class should manage everything to do with the world in a level.
  */
 class World extends Entity {
 

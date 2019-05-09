@@ -80,7 +80,7 @@ public class Entity {
     /**
      * Updates the Model-View-Projection matrix with the current attribute values.
      */
-    public void updateMatrix(){
+    void updateMatrix(){
         this.matrix = new Matrix4f().MVP(this.position, this.rotation, this.scale);
     }
 

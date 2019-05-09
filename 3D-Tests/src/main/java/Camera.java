@@ -43,6 +43,12 @@ public class Camera{
         viewMatrix = new Matrix4f().transform(position, rotation, scale, true);
     }
 
+    /**
+     * Calculates the scale/zoom based on the delta time from Main#update. Also takes scale into account to make the speed constant.
+     * Constants are defined in the top of this class.
+     * @param shouldIncrease whether the scale should increase or not. If true, it increases, meaning zooming in.
+     * @param deltaTime the delta time used to make the scaling uniform.
+     */
     static void calculateScale(boolean shouldIncrease, double deltaTime){
         if (shouldIncrease){
             scale += SCALE_SPEED * scale * deltaTime;
@@ -65,6 +71,10 @@ public class Camera{
         calculateViewMatrix();
     }
 
+    /**
+     * Adds the specified vector to the current position.
+     * @param pos the position to add.
+     */
     public static void addPosition(Vector3f pos){
         position.x += pos.x;
         position.y += pos.y;

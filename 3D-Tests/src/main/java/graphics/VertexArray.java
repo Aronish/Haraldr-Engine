@@ -84,6 +84,10 @@ public class VertexArray {
         glBindVertexArray(0);
     }
 
+    /**
+     * Constructor with just vertex data. Used for creating lines.
+     * @param vertices the vertices of the line. Just 4 floats/2 vertices.
+     */
     public VertexArray(float[] vertices){ //LINE
         int[] indices = {
             0, 1

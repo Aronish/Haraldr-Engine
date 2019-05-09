@@ -8,7 +8,7 @@ import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 
 /**
- * Handles rendering of Entity's.
+ * Handles rendering of game objects.
  */
 public class Renderer {
 
@@ -37,6 +37,10 @@ public class Renderer {
         }
     }
 
+    /**
+     * Prepares and renders a line.
+     * @param line the line to render.
+     */
     private static void render(Line line){
         line.getShader().use();
         line.setMatrixLocation();
@@ -47,6 +51,10 @@ public class Renderer {
         line.getShader().unuse();
     }
 
+    /**
+     * Renders debug lines of the Entity. (In this case (maybe temporary), just specifically a World).
+     * @param world the world whose debug lines to render.
+     */
     public static void renderDebugLines(World world){
         for (Line line : world.getDebugLines()){
             render(line);

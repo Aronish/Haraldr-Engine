@@ -31,6 +31,13 @@ public class Models {
         initDirtLayer(new Vector3f(0.0f, -grassDepth), dirtLength, dirtDepth);
     }
 
+    /**
+     * Creates the vertex and texture coordinate data for a rectangle with specified width height and relative position within the parent entity.
+     * @param relativePosition the relative position of the parent entity.
+     * @param width the width of the model.
+     * @param height the height of the model.
+     * @return a HashMap of string keys and the corresponding data for easily seeing what data is what. (Rather than indices in an array).
+     */
     private static HashMap<String, float[]> createVertexData(Vector3f relativePosition, float width, float height){
         float[] vertices = {
             relativePosition.x + width,     relativePosition.y,

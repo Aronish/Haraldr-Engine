@@ -13,11 +13,6 @@ public class TexturedModel{
     private Texture texture;
     private AABB aabb;
 
-    TexturedModel(float[] vertices, String shaderPath){
-        setVertexArray(vertices);
-        setShader(shaderPath);
-    }
-
     /**
      * Constructor with just the paths for the shader and texture.
      * @param shaderPath the file path for the shaders.
@@ -53,10 +48,6 @@ public class TexturedModel{
         this.vertexArray = new VertexArray();
     }
 
-    private void setVertexArray(float[] indices){
-        this.vertexArray = new VertexArray(indices);
-    }
-
     /**
      * Sets the vertex array for this object. Contains the vertices, indices and texture coordinates
      * along with their associated OpenGL buffers and pointers.
@@ -85,6 +76,10 @@ public class TexturedModel{
         this.texture = new Texture(filePath);
     }
 
+    /**
+     * Gets the relative position of this TexturedModel (the offset inside the parent Entity).
+     * @return the relative position.
+     */
     public Vector3f getRelativePosition(){
         return this.relativePosition;
     }
@@ -94,7 +89,7 @@ public class TexturedModel{
      * Used to retrieve information about the vertices and rarely the indices and texture coordinates.
      * @return the vertex array object.
      */
-    public VertexArray getVertexArray(){
+    VertexArray getVertexArray(){
         return this.vertexArray;
     }
 
@@ -114,6 +109,10 @@ public class TexturedModel{
         return this.texture;
     }
 
+    /**
+     * Gets the bounding box of this TexturedModel.
+     * @return the bounding box.
+     */
     public AABB getAABB(){
         return this.aabb;
     }

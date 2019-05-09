@@ -1,24 +1,33 @@
 package main.java.physics;
 
+/**
+ * Simple data pair with direction and overlap distance used for collision detection.
+ */
 class CollisionDataMap {
 
-    private EnumDirection collisionDirection;
-    private float inside;
+    private final EnumDirection collisionDirection;
+    private final float inside;
 
-    CollisionDataMap(){
-        this.collisionDirection = EnumDirection.INVALIDDIR;
-        this.inside = 0.0f;
-    }
-
-    void setData(EnumDirection collisionDirection, float inside){
-        this.collisionDirection = collisionDirection;
+    /**
+     * Sets default data. Unnecessary.
+     */
+    CollisionDataMap(EnumDirection direction, float inside){
+        this.collisionDirection = direction;
         this.inside = inside;
     }
 
+    /**
+     * Gets the direction.
+     * @return the direction
+     */
     EnumDirection getCollisionDirection(){
         return this.collisionDirection;
     }
 
+    /**
+     * Gets the overlap distance.
+     * @return the overlap distance.
+     */
     float getInside(){
         return this.inside;
     }

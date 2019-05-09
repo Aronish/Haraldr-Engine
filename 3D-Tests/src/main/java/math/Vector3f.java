@@ -47,14 +47,29 @@ public class Vector3f {
         this.z = (float) z;
     }
 
+    /**
+     * Add the other vector to this vector.
+     * @param other the other vector to add.
+     * @return the sum Vector.
+     */
     public Vector3f add(Vector3f other){
         return new Vector3f(this.x + other.x, this.y + other.y, this.z + other.z);
     }
 
+    /**
+     * Subtract the other vector from this vector.
+     * @param other the other vector to subtract.
+     * @return the difference Vector.
+     */
     public Vector3f subtract(Vector3f other){
         return new Vector3f(this.x - other.x, this.y - other.y, this.z - other.z);
     }
 
+    /**
+     * Multiply this Vector with a scalar.
+     * @param scalar the scalar to multiply with.
+     * @return the product Vector.
+     */
     public Vector3f multiply(float scalar){
         return new Vector3f(this.x * scalar, this.y * scalar, this.z * scalar);
     }
@@ -72,6 +87,11 @@ public class Vector3f {
         return new Vector3f(this.x *= norm, this.y *= norm, this.z *= norm);
     }
 
+    /**
+     * Calculates the distance between two (origin) Vector's.
+     * @param other the other Vector.
+     * @return the distance.
+     */
     public double getDistance(Vector3f other){
         Vector3f between = other.subtract(this);
         return Math.sqrt(Math.pow(between.x, 2) + Math.pow(between.y, 2));

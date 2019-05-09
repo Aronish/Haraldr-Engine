@@ -91,10 +91,17 @@ public class Input extends GLFWKeyCallback {
         }
     }
 
+    /**
+     * Sets whether debug info should be rendered.
+     * @param shouldRenderDebug whether debug info should be rendered.
+     */
     private static void setRenderDebug(boolean shouldRenderDebug){
         renderDebug = shouldRenderDebug;
     }
 
+    /**
+     * Gets whether debug info should be rendered.
+     */
     public static boolean shouldRenderDebug(){
         return renderDebug;
     }

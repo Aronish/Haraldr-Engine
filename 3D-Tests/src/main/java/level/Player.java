@@ -4,7 +4,7 @@ import main.java.graphics.Models;
 import main.java.math.Vector3f;
 
 /**
- * The player that is visible in the center of the screen.
+ * The player that you move around in the world.
  */
 public class Player extends Entity {
 
@@ -19,8 +19,8 @@ public class Player extends Entity {
 
     /**
      * Constructor with parameters for position, rotation and scale.
-     * @param position the position of the object. An origin vector. Bottom left corner.
-     * @param rotation the rotation around the z-axis, in degrees.
+     * @param position the position of the player. Origion vector to the top left corner of the model.
+     * @param rotation the rotation around the z-axis, in degrees. CW.
      * @param scale the scale multiplier of this object.
      */
     private Player(Vector3f position, float rotation, float scale){
@@ -31,7 +31,7 @@ public class Player extends Entity {
     /**
      * Calculates the x position based on the velocity and delta time.
      * @param x whether the player should move towards the positive or negative direction. If true, towards positive.
-     * @param deltaTime the delta time from the update method in Main.
+     * @param deltaTime the delta time from Main#update.
      */
     public void calculateXPosition(boolean x, double deltaTime){
         if(x){
@@ -45,7 +45,7 @@ public class Player extends Entity {
     /**
      * Calculates the y position based on the velocity and delta time.
      * @param y whether the player should move towards the positive or negative direction. If true, towards positive.
-     * @param deltaTime the delta time from the update method in Main.
+     * @param deltaTime the delta time from Main#update.
      */
     public void calculateYPosition(boolean y, double deltaTime){
         if(y){
@@ -64,14 +64,26 @@ public class Player extends Entity {
         this.velocityY = velocityY;
     }
 
+    /**
+     * Gets the width of the player's bounding box.
+     * @return the width of the bounding box.
+     */
     public float getWidth(){
         return getTexturedModels().get(0).getAABB().getWidth();
     }
 
+    /**
+     * Gets the height of the player's bounding box.
+     * @return the height of the bounding box.
+     */
     public float getHeight(){
         return getTexturedModels().get(0).getAABB().getHeight();
     }
 
+    /**
+     * Gets the middle of the player's bounding box.
+     * @return the middle of the bounding box.
+     */
     public Vector3f getMiddle() {
         return getTexturedModels().get(0).getAABB().getMiddle();
     }

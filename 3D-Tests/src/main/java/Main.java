@@ -66,18 +66,17 @@ class Main implements Runnable {
      */
     private void update(double deltaTime) {
         Player player = level.getPlayer();
+        World world = level.getWorld();
         Input.moveCameraAndPlayer(deltaTime, player);
         {//Collision Detection
-            for (World world : level.getWorlds()) {
-                for (int texMod = 0; texMod < world.getTexturedModels().size(); texMod++) {
-                    TexturedModel texturedModel = world.getTexturedModels().get(texMod);
-                    if (CollisionDetector.checkCollision(level, world, texturedModel)) {
-                        CollisionDetector.doCollision(CollisionDetector.getCollisionDirection(level, world, texturedModel), level);
-                    }
+            for (int texMod = 0; texMod < world.getTexturedModels().size(); texMod++) {
+                TexturedModel texturedModel = world.getTexturedModels().get(texMod);
+                if (CollisionDetector.checkCollision(level, world, texturedModel)) {
+                    CollisionDetector.doCollision(CollisionDetector.getCollisionDirection(level, world, texturedModel), level);
                 }
             }
         }
-        level.updateLevel();
+        level.updateLevel(deltaTime);
         glfwPollEvents();
     }
 

@@ -66,7 +66,7 @@ public class Camera{
      * Sets the position of the camera.
      * @param pos the new position vector.
      */
-    static void setPosition(Vector3f pos){
+    public static void setPosition(Vector3f pos){
         position = pos.add(new Vector3f(0.5f, -0.5f));
         calculateViewMatrix();
     }

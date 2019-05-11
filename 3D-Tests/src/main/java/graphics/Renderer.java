@@ -2,7 +2,6 @@ package main.java.graphics;
 
 import main.java.level.Entity;
 import main.java.debug.Line;
-import main.java.level.World;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
@@ -41,7 +40,7 @@ public class Renderer {
      * Prepares and renders a line.
      * @param line the line to render.
      */
-    private static void render(Line line){
+    public static void render(Line line){
         line.getShader().use();
         line.setMatrixLocation();
         line.setUniformMatrix();
@@ -49,15 +48,5 @@ public class Renderer {
         line.getVertexArray().draw();
         line.getVertexArray().unbind();
         line.getShader().unuse();
-    }
-
-    /**
-     * Renders debug lines of the Entity. (In this case (maybe temporary), just specifically a World).
-     * @param world the world whose debug lines to render.
-     */
-    public static void renderDebugLines(World world){
-        for (Line line : world.getDebugLines()){
-            render(line);
-        }
     }
 }

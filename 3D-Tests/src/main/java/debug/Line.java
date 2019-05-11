@@ -24,12 +24,10 @@ public class Line {
      * @param position the position of the line, i.e. the first vertex.
      * @param relativePosition a relative position to adjust the position. Mainly if it's in the center of a TexturedModel that has an offset.
      * @param entityPosition the position of the whole entity in the world.
-     * @param otherVertex the other vertex to draw the line to.
      */
-    public Line(Vector3f position, Vector3f relativePosition, Vector3f entityPosition, Vector3f otherVertex){
+    public Line(Vector3f position, Vector3f relativePosition, Vector3f entityPosition){
         Vector3f actualPosition = position.add(entityPosition).add(relativePosition);
         this.vertexArray = new VertexArray(new float[] {actualPosition.x, actualPosition.y, 0.0f, 0.0f});
-        setOtherVertex(otherVertex);
         setShader();
         setMatrixLocation();
         updateMatrix();

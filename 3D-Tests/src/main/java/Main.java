@@ -1,12 +1,9 @@
 //java -cp "C:\Users\Aron\Documents\Java Projects\3D-Tests\lwjgl\*";"C:\Users\Aron\Documents\Java Projects\3D-Tests\src" main/Main
 package main.java;
-//TODO Start development on physics engine. Gravity is most important.
+
 import main.java.graphics.Models;
 import main.java.graphics.Renderer;
-import main.java.graphics.TexturedModel;
 import main.java.level.Level;
-import main.java.level.Player;
-import main.java.level.World;
 import main.java.physics.CollisionDetector;
 import org.lwjgl.opengl.GL;
 
@@ -19,7 +16,7 @@ import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL46.glClearColor;
 
-class Main implements Runnable {
+class Main implements Runnable{
 
     private static double frameRate;
     private Level level;
@@ -37,7 +34,7 @@ class Main implements Runnable {
     /**
      * The run method of the thread. Initializes and starts the main loop.
      */
-    public void run() {
+    public void run(){
         init();
         loop();
     }
@@ -45,7 +42,7 @@ class Main implements Runnable {
     /**
      * Initialize the game and all it's objects and scenes.
      */
-    private void init() {
+    private void init(){
         window = new Window(1280, 720, false);
         GL.createCapabilities();
         /*---OpenGL code won't work before this---*/
@@ -64,18 +61,7 @@ class Main implements Runnable {
      * Updates object attributes, checks for user input, calculates game logic and checks for collisions.
      * @param deltaTime the delta time gotten from the timing circuit of the main loop. Used for physics.
      */
-    private void update(double deltaTime) {
-        Player player = level.getPlayer();
-        World world = level.getWorld();
-        Input.moveCameraAndPlayer(deltaTime, player);
-        {//Collision Detection
-            for (int texMod = 0; texMod < world.getTexturedModels().size(); texMod++) {
-                TexturedModel texturedModel = world.getTexturedModels().get(texMod);
-                if (CollisionDetector.checkCollision(level, world, texturedModel)) {
-                    CollisionDetector.doCollision(CollisionDetector.getCollisionDirection(level, world, texturedModel), level);
-                }
-            }
-        }
+    private void update(double deltaTime){
         level.updateLevel(deltaTime);
         glfwPollEvents();
     }
@@ -83,7 +69,7 @@ class Main implements Runnable {
     /**
      * Render all objects and scenes.
      */
-    private void render() {
+    private void render(){
         Renderer.clear();
         level.renderLevel();
         glfwSwapBuffers(window.getWindow());
@@ -93,9 +79,9 @@ class Main implements Runnable {
     private double currentTime = glfwGetTime();
 
     /**
-     * The main loop which handles timing, updating and rendering.
+     * The main game loop. Uses variable update time step and fixed rendering time step (I think).
      */
-    private void loop() {
+    private void loop(){
         while (!glfwWindowShouldClose(window.getWindow())) {
             double newTime = glfwGetTime();
             double frameTime = newTime - currentTime;
@@ -110,7 +96,7 @@ class Main implements Runnable {
         glfwTerminate();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         new Main().start();
     }
 }

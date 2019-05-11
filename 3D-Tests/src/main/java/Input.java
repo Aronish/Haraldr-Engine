@@ -49,7 +49,7 @@ public class Input extends GLFWKeyCallback {
      * @param deltaTime the delta time gotten from the timing circuit in Main.
      * @param player the player that should move with the camera.
      */
-    static void moveCameraAndPlayer(double deltaTime, Player player){
+    public static void processInput(double deltaTime, Player player){
         if(keys[GLFW_KEY_LEFT_SHIFT]){
             player.setSpeed(10.0d, 10.0d);
         }else{

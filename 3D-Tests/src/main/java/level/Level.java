@@ -14,7 +14,7 @@ public class Level {
 
     private World world;
     private Player player;
-    //private DebugLines debugLines;
+    private DebugLines debugLines;
 
     /**
      * Constructs a Level with the base elements like a Player and World.
@@ -22,8 +22,8 @@ public class Level {
     public Level(){
         this.player = new Player();
         this.world = new World();
-        //this.debugLines = new DebugLines();
-        //this.debugLines.addDebugLines(this.world);
+        this.debugLines = new DebugLines();
+        this.debugLines.addDebugLines(this.world);
     }
 
     /**
@@ -32,13 +32,13 @@ public class Level {
     public void updateLevel(double deltaTime){
         Input.processInput(deltaTime, this.player);
         doCollisions();
-        /*if (Input.shouldRenderDebug()){
+        if (Input.isDebugEnabled()){
             this.debugLines.setPlayerEnd(this.player.getPosition());
             this.debugLines.update();
-        }*/
+        }
         this.world.updateMatrix();
-        Camera.setPosition(this.player.getPosition());
         this.player.updateMatrix(deltaTime);
+        Camera.setPosition(this.player.getPosition()); //Must be updated after Player's matrix has been updated.
     }
 
     /**
@@ -46,9 +46,9 @@ public class Level {
      */
     public void renderLevel(){
         Renderer.render(this.world);
-        /*if (Input.shouldRenderDebug()){
+        if (Input.isDebugEnabled()){
             this.debugLines.render();
-        }*/
+        }
         Renderer.render(this.player);
     }
 

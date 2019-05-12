@@ -1,5 +1,6 @@
 package main.java.level;
 //TODO FIX JAVADOC
+import main.java.debug.IHasDebug;
 import main.java.graphics.Models;
 import main.java.math.Vector3f;
 
@@ -7,7 +8,7 @@ import main.java.math.Vector3f;
  * Main world object, on which everything should be located to be inside the world.
  * For future development style, this class should manage everything to do with the world in a level.
  */
-class World extends Entity {
+class World extends Entity implements IHasDebug {
 
     /**
      * Constructor with the position of the Player in the same Level as this World.

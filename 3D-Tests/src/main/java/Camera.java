@@ -30,7 +30,7 @@ public class Camera{
      * @param rot the rotation of the camera around the z-axis, in degrees.
      */
     private Camera(Vector3f pos, float rot, float scal){
-        position = pos.add(new Vector3f(0.5f, -0.5f));
+        position = pos;
         rotation = rot;
         scale = scal;
         calculateViewMatrix();
@@ -67,7 +67,7 @@ public class Camera{
      * @param pos the new position vector.
      */
     public static void setPosition(Vector3f pos){
-        position = pos.add(new Vector3f(0.5f, -0.5f));
+        position = pos;
         calculateViewMatrix();
     }
 

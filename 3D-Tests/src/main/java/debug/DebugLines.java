@@ -1,5 +1,5 @@
 package main.java.debug;
-
+//TODO ADD JAVADOC
 import main.java.graphics.Renderer;
 import main.java.graphics.TexturedModel;
 import main.java.level.Entity;

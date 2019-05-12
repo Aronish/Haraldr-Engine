@@ -46,7 +46,6 @@ public class Player extends Entity {
         }else{
             addPosition(new Vector3f((float) -(this.speedX * deltaTime), 0.0f));
         }
-        this.updateMatrix();
     }
 
     /**
@@ -60,7 +59,6 @@ public class Player extends Entity {
         }else{
             addPosition(new Vector3f(0.0f, (float) -(this.speedY * deltaTime)));
         }
-        this.updateMatrix();
     }
 
     private void calculateMovement(double deltaTime){

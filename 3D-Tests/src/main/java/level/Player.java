@@ -67,7 +67,7 @@ public class Player extends Entity {
     private void calculateMovement(double deltaTime){
         if (this.velocityX > 1.0d){
             addPosition(new Vector3f((float) (this.velocityX * deltaTime), 0.0f));
-            this.velocityX -= this.velocityX * deltaTime * this.JUMP_SPEED_Y;
+            this.velocityX -= this.velocityX * deltaTime * this.JUMP_SPEED_X;
             Logger.setInfoLevel();
             Logger.log(this.velocityX);
         }else{
@@ -75,7 +75,7 @@ public class Player extends Entity {
         }
         if (this.velocityY > 1.0d){
             addPosition(new Vector3f(0.0f, (float) (this.velocityY * deltaTime)));
-            this.velocityY -= this.velocityY * deltaTime * this.JUMP_SPEED_X;
+            this.velocityY -= this.velocityY * deltaTime * this.JUMP_SPEED_Y;
         }else{
             this.velocityY = 0.0d;
         }

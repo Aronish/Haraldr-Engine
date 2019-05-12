@@ -75,7 +75,7 @@ public class Input extends GLFWKeyCallback {
             player.setVelocity(0.0d, 0.0d);
             player.setPosition(new Vector3f());
             Camera.scale = 1.0f;
-            Camera.setPosition(new Vector3f());
+            Camera.setPosition(player.getPosition());
         }
         if(keys[GLFW_KEY_UP]){
             Camera.calculateScale(true, deltaTime);

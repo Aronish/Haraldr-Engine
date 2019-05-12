@@ -68,7 +68,7 @@ class Main implements Runnable {
         Player player = level.getPlayer();
         World world = level.getWorld();
         Input.moveCameraAndPlayer(deltaTime, player);
-        {//Collision Detection
+        {//Collision Detection//TODO Move to Level
             for (int texMod = 0; texMod < world.getTexturedModels().size(); texMod++) {
                 TexturedModel texturedModel = world.getTexturedModels().get(texMod);
                 if (CollisionDetector.checkCollision(level, world, texturedModel)) {

@@ -38,7 +38,6 @@ public class Level {
         }
         this.world.updateMatrix();
         this.player.updateMatrix(deltaTime);
-        Camera.setPosition(this.player.getPosition()); //Must be updated after Player's matrix has been updated.
     }
 
     /**

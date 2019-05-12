@@ -68,8 +68,6 @@ public class Player extends Entity {
         if (this.velocityX > 1.0d){
             addPosition(new Vector3f((float) (this.velocityX * deltaTime), 0.0f));
             this.velocityX -= this.velocityX * deltaTime * this.JUMP_SPEED_X;
-            Logger.setInfoLevel();
-            Logger.log(this.velocityX);
         }else{
             this.velocityX = 0.0d;
         }

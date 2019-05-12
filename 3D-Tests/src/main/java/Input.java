@@ -27,7 +27,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 public class Input extends GLFWKeyCallback {
 
     private static boolean[] keys = new boolean[65536];
-    private static boolean renderDebug = false;
+    private static boolean debugEnabled = false;
 
     @Override
     public void invoke(long window, int key, int scancode, int action, int mods){
@@ -49,7 +49,7 @@ public class Input extends GLFWKeyCallback {
      * @param deltaTime the delta time gotten from the timing circuit in Main.
      * @param player the player that should move with the camera.
      */
-    static void moveCameraAndPlayer(double deltaTime, Player player){
+    public static void processInput(double deltaTime, Player player){
         if(keys[GLFW_KEY_LEFT_SHIFT]){
             player.setSpeed(10.0d, 10.0d);
         }else{
@@ -86,10 +86,10 @@ public class Input extends GLFWKeyCallback {
             Camera.setPosition(player.getPosition().multiply(Camera.scale));
         }
         if(keys[GLFW_KEY_M]){
-            setRenderDebug(true);
+            setDebugEnabled(true);
         }
         if(keys[GLFW_KEY_N]){
-            setRenderDebug(false);
+            setDebugEnabled(false);
         }
         if(keys[GLFW_KEY_SPACE]){
             player.setVelocity(2.0f, 6.0f);
@@ -98,16 +98,16 @@ public class Input extends GLFWKeyCallback {
 
     /**
      * Sets whether debug info should be rendered.
-     * @param shouldRenderDebug whether debug info should be rendered.
+     * @param debugEnabled whether debug info should be rendered.
      */
-    private static void setRenderDebug(boolean shouldRenderDebug){
-        renderDebug = shouldRenderDebug;
+    private static void setDebugEnabled(boolean debugEnabled){
+        Input.debugEnabled = debugEnabled;
     }
 
     /**
      * Gets whether debug info should be rendered.
      */
-    public static boolean shouldRenderDebug(){
-        return renderDebug;
+    public static boolean isDebugEnabled(){
+        return debugEnabled;
     }
 }

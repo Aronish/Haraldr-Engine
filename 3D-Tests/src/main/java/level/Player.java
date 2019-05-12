@@ -1,6 +1,5 @@
 package main.java.level;
 
-import main.java.debug.Logger;
 import main.java.graphics.Models;
 import main.java.math.Vector3f;
 
@@ -25,7 +24,7 @@ public class Player extends Entity {
     /**
      * Constructor with parameters for position, rotation and scale.
      * @param position the position of the player. Origion vector to the top left corner of the model.
-     * @param rotation the rotation around the z-axis, in degrees. CW.
+     * @param rotation the rotation around the z-axis, in degrees. CCW.
      * @param scale the scale multiplier of this object.
      */
     private Player(Vector3f position, float rotation, float scale){
@@ -47,7 +46,6 @@ public class Player extends Entity {
         }else{
             addPosition(new Vector3f((float) -(this.speedX * deltaTime), 0.0f));
         }
-        this.updateMatrix();
     }
 
     /**
@@ -61,7 +59,6 @@ public class Player extends Entity {
         }else{
             addPosition(new Vector3f(0.0f, (float) -(this.speedY * deltaTime)));
         }
-        this.updateMatrix();
     }
 
     private void calculateMovement(double deltaTime){

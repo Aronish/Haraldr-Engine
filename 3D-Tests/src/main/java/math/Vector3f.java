@@ -1,5 +1,7 @@
 package main.java.math;
 
+import main.java.debug.Logger;
+
 /**
  * A simple class to represent a 3D vector of floats.
  */
@@ -101,6 +103,7 @@ public class Vector3f {
      * Prints this vector for debugging purposes.
      */
     public void printVector(){
-        System.out.println("X: " + this.x + " Y: " + this.y + " Z: " + this.z);
+        Logger.setInfoLevel();
+        Logger.log("X: " + this.x + " Y: " + this.y + " Z: " + this.z);
     }
 }

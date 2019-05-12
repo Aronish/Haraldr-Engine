@@ -4,7 +4,8 @@ import main.java.graphics.TexturedModel;
 import main.java.math.Matrix4f;
 import main.java.math.Vector3f;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
@@ -14,12 +15,12 @@ import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
  */
 public class Entity {
 
-    private HashMap<Integer, TexturedModel> texturedModels; // 0 = First
+    private ArrayList<TexturedModel> texturedModels;
     private Vector3f position;
     private Matrix4f matrix;
-    private int matrixLocation;
-    private float rotation;
     private float scale;
+    private float rotation;
+    private int matrixLocation;
 
     /**
      * Creates a new Entity with the specified properties.
@@ -29,13 +30,11 @@ public class Entity {
      * @param texturedModels TexturedModel's that this Entity should contain. Variable amount.
      */
     public Entity(Vector3f position, float rotation, float scale, TexturedModel ... texturedModels){
-        this.texturedModels = new HashMap<>();
-        for (int texMod = 0; texMod < texturedModels.length; texMod++){
-            this.texturedModels.put(texMod, texturedModels[texMod]);
-        }
         this.position = position;
         this.rotation = rotation;
         this.scale = scale;
+        this.texturedModels = new ArrayList<>();
+        this.texturedModels.addAll(Arrays.asList(texturedModels));
         updateMatrix();
     }
 
@@ -110,7 +109,7 @@ public class Entity {
      * Gets the TexturedModels.
      * @return a HashMap<Integer, TexturedModel> with the TexturedModel's
      */
-    public HashMap<Integer, TexturedModel> getTexturedModels(){
+    public ArrayList<TexturedModel> getTexturedModels(){
         return this.texturedModels;
     }
 }

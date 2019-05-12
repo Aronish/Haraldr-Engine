@@ -1,8 +1,11 @@
 package main.java.level;
-//TODO Should probably have a grid system for efficient collision detection later.
+//TODO FIX JAVADOC
 import main.java.Camera;
 import main.java.Input;
+import main.java.debug.DebugLines;
 import main.java.graphics.Renderer;
+import main.java.graphics.TexturedModel;
+import main.java.physics.CollisionDetector;
 
 /**
  * Main Level class to house everything contained in one level. (Should really only have one World Object)...
@@ -11,22 +14,31 @@ public class Level {
 
     private World world;
     private Player player;
+    private DebugLines debugLines;
 
     /**
      * Constructs a Level with the base elements like a Player and World.
      */
     public Level(){
         this.player = new Player();
-        this.world = new World(this.player.getPosition());
+        this.world = new World();
+        this.debugLines = new DebugLines();
+        this.debugLines.addDebugLines(this.world);
     }
 
     /**
      * Updates the matrices of the game objects in this Level.
      */
     public void updateLevel(double deltaTime){
-        this.world.updateMatrix(this.player.getPosition());
-        Camera.setPosition(this.player.getPosition());
+        Input.processInput(deltaTime, this.player);
+        doCollisions();
+        if (Input.isDebugEnabled()){
+            this.debugLines.setPlayerEnd(this.player.getPosition());
+            this.debugLines.update();
+        }
+        this.world.updateMatrix();
         this.player.updateMatrix(deltaTime);
+        Camera.setPosition(this.player.getPosition()); //Must be updated after Player's matrix has been updated.
     }
 
     /**
@@ -34,25 +46,18 @@ public class Level {
      */
     public void renderLevel(){
         Renderer.render(this.world);
-        if (Input.shouldRenderDebug()){
-            Renderer.renderDebugLines(this.world);
+        if (Input.isDebugEnabled()){
+            this.debugLines.render();
         }
         Renderer.render(this.player);
     }
 
-    /**
-     * Gets the World in this Level.
-     * @return the World object.
-     */
-    public World getWorld(){
-        return this.world;
-    }
-
-    /**
-     * Gets the Player in this Level.
-     * @return the Player.
-     */
-    public Player getPlayer(){
-        return this.player;
+    private void doCollisions(){
+        for (int texMod = 0; texMod < this.world.getTexturedModels().size(); texMod++) {
+            TexturedModel texturedModel = this.world.getTexturedModels().get(texMod);
+            if (CollisionDetector.checkCollision(this.world, texturedModel, this.player)) {
+                CollisionDetector.doCollision(CollisionDetector.getCollisionDirection(this.world, texturedModel, this.player), this.player);
+            }
+        }
     }
 }

@@ -65,10 +65,12 @@ public class Input extends GLFWKeyCallback {
             //TODO May be useless, could be used for ducking: player.calculateYPosition(false, deltaTime);
         }
         if(keys[GLFW_KEY_D]) {
-            //TODO Walk right: player.calculateXPosition(true, deltaTime);
+            player.setForce(5.0d);
+        }else{
+            player.resetMotion();
         }
         if(keys[GLFW_KEY_R]){
-            //Reset Velocity
+            player.setVelocity(0.0d);
             player.setPosition(new Vector3f());
             Camera.scale = 1.0f;
             Camera.setPosition(player.getPosition());

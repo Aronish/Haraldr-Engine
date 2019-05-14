@@ -60,7 +60,6 @@ public class Camera{
                 scale = MIN_SCALE;
             }
         }
-        setPosition(player.getPosition().multiply(scale));
         calculateViewMatrix();
     }
 

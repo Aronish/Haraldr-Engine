@@ -1,6 +1,7 @@
 package main.java.level;
 
 import main.java.Camera;
+import main.java.debug.Logger;
 import main.java.graphics.TexturedModel;
 import main.java.math.Vector3f;
 
@@ -22,19 +23,42 @@ public class MovableEntity extends Entity {
     MovableEntity(Vector3f position, float rotation, float scale, double mass, TexturedModel ... texturedModels){
         super(position, rotation, scale, texturedModels);
         this.mass = mass;
-        this.force = 0.05d;
+        this.force = 0.0d;
         this.acceleration = this.force / this.mass;
     }
-    //TODO Continue developing force system.
+    //TODO Continue developing force system. Override if Player specific. E.g. WALK_SPEED
     private void test(double deltaTime){
-        this.velocity += this.acceleration * deltaTime;
-        addPosition(new Vector3f(0.0f, (float) -this.velocity));
-        Camera.setPosition(getPosition());
+        if (this.velocity < 0.2d){
+            this.velocity += this.acceleration * deltaTime;
+        }
+        addPosition(new Vector3f((float) this.velocity, 0.0f));
     }
 
-    void updateMatrix(double deltaTime) {
+    void update(double deltaTime) {
         test(deltaTime);
+        Camera.setPosition(getPosition().multiply(Camera.scale));
         super.updateMatrix();
+    }
+
+    public void setVelocity(double velocity){
+        this.velocity = velocity;
+    }
+
+    public void setForce(double force){
+        this.force = force;
+        this.acceleration = this.force / this.mass;
+        Logger.setInfoLevel();
+        Logger.log(this.velocity);
+    }
+
+    public void setWalking(double deltaTime, double velocity){
+        addPosition(new Vector3f((float) (velocity * deltaTime), 0.0f));
+    }
+
+    public void resetMotion(){
+        this.force = 0.0d;
+        this.acceleration = 0.0d;
+        this.velocity = 0.0d;
     }
 
     /**

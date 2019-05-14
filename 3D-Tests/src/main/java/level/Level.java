@@ -4,6 +4,7 @@ import main.java.Input;
 import main.java.debug.DebugLines;
 import main.java.graphics.Renderer;
 import main.java.graphics.TexturedModel;
+import main.java.math.Vector3f;
 import main.java.physics.CollisionDetector;
 
 /**
@@ -19,7 +20,7 @@ public class Level {
      * Constructs a Level with the base elements like a Player and World.
      */
     public Level(){
-        this.player = new Player();
+        this.player = new Player(new Vector3f(0.0f, -5.0f));
         this.world = new World();
         this.debugLines = new DebugLines();
         this.debugLines.addDebugLines(this.world);
@@ -36,7 +37,7 @@ public class Level {
             this.debugLines.update();
         }
         this.world.updateMatrix();
-        this.player.updateMatrix(deltaTime);
+        this.player.update(deltaTime);
     }
 
     /**

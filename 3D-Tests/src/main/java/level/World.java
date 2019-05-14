@@ -1,5 +1,5 @@
 package main.java.level;
-//TODO FIX JAVADOC
+
 import main.java.debug.IHasDebug;
 import main.java.graphics.Models;
 import main.java.math.Vector3f;

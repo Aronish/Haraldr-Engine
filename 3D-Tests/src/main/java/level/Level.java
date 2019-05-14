@@ -1,6 +1,5 @@
 package main.java.level;
-//TODO FIX JAVADOC
-import main.java.Camera;
+
 import main.java.Input;
 import main.java.debug.DebugLines;
 import main.java.graphics.Renderer;

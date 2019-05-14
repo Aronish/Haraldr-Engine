@@ -28,7 +28,7 @@ public class Models {
      */
     public Models(){
         initGrassLayer(new Vector3f(), grassLength, grassDepth);
-        initDirtLayer(new Vector3f(0.0f, -grassDepth), dirtLength, dirtDepth);
+        initDirtLayer(new Vector3f(10.0f, -grassDepth), dirtLength, dirtDepth);
     }
 
     /**

@@ -1,5 +1,6 @@
 package main.java;
 
+import main.java.level.Player;
 import main.java.math.Matrix4f;
 import main.java.math.Vector3f;
 
@@ -49,7 +50,7 @@ public class Camera{
      * @param shouldIncrease whether the scale should increase or not. If true, it increases, meaning zooming in.
      * @param deltaTime the delta time used to make the scaling uniform.
      */
-    static void calculateScale(boolean shouldIncrease, double deltaTime){
+    static void calculateScale(boolean shouldIncrease, double deltaTime, Player player){
         if (shouldIncrease){
             scale += SCALE_SPEED * scale * deltaTime;
         }else {
@@ -59,6 +60,7 @@ public class Camera{
                 scale = MIN_SCALE;
             }
         }
+        setPosition(player.getPosition().multiply(scale));
         calculateViewMatrix();
     }
 

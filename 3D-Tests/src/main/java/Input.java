@@ -51,39 +51,33 @@ public class Input extends GLFWKeyCallback {
      */
     public static void processInput(double deltaTime, Player player){
         if(keys[GLFW_KEY_LEFT_SHIFT]){
-            player.setSpeed(10.0d, 10.0d);
+            //TODO Sprint
         }else{
-            player.setSpeed(5.0d, 5.0d);
+            //TODO Unsprint
         }
         if(keys[GLFW_KEY_W]) {
-            player.calculateYPosition(true, deltaTime);
-            Camera.setPosition(player.getPosition().multiply(Camera.scale));
+            //TODO Not sure what to use 'W' for: player.calculateYPosition(true, deltaTime);
         }
         if(keys[GLFW_KEY_A]) {
-            player.calculateXPosition(false, deltaTime);
-            Camera.setPosition(player.getPosition().multiply(Camera.scale));
+            //TODO Walk left: player.calculateXPosition(false, deltaTime);
         }
         if(keys[GLFW_KEY_S]){
-            player.calculateYPosition(false, deltaTime);
-            Camera.setPosition(player.getPosition().multiply(Camera.scale));
+            //TODO May be useless, could be used for ducking: player.calculateYPosition(false, deltaTime);
         }
         if(keys[GLFW_KEY_D]) {
-            player.calculateXPosition(true, deltaTime);
-            Camera.setPosition(player.getPosition().multiply(Camera.scale));
+            //TODO Walk right: player.calculateXPosition(true, deltaTime);
         }
         if(keys[GLFW_KEY_R]){
-            player.setVelocity(0.0d, 0.0d);
+            //Reset Velocity
             player.setPosition(new Vector3f());
             Camera.scale = 1.0f;
             Camera.setPosition(player.getPosition());
         }
         if(keys[GLFW_KEY_UP]){
-            Camera.calculateScale(true, deltaTime);
-            Camera.setPosition(player.getPosition().multiply(Camera.scale));
+            Camera.calculateScale(true, deltaTime, player);
         }
         if(keys[GLFW_KEY_DOWN]){
-            Camera.calculateScale(false, deltaTime);
-            Camera.setPosition(player.getPosition().multiply(Camera.scale));
+            Camera.calculateScale(false, deltaTime, player);
         }
         if(keys[GLFW_KEY_M]){
             setDebugEnabled(true);
@@ -92,7 +86,7 @@ public class Input extends GLFWKeyCallback {
             setDebugEnabled(false);
         }
         if(keys[GLFW_KEY_SPACE]){
-            player.setVelocity(2.0f, 6.0f);
+            //TODO Jump
         }
     }
 

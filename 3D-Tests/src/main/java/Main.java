@@ -1,6 +1,6 @@
 //java -cp "C:\Users\Aron\Documents\Java Projects\3D-Tests\lwjgl\*";"C:\Users\Aron\Documents\Java Projects\3D-Tests\src" main/Main
 package main.java;
-
+//TODO Change physics style to vector forces.
 import main.java.graphics.Models;
 import main.java.graphics.Renderer;
 import main.java.level.Level;

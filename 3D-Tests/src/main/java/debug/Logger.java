@@ -35,6 +35,11 @@ public class Logger {
         logLevel = LogLevels.ERROR;
     }
 
+    /**
+     * Logs a message with the currently set log level.
+     * @param message the message to log. Accepts any type.
+     * @param <T> the type of the message.
+     */
     public static <T> void log(T message){
         System.out.print(logLevel.toString() + ": ");
         System.out.println(message);
@@ -43,7 +48,7 @@ public class Logger {
     /**
      * Contains the available log levels.
      */
-    public enum LogLevels {
+    private enum LogLevels {
         ERROR("[ERROR]"),
         WARNING("[WARNING]"),
         INFO("[INFO]");

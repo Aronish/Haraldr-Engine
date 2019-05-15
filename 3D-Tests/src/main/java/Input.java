@@ -1,6 +1,7 @@
 package main.java;
 
 import main.java.level.Player;
+import main.java.math.Vector2d;
 import main.java.math.Vector3f;
 import org.lwjgl.glfw.GLFWKeyCallback;
 
@@ -53,24 +54,26 @@ public class Input extends GLFWKeyCallback {
         if(keys[GLFW_KEY_LEFT_SHIFT]){
             //TODO Sprint
         }else{
-            //TODO Unsprint
+
         }
         if(keys[GLFW_KEY_W]) {
             //TODO Not sure what to use 'W' for: player.calculateYPosition(true, deltaTime);
         }
         if(keys[GLFW_KEY_A]) {
-            //TODO Walk left: player.calculateXPosition(false, deltaTime);
+            player.setForce(new Vector2d(-5.0d, 0.0d), deltaTime);
+        }else{
+            player.setForce(deltaTime);
         }
         if(keys[GLFW_KEY_S]){
-            //TODO May be useless, could be used for ducking: player.calculateYPosition(false, deltaTime);
+            //TODO Use for ducking (potentially).
         }
         if(keys[GLFW_KEY_D]) {
-            player.setForce(5.0d);
+            player.setForce(new Vector2d(5.0d, 0.0d), deltaTime);
         }else{
-            player.resetMotion();
+            player.setForce(deltaTime);
         }
         if(keys[GLFW_KEY_R]){
-            player.setVelocity(0.0d);
+            player.setVelocity(new Vector2d(0.0d, 0.0d));
             player.setPosition(new Vector3f());
             Camera.scale = 1.0f;
             Camera.setPosition(player.getPosition());

@@ -112,4 +112,28 @@ public class Entity {
     public ArrayList<TexturedModel> getTexturedModels(){
         return this.texturedModels;
     }
+
+    /**
+     * Gets the width of the player's bounding box.
+     * @return the width of the bounding box.
+     */
+    public float getWidth(){
+        return getTexturedModels().get(0).getAABB().getWidth();
+    }
+
+    /**
+     * Gets the height of the player's bounding box.
+     * @return the height of the bounding box.
+     */
+    public float getHeight(){
+        return getTexturedModels().get(0).getAABB().getHeight();
+    }
+
+    /**
+     * Gets the middle of the player's bounding box.
+     * @return the middle of the bounding box.
+     */
+    public Vector3f getMiddle() {
+        return getTexturedModels().get(0).getAABB().getMiddle();
+    }
 }

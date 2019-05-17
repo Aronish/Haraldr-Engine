@@ -1,15 +1,21 @@
 package main.java.level;
 
+import main.java.Camera;
 import main.java.debug.Logger;
 import main.java.graphics.Models;
+import main.java.math.Vector2d;
 import main.java.math.Vector3f;
+import main.java.physics.EnumPlayerMovementType;
+import main.java.physics.IHasGravity;
 
 /**
  * The player that you move around in the world.
  */
-public class Player extends MovableEntity {
+public class Player extends MovableEntity implements IHasGravity {
 
-    private static final double WALK_SPEED = 5.0d;
+    private static final double WALK_SPEED = 7.0d;
+    private EnumPlayerMovementType movementType;
+    private EnumPlayerMovementType lastMovementType;
 
     /**
      * Default constructor if no arguments are provided.
@@ -33,19 +39,39 @@ public class Player extends MovableEntity {
      * @param scale the scale multiplier of this Player.
      */
     private Player(Vector3f position, float rotation, float scale){
-        super(position, rotation, scale, 1.0d, Models.PLAYER);
+        super(position, rotation, scale, 0.5d, Models.PLAYER);
+        this.movementType = EnumPlayerMovementType.STAND;
+        this.lastMovementType = EnumPlayerMovementType.STAND;
+    }
+
+    public void setMovementType(EnumPlayerMovementType movementType){
+        this.movementType = movementType;
+        this.lastMovementType = movementType;
+    }
+
+    public void setStanding(){
+        this.movementType = EnumPlayerMovementType.STAND;
     }
 
     @Override
     public void calculateMotion(double deltaTime) {
-        if (this.forceX != 0.0d){
-            this.velocityX += this.accelerationX;
-        }else{
-            this.velocityX -= this.accelerationX;
-            Logger.setInfoLevel();
-            Logger.log("Decreases" + this.accelerationX);
+        if (this.movementType != EnumPlayerMovementType.STAND && Math.abs(this.getVelocity().getX()) < WALK_SPEED) {
+            this.getVelocity().addX(this.getAcceleration().getX());
+        }else if (this.lastMovementType == EnumPlayerMovementType.LEFT){
+            if (this.getVelocity().getX() < 0.0d){
+                this.getVelocity().subtractX(this.getAcceleration().getX());
+            }else{
+                resetMotionX();
+            }
+        }else if (this.lastMovementType == EnumPlayerMovementType.RIGHT){
+            if (this.getVelocity().getX() > 0.0d){
+                this.getVelocity().subtractX(this.getAcceleration().getX());
+            }else{
+                resetMotionX();
+            }
         }
-        addPosition(new Vector3f((float) (this.velocityX * deltaTime), 0.0f));
+        addPosition(new Vector3f((float) (this.getVelocity().getX() * deltaTime), 0.0f));
+        Camera.setPosition(getPosition().multiply(Camera.scale));
     }
 }
 /*

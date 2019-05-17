@@ -51,7 +51,7 @@ public class Level {
         Renderer.render(this.player);
     }
 
-    private void doCollisions(){
+    private void doCollisions() {
         for (int texMod = 0; texMod < this.world.getTexturedModels().size(); texMod++) {
             TexturedModel texturedModel = this.world.getTexturedModels().get(texMod);
             if (CollisionDetector.checkCollision(this.world, texturedModel, this.player)) {

@@ -1,16 +1,15 @@
 package main.java.level;
 
-import main.java.debug.Logger;
 import main.java.graphics.TexturedModel;
 import main.java.math.Vector2d;
 import main.java.math.Vector3f;
 
 public abstract class MovableEntity extends Entity {
 
-    protected double mass;
-    protected double velocityX, velocityY;
-    protected double accelerationX, accelerationY;
-    protected double forceX, forceY;
+    private double mass;
+    private Vector2d force;
+    private Vector2d velocity;
+    private Vector2d acceleration;
 
     MovableEntity(Vector3f position, float rotation, float scale, TexturedModel ... texturedModels){
         this(position, rotation, scale, 1.0d, texturedModels);
@@ -19,58 +18,56 @@ public abstract class MovableEntity extends Entity {
     MovableEntity(Vector3f position, float rotation, float scale, double mass, TexturedModel ... texturedModels){
         super(position, rotation, scale, texturedModels);
         this.mass = mass;
-        this.velocityX = 0.0d;
-        this.velocityY = 0.0d;
-        this.accelerationX = 0.0d;
-        this.accelerationY = 0.0d;
+        this.force = new Vector2d();
+        this.velocity = new Vector2d();
+        this.acceleration = new Vector2d();
     }
 
     public abstract void calculateMotion(double deltaTime);
 
-    void update(double deltaTime) {
-        calculateMotion(deltaTime);
+    void update(double deltaTime){
+        //Set forces before motion calculation
+        calculateMotion(deltaTime); //Calculate motion
+        resetForces(); //Reset forces
         super.updateMatrix();
     }
 
-    public void setVelocity(Vector2d velocities){
-        this.velocityX = velocities.getX();
-        this.velocityY = velocities.getY();
+    public void setVelocity(Vector2d velocity){
+        this.velocity = velocity;
     }
 
-    public void setForce(double deltaTime){
-        setForce(new Vector2d(0.0d, 0.0d), deltaTime);
+    public void resetForces(){
+        this.force.setX();
+        this.force.setY();
     }
 
-    public void setForce(Vector2d forces, double deltaTime){
-        this.forceX = forces.getX();
-        this.forceY = forces.getY();
-        this.accelerationX = (this.forceX / this.mass) * deltaTime;
-        this.accelerationY = (this.forceY / this.mass) * deltaTime;
-        Logger.setInfoLevel();
-        Logger.log(this.accelerationX + " " + this.accelerationY);
+    public void setForces(Vector2d force, double deltaTime){
+        this.force = force;
+        this.acceleration.setX((this.force.getX() / this.mass) * deltaTime);
+        this.acceleration.setY((this.force.getY() / this.mass) * deltaTime);
     }
 
-    /**
-     * Gets the width of the player's bounding box.
-     * @return the width of the bounding box.
-     */
-    public float getWidth(){
-        return getTexturedModels().get(0).getAABB().getWidth();
+    public void resetMotionX(){
+        this.force.setX();
+        this.velocity.setX();
+        this.acceleration.setX();
     }
 
-    /**
-     * Gets the height of the player's bounding box.
-     * @return the height of the bounding box.
-     */
-    public float getHeight(){
-        return getTexturedModels().get(0).getAABB().getHeight();
+    public void resetMotionY(){
+        this.force.setY();
+        this.velocity.setY();
+        this.acceleration.setY();
     }
 
-    /**
-     * Gets the middle of the player's bounding box.
-     * @return the middle of the bounding box.
-     */
-    public Vector3f getMiddle() {
-        return getTexturedModels().get(0).getAABB().getMiddle();
+    public Vector2d getForce() {
+        return this.force;
+    }
+
+    public Vector2d getVelocity(){
+        return this.velocity;
+    }
+
+    public Vector2d getAcceleration() {
+        return this.acceleration;
     }
 }

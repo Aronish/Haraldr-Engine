@@ -1,5 +1,6 @@
 package main.java;
 
+import main.java.debug.Logger;
 import main.java.level.Player;
 import main.java.math.Vector2d;
 import main.java.math.Vector3f;
@@ -14,6 +15,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_N;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
@@ -48,19 +50,16 @@ public class Input extends GLFWKeyCallback {
      * @param player the player that should move with the camera.
      */
     public static void processInput(double deltaTime, Player player){
-        player.setStanding();
         if(keys[GLFW_KEY_A]) {
-            player.setMovementType(EnumPlayerMovementType.LEFT);
-            player.setForces(new Vector2d(-10.0d, 0.0d), deltaTime);
+
         }
         if(keys[GLFW_KEY_D]) {
-            player.setMovementType(EnumPlayerMovementType.RIGHT);
-            player.setForces(new Vector2d(10.0d, 0.0d), deltaTime);
+
         }
         if(keys[GLFW_KEY_R]){
-            player.resetForces();
-            player.setVelocity(new Vector2d(0.0d, 0.0d));
             player.setPosition(new Vector3f());
+            player.resetForces();
+            player.resetMotionX();
             Camera.scale = 1.0f;
             Camera.setPosition(player.getPosition());
         }

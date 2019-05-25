@@ -11,7 +11,7 @@ import main.java.physics.IHasGravity;
 /**
  * The player that you move around in the world.
  */
-public class Player extends MovableEntity implements IHasGravity {
+public class Player extends MovableEntity {
 
     private static final double WALK_SPEED = 7.0d;
     private EnumPlayerMovementType movementType;
@@ -39,51 +39,28 @@ public class Player extends MovableEntity implements IHasGravity {
      * @param scale the scale multiplier of this Player.
      */
     private Player(Vector3f position, float rotation, float scale){
-        super(position, rotation, scale, 0.5d, Models.PLAYER);
+        super(position, rotation, scale, Models.PLAYER);
         this.movementType = EnumPlayerMovementType.STAND;
         this.lastMovementType = EnumPlayerMovementType.STAND;
-    }
-
-    public void setMovementType(EnumPlayerMovementType movementType){
-        this.movementType = movementType;
-        this.lastMovementType = movementType;
-    }
-
-    public void setStanding(){
-        this.movementType = EnumPlayerMovementType.STAND;
     }
 
     @Override
     public void calculateMotion(double deltaTime) {
         if (this.movementType != EnumPlayerMovementType.STAND && Math.abs(this.getVelocity().getX()) < WALK_SPEED) {
-            this.getVelocity().addX(this.getAcceleration().getX());
         }else if (this.lastMovementType == EnumPlayerMovementType.LEFT){
             if (this.getVelocity().getX() < 0.0d){
-                this.getVelocity().subtractX(this.getAcceleration().getX());
+                //TODO Fix walking and change over to only velocities.
             }else{
-                resetMotionX();
+                this.movementType = EnumPlayerMovementType.STAND;
             }
         }else if (this.lastMovementType == EnumPlayerMovementType.RIGHT){
             if (this.getVelocity().getX() > 0.0d){
-                this.getVelocity().subtractX(this.getAcceleration().getX());
+
             }else{
-                resetMotionX();
+                this.movementType = EnumPlayerMovementType.STAND;
             }
         }
         addPosition(new Vector3f((float) (this.getVelocity().getX() * deltaTime), 0.0f));
         Camera.setPosition(getPosition().multiply(Camera.scale));
     }
 }
-/*
-private void test(double deltaTime){
-    Logger.setInfoLevel();
-    Logger.log(this.velocity);
-    if (this.velocity < 5.0d && this.force != 0.0d) {
-        this.velocity += this.acceleration;
-    }else if(this.velocity > 0.0d && this.force == 0.0d){
-        this.velocity -= this.acceleration;
-    }else if(this.velocity < 0.0d){
-        this.velocity = 0.0d;
-    }
-    addPosition(new Vector3f((float) (this.velocity * deltaTime), 0.0f));
-}*/

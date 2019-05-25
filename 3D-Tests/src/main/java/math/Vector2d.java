@@ -1,5 +1,7 @@
 package main.java.math;
 
+import main.java.debug.Logger;
+
 public class Vector2d {
 
     private double x, y;
@@ -38,11 +40,24 @@ public class Vector2d {
         return this.y;
     }
 
+    public void add(Vector2d other){
+        this.x += other.getX();
+        this.y += other.getY();
+    }
+
     public void addX(double dx){
         this.x += dx;
     }
 
     public void subtractX(double dx){
         this.x -= dx;
+    }
+
+    /**
+     * Prints this vector for debugging purposes.
+     */
+    public void printVector(){
+        Logger.setInfoLevel();
+        Logger.log("X: " + this.x + " Y: " + this.y);
     }
 }

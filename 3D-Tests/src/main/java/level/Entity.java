@@ -13,7 +13,7 @@ import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 /**
  * Class that represents a base game object. Contains common properties and a TexturedModel's to render.
  */
-public class Entity {
+public abstract class Entity {
 
     private ArrayList<TexturedModel> texturedModels;
     private Vector3f position;

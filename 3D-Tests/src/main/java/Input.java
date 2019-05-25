@@ -1,8 +1,6 @@
 package main.java;
 
-import main.java.debug.Logger;
 import main.java.level.Player;
-import main.java.math.Vector2d;
 import main.java.math.Vector3f;
 import main.java.physics.EnumPlayerMovementType;
 import org.lwjgl.glfw.GLFWKeyCallback;
@@ -15,7 +13,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_N;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
@@ -49,25 +46,24 @@ public class Input extends GLFWKeyCallback {
      * @param deltaTime the delta time gotten from the timing circuit in Main.
      * @param player the player that should move with the camera.
      */
-    public static void processInput(double deltaTime, Player player){
+    public static void processInput(float deltaTime, Player player){
+        player.setMovementType(EnumPlayerMovementType.STAND);
         if(keys[GLFW_KEY_A]) {
-
+            player.setMovementType(EnumPlayerMovementType.LEFT);
         }
         if(keys[GLFW_KEY_D]) {
-
+            player.setMovementType(EnumPlayerMovementType.RIGHT);
         }
         if(keys[GLFW_KEY_R]){
             player.setPosition(new Vector3f());
-            player.resetForces();
-            player.resetMotionX();
             Camera.scale = 1.0f;
             Camera.setPosition(player.getPosition());
         }
         if(keys[GLFW_KEY_UP]){
-            Camera.calculateScale(true, deltaTime, player);
+            Camera.calculateScale(true, deltaTime);
         }
         if(keys[GLFW_KEY_DOWN]){
-            Camera.calculateScale(false, deltaTime, player);
+            Camera.calculateScale(false, deltaTime);
         }
         if(keys[GLFW_KEY_M]){
             setDebugEnabled(true);

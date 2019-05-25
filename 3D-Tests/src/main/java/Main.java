@@ -51,7 +51,7 @@ class Main implements Runnable{
         glfwShowWindow(window.getWindow());
         glClearColor(0.2f, 0.6f, 0.65f, 1.0f);
 
-        frameRate = 60;
+        frameRate = 60d;
         new CollisionDetector();
         new Models();
         new Camera();
@@ -63,7 +63,7 @@ class Main implements Runnable{
      * Updates object attributes, checks for user input, calculates game logic and checks for collisions.
      * @param deltaTime the delta time gotten from the timing circuit of the main loop. Used for physics.
      */
-    private void update(double deltaTime){
+    private void update(float deltaTime){
         level.updateLevel(deltaTime);
         glfwPollEvents();
     }
@@ -90,7 +90,7 @@ class Main implements Runnable{
             currentTime = newTime;
             while (frameTime > 0.0) {
                 double deltaTime = Math.min(frameTime, dt);
-                update(deltaTime);
+                update((float) deltaTime);
                 frameTime -= deltaTime;
             }
             render();

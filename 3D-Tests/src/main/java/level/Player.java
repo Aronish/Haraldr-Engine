@@ -1,9 +1,7 @@
 package main.java.level;
 
 import main.java.Camera;
-import main.java.debug.Logger;
 import main.java.graphics.Models;
-import main.java.math.Vector2d;
 import main.java.math.Vector3f;
 import main.java.physics.EnumPlayerMovementType;
 import main.java.physics.IHasGravity;
@@ -11,11 +9,10 @@ import main.java.physics.IHasGravity;
 /**
  * The player that you move around in the world.
  */
-public class Player extends MovableEntity {
+public class Player extends MovableEntity implements IHasGravity {
 
-    private static final double WALK_SPEED = 7.0d;
+    private static final float WALK_SPEED = 7.0f;
     private EnumPlayerMovementType movementType;
-    private EnumPlayerMovementType lastMovementType;
 
     /**
      * Default constructor if no arguments are provided.
@@ -41,26 +38,26 @@ public class Player extends MovableEntity {
     private Player(Vector3f position, float rotation, float scale){
         super(position, rotation, scale, Models.PLAYER);
         this.movementType = EnumPlayerMovementType.STAND;
-        this.lastMovementType = EnumPlayerMovementType.STAND;
+    }
+
+    public void setMovementType(EnumPlayerMovementType movementType){
+        this.movementType = movementType;
     }
 
     @Override
-    public void calculateMotion(double deltaTime) {
-        if (this.movementType != EnumPlayerMovementType.STAND && Math.abs(this.getVelocity().getX()) < WALK_SPEED) {
-        }else if (this.lastMovementType == EnumPlayerMovementType.LEFT){
-            if (this.getVelocity().getX() < 0.0d){
-                //TODO Fix walking and change over to only velocities.
-            }else{
-                this.movementType = EnumPlayerMovementType.STAND;
-            }
-        }else if (this.lastMovementType == EnumPlayerMovementType.RIGHT){
-            if (this.getVelocity().getX() > 0.0d){
-
-            }else{
-                this.movementType = EnumPlayerMovementType.STAND;
-            }
+    public void calculateMotion(float deltaTime) {
+        if (this.movementType == EnumPlayerMovementType.STAND){
+            this.setVelocity();
+        }else{
+            this.getVelocity().setX(WALK_SPEED * this.movementType.directionFactor);
         }
-        addPosition(new Vector3f((float) (this.getVelocity().getX() * deltaTime), 0.0f));
-        Camera.setPosition(getPosition().multiply(Camera.scale));
+        gravity();
+        addPosition(new Vector3f(this.getVelocity().getX() * deltaTime, this.getVelocity().getY() * deltaTime));
+        Camera.setPosition(getPosition());
+    }
+
+    @Override
+    public void gravity() {
+        calculateGravity(this);
     }
 }

@@ -2,54 +2,54 @@ package main.java.math;
 
 import main.java.debug.Logger;
 
-public class Vector2d {
+public class Vector2f {
 
-    private double x, y;
+    private float x, y;
 
-    public Vector2d(){
-        this.x = 0.0d;
-        this.y = 0.0d;
+    public Vector2f(){
+        this.x = 0.0f;
+        this.y = 0.0f;
     }
 
-    public Vector2d(double x, double y){
+    public Vector2f(float x, float y){
         this.x = x;
         this.y = y;
     }
 
     public void setX(){
-        this.x = 0.0d;
+        this.x = 0.0f;
     }
 
     public void setY(){
-        this.y = 0.0d;
+        this.y = 0.0f;
     }
 
-    public void setX(double x){
+    public void setX(float x){
         this.x = x;
     }
 
-    public void setY(double y){
+    public void setY(float y){
         this.y = y;
     }
 
-    public double getX(){
+    public float getX(){
         return this.x;
     }
 
-    public double getY(){
+    public float getY(){
         return this.y;
     }
 
-    public void add(Vector2d other){
+    public void add(Vector2f other){
         this.x += other.getX();
         this.y += other.getY();
     }
 
-    public void addX(double dx){
+    public void addX(float dx){
         this.x += dx;
     }
 
-    public void subtractX(double dx){
+    public void subtractX(float dx){
         this.x -= dx;
     }
 

@@ -10,6 +10,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_N;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
@@ -49,6 +50,11 @@ public class Input extends GLFWKeyCallback {
      */
     public static void processInput(float deltaTime, Player player){
         player.setMovementType(EnumPlayerMovementType.STAND);
+        if(keys[GLFW_KEY_LEFT_SHIFT]){
+            player.setRunning(true);
+        }else{
+            player.setRunning(false);
+        }
         if(keys[GLFW_KEY_A]) {
             player.setMovementType(EnumPlayerMovementType.LEFT);
         }
@@ -56,6 +62,7 @@ public class Input extends GLFWKeyCallback {
             player.setMovementType(EnumPlayerMovementType.RIGHT);
         }
         if(keys[GLFW_KEY_R]){
+            player.resetGravityAcceleration();
             player.setPosition(new Vector3f());
             Camera.scale = 1.0f;
             Camera.setPosition(player.getPosition());

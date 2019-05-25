@@ -1,7 +1,6 @@
 package main.java.level;
 
 import main.java.Camera;
-import main.java.debug.Logger;
 import main.java.graphics.Models;
 import main.java.math.Vector3f;
 import main.java.physics.EnumPlayerMovementType;
@@ -10,12 +9,14 @@ import main.java.physics.EnumPlayerMovementType;
  * The player that you move around in the world.
  */
 public class Player extends MovableEntity {
-
-    private static final float WALK_SPEED = 7.0f;
-    private static final float JUMP_STRENGTH = 12.0f;
+    //TODO Make gravity take jump velocity into account.
+    private static final float WALK_SPEED = 5.0f;
+    private static final float JUMP_STRENGTH = 10.0f;
+    private static final float RUN_MULTIPLIER = 2.0f;
 
     private EnumPlayerMovementType movementType;
     private boolean isJumping;
+    private boolean isRunning;
 
     /**
      * Default constructor if no arguments are provided.
@@ -42,6 +43,7 @@ public class Player extends MovableEntity {
         super(position, rotation, scale, true, Models.PLAYER);
         this.movementType = EnumPlayerMovementType.STAND;
         this.isJumping = false;
+        this.isRunning = false;
     }
 
     public void setMovementType(EnumPlayerMovementType movementType){
@@ -52,12 +54,16 @@ public class Player extends MovableEntity {
         this.isJumping = isJumping;
     }
 
+    public void setRunning(boolean isRunning){
+        this.isRunning = isRunning;
+    }
+
     @Override
     public void calculateMotion(float deltaTime) {
         if (this.movementType == EnumPlayerMovementType.STAND && !this.isJumping){
             this.resetVelocity();
         }else{
-            this.getVelocity().addX(WALK_SPEED * this.movementType.directionFactor);
+            this.getVelocity().addX(this.isRunning ? WALK_SPEED * RUN_MULTIPLIER * this.movementType.directionFactor : WALK_SPEED * this.movementType.directionFactor);
         }
         if (this.isJumping){
             this.getVelocity().addY(JUMP_STRENGTH);

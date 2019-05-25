@@ -13,6 +13,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_N;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
@@ -70,6 +71,11 @@ public class Input extends GLFWKeyCallback {
         }
         if(keys[GLFW_KEY_N]){
             setDebugEnabled(false);
+        }
+        if(keys[GLFW_KEY_SPACE]){
+            player.setJumping(true);
+        }else{
+            player.setJumping(false);
         }
     }
 

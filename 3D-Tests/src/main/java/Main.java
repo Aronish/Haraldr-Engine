@@ -51,7 +51,7 @@ class Main implements Runnable{
         glfwShowWindow(window.getWindow());
         glClearColor(0.2f, 0.6f, 0.65f, 1.0f);
 
-        frameRate = 60d;
+        frameRate = 60.0d;
         new CollisionDetector();
         new Models();
         new Camera();

@@ -1,18 +1,21 @@
 package main.java.level;
 
 import main.java.Camera;
+import main.java.debug.Logger;
 import main.java.graphics.Models;
 import main.java.math.Vector3f;
 import main.java.physics.EnumPlayerMovementType;
-import main.java.physics.IHasGravity;
 
 /**
  * The player that you move around in the world.
  */
-public class Player extends MovableEntity implements IHasGravity {
+public class Player extends MovableEntity {
 
     private static final float WALK_SPEED = 7.0f;
+    private static final float JUMP_STRENGTH = 12.0f;
+
     private EnumPlayerMovementType movementType;
+    private boolean isJumping;
 
     /**
      * Default constructor if no arguments are provided.
@@ -36,28 +39,31 @@ public class Player extends MovableEntity implements IHasGravity {
      * @param scale the scale multiplier of this Player.
      */
     private Player(Vector3f position, float rotation, float scale){
-        super(position, rotation, scale, Models.PLAYER);
+        super(position, rotation, scale, true, Models.PLAYER);
         this.movementType = EnumPlayerMovementType.STAND;
+        this.isJumping = false;
     }
 
     public void setMovementType(EnumPlayerMovementType movementType){
         this.movementType = movementType;
     }
 
-    @Override
-    public void calculateMotion(float deltaTime) {
-        if (this.movementType == EnumPlayerMovementType.STAND){
-            this.setVelocity();
-        }else{
-            this.getVelocity().setX(WALK_SPEED * this.movementType.directionFactor);
-        }
-        gravity();
-        addPosition(new Vector3f(this.getVelocity().getX() * deltaTime, this.getVelocity().getY() * deltaTime));
-        Camera.setPosition(getPosition());
+    public void setJumping(boolean isJumping){
+        this.isJumping = isJumping;
     }
 
     @Override
-    public void gravity() {
-        calculateGravity(this);
+    public void calculateMotion(float deltaTime) {
+        if (this.movementType == EnumPlayerMovementType.STAND && !this.isJumping){
+            this.resetVelocity();
+        }else{
+            this.getVelocity().addX(WALK_SPEED * this.movementType.directionFactor);
+        }
+        if (this.isJumping){
+            this.getVelocity().addY(JUMP_STRENGTH);
+        }
+        calculateGravity(deltaTime);
+        addPosition(new Vector3f(this.getVelocity().getX() * deltaTime, this.getVelocity().getY() * deltaTime));
+        Camera.setPosition(getPosition());
     }
 }

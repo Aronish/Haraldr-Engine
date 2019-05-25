@@ -8,9 +8,6 @@ class CollisionDataMap {
     private final EnumDirection collisionDirection;
     private final float inside;
 
-    /**
-     * Sets default data. Unnecessary.
-     */
     CollisionDataMap(EnumDirection direction, float inside){
         this.collisionDirection = direction;
         this.inside = inside;

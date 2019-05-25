@@ -73,6 +73,7 @@ public class CollisionDetector {
         switch (collisionDataMap.getCollisionDirection()) {
             case NORTH:
                 player.addPosition(new Vector3f(0.0f, inside));
+                player.resetGravityAcceleration();
                 Camera.addPosition(new Vector3f(0.0f, inside * Camera.scale));
                 break;
             case EAST:

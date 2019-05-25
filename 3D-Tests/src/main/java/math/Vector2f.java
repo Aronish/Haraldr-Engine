@@ -32,6 +32,11 @@ public class Vector2f {
         this.y = y;
     }
 
+    public void reset(){
+        this.x = 0.0f;
+        this.y = 0.0f;
+    }
+
     public float getX(){
         return this.x;
     }
@@ -47,6 +52,10 @@ public class Vector2f {
 
     public void addX(float dx){
         this.x += dx;
+    }
+
+    public void addY(float dy){
+        this.y += dy;
     }
 
     public void subtractX(float dx){

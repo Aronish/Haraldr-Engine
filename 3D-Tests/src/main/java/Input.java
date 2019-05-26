@@ -79,10 +79,8 @@ public class Input extends GLFWKeyCallback {
         if(keys[GLFW_KEY_N]){
             setDebugEnabled(false);
         }
-        if(keys[GLFW_KEY_SPACE]){
+        if(keys[GLFW_KEY_SPACE]) {
             player.setJumping(true);
-        }else{
-            player.setJumping(false);
         }
     }
 

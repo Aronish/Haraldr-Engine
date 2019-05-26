@@ -1,6 +1,6 @@
 //java -cp "C:\Users\Aron\Documents\Java Projects\3D-Tests\lwjgl\*";"C:\Users\Aron\Documents\Java Projects\3D-Tests\src" main/Main
 package main.java;
-//TODO Change physics style to vector forces.
+
 import main.java.debug.Logger;
 import main.java.graphics.Models;
 import main.java.graphics.Renderer;
@@ -84,13 +84,16 @@ class Main implements Runnable{
      * The main game loop. Uses variable update time step and fixed rendering time step (I think).
      */
     private void loop(){
+        update(0.0f);
         while (!glfwWindowShouldClose(window.getWindow())) {
             double newTime = glfwGetTime();
             double frameTime = newTime - currentTime;
             currentTime = newTime;
             while (frameTime > 0.0) {
                 double deltaTime = Math.min(frameTime, dt);
-                update((float) deltaTime);
+                if (currentTime > 3.0d){
+                    update((float) deltaTime);
+                }
                 frameTime -= deltaTime;
             }
             render();

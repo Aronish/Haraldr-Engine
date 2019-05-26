@@ -1,6 +1,7 @@
 package main.java.level;
 
 import main.java.Camera;
+import main.java.debug.Logger;
 import main.java.graphics.Models;
 import main.java.math.Vector3f;
 import main.java.physics.EnumPlayerMovementType;
@@ -9,9 +10,9 @@ import main.java.physics.EnumPlayerMovementType;
  * The player that you move around in the world.
  */
 public class Player extends MovableEntity {
-    //TODO Make gravity take jump velocity into account.
+
     private static final float WALK_SPEED = 5.0f;
-    private static final float JUMP_STRENGTH = 10.0f;
+    private static final float JUMP_STRENGTH = 12.0f;
     private static final float RUN_MULTIPLIER = 2.0f;
 
     private EnumPlayerMovementType movementType;
@@ -65,8 +66,12 @@ public class Player extends MovableEntity {
         }else{
             this.getVelocity().addX(this.isRunning ? WALK_SPEED * RUN_MULTIPLIER * this.movementType.directionFactor : WALK_SPEED * this.movementType.directionFactor);
         }
-        if (this.isJumping){
-            this.getVelocity().addY(JUMP_STRENGTH);
+        if (this.isJumping) {
+            if (Math.abs(this.getGravityAcceleration()) < JUMP_STRENGTH) {
+                this.getVelocity().addY(JUMP_STRENGTH);
+            }else{
+                this.isJumping = false;
+            }
         }
         calculateGravity(deltaTime);
         addPosition(new Vector3f(this.getVelocity().getX() * deltaTime, this.getVelocity().getY() * deltaTime));

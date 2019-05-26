@@ -20,7 +20,7 @@ public class Level {
      * Constructs a Level with the base elements like a Player and World.
      */
     public Level(){
-        this.player = new Player(new Vector3f(0.0f, 20.0f));
+        this.player = new Player(new Vector3f(0.0f, 0.0f));
         this.world = new World();
         this.debugLines = new DebugLines();
         this.debugLines.addDebugLines(this.world);

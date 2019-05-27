@@ -3,6 +3,7 @@ package main.java.level;
 import main.java.Camera;
 import main.java.debug.Logger;
 import main.java.graphics.Models;
+import main.java.graphics.Renderer;
 import main.java.math.Vector3f;
 import main.java.physics.EnumPlayerMovementType;
 
@@ -12,8 +13,9 @@ import main.java.physics.EnumPlayerMovementType;
 public class Player extends MovableEntity {
 
     private static final float WALK_SPEED = 5.0f;
-    private static final float JUMP_STRENGTH = 12.0f;
-    private static final float RUN_MULTIPLIER = 2.0f;
+    private static final float JUMP_STRENGTH = 8.0f;
+    private static final float RUN_MULTIPLIER = 1.5f;
+    private static final float JUMP_SLOWDOWN = 0.5f;
 
     private EnumPlayerMovementType movementType;
     private boolean isJumping;
@@ -64,13 +66,24 @@ public class Player extends MovableEntity {
         if (this.movementType == EnumPlayerMovementType.STAND && !this.isJumping){
             this.resetVelocity();
         }else{
-            this.getVelocity().addX(this.isRunning ? WALK_SPEED * RUN_MULTIPLIER * this.movementType.directionFactor : WALK_SPEED * this.movementType.directionFactor);
+            //this.getVelocity().addX(this.isRunning ? WALK_SPEED * RUN_MULTIPLIER * this.movementType.directionFactor : WALK_SPEED * this.movementType.directionFactor);
+
+            if (this.isRunning && this.isJumping){
+                this.getVelocity().addX(WALK_SPEED * RUN_MULTIPLIER * JUMP_SLOWDOWN * this.movementType.directionFactor);
+            }else if (this.isRunning){
+                this.getVelocity().addX(WALK_SPEED * RUN_MULTIPLIER * this.movementType.directionFactor);
+            }else if (this.isJumping){
+                this.getVelocity().addX(WALK_SPEED * JUMP_SLOWDOWN * this.movementType.directionFactor);
+            }else{
+                this.getVelocity().addX(WALK_SPEED * this.movementType.directionFactor);
+            }
         }
         if (this.isJumping) {
             if (Math.abs(this.getGravityAcceleration()) < JUMP_STRENGTH) {
                 this.getVelocity().addY(JUMP_STRENGTH);
             }else{
                 this.isJumping = false;
+                Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
             }
         }
         calculateGravity(deltaTime);

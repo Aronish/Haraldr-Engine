@@ -15,7 +15,6 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.opengl.GL46.glClearColor;
 
 class Main implements Runnable{
 
@@ -49,7 +48,7 @@ class Main implements Runnable{
         /*---OpenGL code won't work before this---*/
         glfwSwapInterval(1);
         glfwShowWindow(window.getWindow());
-        glClearColor(0.2f, 0.6f, 0.65f, 1.0f);
+        Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
 
         frameRate = 60.0d;
         new CollisionDetector();

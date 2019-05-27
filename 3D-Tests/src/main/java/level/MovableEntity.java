@@ -6,11 +6,12 @@ import main.java.math.Vector3f;
 
 public abstract class MovableEntity extends Entity {
 
+    private static final float GRAVITY_CONSTANT = -15.0f;
+    private static final float MAX_GRAVITY_ACCELERATION = -15.0f;
+
     private Vector2f velocity;
     private boolean hasGravity;
     private float gravityAcceleration;
-    private static final float GRAVITY_CONSTANT = -25.0f;
-    private static final float MAX_GRAVITY_ACCELERATION = -25.0f;
 
     MovableEntity(Vector3f position, float rotation, float scale, boolean hasGravity, TexturedModel... texturedModels) {
         super(position, rotation, scale, texturedModels);

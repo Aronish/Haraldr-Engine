@@ -22,6 +22,7 @@ public class TexturedModel{
         setVertexArray();
         setShader(shaderPath);
         setTexture(texturePath);
+        this.relativePosition = new Vector3f();
         this.aabb = new AABB();
     }
 

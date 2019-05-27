@@ -13,7 +13,7 @@ import main.java.physics.EnumPlayerMovementType;
 public class Player extends MovableEntity {
 
     private static final float WALK_SPEED = 5.0f;
-    private static final float JUMP_STRENGTH = 8.0f;
+    private static final float JUMP_STRENGTH = 10.0f;
     private static final float RUN_MULTIPLIER = 1.5f;
     private static final float JUMP_SLOWDOWN = 0.5f;
 
@@ -66,8 +66,6 @@ public class Player extends MovableEntity {
         if (this.movementType == EnumPlayerMovementType.STAND && !this.isJumping){
             this.resetVelocity();
         }else{
-            //this.getVelocity().addX(this.isRunning ? WALK_SPEED * RUN_MULTIPLIER * this.movementType.directionFactor : WALK_SPEED * this.movementType.directionFactor);
-
             if (this.isRunning && this.isJumping){
                 this.getVelocity().addX(WALK_SPEED * RUN_MULTIPLIER * JUMP_SLOWDOWN * this.movementType.directionFactor);
             }else if (this.isRunning){
@@ -81,12 +79,19 @@ public class Player extends MovableEntity {
         if (this.isJumping) {
             if (Math.abs(this.getGravityAcceleration()) < JUMP_STRENGTH) {
                 this.getVelocity().addY(JUMP_STRENGTH);
-            }else{
+                calculateGravity(0.0f, deltaTime);
+            } else {
                 this.isJumping = false;
-                Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
             }
+        }else{
+            calculateGravity(JUMP_STRENGTH, deltaTime);
+        }//TODO Make it stop bouncing
+        if (this.getVelocity().getY() > 0.0f){
+            Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
+        }else{
+            Renderer.setClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         }
-        calculateGravity(deltaTime);
+        Logger.log(this.getVelocity().getY());
         addPosition(new Vector3f(this.getVelocity().getX() * deltaTime, this.getVelocity().getY() * deltaTime));
         Camera.setPosition(getPosition());
     }

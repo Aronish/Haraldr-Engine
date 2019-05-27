@@ -1,5 +1,6 @@
 package main.java.level;
 
+import main.java.debug.Logger;
 import main.java.graphics.TexturedModel;
 import main.java.math.Vector2f;
 import main.java.math.Vector3f;
@@ -28,14 +29,14 @@ public abstract class MovableEntity extends Entity {
         super.updateMatrix();
     }
 
-    void calculateGravity(float deltaTime){
+    void calculateGravity(float compensation, float deltaTime){
         if (this.hasGravity){
             if (this.gravityAcceleration > MAX_GRAVITY_ACCELERATION){
                 this.gravityAcceleration += GRAVITY_CONSTANT * deltaTime;
             }else{
                 this.gravityAcceleration = MAX_GRAVITY_ACCELERATION;
             }
-            this.velocity.addY(this.gravityAcceleration);
+            this.velocity.addY(this.gravityAcceleration + compensation);
         }
     }
 
@@ -45,6 +46,10 @@ public abstract class MovableEntity extends Entity {
 
     public void resetGravityAcceleration(){
         this.gravityAcceleration = 0.0f;
+    }
+
+    public void addGravityAcceleration(float deltaGravity){
+        this.gravityAcceleration += deltaGravity;
     }
 
     Vector2f getVelocity() {

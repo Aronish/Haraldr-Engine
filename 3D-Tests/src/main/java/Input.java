@@ -82,7 +82,6 @@ public class Input extends GLFWKeyCallback {
         }
         if(keys[GLFW_KEY_SPACE]) {
             player.setJumping(true);
-            Renderer.setClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         }
     }
 

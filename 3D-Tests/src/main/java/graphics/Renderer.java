@@ -19,6 +19,13 @@ public class Renderer {
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
+    /**
+     * Sets the clear color to the rgb color specified by the arguments. [0-1]
+     * @param r the red channel.
+     * @param g the green channel.
+     * @param b the blue channel.
+     * @param a the alpha channel.
+     */
     public static void setClearColor(float r, float g, float b, float a){
         glClearColor(r, g, b, a);
     }

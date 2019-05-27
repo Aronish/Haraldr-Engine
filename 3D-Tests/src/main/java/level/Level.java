@@ -68,6 +68,9 @@ public class Level {
         Renderer.render(this.player);
     }
 
+    /**
+     * Does collision detection and resolution for the objects requiring collisions.
+     */
     private void doCollisions() {
         for (int texMod = 0; texMod < this.world.getTexturedModels().size(); texMod++) {
             TexturedModel texturedModel = this.world.getTexturedModels().get(texMod);

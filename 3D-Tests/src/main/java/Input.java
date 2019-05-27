@@ -1,6 +1,5 @@
 package main.java;
 
-import main.java.graphics.Renderer;
 import main.java.level.Player;
 import main.java.math.Vector3f;
 import main.java.physics.EnumPlayerMovementType;

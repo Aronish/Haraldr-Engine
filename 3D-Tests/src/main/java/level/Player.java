@@ -49,18 +49,34 @@ public class Player extends MovableEntity {
         this.isRunning = false;
     }
 
+    /**
+     * Sets the movement type.
+     * @param movementType one of the available movement types for the Player.
+     */
     public void setMovementType(EnumPlayerMovementType movementType){
         this.movementType = movementType;
     }
 
+    /**
+     * Set whether this Player is jumping.
+     * @param isJumping whether the Player should be jumping.
+     */
     public void setJumping(boolean isJumping){
         this.isJumping = isJumping;
     }
 
+    /**
+     * Set whether this Player is running.
+     * @param isRunning whether the Player should be running.
+     */
     public void setRunning(boolean isRunning){
         this.isRunning = isRunning;
     }
 
+    /**
+     * Calculates the motion from factors like speed, isJumping and isRunning.
+     * @param deltaTime the delta time gotten from the timing circuit in Main.
+     */
     @Override
     public void calculateMotion(float deltaTime) {
         if (this.movementType == EnumPlayerMovementType.STAND && !this.isJumping){

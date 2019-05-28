@@ -58,7 +58,6 @@ public class Matrix4f {
      * @param scale the scale multiplier.
      * @return the resulting MVP matrix.
      */
-    //TODO Create dynamic aspect ratio.
     public Matrix4f MVP(Vector3f position, float angle, float scale){
         // Resolution must have the aspect ratio 16:9 as of now.
         return orthographic(16f, -16f, 9f, -9f, -5f, 5f).multiply(Camera.viewMatrix).multiply(transform(position, angle, scale, false));

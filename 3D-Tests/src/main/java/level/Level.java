@@ -14,6 +14,7 @@ import java.util.ArrayList;
  */
 public class Level {
 
+    //TODO ArrayLists for Entities and MovableEntities that require deltaTime.
     private World world;
     private Player player;
     private DebugLines debugLines;
@@ -31,6 +32,9 @@ public class Level {
         }
         this.debugLines = new DebugLines();
         this.debugLines.addDebugLines(this.world);
+        for (Obstacle obstacle : this.obstacles){
+            this.debugLines.addDebugLines(obstacle);
+        }
     }
 
     /**

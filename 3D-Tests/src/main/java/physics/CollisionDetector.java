@@ -74,6 +74,7 @@ public class CollisionDetector {
             case NORTH:
                 player.addPosition(new Vector3f(0.0f, inside));
                 player.resetGravityAcceleration();
+                player.setFalling(false);
                 Camera.addPosition(new Vector3f(0.0f, inside * Camera.scale));
                 break;
             case EAST:

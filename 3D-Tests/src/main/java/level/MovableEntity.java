@@ -24,7 +24,7 @@ public abstract class MovableEntity extends Entity {
      * @param hasGravity whether it is affected by gravity.
      * @param texturedModels TexturedModel's that this Entity should contain. Variable amount.
      */
-    MovableEntity(Vector3f position, float rotation, float scale, boolean hasGravity, TexturedModel... texturedModels) {
+    MovableEntity(Vector3f position, float rotation, float scale, boolean hasGravity, TexturedModel ... texturedModels) {
         super(position, rotation, scale, texturedModels);
         this.velocity = new Vector2f();
         this.hasGravity = hasGravity;
@@ -54,10 +54,10 @@ public abstract class MovableEntity extends Entity {
      */
     void calculateGravity(float compensation, float deltaTime){
         if (this.hasGravity){
-            if (this.gravityAcceleration > MAX_GRAVITY_ACCELERATION){
+            if (this.gravityAcceleration > MAX_GRAVITY_ACCELERATION - compensation){
                 this.gravityAcceleration += GRAVITY_CONSTANT * deltaTime;
             }else{
-                this.gravityAcceleration = MAX_GRAVITY_ACCELERATION;
+                this.gravityAcceleration = MAX_GRAVITY_ACCELERATION - compensation;
             }
             this.velocity.addY(this.gravityAcceleration + compensation);
         }

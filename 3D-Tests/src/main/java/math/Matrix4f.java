@@ -8,6 +8,11 @@ import main.java.Camera;
 public class Matrix4f {
 
     public float[] matrix = new float[16];
+    private static Matrix4f orthographic;
+
+    static{
+        orthographic = new Matrix4f().orthographic(16f, -16f, 9f, -9f, -5f, 5f);
+    }
 
     /**
      * Initializes every cell to 0.0f.
@@ -61,7 +66,7 @@ public class Matrix4f {
     //TODO Create dynamic aspect ratio.
     public Matrix4f MVP(Vector3f position, float angle, float scale){
         // Resolution must have the aspect ratio 16:9 as of now.
-        return orthographic(16f, -16f, 9f, -9f, -5f, 5f).multiply(Camera.viewMatrix).multiply(transform(position, angle, scale, false));
+        return orthographic.multiply(Camera.viewMatrix).multiply(transform(position, angle, scale, false));
     }
 
     /**
@@ -73,7 +78,7 @@ public class Matrix4f {
      * @return the resulting MP matrix.
      */
     public Matrix4f MP(Vector3f position, float angle, float scale){
-        return orthographic(16f, -16f, 9f, -9f, -5f, 5f).multiply(transform(position, angle, scale, false));
+        return orthographic.multiply(transform(position, angle, scale, false));
     }
 
     /**

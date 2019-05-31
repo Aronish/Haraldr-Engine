@@ -3,7 +3,6 @@ package main.java.level;
 import main.java.Camera;
 import main.java.debug.Logger;
 import main.java.graphics.Models;
-import main.java.graphics.Renderer;
 import main.java.math.Vector3f;
 import main.java.physics.EnumPlayerMovementType;
 
@@ -13,13 +12,14 @@ import main.java.physics.EnumPlayerMovementType;
 public class Player extends MovableEntity {
 
     private static final float WALK_SPEED = 5.0f;
-    private static final float JUMP_STRENGTH = 10.0f;
+    private static final float JUMP_STRENGTH = 9.0f;
     private static final float RUN_MULTIPLIER = 1.5f;
     private static final float JUMP_SLOWDOWN = 0.5f;
 
     private EnumPlayerMovementType movementType;
     private boolean isJumping;
     private boolean isRunning;
+    private boolean isFalling;
 
     /**
      * Default constructor if no arguments are provided.
@@ -47,6 +47,7 @@ public class Player extends MovableEntity {
         this.movementType = EnumPlayerMovementType.STAND;
         this.isJumping = false;
         this.isRunning = false;
+        this.isFalling = false;
     }
 
     /**
@@ -71,6 +72,18 @@ public class Player extends MovableEntity {
      */
     public void setRunning(boolean isRunning){
         this.isRunning = isRunning;
+    }
+
+    /**
+     * Set whether this Player is falling.
+     * @param isFalling whether the Player should be falling.
+     */
+    public void setFalling(boolean isFalling){
+        this.isFalling = isFalling;
+    }
+
+    public boolean isJumping(){
+        return this.isJumping;
     }
 
     /**
@@ -99,13 +112,10 @@ public class Player extends MovableEntity {
             } else {
                 this.isJumping = false;
             }
-        }else{
+        }else if (this.isFalling){
             calculateGravity(JUMP_STRENGTH, deltaTime);
-        }//TODO Make it stop bouncing
-        if (this.getVelocity().getY() > 0.0f){
-            Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
         }else{
-            Renderer.setClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+            calculateGravity(0.0f, deltaTime);
         }
         Logger.log(this.getVelocity().getY());
         addPosition(new Vector3f(this.getVelocity().getX() * deltaTime, this.getVelocity().getY() * deltaTime));

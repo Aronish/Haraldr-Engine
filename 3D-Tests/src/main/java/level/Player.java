@@ -11,10 +11,9 @@ import main.java.physics.EnumPlayerMovementType;
  */
 public class Player extends MovableEntity {
 
-    private static final float WALK_SPEED = 5.0f;
+    private static final float WALK_SPEED = 4.0f;
     private static final float JUMP_STRENGTH = 9.0f;
     private static final float RUN_MULTIPLIER = 1.5f;
-    private static final float JUMP_SLOWDOWN = 0.5f;
 
     private EnumPlayerMovementType movementType;
     private boolean isJumping;
@@ -82,27 +81,27 @@ public class Player extends MovableEntity {
         this.isFalling = isFalling;
     }
 
+    public boolean isFalling(){
+        return this.isFalling;
+    }
+
     /**
      * Calculates the motion from factors like speed, isJumping and isRunning.
      * @param deltaTime the delta time gotten from the timing circuit in Main.
      */
     @Override
-    public void calculateMotion(float deltaTime) {
+    public void calculateMotion(float deltaTime){
         if (this.movementType == EnumPlayerMovementType.STAND && !this.isJumping){
             this.resetVelocity();
         }else{
-            if (this.isRunning && this.isJumping){
-                this.getVelocity().addX(WALK_SPEED * RUN_MULTIPLIER * JUMP_SLOWDOWN * this.movementType.directionFactor);
-            }else if (this.isRunning){
+            if (this.isRunning){
                 this.getVelocity().addX(WALK_SPEED * RUN_MULTIPLIER * this.movementType.directionFactor);
-            }else if (this.isJumping){
-                this.getVelocity().addX(WALK_SPEED * JUMP_SLOWDOWN * this.movementType.directionFactor);
             }else{
                 this.getVelocity().addX(WALK_SPEED * this.movementType.directionFactor);
             }
         }
-        if (this.isJumping) {
-            if (Math.abs(this.getGravityAcceleration()) < JUMP_STRENGTH) {
+        if (this.isJumping){
+            if (Math.abs(this.getGravityAcceleration()) < JUMP_STRENGTH){
                 this.getVelocity().addY(JUMP_STRENGTH);
                 calculateGravity(0.0f, deltaTime);
             } else {

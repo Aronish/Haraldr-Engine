@@ -82,10 +82,6 @@ public class Player extends MovableEntity {
         this.isFalling = isFalling;
     }
 
-    public boolean isJumping(){
-        return this.isJumping;
-    }
-
     /**
      * Calculates the motion from factors like speed, isJumping and isRunning.
      * @param deltaTime the delta time gotten from the timing circuit in Main.

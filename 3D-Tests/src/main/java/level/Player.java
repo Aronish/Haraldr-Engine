@@ -1,7 +1,6 @@
 package main.java.level;
 
 import main.java.Camera;
-import main.java.debug.Logger;
 import main.java.graphics.Models;
 import main.java.math.Vector3f;
 import main.java.physics.EnumPlayerMovementType;
@@ -112,7 +111,6 @@ public class Player extends MovableEntity {
         }else{
             calculateGravity(0.0f, deltaTime);
         }
-        Logger.log(this.getVelocity().getY());
         addPosition(new Vector3f(this.getVelocity().getX() * deltaTime, this.getVelocity().getY() * deltaTime));
         Camera.setPosition(getPosition());
     }

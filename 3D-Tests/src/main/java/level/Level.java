@@ -3,7 +3,6 @@ package main.java.level;
 import main.java.Input;
 import main.java.debug.DebugLines;
 import main.java.graphics.Renderer;
-import main.java.graphics.TexturedModel;
 import main.java.math.Vector3f;
 import main.java.physics.CollisionDetector;
 
@@ -14,7 +13,6 @@ import java.util.ArrayList;
  */
 public class Level {
 
-    //TODO ArrayLists for Entities and MovableEntities that require deltaTime.
     private World world;
     private Player player;
     private DebugLines debugLines;
@@ -77,16 +75,10 @@ public class Level {
      */
     private void doCollisions() {
         for (int texMod = 0; texMod < this.world.getTexturedModels().size(); texMod++) {
-            TexturedModel texturedModel = this.world.getTexturedModels().get(texMod);
-            if (CollisionDetector.checkCollision(this.world, texturedModel, this.player)) {
-                CollisionDetector.doCollision(CollisionDetector.getCollisionDirection(this.world, texturedModel, this.player), this.player);
-            }
+            CollisionDetector.doCollisions(this.world, this.world.getTexturedModels().get(texMod), this.player);
         }
         for (Obstacle obstacle : this.obstacles){
-            TexturedModel texturedModel = obstacle.getTexturedModels().get(0);
-            if (CollisionDetector.checkCollision(obstacle, texturedModel, this.player)){
-                CollisionDetector.doCollision(CollisionDetector.getCollisionDirection(obstacle, texturedModel, this.player), this.player);
-            }
+            CollisionDetector.doCollisions(obstacle, obstacle.getTexturedModels().get(0), this.player);
         }
     }
 }

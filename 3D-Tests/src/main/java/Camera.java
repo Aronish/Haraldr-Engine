@@ -10,12 +10,12 @@ import main.java.math.Vector3f;
 public class Camera{
 
     public static Matrix4f viewMatrix;
-    public static float scale;
     private static Vector3f position;
     private static float rotation;
+    public static float scale;
 
     private static final float MIN_SCALE = 0.25f;
-    private static final double SCALE_SPEED = 1.0d;
+    private static final float SCALE_SPEED = 1.0f;
 
     /**
      * Default constructor if no arguments are provided.

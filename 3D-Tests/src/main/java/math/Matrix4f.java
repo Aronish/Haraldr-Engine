@@ -178,9 +178,9 @@ public class Matrix4f {
      * @param FOV the field-of-view of the camera frustum.
      * @return the resulting perspective projection matrix.
      */
-    public Matrix4f perspective(double FOV){
+    public Matrix4f perspective(float FOV){
         Matrix4f result = new Matrix4f();
-        float ar = (float) 1920/1080;
+        float ar = 1920.0f/1080.0f;
         float near = 0.1f;
         float far = 1000.0f;
         float range = far - near;

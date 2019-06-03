@@ -8,6 +8,7 @@ import main.java.level.Player;
 import main.java.math.Vector3f;
 
 import static main.java.physics.EnumDirection.EAST;
+import static main.java.physics.EnumDirection.INVALIDDIR;
 import static main.java.physics.EnumDirection.NORTH;
 import static main.java.physics.EnumDirection.SOUTH;
 import static main.java.physics.EnumDirection.WEST;
@@ -18,7 +19,7 @@ import static main.java.physics.EnumDirection.WEST;
 public class CollisionDetector {
 
     public static void doCollisions(Entity entity, TexturedModel texturedModel, Player player){
-        if (checkCollision(entity, texturedModel, player)){
+        while (checkCollision(entity, texturedModel, player)){
             resolveCollision(getCollisionDirection(entity, texturedModel, player), player);
         }
     }
@@ -48,20 +49,18 @@ public class CollisionDetector {
         float rightCollision = (entity.getPosition().x + texturedModel.getRelativePosition().x) + texturedModel.getAABB().getWidth() - player.getPosition().x;
         float leftCollision = player.getPosition().x + player.getWidth() - (entity.getPosition().x + texturedModel.getRelativePosition().x);
         float bottomCollision = player.getPosition().y - ((entity.getPosition().y + texturedModel.getRelativePosition().y) - texturedModel.getAABB().getHeight());
-        CollisionDataMap collisionDataMap = null;
+
         if (topCollision < bottomCollision && topCollision < leftCollision && topCollision < rightCollision ) {
-            collisionDataMap = new CollisionDataMap(NORTH, topCollision);
+            return new CollisionDataMap(NORTH, topCollision);
+        }else if (rightCollision < leftCollision && rightCollision < topCollision && rightCollision < bottomCollision ) {
+            return new CollisionDataMap(EAST, rightCollision);
+        }else if (leftCollision < rightCollision && leftCollision < topCollision && leftCollision < bottomCollision) {
+            return new CollisionDataMap(WEST, leftCollision);
+        }else if (bottomCollision < topCollision && bottomCollision < leftCollision && bottomCollision < rightCollision) {
+            return new CollisionDataMap(SOUTH, bottomCollision);
+        }else{
+            return new CollisionDataMap(INVALIDDIR, 0.0f);
         }
-        if (rightCollision < leftCollision && rightCollision < topCollision && rightCollision < bottomCollision ) {
-            collisionDataMap = new CollisionDataMap(EAST, rightCollision);
-        }
-        if (leftCollision < rightCollision && leftCollision < topCollision && leftCollision < bottomCollision) {
-            collisionDataMap = new CollisionDataMap(WEST, leftCollision);
-        }
-        if (bottomCollision < topCollision && bottomCollision < leftCollision && bottomCollision < rightCollision) {
-            collisionDataMap = new CollisionDataMap(SOUTH, bottomCollision);
-        }
-        return collisionDataMap;
     }
 
     /**
@@ -70,11 +69,6 @@ public class CollisionDetector {
      * @param player the player that collided.
      */
     private static void resolveCollision(CollisionDataMap collisionDataMap, Player player) {
-        if (collisionDataMap == null){
-            Logger.setErrorLevel();
-            Logger.log("Collision error");
-            throw new RuntimeException("CollisionDataMap was null!");
-        }
         float inside = collisionDataMap.getInside();
         switch (collisionDataMap.getCollisionDirection()) {
             case NORTH:
@@ -94,6 +88,10 @@ public class CollisionDetector {
             case SOUTH:
                 player.addPosition(new Vector3f(0.0f, -inside));
                 Camera.addPosition(new Vector3f(0.0f, -inside * Camera.scale));
+                break;
+            case INVALIDDIR:
+                Logger.setWarningLevel();
+                Logger.log("Detected invalid collision direction!");
                 break;
         }
     }

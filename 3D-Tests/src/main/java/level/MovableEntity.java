@@ -42,9 +42,8 @@ public abstract class MovableEntity extends Entity {
      * @param deltaTime the delta time gotten from the timing circuit in Main.
      */
     void update(float deltaTime) {
-        calculateMotion(deltaTime);
         resetVelocity();
-        super.updateMatrix();
+        calculateMotion(deltaTime);
     }
 
     /**

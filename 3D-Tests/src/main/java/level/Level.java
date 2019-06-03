@@ -26,8 +26,9 @@ public class Level {
         this.world = new World();
         this.obstacles = new ArrayList<>();
         for (int i = 0; i < 6; i++){
-            this.obstacles.add(new Obstacle(new Vector3f(i + 1, i + 1)));
+            this.obstacles.add(new Obstacle(new Vector3f(i + 1.0f, i + 1.0f)));
         }
+        this.obstacles.add(new Obstacle(new Vector3f(7.0f, 6.0f)));
         this.debugLines = new DebugLines();
         this.debugLines.addDebugLines(this.world);
         for (Obstacle obstacle : this.obstacles){
@@ -36,36 +37,37 @@ public class Level {
     }
 
     /**
-     * Updates the matrices of the game objects in this Level.
+     * Process input, update physics/movement, do collisions, update matrices last.
      */
     public void updateLevel(float deltaTime){
         Input.processInput(deltaTime, this.player);
+        this.player.update(deltaTime);
         doCollisions();
         if (Input.isDebugEnabled()){
-            updateDebug();
+            this.debugLines.setPlayerEnd(this.player.getPosition());
         }
-        this.world.updateMatrix();
+        updateMatrices();
+    }
+
+    private void updateMatrices(){
+        this.debugLines.update();
         for (Obstacle obstacle : this.obstacles){
             obstacle.updateMatrix();
         }
-        this.player.update(deltaTime);
-    }
-
-    private void updateDebug(){
-        this.debugLines.setPlayerEnd(this.player.getPosition());
-        this.debugLines.update();
+        this.world.updateMatrix();
+        this.player.updateMatrix();
     }
 
     /**
      * Renders the game objects in this Level.
      */
     public void renderLevel(){
+        if (Input.isDebugEnabled()){
+            this.debugLines.render();
+        }
         Renderer.render(this.world);
         for (Obstacle obstacle : this.obstacles){
             Renderer.render(obstacle);
-        }
-        if (Input.isDebugEnabled()){
-            this.debugLines.render();
         }
         Renderer.render(this.player);
     }

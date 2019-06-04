@@ -24,8 +24,12 @@ public class Camera{
         this(new Vector3f(), 0.0f, 1.0f);
     }
 
+    Camera(float scale){
+        this(new Vector3f(), 0.0f, scale);
+    }
+
     /**
-     * Constructor with parameters for position and rotation.
+     * Constructor with parameters for position and rotation. Can probably be private, since it's always set to the position of the Player.
      * @param pos the position of the camera, an origin vector.
      * @param rot the rotation of the camera around the z-axis, in degrees.
      */

@@ -19,7 +19,7 @@ import static main.java.physics.EnumDirection.WEST;
 public class CollisionDetector {
 
     public static void doCollisions(Entity entity, TexturedModel texturedModel, Player player){
-        while (checkCollision(entity, texturedModel, player)){
+        if (checkCollision(entity, texturedModel, player)){
             resolveCollision(getCollisionDirection(entity, texturedModel, player), player);
         }
     }

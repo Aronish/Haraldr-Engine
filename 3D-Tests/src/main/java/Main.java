@@ -5,6 +5,7 @@ import main.java.debug.Logger;
 import main.java.graphics.Models;
 import main.java.graphics.Renderer;
 import main.java.level.Level;
+import main.java.math.SimplexNoise;
 import main.java.physics.CollisionDetector;
 import org.lwjgl.opengl.GL;
 
@@ -51,10 +52,11 @@ class Main implements Runnable{
         Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
 
         frameRate = 60.0d;
+        new Logger();
+        new SimplexNoise();
         new CollisionDetector();
         new Models();
-        new Camera();
-        new Logger();
+        new Camera(0.25f);
         level = new Level();
     }
 

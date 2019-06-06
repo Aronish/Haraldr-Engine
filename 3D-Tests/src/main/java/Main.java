@@ -80,6 +80,9 @@ class Main implements Runnable{
 
     private double dt = 1.0d / frameRate;
     private double currentTime = glfwGetTime();
+    private double timer = 0.0d;
+    private int frames = 0;
+    private int updates = 0;
 
     /**
      * The main game loop. Uses variable update time step and fixed rendering time step (I think).
@@ -90,14 +93,23 @@ class Main implements Runnable{
             double newTime = glfwGetTime();
             double frameTime = newTime - currentTime;
             currentTime = newTime;
+            timer += frameTime;
+            if (timer >= 1.0d){
+                window.setTitle("FPS: " + (int) (frames / timer) + " UPS: " + (int) (updates / timer));
+                timer = 0.0d;
+                frames = 0;
+                updates = 0;
+            }
             while (frameTime > 0.0) {
                 double deltaTime = Math.min(frameTime, dt);
-                if (currentTime > 3.0d){
+                if (currentTime > 2.0d){
                     update((float) deltaTime);
+                    ++updates;
                 }
                 frameTime -= deltaTime;
             }
             render();
+            ++frames;
         }
         glfwTerminate();
     }

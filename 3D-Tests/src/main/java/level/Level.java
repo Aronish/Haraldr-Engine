@@ -29,7 +29,7 @@ public class Level {
      * Process input, update physics/movement, do collisions, update matrices last.
      */
     public void updateLevel(float deltaTime){
-        Input.processInput(deltaTime, this.player);
+        Input.processInput(deltaTime, this.player, this.world);
         this.player.update(deltaTime);
         doCollisions();
         if (Input.isDebugEnabled()){

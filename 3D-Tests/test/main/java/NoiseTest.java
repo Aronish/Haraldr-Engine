@@ -12,7 +12,7 @@ import java.util.Random;
 public class NoiseTest {
 
     private static int w = 1280, h = 720;
-    private static double scale = 0.005d;
+    private static double scale = 0.001d;
 
     public static void main(String[] args){
         new SimplexNoise();

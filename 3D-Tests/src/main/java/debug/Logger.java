@@ -43,6 +43,7 @@ public class Logger {
     public static <T> void log(T message){
         System.out.print(logLevel.toString() + ": ");
         System.out.println(message);
+        setInfoLevel();
     }
 
     /**

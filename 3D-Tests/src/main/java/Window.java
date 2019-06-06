@@ -22,6 +22,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowMonitor;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
@@ -36,7 +37,7 @@ class Window {
 
     private long window;
     private boolean isFullscreen;
-    private static int windowWidth, windowHeight;
+    private int windowWidth, windowHeight;
     private GLFWVidMode vidmode;
 
     /**
@@ -95,6 +96,14 @@ class Window {
             glViewport(0, 0, this.vidmode.width(), this.vidmode.height());
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         }
+    }
+
+    /**
+     * Sets the title to the provided one.
+     * @param title the new title.
+     */
+    void setTitle(String title){
+        glfwSetWindowTitle(this.window, title);
     }
 
     /**

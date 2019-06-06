@@ -1,6 +1,8 @@
 package main.java;
 
+import main.java.debug.Logger;
 import main.java.level.Player;
+import main.java.level.World;
 import main.java.math.Vector3f;
 import main.java.physics.EnumPlayerMovementType;
 import org.lwjgl.glfw.GLFWKeyCallback;
@@ -10,10 +12,13 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_G;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_N;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
@@ -37,9 +42,19 @@ public class Input extends GLFWKeyCallback {
             if (key == GLFW_KEY_F){
                 Main.window.changeFullscreen();
             }
-            keys[key] = true;
+            if (key > 0){
+                keys[key] = true;
+            }else{
+                Logger.setWarningLevel();
+                Logger.log("Invalid keycode: " + key);
+            }
         }else if (action == GLFW_RELEASE){
-            keys[key] = false;
+            if (key > 0){
+                keys[key] = false;
+            }else{
+                Logger.setWarningLevel();
+                Logger.log("Invalid keycode: " + key);
+            }
         }
     }
 
@@ -48,7 +63,7 @@ public class Input extends GLFWKeyCallback {
      * @param deltaTime the delta time gotten from the timing circuit in Main.
      * @param player the player that should move with the camera.
      */
-    public static void processInput(float deltaTime, Player player){
+    public static void processInput(float deltaTime, Player player, World world){
         player.setMovementType(EnumPlayerMovementType.STAND);
         if(keys[GLFW_KEY_LEFT_SHIFT]){
             player.setRunning(true);
@@ -73,6 +88,12 @@ public class Input extends GLFWKeyCallback {
         if(keys[GLFW_KEY_DOWN]){
             Camera.calculateScale(false, deltaTime);
         }
+        if(keys[GLFW_KEY_LEFT]){
+            world.increaseNoiseScale(0.001d);
+        }
+        if(keys[GLFW_KEY_RIGHT]){
+            world.increaseNoiseScale(-0.001d);
+        }
         if(keys[GLFW_KEY_M]){
             setDebugEnabled(true);
         }
@@ -84,6 +105,9 @@ public class Input extends GLFWKeyCallback {
                 player.setJumping(true);
                 player.setFalling(true);
             }
+        }
+        if(keys[GLFW_KEY_G]){
+            world.regenerateWorld();
         }
     }
 

@@ -13,7 +13,9 @@ import java.util.Random;
  * Main world object, on which everything should be located to be inside the world.
  * For future development style, this class should manage everything to do with the world in a level.
  */
-class World extends Entity implements IHasDebug {
+public class World extends Entity implements IHasDebug {
+
+    private static double NOISE_SCALE = 0.01d;
 
     private ArrayList<Obstacle> obstacles;
 
@@ -46,11 +48,21 @@ class World extends Entity implements IHasDebug {
 
     private void generateWorld(){
         Random random = new Random();
-        for (float i = 0; i < 10.0f; i += 0.2f){
-            float y = (float) SimplexNoise.noise(random.nextDouble() * 20.0d, random.nextDouble() * 20.0d) + 2;
-            Logger.log(y);
-            this.obstacles.add(new Obstacle(new Vector3f(i * 5, y)));
+        double seed = random.nextDouble() * 10000.0d;
+        for (int i = 0; i < 100; ++i){
+            float y = (float) ((SimplexNoise.noise(i * NOISE_SCALE, 0.0d, seed) + 1.0d) / 2.0d * 20.0d);
+            this.obstacles.add(new Obstacle(new Vector3f(i - 50, y + 2)));
         }
+    }
+
+    public void regenerateWorld(){
+        this.obstacles = new ArrayList<>();
+        generateWorld();
+    }
+
+    public void increaseNoiseScale(double dScale){
+        Logger.log(NOISE_SCALE);
+        NOISE_SCALE += dScale;
     }
 
     ArrayList<Obstacle> getObstacles(){

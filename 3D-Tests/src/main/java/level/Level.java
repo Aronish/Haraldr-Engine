@@ -42,9 +42,7 @@ public class Level {
     private void updateMatrices(){
         this.debugLines.update();
         this.world.updateMatrix();
-        for (WorldTile worldTile : this.world.getWorldTiles()){
-            worldTile.updateMatrix();
-        }
+        this.world.getWorldTiles().forEach(WorldTile::updateMatrix);
         this.startingTile.updateMatrix();
         this.player.updateMatrix();
     }
@@ -57,9 +55,7 @@ public class Level {
             this.debugLines.render();
         }
         Renderer.render(this.world);
-        for (WorldTile worldTile : this.world.getWorldTiles()){
-            Renderer.render(worldTile);
-        }
+        this.world.getWorldTiles().forEach(Renderer::render);
         Renderer.render(this.startingTile);
         Renderer.render(this.player);
     }

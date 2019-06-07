@@ -9,8 +9,8 @@ import main.java.math.Vector3f;
  */
 public abstract class MovableEntity extends Entity {
 
-    private static final float GRAVITY_CONSTANT = -18.0f;
-    private static final float MAX_GRAVITY_ACCELERATION = -18.0f;
+    private static final float GRAVITY_CONSTANT = -20.0f;
+    private static final float MAX_GRAVITY_ACCELERATION = -20.0f;
 
     private Vector2f velocity;
     private boolean hasGravity;
@@ -48,7 +48,7 @@ public abstract class MovableEntity extends Entity {
 
     /**
      * Calculates gravity for this MovableEntity. Subject to change, refactoring and movement.
-     * @param compensation a value with which the gravity is compensated. Used for player jumping. TEMP
+     * @param compensation a value with which the gravity is compensated. Used for player jumping. Probably bad implementation.
      * @param deltaTime the delta time gotten from the timing circuit in Main.
      */
     void calculateGravity(float compensation, float deltaTime){
@@ -60,6 +60,10 @@ public abstract class MovableEntity extends Entity {
             }
             this.velocity.addY(this.gravityAcceleration + compensation);
         }
+    }
+
+    public void setHasGravity(boolean hasGravity){
+        this.hasGravity = hasGravity;
     }
 
     /**

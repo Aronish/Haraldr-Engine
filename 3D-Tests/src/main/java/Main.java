@@ -47,7 +47,7 @@ class Main implements Runnable{
         window = new Window(1280, 720, false);
         GL.createCapabilities();
         /*---OpenGL code won't work before this---*/
-        glfwSwapInterval(1);
+        //glfwSwapInterval(1);
         glfwShowWindow(window.getWindow());
         Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
 

@@ -2,6 +2,8 @@ package main.java.graphics;
 
 import main.java.level.Entity;
 import main.java.debug.Line;
+import main.java.level.Tile;
+import main.java.level.WorldTile;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
@@ -45,6 +47,12 @@ public class Renderer {
             entity.getTexturedModels().get(texMod).getTexture().unbind();
             entity.getTexturedModels().get(texMod).getVertexArray().unbind();
             entity.getTexturedModels().get(texMod).getShader().unuse();
+        }
+    }
+
+    public static void render(WorldTile worldTile){
+        for (Tile tile : worldTile.getTiles()){
+            render(tile);
         }
     }
 

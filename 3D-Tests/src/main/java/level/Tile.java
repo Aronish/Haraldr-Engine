@@ -7,12 +7,12 @@ import main.java.math.Vector3f;
 /**
  * Simple 1x1 square Entity.
  */
-public class Obstacle extends Entity {
+public class Tile extends Entity {
 
     /**
      * Default constructor without parameters.
      */
-    Obstacle(){
+    Tile(){
         this(new Vector3f(), 0.0f, 1.0f, Models.OBSTACLE);
     }
 
@@ -20,11 +20,11 @@ public class Obstacle extends Entity {
      * Constructor with just the position.
      * @param position the initial position of this object.
      */
-    Obstacle(Vector3f position){
+    Tile(Vector3f position){
         this(position, 0.0f, 1.0f, Models.OBSTACLE);
     }
 
-    Obstacle(Vector3f position, TexturedModel... texturedModels){
+    Tile(Vector3f position, TexturedModel... texturedModels){
         this(position, 0.0f, 1.0f, texturedModels);
     }
 
@@ -34,11 +34,11 @@ public class Obstacle extends Entity {
      * @param rotation the initial rotation of this object.
      * @param scale the initial scale of this object.
      */
-    private Obstacle(Vector3f position, float rotation, float scale){
+    private Tile(Vector3f position, float rotation, float scale){
         this(position, rotation, scale, Models.OBSTACLE);
     }
 
-    private Obstacle(Vector3f position, float rotation, float scale, TexturedModel... texturedModels){
+    private Tile(Vector3f position, float rotation, float scale, TexturedModel... texturedModels){
         super(position, rotation, scale, texturedModels);
     }
 }

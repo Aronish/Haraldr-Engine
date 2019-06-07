@@ -12,7 +12,7 @@ import java.util.Random;
 public class NoiseTest {
 
     private static int w = 1280, h = 720;
-    private static double scale = 0.001d;
+    private static double scale = 0.005d;
 
     public static void main(String[] args){
         new SimplexNoise();
@@ -25,7 +25,7 @@ public class NoiseTest {
                 noise = (int) ((SimplexNoise.noise(i * scale, j * scale, z * scale) + 1) / 2 * 255);
                 //System.out.println(noise);
                 //image.setRGB((int) i, (int) j, new Color(0, noise > 128 ? 200 : 80, noise < 128 ? 200 : 80, 255).getRGB());
-                image.setRGB((int) i, (int) j, new Color(0, 0, 0, noise).getRGB());
+                image.setRGB((int) i, (int) j, new Color(noise > 128 ? 255 : 0, 0, noise < 128 ? 255 : 0, 255).getRGB());
                 z += 0.005f;
             }
         }

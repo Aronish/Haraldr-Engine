@@ -1,8 +1,6 @@
 package main.java.level;
 
-import main.java.debug.IHasDebug;
 import main.java.debug.Logger;
-import main.java.graphics.Models;
 import main.java.math.SimplexNoise;
 import main.java.math.Vector3f;
 
@@ -13,11 +11,11 @@ import java.util.Random;
  * Main world object, on which everything should be located to be inside the world.
  * For future development style, this class should manage everything to do with the world in a level.
  */
-public class World extends Entity implements IHasDebug {
+public class World extends Entity {
 
-    private static double NOISE_SCALE = 0.01d;
+    private static double noiseScale = 0.05d;
 
-    private ArrayList<Obstacle> obstacles;
+    private ArrayList<WorldTile> tiles;
 
     /**
      * Constructor with the position of the Player in the same Level as this World.
@@ -41,8 +39,8 @@ public class World extends Entity implements IHasDebug {
      * @param scale the scale multiplier of this object.
      */
     private World(Vector3f position, float rotation, float scale){
-        super(position, rotation, scale, Models.getDIRT_LAYER(), Models.getGRASS_LAYER());
-        this.obstacles = new ArrayList<>();
+        super(position, rotation, scale);
+        this.tiles = new ArrayList<>();
         generateWorld();
     }
 
@@ -50,22 +48,22 @@ public class World extends Entity implements IHasDebug {
         Random random = new Random();
         double seed = random.nextDouble() * 10000.0d;
         for (int i = 0; i < 100; ++i){
-            float y = (float) ((SimplexNoise.noise(i * NOISE_SCALE, 0.0d, seed) + 1.0d) / 2.0d * 20.0d);
-            this.obstacles.add(new Obstacle(new Vector3f(i - 50, y + 2)));
+            int y = (int) ((SimplexNoise.noise(i * noiseScale, 0.0d, seed) + 1.0d) / 2.0d * 20.0d);
+            this.tiles.add(new WorldTile(new Vector3f(i - 50, y + 10)));
         }
     }
 
     public void regenerateWorld(){
-        this.obstacles = new ArrayList<>();
+        this.tiles = new ArrayList<>();
         generateWorld();
     }
 
     public void increaseNoiseScale(double dScale){
-        Logger.log(NOISE_SCALE);
-        NOISE_SCALE += dScale;
+        Logger.log(noiseScale);
+        noiseScale += dScale;
     }
 
-    ArrayList<Obstacle> getObstacles(){
-        return this.obstacles;
+    ArrayList<WorldTile> getTiles(){
+        return this.tiles;
     }
 }

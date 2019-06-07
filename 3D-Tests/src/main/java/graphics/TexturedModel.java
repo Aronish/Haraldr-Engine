@@ -1,6 +1,7 @@
 package main.java.graphics;
 
 import main.java.math.Vector3f;
+import main.java.physics.AABB;
 
 /**
  * Class for handling models for game objects.

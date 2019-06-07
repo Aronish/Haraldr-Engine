@@ -1,4 +1,4 @@
-package main.java.graphics;
+package main.java.physics;
 
 import main.java.math.Vector3f;
 
@@ -13,7 +13,7 @@ public class AABB {
     /**
      * Default constructor without parameters. Sets a 1x1 bounding box.
      */
-    AABB(){
+    public AABB(){
         this.width = 1.0f;
         this.height = 1.0f;
         this.middle = new Vector3f(0.5f, -0.5f);
@@ -24,10 +24,15 @@ public class AABB {
      * @param width the width.
      * @param height the height.
      */
-    AABB(float width, float height){
+    public AABB(float width, float height){
         this.width = width;
         this.height = height;
         this.middle = new Vector3f(width / 2.0f, -(height / 2.0f));
+    }
+
+    public void setScale(float scale){
+        this.width *= scale;
+        this.height *= scale;
     }
 
     /**

@@ -19,7 +19,10 @@ public class Models {
     private static final float dirtLength = 30.0f, dirtDepth = 10.0f;
 
     public static final TexturedModel OBSTACLE = new TexturedModel("src/main/java/shaders/square_shader", "src/main/resources/grass.png");
+    public static final TexturedModel GRASS_TILE = new TexturedModel("src/main/java/shaders/square_shader", "src/main/resources/grass.png");
+    public static final TexturedModel DIRT_TILE = new TexturedModel("src/main/java/shaders/square_shader", "src/main/resources/dirt.png");
     public static final TexturedModel PLAYER = new TexturedModel("src/main/java/shaders/player_shader", "src/main/resources/player.png");
+
     private static TexturedModel GRASS_LAYER = null;
     private static TexturedModel DIRT_LAYER = null;
 

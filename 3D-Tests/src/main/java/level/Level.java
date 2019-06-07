@@ -2,6 +2,7 @@ package main.java.level;
 
 import main.java.Input;
 import main.java.debug.DebugLines;
+import main.java.debug.Logger;
 import main.java.graphics.Renderer;
 import main.java.math.Vector3f;
 import main.java.physics.CollisionDetector;
@@ -13,16 +14,17 @@ public class Level {
 
     private World world;
     private Player player;
+    private Tile startingTile;
     private DebugLines debugLines;
 
     /**
      * Constructs a Level with the base elements like a Player and World.
      */
     public Level(){
-        this.player = new Player(new Vector3f(0.0f, 5.0f));
+        this.player = new Player(new Vector3f(0.0f, 25.0f), 8.0f);
+        this.startingTile = new Tile(new Vector3f(0.0f, 23.0f));
         this.world = new World();
         this.debugLines = new DebugLines();
-        this.debugLines.addDebugLines(this.world);
     }
 
     /**
@@ -41,9 +43,10 @@ public class Level {
     private void updateMatrices(){
         this.debugLines.update();
         this.world.updateMatrix();
-        for (Obstacle obstacle : this.world.getObstacles()){
-            obstacle.updateMatrix();
+        for (WorldTile worldTile : this.world.getTiles()){
+            worldTile.updateMatrix();
         }
+        this.startingTile.updateMatrix();
         this.player.updateMatrix();
     }
 
@@ -55,9 +58,10 @@ public class Level {
             this.debugLines.render();
         }
         Renderer.render(this.world);
-        for (Obstacle obstacle : this.world.getObstacles()){
-            Renderer.render(obstacle);
+        for (WorldTile worldTile : this.world.getTiles()){
+            Renderer.render(worldTile);
         }
+        Renderer.render(this.startingTile);
         Renderer.render(this.player);
     }
 
@@ -65,11 +69,13 @@ public class Level {
      * Does collision detection and resolution for the objects requiring collisions.
      */
     private void doCollisions() {
-        for (int texMod = 0; texMod < this.world.getTexturedModels().size(); texMod++) {
-            CollisionDetector.doCollisions(this.world, this.world.getTexturedModels().get(texMod), this.player);
-        }
-        for (Obstacle obstacle : this.world.getObstacles()){
-            CollisionDetector.doCollisions(obstacle, obstacle.getTexturedModels().get(0), this.player);
+        CollisionDetector.doCollisions(this.startingTile, this.startingTile.getTexturedModels().get(0), this.player);
+        for (WorldTile worldTile : this.world.getTiles()){
+            if (CollisionDetector.checkCollision(worldTile, this.player)){
+                for (Tile tile : worldTile.getTiles()){
+                    CollisionDetector.doCollisions(tile, tile.getTexturedModels().get(0), this.player);
+                }
+            }
         }
     }
 }

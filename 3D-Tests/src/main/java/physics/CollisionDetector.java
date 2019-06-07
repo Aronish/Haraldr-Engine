@@ -5,6 +5,7 @@ import main.java.debug.Logger;
 import main.java.graphics.TexturedModel;
 import main.java.level.Entity;
 import main.java.level.Player;
+import main.java.level.WorldTile;
 import main.java.math.Vector3f;
 
 import static main.java.physics.EnumDirection.EAST;
@@ -24,6 +25,12 @@ public class CollisionDetector {
         }
     }
 
+    public static boolean checkCollision(WorldTile worldTile, Player player){
+        boolean collisionX = player.getPosition().x + player.getWidth() > worldTile.getPosition().x && worldTile.getPosition().x + worldTile.getWidth() > player.getPosition().x;
+        boolean collisionY = player.getPosition().y - player.getHeight() < worldTile.getPosition().y && worldTile.getPosition().y - worldTile.getHeight() < player.getPosition().y;
+        return collisionX && collisionY;
+    }
+
     /**
      * Checks whether there is a collision between the Player in the Level and the current TexturedModel in the Entity.
      * @param player the Player to check collisions with.
@@ -31,7 +38,7 @@ public class CollisionDetector {
      * @param texturedModel the TexturedModel to check collision against.
      * @return true if there was a collision on both axis.
      */
-    private static boolean checkCollision(Entity entity, TexturedModel texturedModel, Player player){
+    public static boolean checkCollision(Entity entity, TexturedModel texturedModel, Player player){
         boolean collisionX = player.getPosition().x + player.getWidth() > entity.getPosition().x + texturedModel.getRelativePosition().x && entity.getPosition().x + texturedModel.getRelativePosition().x + texturedModel.getAABB().getWidth() > player.getPosition().x;
         boolean collisionY = player.getPosition().y - player.getHeight() < entity.getPosition().y + texturedModel.getRelativePosition().y && entity.getPosition().y + texturedModel.getRelativePosition().y - texturedModel.getAABB().getHeight() < player.getPosition().y;
         return collisionX && collisionY;

@@ -8,6 +8,7 @@ import main.java.physics.EnumPlayerMovementType;
 import org.lwjgl.glfw.GLFWKeyCallback;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -21,6 +22,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_V;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
@@ -78,9 +80,14 @@ public class Input extends GLFWKeyCallback {
         }
         if(keys[GLFW_KEY_R]){
             player.resetGravityAcceleration();
-            player.setPosition(new Vector3f());
-            Camera.scale = 1.0f;
+            player.setPosition(new Vector3f(0.0f, 25.0f));
             Camera.setPosition(player.getPosition());
+        }
+        if(keys[GLFW_KEY_C]){
+            player.setHasGravity(false);
+        }
+        if(keys[GLFW_KEY_V]){
+            player.setHasGravity(true);
         }
         if(keys[GLFW_KEY_UP]){
             Camera.calculateScale(true, deltaTime);

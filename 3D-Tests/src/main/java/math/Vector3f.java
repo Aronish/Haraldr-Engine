@@ -67,6 +67,10 @@ public class Vector3f {
         return new Vector3f(this.x - other.x, this.y - other.y, this.z - other.z);
     }
 
+    public Vector3f subtractY(float dy){
+        return new Vector3f(this.x, this.y - dy);
+    }
+
     /**
      * Multiply this Vector with a scalar.
      * @param scalar the scalar to multiply with.

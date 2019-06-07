@@ -29,13 +29,13 @@ public abstract class Entity {
      * @param scale the initial scale of this Entity.
      * @param texturedModels TexturedModel's that this Entity should contain. Variable amount.
      */
-    public Entity(Vector3f position, float rotation, float scale, TexturedModel ... texturedModels){
+    public Entity(Vector3f position, float rotation, float scale, TexturedModel... texturedModels){
         this.position = position;
         this.rotation = rotation;
         this.scale = scale;
         this.texturedModels = new ArrayList<>();
         this.texturedModels.addAll(Arrays.asList(texturedModels));
-        updateMatrix();
+        this.texturedModels.forEach((texturedModel) -> texturedModel.getAABB().setScale(this.scale));
     }
 
     /**
@@ -105,6 +105,10 @@ public abstract class Entity {
         return new Vector3f(this.position.x, this.position.y, this.position.z);
     }
 
+    public float getScale(){
+        return this.scale;
+    }
+
     /**
      * Gets the TexturedModels.
      * @return a HashMap<Integer, TexturedModel> with the TexturedModel's
@@ -114,7 +118,7 @@ public abstract class Entity {
     }
 
     /**
-     * Gets the width of the player's bounding box.
+     * Gets the width of the default bouding box.
      * @return the width of the bounding box.
      */
     public float getWidth(){
@@ -122,7 +126,7 @@ public abstract class Entity {
     }
 
     /**
-     * Gets the height of the player's bounding box.
+     * Gets the height of the default bouding box.
      * @return the height of the bounding box.
      */
     public float getHeight(){
@@ -130,7 +134,7 @@ public abstract class Entity {
     }
 
     /**
-     * Gets the middle of the player's bounding box.
+     * Gets the middle of the default bouding box.
      * @return the middle of the bounding box.
      */
     public Vector3f getMiddle() {

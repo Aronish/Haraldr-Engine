@@ -2,7 +2,6 @@ package main.java.level;
 
 import main.java.Input;
 import main.java.debug.DebugLines;
-import main.java.debug.Logger;
 import main.java.graphics.Renderer;
 import main.java.math.Vector3f;
 import main.java.physics.CollisionDetector;
@@ -21,7 +20,7 @@ public class Level {
      * Constructs a Level with the base elements like a Player and World.
      */
     public Level(){
-        this.player = new Player(new Vector3f(0.0f, 25.0f), 8.0f);
+        this.player = new Player(new Vector3f(0.0f, 25.0f), 2.0f);
         this.startingTile = new Tile(new Vector3f(0.0f, 23.0f));
         this.world = new World();
         this.debugLines = new DebugLines();
@@ -43,7 +42,7 @@ public class Level {
     private void updateMatrices(){
         this.debugLines.update();
         this.world.updateMatrix();
-        for (WorldTile worldTile : this.world.getTiles()){
+        for (WorldTile worldTile : this.world.getWorldTiles()){
             worldTile.updateMatrix();
         }
         this.startingTile.updateMatrix();
@@ -58,7 +57,7 @@ public class Level {
             this.debugLines.render();
         }
         Renderer.render(this.world);
-        for (WorldTile worldTile : this.world.getTiles()){
+        for (WorldTile worldTile : this.world.getWorldTiles()){
             Renderer.render(worldTile);
         }
         Renderer.render(this.startingTile);
@@ -70,7 +69,7 @@ public class Level {
      */
     private void doCollisions() {
         CollisionDetector.doCollisions(this.startingTile, this.startingTile.getTexturedModels().get(0), this.player);
-        for (WorldTile worldTile : this.world.getTiles()){
+        for (WorldTile worldTile : this.world.getWorldTiles()){
             if (CollisionDetector.checkCollision(worldTile, this.player)){
                 for (Tile tile : worldTile.getTiles()){
                     CollisionDetector.doCollisions(tile, tile.getTexturedModels().get(0), this.player);

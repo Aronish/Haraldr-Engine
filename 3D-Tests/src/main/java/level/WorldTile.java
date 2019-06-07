@@ -16,7 +16,7 @@ public class WorldTile extends Entity {
     }
 
     private WorldTile(Vector3f position, float rotation, float scale) {
-        super(position, rotation, scale, Models.GRASS_TILE);
+        super(position, rotation, scale);
         this.tiles = new ArrayList<>();
         this.tiles.add(new Tile(position, Models.GRASS_TILE));
         for (float i = position.subtractY(1.0f).y; i >= 0.0f; --i){

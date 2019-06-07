@@ -7,9 +7,6 @@ import main.java.math.Vector3f;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.lwjgl.opengl.GL20.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
-
 /**
  * Class that represents a base game object. Contains common properties and a TexturedModel's to render.
  */
@@ -20,7 +17,6 @@ public abstract class Entity {
     private Matrix4f matrix;
     private float scale;
     private float rotation;
-    private int matrixLocation;
 
     /**
      * Creates a new Entity with the specified properties.
@@ -83,18 +79,8 @@ public abstract class Entity {
         this.matrix = new Matrix4f().MVP(this.position, this.rotation, this.scale);
     }
 
-    /**
-     * Retrieves the matrix location in the shader for the specified TexturedModel.
-     */
-    public void setMatrixLocation(int id){
-        this.matrixLocation = glGetUniformLocation(this.texturedModels.get(id).getShader().getShaderProgram(), "matrix");
-    }
-
-    /**
-     * Sets the uniform variable in the vertex shader to the current Model-View-Projection matrix.
-     */
-    public void setUniformMatrix(){
-        glUniformMatrix4fv(this.matrixLocation, false, this.matrix.matrix);
+    public float[] getMatrix(){
+        return this.matrix.matrix;
     }
 
     /**

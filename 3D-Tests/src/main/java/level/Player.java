@@ -12,7 +12,7 @@ public class Player extends MovableEntity {
 
     private static final float WALK_SPEED = 4.0f;
     private static final float JUMP_STRENGTH = 9.0f;
-    private static final float RUN_MULTIPLIER = 5.0f;
+    private static final float RUN_MULTIPLIER = 1.5f;
 
     private EnumPlayerMovementType movementType;
     private boolean isJumping;

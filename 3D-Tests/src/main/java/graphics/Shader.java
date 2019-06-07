@@ -1,8 +1,12 @@
 package main.java.graphics;
 
+import main.java.math.Matrix4f;
+
 import java.io.File;
 import java.util.Scanner;
 
+import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL46.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL46.GL_VERTEX_SHADER;
 import static org.lwjgl.opengl.GL46.glAttachShader;
@@ -101,6 +105,11 @@ public class Shader {
             e.printStackTrace();
         }
         return stringBuilder.toString();
+    }
+
+    void setMatrix(float[] matrix){
+        int matrixLocation = glGetUniformLocation(this.shaderProgram, "matrix");
+        glUniformMatrix4fv(matrixLocation, false, matrix);
     }
 
     /**

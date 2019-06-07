@@ -15,7 +15,7 @@ public class World extends Entity {
 
     private static double noiseScale = 0.05d;
 
-    private ArrayList<WorldTile> tiles;
+    private ArrayList<WorldTile> worldTiles;
 
     /**
      * Constructor with the position of the Player in the same Level as this World.
@@ -40,7 +40,7 @@ public class World extends Entity {
      */
     private World(Vector3f position, float rotation, float scale){
         super(position, rotation, scale);
-        this.tiles = new ArrayList<>();
+        this.worldTiles = new ArrayList<>();
         generateWorld();
     }
 
@@ -49,12 +49,12 @@ public class World extends Entity {
         double seed = random.nextDouble() * 10000.0d;
         for (int i = 0; i < 100; ++i){
             int y = (int) ((SimplexNoise.noise(i * noiseScale, 0.0d, seed) + 1.0d) / 2.0d * 20.0d);
-            this.tiles.add(new WorldTile(new Vector3f(i - 50, y + 10)));
+            this.worldTiles.add(new WorldTile(new Vector3f(i - 50, y + 10)));
         }
     }
 
     public void regenerateWorld(){
-        this.tiles = new ArrayList<>();
+        this.worldTiles = new ArrayList<>();
         generateWorld();
     }
 
@@ -63,7 +63,7 @@ public class World extends Entity {
         noiseScale += dScale;
     }
 
-    ArrayList<WorldTile> getTiles(){
-        return this.tiles;
+    ArrayList<WorldTile> getWorldTiles(){
+        return this.worldTiles;
     }
 }

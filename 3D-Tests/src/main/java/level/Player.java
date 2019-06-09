@@ -3,7 +3,6 @@ package main.java.level;
 import main.java.Camera;
 import main.java.debug.Logger;
 import main.java.graphics.Models;
-import main.java.graphics.Renderer;
 import main.java.math.Vector3f;
 import main.java.physics.EnumPlayerMovementType;
 
@@ -20,7 +19,6 @@ public class Player extends MovableEntity {
     private boolean isJumping;
     private boolean isRunning;
     private boolean isFalling;
-    private boolean isStanding;
 
     /**
      * Default constructor if no arguments are provided.
@@ -53,7 +51,6 @@ public class Player extends MovableEntity {
         this.isJumping = false;
         this.isRunning = false;
         this.isFalling = false;
-        this.isStanding = false;
     }
 
     /**
@@ -88,8 +85,8 @@ public class Player extends MovableEntity {
         this.isFalling = isFalling;
     }
 
-    public void setStanding(boolean isStanding){
-        this.isStanding = isStanding;
+    public boolean isJumping(){
+        return this.isJumping;
     }
 
     public boolean isFalling(){
@@ -109,26 +106,20 @@ public class Player extends MovableEntity {
             getVelocity().addX(WALK_SPEED * this.movementType.directionFactor);
         }
         //---Jumping-Calculations---\\
-        if (this.isJumping){
-            if (Math.abs(getGravityAcceleration()) < JUMP_STRENGTH){
+        if (this.isJumping) {
+            if (Math.abs(getGravityAcceleration()) < JUMP_STRENGTH) {
                 getVelocity().addY(JUMP_STRENGTH);
                 calculateGravity(0.0f, deltaTime);
             } else {
                 this.isJumping = false;
             }
-        }else if (this.isStanding){
-            calculateGravity(0.0f, deltaTime);
-            Logger.log("STANDING");
         }else if (this.isFalling){
-            if (getVelocity().getY() < 0.0f){
-                calculateGravity(JUMP_STRENGTH, deltaTime);
-            }else{
-                calculateGravity(0.0f, deltaTime);
-            }
+            calculateGravity(JUMP_STRENGTH, deltaTime);
+        }else{
+            calculateGravity(0.0f, deltaTime);
         }
+        Logger.log(getVelocity().getY());
         addPosition(new Vector3f(this.getVelocity().getX() * deltaTime, this.getVelocity().getY() * deltaTime));
         Camera.setPosition(getPosition().add(getMiddle()));
-        this.isStanding = false;
-        this.isFalling = true;
     }
 }

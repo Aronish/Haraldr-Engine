@@ -48,7 +48,7 @@ public abstract class MovableEntity extends Entity {
 
     /**
      * Calculates gravity for this MovableEntity. Subject to change, refactoring and movement.
-     * @param compensation a value with which the gravity is compensated. Used for player jumping. Probably bad implementation.
+     * @param compensation a value with which the gravity is compensated. E.g. gravity becomes stronger to account for the jumping velocity.
      * @param deltaTime the delta time gotten from the timing circuit in Main.
      */
     void calculateGravity(float compensation, float deltaTime){
@@ -69,7 +69,7 @@ public abstract class MovableEntity extends Entity {
     /**
      * Resets the X and Y velocities to 0.
      */
-    void resetVelocity(){
+    private void resetVelocity(){
         this.velocity.reset();
     }
 

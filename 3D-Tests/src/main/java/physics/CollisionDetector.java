@@ -38,7 +38,7 @@ public class CollisionDetector {
      * @param texturedModel the TexturedModel to check collision against.
      * @return true if there was a collision on both axis.
      */
-    public static boolean checkCollision(Entity entity, TexturedModel texturedModel, Player player){
+    private static boolean checkCollision(Entity entity, TexturedModel texturedModel, Player player){
         boolean collisionX = player.getPosition().x + player.getWidth() > entity.getPosition().x + texturedModel.getRelativePosition().x && entity.getPosition().x + texturedModel.getRelativePosition().x + texturedModel.getAABB().getWidth() > player.getPosition().x;
         boolean collisionY = player.getPosition().y - player.getHeight() < entity.getPosition().y + texturedModel.getRelativePosition().y && entity.getPosition().y + texturedModel.getRelativePosition().y - texturedModel.getAABB().getHeight() < player.getPosition().y;
         return collisionX && collisionY;
@@ -79,10 +79,11 @@ public class CollisionDetector {
         float inside = collisionDataMap.getInside();
         switch (collisionDataMap.getCollisionDirection()) {
             case NORTH:
-                player.addPosition(new Vector3f(0.0f, inside));
                 player.resetGravityAcceleration();
-                player.setFalling(false);
-                player.setStanding(true);
+                if (!player.isJumping()){
+                    player.setFalling(false);
+                }
+                player.addPosition(new Vector3f(0.0f, inside));
                 Camera.addPosition(new Vector3f(0.0f, inside * Camera.scale));
                 break;
             case EAST:

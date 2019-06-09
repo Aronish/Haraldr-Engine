@@ -110,6 +110,7 @@ public class Input extends GLFWKeyCallback {
         if(keys[GLFW_KEY_SPACE]) {
             if (!player.isFalling()) {
                 player.setJumping(true);
+                player.setFalling(true);
             }
         }
         if(keys[GLFW_KEY_G]){

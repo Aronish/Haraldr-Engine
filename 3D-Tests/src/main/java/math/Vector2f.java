@@ -111,6 +111,10 @@ public class Vector2f {
         this.x -= dx;
     }
 
+    public void subtractY(float dy){
+        this.y -= dy;
+    }
+
     /**
      * Prints this vector for debugging purposes.
      */

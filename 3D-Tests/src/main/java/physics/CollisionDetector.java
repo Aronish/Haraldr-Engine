@@ -79,8 +79,8 @@ public class CollisionDetector {
         float inside = collisionDataMap.getInside();
         switch (collisionDataMap.getCollisionDirection()) {
             case NORTH:
-                player.resetGravityAcceleration();
                 if (!player.isJumping()){
+                    player.resetGravityAcceleration();
                     player.setFalling(false);
                 }
                 player.addPosition(new Vector3f(0.0f, inside));

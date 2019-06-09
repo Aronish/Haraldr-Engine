@@ -1,5 +1,6 @@
 package main.java.physics;
 
+import main.java.math.Vector2f;
 import main.java.math.Vector3f;
 
 /**
@@ -30,9 +31,9 @@ public class AABB {
         calculateMiddle();
     }
 
-    public void setScale(float scale){
-        this.width *= scale;
-        this.height *= scale;
+    public void setScale(Vector2f scale){
+        this.width *= scale.getX();
+        this.height *= scale.getY();
         calculateMiddle();
     }
 

@@ -3,6 +3,7 @@ package main.java.debug;
 import main.java.graphics.Shader;
 import main.java.graphics.VertexArray;
 import main.java.math.Matrix4f;
+import main.java.math.Vector2f;
 import main.java.math.Vector3f;
 
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
@@ -25,7 +26,7 @@ public class Line {
      * @param relativePosition a relative position to adjust the position. Mainly if it's in the center of a TexturedModel that has an offset.
      * @param entityPosition the position of the whole entity in the world.
      */
-    public Line(Vector3f position, Vector3f relativePosition, Vector3f entityPosition){
+    Line(Vector3f position, Vector3f relativePosition, Vector3f entityPosition){
         Vector3f actualPosition = position.add(entityPosition).add(relativePosition);
         this.vertexArray = new VertexArray(new float[] {actualPosition.x, actualPosition.y, 0.0f, 0.0f});
         setShader();
@@ -37,7 +38,7 @@ public class Line {
      * Sets the other vertex to draw the line to. Can be any vertex.
      * @param otherVertex the other vertex.
      */
-    public void setOtherVertex(Vector3f otherVertex){
+    void setOtherVertex(Vector3f otherVertex){
         this.otherVertex = otherVertex;
         updateVertexData();
     }
@@ -52,8 +53,8 @@ public class Line {
     /**
      * Updates the Model-View-Projection matrix with the current attribute values.
      */
-    public void updateMatrix(){
-        this.matrix = new Matrix4f().MVP(new Vector3f(), 0.0f, 1.0f);
+    void updateMatrix(){
+        this.matrix = new Matrix4f().MVP(new Vector3f(), 0.0f, new Vector2f(1.0f));
     }
 
     /**

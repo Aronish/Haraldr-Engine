@@ -1,6 +1,7 @@
 package main.java;
 
 import main.java.math.Matrix4f;
+import main.java.math.Vector2f;
 import main.java.math.Vector3f;
 
 /**
@@ -44,7 +45,7 @@ public class Camera{
      * Calculates a new view matrix (an inverted transformation matrix) from the current attribute values.
      */
     private static void calculateViewMatrix(){
-        viewMatrix = new Matrix4f().transform(position, rotation, scale, true);
+        viewMatrix = new Matrix4f().transform(position, rotation, new Vector2f(scale), true);
     }
 
     /**

@@ -1,8 +1,8 @@
 package main.java.level;
 
 import main.java.Camera;
-import main.java.debug.Logger;
 import main.java.graphics.Models;
+import main.java.math.Vector2f;
 import main.java.math.Vector3f;
 import main.java.physics.EnumPlayerMovementType;
 
@@ -12,7 +12,7 @@ import main.java.physics.EnumPlayerMovementType;
 public class Player extends MovableEntity {
 
     private static final float WALK_SPEED = 4.0f;
-    private static final float JUMP_STRENGTH = 9.0f;
+    private static final float JUMP_STRENGTH = 12.0f;
     private static final float RUN_MULTIPLIER = 1.5f;
 
     private EnumPlayerMovementType movementType;
@@ -46,7 +46,7 @@ public class Player extends MovableEntity {
      * @param scale the scale multiplier of this Player.
      */
     private Player(Vector3f position, float rotation, float scale){
-        super(position, rotation, scale, true, Models.PLAYER);
+        super(position, rotation, scale, true, Models.getPLAYER());
         this.movementType = EnumPlayerMovementType.STAND;
         this.isJumping = false;
         this.isRunning = false;
@@ -100,6 +100,9 @@ public class Player extends MovableEntity {
     @Override
     public void calculateMotion(float deltaTime){
         //---Walking Calculations---\\
+        if (this.movementType != EnumPlayerMovementType.STAND){
+            setScale(new Vector2f(-this.movementType.directionFactor, 1.0f));
+        }
         if (this.isRunning){
             getVelocity().addX(WALK_SPEED * RUN_MULTIPLIER * this.movementType.directionFactor);
         }else{
@@ -118,7 +121,6 @@ public class Player extends MovableEntity {
         }else{
             calculateGravity(0.0f, deltaTime);
         }
-        Logger.log(getVelocity().getY());
         addPosition(new Vector3f(this.getVelocity().getX() * deltaTime, this.getVelocity().getY() * deltaTime));
         Camera.setPosition(getPosition().add(getMiddle()));
     }

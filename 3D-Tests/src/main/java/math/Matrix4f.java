@@ -63,9 +63,9 @@ public class Matrix4f {
      * @param scale the scale multiplier.
      * @return the resulting MVP matrix.
      */
-    public Matrix4f MVP(Vector3f position, float angle, float scale){
+    public Matrix4f MVP(Vector3f position, float angle, Vector2f scale){
         // Resolution must have the aspect ratio 16:9 as of now.
-        return orthographic.multiply(Camera.viewMatrix).multiply(transform(position, angle, scale, false));
+        return orthographic.multiply(Camera.viewMatrix).multiply(transform(scale.getX() == -1 ? position.add(new Vector3f(1.0f, 0.0f)) : position, angle, scale, false));
     }
 
     /**
@@ -76,7 +76,7 @@ public class Matrix4f {
      * @param scale the scale multiplier.
      * @return the resulting MP matrix.
      */
-    public Matrix4f MP(Vector3f position, float angle, float scale){
+    public Matrix4f MP(Vector3f position, float angle, Vector2f scale){
         return orthographic.multiply(transform(position, angle, scale, false));
     }
 
@@ -88,19 +88,14 @@ public class Matrix4f {
      * @param isCamera if the transformation matrix is the view matrix of a camera. If <code>true</code>, the translation and rotation will be inverted.
      * @return the resulting transformation matrix.
      */
-    public Matrix4f transform(Vector3f position, float angle, float scale, boolean isCamera){
+    public Matrix4f transform(Vector3f position, float angle, Vector2f scale, boolean isCamera){
         return translate(position, isCamera).multiply(rotate(angle, isCamera)).multiply(scale(scale));
     }
 
-    /**
-     * Creates a scale matrix.
-     * @param scale the scale multiplier.
-     * @return the resulting scale matrix.
-     */
-    private Matrix4f scale(float scale){
+    private Matrix4f scale(Vector2f scale){
         Matrix4f result = new Matrix4f();
-        result.matrix[0] = scale;
-        result.matrix[5] = scale;
+        result.matrix[0] = scale.getX();
+        result.matrix[5] = scale.getY();
         result.matrix[10] = 1.0f;
         result.matrix[15] = 1.0f;
         return result;

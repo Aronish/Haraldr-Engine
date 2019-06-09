@@ -47,9 +47,9 @@ public class World extends Entity {
 
     private void generateWorld(){
         double seed = this.random.nextDouble() * 100000.0d;
-        for (int i = 0; i < 100; ++i){
+        for (int i = 0; i < 200; ++i){
             int y = (int) ((SimplexNoise.noise(i * noiseScale, 0.0d, seed) + 1.0d) / 2.0d * 40.0d);
-            this.worldTiles.add(new WorldTile(new Vector3f(i - 50, y + 5)));
+            this.worldTiles.add(new WorldTile(new Vector3f(i - 100, y + 5)));
         }
     }
 

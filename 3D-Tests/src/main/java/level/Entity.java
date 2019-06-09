@@ -2,6 +2,7 @@ package main.java.level;
 
 import main.java.graphics.TexturedModel;
 import main.java.math.Matrix4f;
+import main.java.math.Vector2f;
 import main.java.math.Vector3f;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public abstract class Entity {
     private ArrayList<TexturedModel> texturedModels;
     private Vector3f position;
     private Matrix4f matrix;
-    private float scale;
+    private Vector2f scale;
     private float rotation;
 
     /**
@@ -28,7 +29,7 @@ public abstract class Entity {
     public Entity(Vector3f position, float rotation, float scale, TexturedModel... texturedModels){
         this.position = position;
         this.rotation = rotation;
-        this.scale = scale;
+        this.scale = new Vector2f(scale);
         this.texturedModels = new ArrayList<>();
         this.texturedModels.addAll(Arrays.asList(texturedModels));
         this.texturedModels.forEach((texturedModel) -> texturedModel.getAABB().setScale(this.scale));
@@ -64,7 +65,7 @@ public abstract class Entity {
      * Sets the scale of this object.
      * @param scale the scale multiplier.
      */
-    public void setScale(float scale){
+    public void setScale(Vector2f scale){
         this.scale = scale;
     }
 
@@ -87,7 +88,7 @@ public abstract class Entity {
         return new Vector3f(this.position.x, this.position.y, this.position.z);
     }
 
-    public float getScale(){
+    public Vector2f getScale(){
         return this.scale;
     }
 

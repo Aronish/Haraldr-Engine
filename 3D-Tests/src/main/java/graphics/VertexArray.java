@@ -1,8 +1,11 @@
 package main.java.graphics;
 
+import main.java.debug.Logger;
+
 import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBufferSubData;
+import static org.lwjgl.opengl.GL15.glGetBufferSubData;
 import static org.lwjgl.opengl.GL46.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL46.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL46.GL_FLOAT;

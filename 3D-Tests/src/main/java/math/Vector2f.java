@@ -14,6 +14,11 @@ public class Vector2f {
         this.y = 0.0f;
     }
 
+    public Vector2f(float both){
+        this.x = both;
+        this.y = both;
+    }
+
     /**
      * Sets the positions to the provided ones.
      * @param x the x component.

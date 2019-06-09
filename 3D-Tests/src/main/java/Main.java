@@ -56,7 +56,7 @@ class Main implements Runnable{
         new SimplexNoise();
         new CollisionDetector();
         new Models();
-        new Camera(0.25f);
+        new Camera(0.5f);
         level = new Level();
     }
 

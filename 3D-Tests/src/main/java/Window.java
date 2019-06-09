@@ -25,7 +25,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
-import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL46.GL_TRUE;
 import static org.lwjgl.opengl.GL46.glViewport;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -49,11 +48,9 @@ class Window {
      */
     Window(int width, int height, boolean fullscreen){
         isFullscreen = fullscreen;
-
         if (!glfwInit()){
             throw new IllegalStateException("Couldn't init GLFW!");
         }
-
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -61,21 +58,20 @@ class Window {
         glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
         glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
-
         this.vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        if (this.vidmode == null){
+            throw new IllegalStateException("Vidmode was not found!");
+        }
         windowWidth = fullscreen ? this.vidmode.width() : width;
         windowHeight = fullscreen ? this.vidmode.height() : height;
-
         window = glfwCreateWindow(windowWidth, windowHeight, "OpenGL Game", (fullscreen ? glfwGetPrimaryMonitor() : NULL), NULL);
         if (window == NULL) {
             glfwTerminate();
             throw new RuntimeException("Window failed to be created");
         }
-
         if(fullscreen){
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         }
-
         glfwSetKeyCallback(window, new Input());
         glfwSetWindowPos(window, (this.vidmode.width() - windowWidth) / 2, (this.vidmode.height() - windowHeight) / 2);
         glfwMakeContextCurrent(window);

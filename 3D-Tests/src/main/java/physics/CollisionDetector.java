@@ -82,6 +82,7 @@ public class CollisionDetector {
                 player.addPosition(new Vector3f(0.0f, inside));
                 player.resetGravityAcceleration();
                 player.setFalling(false);
+                player.setStanding(true);
                 Camera.addPosition(new Vector3f(0.0f, inside * Camera.scale));
                 break;
             case EAST:
@@ -95,10 +96,6 @@ public class CollisionDetector {
             case SOUTH:
                 player.addPosition(new Vector3f(0.0f, -inside));
                 Camera.addPosition(new Vector3f(0.0f, -inside * Camera.scale));
-                break;
-            case INVALIDDIR:
-                Logger.setWarningLevel();
-                Logger.log("Detected invalid collision direction!");
                 break;
         }
     }

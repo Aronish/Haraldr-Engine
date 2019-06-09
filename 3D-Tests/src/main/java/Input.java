@@ -80,7 +80,7 @@ public class Input extends GLFWKeyCallback {
         }
         if(keys[GLFW_KEY_R]){
             player.resetGravityAcceleration();
-            player.setPosition(new Vector3f(0.0f, 25.0f));
+            player.setPosition(new Vector3f(0.0f, 50.0f));
             Camera.setPosition(player.getPosition());
         }
         if(keys[GLFW_KEY_C]){
@@ -110,7 +110,6 @@ public class Input extends GLFWKeyCallback {
         if(keys[GLFW_KEY_SPACE]) {
             if (!player.isFalling()) {
                 player.setJumping(true);
-                player.setFalling(true);
             }
         }
         if(keys[GLFW_KEY_G]){

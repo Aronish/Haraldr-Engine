@@ -27,12 +27,17 @@ public class AABB {
     public AABB(float width, float height){
         this.width = width;
         this.height = height;
-        this.middle = new Vector3f(width / 2.0f, -(height / 2.0f));
+        calculateMiddle();
     }
 
     public void setScale(float scale){
         this.width *= scale;
         this.height *= scale;
+        calculateMiddle();
+    }
+
+    private void calculateMiddle(){
+        this.middle = new Vector3f(this.width / 2.0f, -(this.height / 2.0f));
     }
 
     /**

@@ -1,7 +1,9 @@
 package main.java.level;
 
 import main.java.Camera;
+import main.java.debug.Logger;
 import main.java.graphics.Models;
+import main.java.graphics.Renderer;
 import main.java.math.Vector3f;
 import main.java.physics.EnumPlayerMovementType;
 
@@ -18,6 +20,7 @@ public class Player extends MovableEntity {
     private boolean isJumping;
     private boolean isRunning;
     private boolean isFalling;
+    private boolean isStanding;
 
     /**
      * Default constructor if no arguments are provided.
@@ -50,6 +53,7 @@ public class Player extends MovableEntity {
         this.isJumping = false;
         this.isRunning = false;
         this.isFalling = false;
+        this.isStanding = false;
     }
 
     /**
@@ -84,6 +88,10 @@ public class Player extends MovableEntity {
         this.isFalling = isFalling;
     }
 
+    public void setStanding(boolean isStanding){
+        this.isStanding = isStanding;
+    }
+
     public boolean isFalling(){
         return this.isFalling;
     }
@@ -92,30 +100,36 @@ public class Player extends MovableEntity {
      * Calculates the motion from factors like speed, isJumping and isRunning.
      * @param deltaTime the delta time gotten from the timing circuit in Main.
      */
+    //TODO THIS IS YOUR LOOP AND PARADOX SATAN: CANNOT BE UNSUMMONED, GO TO HELL!!!!!!!
     @Override
     public void calculateMotion(float deltaTime){
-        if (this.movementType == EnumPlayerMovementType.STAND && !this.isJumping){
-            this.resetVelocity();
+        //---Walking Calculations---\\
+        if (this.isRunning){
+            getVelocity().addX(WALK_SPEED * RUN_MULTIPLIER * this.movementType.directionFactor);
         }else{
-            if (this.isRunning){
-                this.getVelocity().addX(WALK_SPEED * RUN_MULTIPLIER * this.movementType.directionFactor);
-            }else{
-                this.getVelocity().addX(WALK_SPEED * this.movementType.directionFactor);
-            }
+            getVelocity().addX(WALK_SPEED * this.movementType.directionFactor);
         }
+        //---Jumping-Calculations---\\
         if (this.isJumping){
-            if (Math.abs(this.getGravityAcceleration()) < JUMP_STRENGTH){
-                this.getVelocity().addY(JUMP_STRENGTH);
+            if (Math.abs(getGravityAcceleration()) < JUMP_STRENGTH){
+                getVelocity().addY(JUMP_STRENGTH);
                 calculateGravity(0.0f, deltaTime);
             } else {
                 this.isJumping = false;
             }
-        }else if (this.isFalling){
-            calculateGravity(JUMP_STRENGTH, deltaTime);
-        }else{
+        }else if (this.isStanding){
             calculateGravity(0.0f, deltaTime);
+            Logger.log("STANDING");
+        }else if (this.isFalling){
+            if (getVelocity().getY() < 0.0f){
+                calculateGravity(JUMP_STRENGTH, deltaTime);
+            }else{
+                calculateGravity(0.0f, deltaTime);
+            }
         }
         addPosition(new Vector3f(this.getVelocity().getX() * deltaTime, this.getVelocity().getY() * deltaTime));
-        Camera.setPosition(getPosition());
+        Camera.setPosition(getPosition().add(getMiddle()));
+        this.isStanding = false;
+        this.isFalling = true;
     }
 }

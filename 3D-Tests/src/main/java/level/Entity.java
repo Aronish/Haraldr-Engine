@@ -40,7 +40,6 @@ public abstract class Entity {
      */
     public void setPosition(Vector3f position){
         this.position = position;
-        updateMatrix();
     }
 
     /**
@@ -51,7 +50,6 @@ public abstract class Entity {
         this.position.x += position.x;
         this.position.y += position.y;
         this.position.z += position.z;
-        updateMatrix();
     }
 
     /**
@@ -60,7 +58,6 @@ public abstract class Entity {
      */
     public void setRotation(float rotation){
         this.rotation = rotation;
-        updateMatrix();
     }
 
     /**
@@ -69,7 +66,6 @@ public abstract class Entity {
      */
     public void setScale(float scale){
         this.scale = scale;
-        updateMatrix();
     }
 
     /**
@@ -123,7 +119,7 @@ public abstract class Entity {
      * Gets the middle of the default bouding box.
      * @return the middle of the bounding box.
      */
-    public Vector3f getMiddle() {
+    Vector3f getMiddle() {
         return getTexturedModels().get(0).getAABB().getMiddle();
     }
 }

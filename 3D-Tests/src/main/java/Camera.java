@@ -14,7 +14,7 @@ public class Camera{
     private static float rotation;
     public static float scale;
 
-    private static final float MIN_SCALE = 0.25f;
+    private static final float MIN_SCALE = 0.125f;
     private static final float SCALE_SPEED = 1.0f;
 
     /**

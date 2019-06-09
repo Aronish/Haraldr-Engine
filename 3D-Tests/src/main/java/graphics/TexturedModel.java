@@ -99,7 +99,7 @@ public class TexturedModel{
      * Gets the shader.
      * @return the shader.
      */
-    public Shader getShader(){
+    Shader getShader(){
         return this.shader;
     }
 

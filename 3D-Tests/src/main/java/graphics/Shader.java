@@ -92,20 +92,19 @@ public class Shader {
         }catch (Exception e){
             System.out.println("Error 1");
         }
-        if (shaderFile != null) {
-            stringBuilder = new StringBuilder((int) shaderFile.length());
-            try (Scanner scanner = new Scanner(shaderFile)) {
-                while (scanner.hasNextLine()) {
-                    stringBuilder.append(scanner.nextLine()).append(System.lineSeparator());
-                }
-            } catch (Exception e) {
-                System.out.println("Error 2");
-                e.printStackTrace();
-            }
-            return stringBuilder.toString();
-        }else{
+        if (shaderFile == null) {
             throw new IllegalStateException("Shader file was not initialized!");
         }
+        stringBuilder = new StringBuilder((int) shaderFile.length());
+        try (Scanner scanner = new Scanner(shaderFile)) {
+            while (scanner.hasNextLine()) {
+                stringBuilder.append(scanner.nextLine()).append(System.lineSeparator());
+            }
+        } catch (Exception e) {
+            System.out.println("Error 2");
+            e.printStackTrace();
+        }
+        return stringBuilder.toString();
     }
 
     void setMatrix(float[] matrix){

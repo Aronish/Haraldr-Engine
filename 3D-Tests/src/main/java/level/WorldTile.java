@@ -44,4 +44,10 @@ public class WorldTile extends Entity {
     public float getHeight() {
         return this.aabb.getHeight();
     }
+
+    @Override
+    void cleanUp() {
+        super.cleanUp();
+        this.tiles.forEach(Tile::cleanUp);
+    }
 }

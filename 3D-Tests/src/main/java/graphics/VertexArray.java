@@ -1,11 +1,10 @@
 package main.java.graphics;
 
-import main.java.debug.Logger;
-
 import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBufferSubData;
-import static org.lwjgl.opengl.GL15.glGetBufferSubData;
+import static org.lwjgl.opengl.GL15.glDeleteBuffers;
+import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL46.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL46.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL46.GL_FLOAT;
@@ -26,7 +25,7 @@ import static org.lwjgl.opengl.GL46.glVertexAttribPointer;
  */
 public class VertexArray {
 
-    private int vao, vbo, length;
+    private int vao, vbo, tbo, ebo, length;
     private int renderMode;
 
     private static float[] defVertices = {
@@ -64,24 +63,24 @@ public class VertexArray {
     VertexArray(float[] vertices, int[] indices, float[] texcoords){
         this.vao = glGenVertexArrays();
         this.vbo = glGenBuffers();
-        int ebo = glGenBuffers();
-        int tbo = glGenBuffers();
+        this.ebo = glGenBuffers();
+        this.tbo = glGenBuffers();
         this.length = indices.length;
         this.renderMode = GL_TRIANGLES;
 
         glBindVertexArray(this.vao);
 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
         glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 8, 0);
         glEnableVertexAttribArray(0);
 
-        glBindBuffer(GL_ARRAY_BUFFER, tbo);
+        glBindBuffer(GL_ARRAY_BUFFER, this.tbo);
         glBufferData(GL_ARRAY_BUFFER, texcoords, GL_STATIC_DRAW);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, 8, 0);
         glEnableVertexAttribArray(1);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this.ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
 
         glBindVertexArray(0);
@@ -97,7 +96,7 @@ public class VertexArray {
         };
         this.vao = glGenVertexArrays();
         this.vbo = glGenBuffers();
-        int ebo = glGenBuffers();
+        this.ebo = glGenBuffers();
         this.length = 2;
         this.renderMode = GL_LINES;
 
@@ -108,7 +107,7 @@ public class VertexArray {
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 8, 0);
         glEnableVertexAttribArray(0);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this.ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_DYNAMIC_DRAW);
 
         glBindVertexArray(0);
@@ -142,7 +141,15 @@ public class VertexArray {
     /**
      * Unbinds the VAO to avoid weird conflicts.
      */
-    void unbind(){
+    private void unbind(){
         glBindVertexArray(0);
+    }
+
+    public void delete(){
+        unbind();
+        glDeleteVertexArrays(this.vao);
+        glDeleteBuffers(this.vbo);
+        glDeleteBuffers(this.tbo);
+        glDeleteBuffers(this.ebo);
     }
 }

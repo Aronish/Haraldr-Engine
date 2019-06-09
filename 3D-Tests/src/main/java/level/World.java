@@ -66,4 +66,10 @@ public class World extends Entity {
     ArrayList<WorldTile> getWorldTiles(){
         return this.worldTiles;
     }
+
+    @Override
+    void cleanUp() {
+        super.cleanUp();
+        this.worldTiles.forEach(WorldTile::cleanUp);
+    }
 }

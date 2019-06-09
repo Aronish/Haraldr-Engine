@@ -118,4 +118,10 @@ public class TexturedModel{
     public AABB getAABB(){
         return this.aabb;
     }
+
+    public void cleanUp(){
+        this.vertexArray.delete();
+        this.shader.delete();
+        this.texture.delete();
+    }
 }

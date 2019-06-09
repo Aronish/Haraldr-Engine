@@ -9,8 +9,8 @@ import main.java.math.Vector3f;
  */
 public abstract class MovableEntity extends Entity {
 
-    private static final float GRAVITY_CONSTANT = -20.0f;
-    private static final float MAX_GRAVITY_ACCELERATION = -20.0f;
+    private static final float GRAVITY_CONSTANT = -25.0f;
+    private static final float MAX_GRAVITY_ACCELERATION = -30.0f;
 
     private Vector2f velocity;
     private boolean hasGravity;

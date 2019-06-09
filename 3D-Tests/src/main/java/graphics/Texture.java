@@ -20,6 +20,7 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
@@ -60,12 +61,16 @@ class Texture {
         }
 
         int[] data = new int[this.width * this.height];
-        for (int i = 0; i < this.width * this.height; i++) {
-            int a = (pixels[i] & 0xff000000) >> 24;
-            int r = (pixels[i] & 0xff0000) >> 16;
-            int g = (pixels[i] & 0xff00) >> 8;
-            int b = (pixels[i] & 0xff);
-            data[i] = a << 24 | b << 16 | g << 8 | r;
+        if (pixels != null) {
+            for (int i = 0; i < this.width * this.height; i++) {
+                int a = (pixels[i] & 0xff000000) >> 24;
+                int r = (pixels[i] & 0xff0000) >> 16;
+                int g = (pixels[i] & 0xff00) >> 8;
+                int b = (pixels[i] & 0xff);
+                data[i] = a << 24 | b << 16 | g << 8 | r;
+            }
+        }else{
+            throw new IllegalStateException("Texture was not read and stored properly!");
         }
 
         int result = glGenTextures();
@@ -92,7 +97,12 @@ class Texture {
     /**
      * Unbinds this texture to avoid weird conflicts.
      */
-    void unbind(){
+    private void unbind(){
         glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    void delete(){
+        unbind();
+        glDeleteTextures(this.texture);
     }
 }

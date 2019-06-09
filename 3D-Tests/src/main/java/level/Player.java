@@ -12,7 +12,7 @@ import main.java.physics.EnumPlayerMovementType;
 public class Player extends MovableEntity {
 
     private static final float WALK_SPEED = 4.0f;
-    private static final float JUMP_STRENGTH = 12.0f;
+    private static final float JUMP_STRENGTH = 13.0f;
     private static final float RUN_MULTIPLIER = 1.5f;
 
     private EnumPlayerMovementType movementType;

@@ -123,4 +123,8 @@ public abstract class Entity {
     Vector3f getMiddle() {
         return getTexturedModels().get(0).getAABB().getMiddle();
     }
+
+    void cleanUp(){
+        this.texturedModels.forEach(TexturedModel::cleanUp);
+    }
 }

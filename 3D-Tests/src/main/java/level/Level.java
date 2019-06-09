@@ -73,4 +73,11 @@ public class Level {
             }
         }
     }
+
+    public void cleanUp(){
+        this.world.cleanUp();
+        this.startingTile.cleanUp();
+        this.player.cleanUp();
+        this.debugLines.cleanUp();
+    }
 }

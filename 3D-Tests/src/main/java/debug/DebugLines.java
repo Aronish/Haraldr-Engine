@@ -58,4 +58,8 @@ public class DebugLines {
             Renderer.render(line);
         }
     }
+
+    public void cleanUp(){
+        this.debugLines.forEach(Line::cleanUp);
+    }
 }

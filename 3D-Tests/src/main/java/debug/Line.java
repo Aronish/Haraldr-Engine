@@ -93,4 +93,9 @@ public class Line {
     public VertexArray getVertexArray(){
         return this.vertexArray;
     }
+
+    void cleanUp(){
+        this.vertexArray.delete();
+        this.shader.delete();
+    }
 }

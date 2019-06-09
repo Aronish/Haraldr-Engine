@@ -1,10 +1,9 @@
 package main.java.graphics;
 
-import main.java.math.Matrix4f;
-
 import java.io.File;
 import java.util.Scanner;
 
+import static org.lwjgl.opengl.GL20.glDeleteProgram;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL46.GL_FRAGMENT_SHADER;
@@ -14,8 +13,6 @@ import static org.lwjgl.opengl.GL46.glCompileShader;
 import static org.lwjgl.opengl.GL46.glCreateProgram;
 import static org.lwjgl.opengl.GL46.glCreateShader;
 import static org.lwjgl.opengl.GL46.glDeleteShader;
-import static org.lwjgl.opengl.GL46.glGetProgramInfoLog;
-import static org.lwjgl.opengl.GL46.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL46.glLinkProgram;
 import static org.lwjgl.opengl.GL46.glShaderSource;
 import static org.lwjgl.opengl.GL46.glUseProgram;
@@ -48,16 +45,16 @@ public class Shader {
         int fragmentShader = createShader(GL_FRAGMENT_SHADER, readShaderFile(fragmentShaderPath));
 
         glCompileShader(vertexShader);
-        System.out.println(glGetShaderInfoLog(vertexShader));
+        //System.out.println(glGetShaderInfoLog(vertexShader));
         glCompileShader(fragmentShader);
-        System.out.println(glGetShaderInfoLog(fragmentShader));
+        //System.out.println(glGetShaderInfoLog(fragmentShader));
 
         this.shaderProgram = glCreateProgram();
         glAttachShader(this.shaderProgram, vertexShader);
         glAttachShader(this.shaderProgram, fragmentShader);
         glLinkProgram(shaderProgram);
         glValidateProgram(shaderProgram);
-        System.out.println(glGetProgramInfoLog(shaderProgram));
+        //System.out.println(glGetProgramInfoLog(shaderProgram));
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
     }
@@ -95,16 +92,20 @@ public class Shader {
         }catch (Exception e){
             System.out.println("Error 1");
         }
-        stringBuilder = new StringBuilder((int) shaderFile.length());
-        try (Scanner scanner = new Scanner(shaderFile)){
-            while (scanner.hasNextLine()){
-                stringBuilder.append(scanner.nextLine() + System.lineSeparator());
+        if (shaderFile != null) {
+            stringBuilder = new StringBuilder((int) shaderFile.length());
+            try (Scanner scanner = new Scanner(shaderFile)) {
+                while (scanner.hasNextLine()) {
+                    stringBuilder.append(scanner.nextLine()).append(System.lineSeparator());
+                }
+            } catch (Exception e) {
+                System.out.println("Error 2");
+                e.printStackTrace();
             }
-        }catch(Exception e){
-            System.out.println("Error 2");
-            e.printStackTrace();
+            return stringBuilder.toString();
+        }else{
+            throw new IllegalStateException("Shader file was not initialized!");
         }
-        return stringBuilder.toString();
     }
 
     void setMatrix(float[] matrix){
@@ -122,7 +123,12 @@ public class Shader {
     /**
      * Unuses the shader program to avoid weird conflicts.
      */
-    void unuse(){
+    private void unuse(){
         glUseProgram(0);
+    }
+
+    public void delete(){
+        unuse();
+        glDeleteProgram(this.shaderProgram);
     }
 }

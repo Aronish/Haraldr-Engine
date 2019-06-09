@@ -111,6 +111,7 @@ class Main implements Runnable{
             render();
             ++frames;
         }
+        level.cleanUp();
         glfwTerminate();
     }
 

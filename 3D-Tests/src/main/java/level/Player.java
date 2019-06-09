@@ -100,7 +100,6 @@ public class Player extends MovableEntity {
      * Calculates the motion from factors like speed, isJumping and isRunning.
      * @param deltaTime the delta time gotten from the timing circuit in Main.
      */
-    //TODO THIS IS YOUR LOOP AND PARADOX SATAN: CANNOT BE UNSUMMONED, GO TO HELL!!!!!!!
     @Override
     public void calculateMotion(float deltaTime){
         //---Walking Calculations---\\

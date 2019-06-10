@@ -61,9 +61,10 @@ public class Input extends GLFWKeyCallback {
     }
 
     /**
-     * Checks if any keys associated with movement are pressed. If so, the camera is moved accordingly.
+     * Performs operations based on the keys pressed.
      * @param deltaTime the delta time gotten from the timing circuit in Main.
-     * @param player the player that should move with the camera.
+     * @param player the Player that should move with the Camera.
+     * @param world the World which, in this case is used to regenerate the World.
      */
     public static void processInput(float deltaTime, Player player, World world){
         player.setMovementType(EnumPlayerMovementType.STAND);
@@ -81,6 +82,7 @@ public class Input extends GLFWKeyCallback {
         if(keys[GLFW_KEY_R]){
             player.resetGravityAcceleration();
             player.setPosition(new Vector3f(0.0f, 50.0f));
+            Camera.scale = 1.0f;
             Camera.setPosition(player.getPosition());
         }
         if(keys[GLFW_KEY_C]){

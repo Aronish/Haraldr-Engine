@@ -92,6 +92,11 @@ public class Matrix4f {
         return translate(position, isCamera).multiply(rotate(angle, isCamera)).multiply(scale(scale));
     }
 
+    /**
+     * Creates a scale matrix with scale values for both x and y.
+     * @param scale a Vector2f containing the scale values for x and y.
+     * @return the resulting scale matrix.
+     */
     private Matrix4f scale(Vector2f scale){
         Matrix4f result = new Matrix4f();
         result.matrix[0] = scale.getX();

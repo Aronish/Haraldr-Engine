@@ -145,6 +145,9 @@ public class VertexArray {
         glBindVertexArray(0);
     }
 
+    /**
+     * Deletes the vertex array and associated buffers.
+     */
     public void delete(){
         unbind();
         glDeleteVertexArrays(this.vao);

@@ -76,6 +76,10 @@ public abstract class Entity {
         this.matrix = new Matrix4f().MVP(this.position, this.rotation, this.scale);
     }
 
+    /**
+     * Gets the float array form of the matrix of this Entity.
+     * @return the matrix in float array form.
+     */
     public float[] getMatrix(){
         return this.matrix.matrix;
     }
@@ -88,6 +92,10 @@ public abstract class Entity {
         return new Vector3f(this.position.x, this.position.y, this.position.z);
     }
 
+    /**
+     * Gets the scale of this Entity.
+     * @return the scale.
+     */
     public Vector2f getScale(){
         return this.scale;
     }
@@ -124,6 +132,9 @@ public abstract class Entity {
         return getTexturedModels().get(0).getAABB().getMiddle();
     }
 
+    /**
+     * Cleans up every TexturedModel that this Entity has.
+     */
     void cleanUp(){
         this.texturedModels.forEach(TexturedModel::cleanUp);
     }

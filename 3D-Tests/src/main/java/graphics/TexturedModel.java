@@ -119,6 +119,9 @@ public class TexturedModel{
         return this.aabb;
     }
 
+    /**
+     * Deletes the shader program, buffer objects and textures.
+     */
     public void cleanUp(){
         this.vertexArray.delete();
         this.shader.delete();

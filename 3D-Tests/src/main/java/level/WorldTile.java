@@ -6,15 +6,28 @@ import main.java.physics.AABB;
 
 import java.util.ArrayList;
 
+/**
+ * A one unit wide pillar of Tile's. The height of these are calculated in World#generateWorld. World also holds a list of these.
+ */
 public class WorldTile extends Entity {
 
     private ArrayList<Tile> tiles;
     private AABB aabb;
 
+    /**
+     * Constructor with just the position.
+     * @param position the initial position of this WorldTile.
+     */
     WorldTile(Vector3f position){
         this(position, 0.0f, 1.0f);
     }
 
+    /**
+     * Constructor with the position, rotation and scale.
+     * @param position the position of this WorldTile.
+     * @param rotation the rotation around the z-axis, in degrees. CCW.
+     * @param scale the scale multiplier of this WorldTile.
+     */
     private WorldTile(Vector3f position, float rotation, float scale) {
         super(position, rotation, scale);
         this.tiles = new ArrayList<>();
@@ -25,7 +38,11 @@ public class WorldTile extends Entity {
         this.aabb = new AABB(1.0f, position.y);
     }
 
-    public ArrayList<Tile> getTiles(){
+    /**
+     * Gets the list of Tile's.
+     * @return the list of Tile's.
+     */
+    ArrayList<Tile> getTiles(){
         return this.tiles;
     }
 

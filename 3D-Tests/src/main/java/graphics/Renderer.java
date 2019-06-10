@@ -45,10 +45,6 @@ public class Renderer {
         }
     }
 
-    public static void render(WorldTile worldTile){
-        worldTile.getTiles().forEach(Renderer::render);
-    }
-
     /**
      * Prepares and renders a line.
      * @param line the line to render.

@@ -1,5 +1,8 @@
 package main.java.physics;
 
+/**
+ * The valid states of movement for the Player. Contains a direction factor to easily change direction of movement.
+ */
 public enum EnumPlayerMovementType {
     LEFT(-1.0f),
     RIGHT(1.0f),

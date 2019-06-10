@@ -126,6 +126,9 @@ public class Shader {
         glUseProgram(0);
     }
 
+    /**
+     * Deletes the shader program.
+     */
     public void delete(){
         unuse();
         glDeleteProgram(this.shaderProgram);

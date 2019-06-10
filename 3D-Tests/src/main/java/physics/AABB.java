@@ -31,12 +31,19 @@ public class AABB {
         calculateMiddle();
     }
 
+    /**
+     * Accounts for the scale of an Entity.
+     * @param scale the scale to multiply by.
+     */
     public void setScale(Vector2f scale){
         this.width *= scale.getX();
         this.height *= scale.getY();
         calculateMiddle();
     }
 
+    /**
+     * Calculates the middle of this bounding box.
+     */
     private void calculateMiddle(){
         this.middle = new Vector3f(this.width / 2.0f, -(this.height / 2.0f));
     }

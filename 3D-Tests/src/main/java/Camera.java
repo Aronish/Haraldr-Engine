@@ -1,8 +1,12 @@
 package main.java;
 
+import main.java.graphics.TexturedModel;
+import main.java.level.Entity;
 import main.java.math.Matrix4f;
 import main.java.math.Vector2f;
 import main.java.math.Vector3f;
+
+import java.util.HashSet;
 
 /**
  * A virtual camera for the game. Is essentially a normal object except that the transformation matrix is inverted.
@@ -25,6 +29,10 @@ public class Camera{
         this(new Vector3f(), 0.0f, 1.0f);
     }
 
+    /**
+     * Constructor with just the scale.
+     * @param scale the scale to scale the world by.
+     */
     Camera(float scale){
         this(new Vector3f(), 0.0f, scale);
     }
@@ -85,5 +93,28 @@ public class Camera{
         position.y += pos.y;
         position.z += pos.z;
         calculateViewMatrix();
+    }
+
+    /**
+     * Checks if the provided entities are in the view of the Camera. If they are, they are added to the provided list.
+     * Still does not account for relative position of TexturedModels's.
+     * @param visibleObjects a list, which keeps track of all the visible entities.
+     * @param entities the entities to check visibility against.
+     */
+    public static void isInView(HashSet<Entity> visibleObjects, Entity... entities){
+        float scaleAdjustedX = position.x / scale;
+        float scaleAdjustedY = position.y / scale;
+        float xBoundary = 16.0f / scale;
+        float yBoundary = 9.0f / scale;
+        for (Entity entity : entities){
+            for (TexturedModel texturedModel : entity.getTexturedModels()){
+                boolean collisionX = entity.getPosition().x + texturedModel.getRelativePosition().x + texturedModel.getAABB().getWidth() > scaleAdjustedX - xBoundary && entity.getPosition().x < scaleAdjustedX + xBoundary;
+                boolean collisionY = entity.getPosition().y + texturedModel.getRelativePosition().x - texturedModel.getAABB().getHeight() < scaleAdjustedY + yBoundary && entity.getPosition().y > scaleAdjustedY - yBoundary;
+                if (collisionX && collisionY){
+                    visibleObjects.add(entity);
+                    break;
+                }
+            }
+        }
     }
 }

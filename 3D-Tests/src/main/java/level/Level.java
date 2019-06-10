@@ -1,10 +1,13 @@
 package main.java.level;
 
+import main.java.Camera;
 import main.java.Input;
 import main.java.debug.DebugLines;
 import main.java.graphics.Renderer;
 import main.java.math.Vector3f;
 import main.java.physics.CollisionDetector;
+
+import java.util.HashSet;
 
 /**
  * Main Level class to house everything contained in one level. (Should really only have one World Object)...
@@ -16,14 +19,17 @@ public class Level {
     private Tile startingTile;
     private DebugLines debugLines;
 
+    private HashSet<Entity> visibleObjects;
+
     /**
-     * Constructs a Level with the base elements like a Player and World.
+     * Constructs a Level.
      */
     public Level(){
         this.player = new Player(new Vector3f(0.0f, 50.0f));
         this.startingTile = new Tile(new Vector3f(0.0f, 47.0f));
         this.world = new World();
         this.debugLines = new DebugLines();
+        this.visibleObjects = new HashSet<>();
     }
 
     /**
@@ -31,7 +37,14 @@ public class Level {
      */
     public void updateLevel(float deltaTime){
         Input.processInput(deltaTime, this.player, this.world);
-        this.player.update(deltaTime);
+        this.player.update(deltaTime); //Update Player no matter what.
+        this.visibleObjects.clear();
+        Camera.isInView(this.visibleObjects, this.startingTile);
+        for (WorldTile worldTile : this.world.getWorldTiles()){
+            for (Tile tile : worldTile.getTiles()){
+                Camera.isInView(this.visibleObjects, tile);
+            }
+        }
         doCollisions();
         if (Input.isDebugEnabled()){
             this.debugLines.setPlayerEnd(this.player.getPosition());
@@ -39,12 +52,13 @@ public class Level {
         updateMatrices();
     }
 
+    /**
+     * Updates all the matrices.
+     */
     private void updateMatrices(){
         this.debugLines.update();
-        this.world.updateMatrix();
-        this.world.getWorldTiles().forEach(WorldTile::updateMatrix);
-        this.startingTile.updateMatrix();
         this.player.updateMatrix();
+        this.visibleObjects.forEach(Entity::updateMatrix);
     }
 
     /**
@@ -54,9 +68,7 @@ public class Level {
         if (Input.isDebugEnabled()){
             this.debugLines.render();
         }
-        Renderer.render(this.world);
-        this.world.getWorldTiles().forEach(Renderer::render);
-        Renderer.render(this.startingTile);
+        this.visibleObjects.forEach(Renderer::render);
         Renderer.render(this.player);
     }
 
@@ -74,6 +86,9 @@ public class Level {
         }
     }
 
+    /**
+     * Deletes all shader programs, buffer objects and textures.
+     */
     public void cleanUp(){
         this.world.cleanUp();
         this.startingTile.cleanUp();

@@ -2,6 +2,9 @@ package main.java.math;
 
 import main.java.debug.Logger;
 
+/**
+ * A simple class to represent a 2D vector of floats.
+ */
 public class Vector2f {
 
     private float x, y;
@@ -14,6 +17,10 @@ public class Vector2f {
         this.y = 0.0f;
     }
 
+    /**
+     * Constructor that sets both x and y to the same value.
+     * @param both the value to apply to both x and y.
+     */
     public Vector2f(float both){
         this.x = both;
         this.y = both;
@@ -116,6 +123,10 @@ public class Vector2f {
         this.x -= dx;
     }
 
+    /**
+     * Subtracts a value from y.
+     * @param dy the value to subtract.
+     */
     public void subtractY(float dy){
         this.y -= dy;
     }

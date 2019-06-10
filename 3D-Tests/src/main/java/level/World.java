@@ -1,6 +1,5 @@
 package main.java.level;
 
-import main.java.debug.Logger;
 import main.java.math.SimplexNoise;
 import main.java.math.Vector3f;
 
@@ -45,24 +44,37 @@ public class World extends Entity {
         generateWorld();
     }
 
+    /**
+     * Generates a list of WorldTiles with varying heights based on SimplexNoise with a random seed.
+     */
     private void generateWorld(){
         double seed = this.random.nextDouble() * 100000.0d;
-        for (int i = 0; i < 200; ++i){
+        for (int i = 0; i < 2000; ++i){
             int y = (int) ((SimplexNoise.noise(i * noiseScale, 0.0d, seed) + 1.0d) / 2.0d * 40.0d);
             this.worldTiles.add(new WorldTile(new Vector3f(i - 100, y + 5)));
         }
     }
 
+    /**
+     * Clears the world list an generates a new one.
+     */
     public void regenerateWorld(){
-        this.worldTiles = new ArrayList<>();
+        this.worldTiles.clear();
         generateWorld();
     }
 
+    /**
+     * Increases/decreases the noise scale with the provided value.
+     * @param dScale how much to change the noise scale.
+     */
     public void increaseNoiseScale(double dScale){
-        Logger.log(noiseScale);
         noiseScale += dScale;
     }
 
+    /**
+     * Gets the list of WorldTile'.
+     * @return the list of WorldTile's.
+     */
     ArrayList<WorldTile> getWorldTiles(){
         return this.worldTiles;
     }

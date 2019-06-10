@@ -101,6 +101,9 @@ class Texture {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
+    /**
+     * Deletes the texture.
+     */
     void delete(){
         unbind();
         glDeleteTextures(this.texture);

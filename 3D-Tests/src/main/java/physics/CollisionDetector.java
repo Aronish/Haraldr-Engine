@@ -19,12 +19,24 @@ import static main.java.physics.EnumDirection.WEST;
  */
 public class CollisionDetector {
 
+    /**
+     * Does all the collision related operations.
+     * @param entity the Entity, whose TexturedModel is currently checked.
+     * @param texturedModel the TexturedModel to check collision against.
+     * @param player the Player to check collisions with.
+     */
     public static void doCollisions(Entity entity, TexturedModel texturedModel, Player player){
         if (checkCollision(entity, texturedModel, player)){
             resolveCollision(getCollisionDirection(entity, texturedModel, player), player);
         }
     }
 
+    /**
+     * Checks whether there is a collision between the Player in the Level and a WorldTile. Collision is then checked against every individual Tile in the WorldTile.
+     * @param worldTile the WorldTile to check collision against.
+     * @param player the Player to check collisions with.
+     * @return true if there was a collision on both axes.
+     */
     public static boolean checkCollision(WorldTile worldTile, Player player){
         boolean collisionX = player.getPosition().x + player.getWidth() > worldTile.getPosition().x && worldTile.getPosition().x + worldTile.getWidth() > player.getPosition().x;
         boolean collisionY = player.getPosition().y - player.getHeight() < worldTile.getPosition().y && worldTile.getPosition().y - worldTile.getHeight() < player.getPosition().y;
@@ -36,7 +48,7 @@ public class CollisionDetector {
      * @param player the Player to check collisions with.
      * @param entity the Entity, whose TexturedModel is currently checked.
      * @param texturedModel the TexturedModel to check collision against.
-     * @return true if there was a collision on both axis.
+     * @return true if there was a collision on both axes.
      */
     private static boolean checkCollision(Entity entity, TexturedModel texturedModel, Player player){
         boolean collisionX = player.getPosition().x + player.getWidth() > entity.getPosition().x + texturedModel.getRelativePosition().x && entity.getPosition().x + texturedModel.getRelativePosition().x + texturedModel.getAABB().getWidth() > player.getPosition().x;

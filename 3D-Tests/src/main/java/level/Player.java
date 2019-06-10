@@ -85,10 +85,18 @@ public class Player extends MovableEntity {
         this.isFalling = isFalling;
     }
 
+    /**
+     * Gets whether this Player is jumping.
+     * @return whether this Player is jumping.
+     */
     public boolean isJumping(){
         return this.isJumping;
     }
 
+    /**
+     * Gets whether this Player is falling.
+     * @return whether this Player is falling.
+     */
     public boolean isFalling(){
         return this.isFalling;
     }

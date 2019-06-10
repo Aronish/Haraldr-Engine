@@ -85,7 +85,7 @@ class Main implements Runnable{
     private int updates = 0;
 
     /**
-     * The main game loop. Uses variable update time step and fixed rendering time step (I think).
+     * The main game loop. Uses variable update time step and fixed rendering time step (I think). Cleans up afterwards.
      */
     private void loop(){
         update(0.0f);

@@ -24,6 +24,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_V;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
@@ -96,6 +97,9 @@ public class Input extends GLFWKeyCallback {
         }
         if(keys[GLFW_KEY_V]){
             player.setHasGravity(true);
+        }
+        if(keys[GLFW_KEY_Z]){
+            world.resetNoiseScale();
         }
         if(keys[GLFW_KEY_UP]){
             Camera.calculateScale(true, deltaTime);

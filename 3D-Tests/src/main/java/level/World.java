@@ -71,6 +71,10 @@ public class World extends Entity {
         noiseScale += dScale;
     }
 
+    public void resetNoiseScale(){
+        noiseScale = 0.042d;
+    }
+
     /**
      * Gets the list of WorldTile'.
      * @return the list of WorldTile's.

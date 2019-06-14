@@ -38,10 +38,10 @@ public class WorldTile extends Entity {
     private WorldTile(Vector3f position, float rotation, float scale) {
         super(position, rotation, scale);
         this.tiles = new ArrayList<>();
-        if (position.y < 55.0f && random.nextBoolean()){
+        if (position.y < 58.0f && random.nextBoolean()){
             this.tiles.add(new Tree(position.add(new Vector3f(0.0f, 3.0f))));
         }
-        Tile topTile = new Tile(position, position.y > 50.0f ? Models.SNOW_TILE : Models.GRASS_TILE);
+        Tile topTile = new Tile(position, position.y > 55.0f ? Models.SNOW_TILE : Models.GRASS_TILE);
         if (random.nextBoolean()){
             topTile.setScale(new Vector2f(-1.0f, 1.0f));
         }

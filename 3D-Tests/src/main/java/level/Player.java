@@ -14,11 +14,13 @@ public class Player extends MovableEntity {
     private static final float WALK_SPEED = 4.0f;
     private static final float JUMP_STRENGTH = 13.0f;
     private static final float RUN_MULTIPLIER = 1.5f;
+    private static final float BOOST_MULTIPLIER = 10.0f;
 
     private EnumPlayerMovementType movementType;
     private boolean isJumping;
     private boolean isRunning;
     private boolean isFalling;
+    private boolean isBoosting;
 
     /**
      * Default constructor if no arguments are provided.
@@ -51,6 +53,7 @@ public class Player extends MovableEntity {
         this.isJumping = false;
         this.isRunning = false;
         this.isFalling = false;
+        this.isBoosting = false;
     }
 
     /**
@@ -85,6 +88,10 @@ public class Player extends MovableEntity {
         this.isFalling = isFalling;
     }
 
+    public void setBoosting(boolean isBoosting){
+        this.isBoosting = isBoosting;
+    }
+
     /**
      * Gets whether this Player is jumping.
      * @return whether this Player is jumping.
@@ -101,6 +108,10 @@ public class Player extends MovableEntity {
         return this.isFalling;
     }
 
+    public void resetPosition(){
+        setPosition(new Vector3f(0.0f, 80.0f));
+    }
+
     /**
      * Calculates the motion from factors like speed, isJumping and isRunning.
      * @param deltaTime the delta time gotten from the timing circuit in Main.
@@ -111,7 +122,9 @@ public class Player extends MovableEntity {
         if (this.movementType != EnumPlayerMovementType.STAND){
             setScale(new Vector2f(-this.movementType.directionFactor, 1.0f));
         }
-        if (this.isRunning){
+        if (this.isBoosting){
+            getVelocity().addX(WALK_SPEED * BOOST_MULTIPLIER * this.movementType.directionFactor);
+        }else if (this.isRunning){
             getVelocity().addX(WALK_SPEED * RUN_MULTIPLIER * this.movementType.directionFactor);
         }else{
             getVelocity().addX(WALK_SPEED * this.movementType.directionFactor);

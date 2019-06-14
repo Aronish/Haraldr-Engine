@@ -12,9 +12,9 @@ import java.util.Random;
  */
 public class World extends Entity {
 
-    private static double noiseScale = 0.05d;
+    private static double noiseScale = 0.042d;
     private ArrayList<WorldTile> worldTiles;
-    private Random random;
+    private static Random random;
 
     /**
      * Constructor with the position of the Player in the same Level as this World.
@@ -39,7 +39,7 @@ public class World extends Entity {
      */
     private World(Vector3f position, float rotation, float scale){
         super(position, rotation, scale);
-        this.random = new Random();
+        random = new Random();
         this.worldTiles = new ArrayList<>();
         generateWorld();
     }
@@ -48,10 +48,10 @@ public class World extends Entity {
      * Generates a list of WorldTiles with varying heights based on SimplexNoise with a random seed.
      */
     private void generateWorld(){
-        double seed = this.random.nextDouble() * 100000.0d;
-        for (int i = 0; i < 2000; ++i){
-            int y = (int) ((SimplexNoise.noise(i * noiseScale, 0.0d, seed) + 1.0d) / 2.0d * 40.0d);
-            this.worldTiles.add(new WorldTile(new Vector3f(i - 100, y + 5)));
+        double seed = random.nextDouble() * 100000.0d;
+        for (int i = 0; i < 1500; ++i){
+            int y = (int) ((SimplexNoise.noise(i * noiseScale, 0.0d, seed) + 1.0d) / 2.0d * 60.0d);
+            this.worldTiles.add(new WorldTile(new Vector3f(i - 750, y + 20)));
         }
     }
 

@@ -18,11 +18,15 @@ public class Models {
     public static final TexturedModel DEFAULT = new TexturedModel("src/main/java/shaders/square_shader", "src/main/resources/black.png");
     public static final TexturedModel GRASS_TILE = new TexturedModel("src/main/java/shaders/square_shader", "src/main/resources/grass.png");
     public static final TexturedModel DIRT_TILE = new TexturedModel("src/main/java/shaders/square_shader", "src/main/resources/dirt.png");
+    public static final TexturedModel STONE_TILE = new TexturedModel("src/main/java/shaders/square_shader", "src/main/resources/stone.png");
+    public static final TexturedModel SNOW_TILE = new TexturedModel("src/main/java/shaders/square_shader", "src/main/resources/snow.png");
 
     private static TexturedModel PLAYER = null;
+    private static TexturedModel TREE = null;
 
     public Models(){
         initPlayerModel(1.0f, 2.86f);
+        initTreeModel(1.0f, 3.0f);
     }
 
     /**
@@ -61,9 +65,27 @@ public class Models {
         }
     }
 
+    private static void initTreeModel(float width, float height){
+        if (TREE == null){
+            HashMap<String, float[]> vertexData = createVertexData(new Vector3f(), width, height);
+            TREE = new TexturedModel(vertexData.get("vertices"), defIndices, vertexData.get("texcoords"), new Vector3f(), width, height, "src/main/java/shaders/square_shader", "src/main/resources/tree.png");
+        }else{
+            Logger.setWarningLevel();
+            Logger.log("Tried to initialize models more than once!");
+        }
+    }
+
     public static TexturedModel getPLAYER(){
         if (PLAYER != null){
             return PLAYER;
+        }else{
+            throw new RuntimeException("Models were not itialized");
+        }
+    }
+
+    public static TexturedModel getTREE(){
+        if (TREE != null){
+            return TREE;
         }else{
             throw new RuntimeException("Models were not itialized");
         }

@@ -110,6 +110,8 @@ public class CollisionDetector {
                 player.addPosition(new Vector3f(0.0f, -inside));
                 Camera.addPosition(new Vector3f(0.0f, -inside * Camera.scale));
                 break;
+            case INVALIDDIR:
+                player.resetPosition();
         }
     }
 }

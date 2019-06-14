@@ -174,15 +174,15 @@ public class Matrix4f {
 
     /**
      * Creates a perspective projection matrix. Objects further away will get smaller to simulate perspective.
-     * Not used in true 2D.
+     * A lot of things would need to be rewritten if this is to be used. Camera#isInView won't work correctly. It is specifically made for orthographic projection.
      * @param FOV the field-of-view of the camera frustum.
      * @return the resulting perspective projection matrix.
      */
     public Matrix4f perspective(float FOV){
         Matrix4f result = new Matrix4f();
-        float ar = 1920.0f/1080.0f;
-        float near = 0.1f;
-        float far = 1000.0f;
+        float ar = 1280.0f/720.0f;
+        float near = -1.0f;
+        float far = 10.0f;
         float range = far - near;
         float tanHalfFOV = (float) Math.tan(Math.toRadians(FOV / 2));
 

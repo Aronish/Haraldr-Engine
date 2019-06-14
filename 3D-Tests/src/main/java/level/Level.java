@@ -16,7 +16,6 @@ public class Level {
 
     private World world;
     private Player player;
-    private Tile startingTile;
     private DebugLines debugLines;
 
     private HashSet<Entity> visibleObjects;
@@ -25,8 +24,8 @@ public class Level {
      * Constructs a Level.
      */
     public Level(){
-        this.player = new Player(new Vector3f(0.0f, 50.0f));
-        this.startingTile = new Tile(new Vector3f(0.0f, 47.0f));
+        this.player = new Player();
+        this.player.resetPosition();
         this.world = new World();
         this.debugLines = new DebugLines();
         this.visibleObjects = new HashSet<>();
@@ -38,18 +37,21 @@ public class Level {
     public void updateLevel(float deltaTime){
         Input.processInput(deltaTime, this.player, this.world);
         this.player.update(deltaTime); //Update Player no matter what.
-        this.visibleObjects.clear();
-        Camera.isInView(this.visibleObjects, this.startingTile);
-        for (WorldTile worldTile : this.world.getWorldTiles()){
-            for (Tile tile : worldTile.getTiles()){
-                Camera.isInView(this.visibleObjects, tile);
-            }
-        }
+        checkVisibility();
         doCollisions();
         if (Input.isDebugEnabled()){
             this.debugLines.setPlayerEnd(this.player.getPosition());
         }
         updateMatrices();
+    }
+
+    private void checkVisibility(){
+        this.visibleObjects.clear();
+        for (WorldTile worldTile : this.world.getWorldTiles()){
+            for (Entity tile : worldTile.getTiles()){
+                Camera.isInView(this.visibleObjects, tile);
+            }
+        }
     }
 
     /**
@@ -76,11 +78,12 @@ public class Level {
      * Does collision detection and resolution for the objects requiring collisions.
      */
     private void doCollisions() {
-        CollisionDetector.doCollisions(this.startingTile, this.startingTile.getTexturedModels().get(0), this.player);
         for (WorldTile worldTile : this.world.getWorldTiles()){
             if (CollisionDetector.checkCollision(worldTile, this.player)){
-                for (Tile tile : worldTile.getTiles()){
-                    CollisionDetector.doCollisions(tile, tile.getTexturedModels().get(0), this.player);
+                for (Entity tile : worldTile.getTiles()){
+                    if (!(tile instanceof Tree)){
+                        CollisionDetector.doCollisions(tile, tile.getTexturedModels().get(0), this.player);
+                    }
                 }
             }
         }
@@ -91,7 +94,6 @@ public class Level {
      */
     public void cleanUp(){
         this.world.cleanUp();
-        this.startingTile.cleanUp();
         this.player.cleanUp();
         this.debugLines.cleanUp();
     }

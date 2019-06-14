@@ -96,6 +96,7 @@ public class Camera{
     }
 
     /**
+     * //TODO Make this work with perspective. Would love to be able to have a sky texture far in the distance that scrolls differently.
      * Checks if the provided entities are in the view of the Camera. If they are, they are added to the provided list.
      * Still does not account for relative position of TexturedModels's.
      * @param visibleObjects a list, which keeps track of all the visible entities.

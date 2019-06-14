@@ -189,8 +189,8 @@ public class Matrix4f {
         result.matrix[0] = 1.0f / (tanHalfFOV * ar);
         result.matrix[5] = 1.0f / tanHalfFOV;
         result.matrix[10] = -((far + near) / range);
-        result.matrix[11] = -1;
-        result.matrix[14] = -((2.0f * far * near) / range);
+        result.matrix[11] = -((2.0f * far * near) / range);
+        result.matrix[14] = -1;
         return result;
     }
 }

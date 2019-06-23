@@ -1,4 +1,3 @@
-//java -cp "C:\Users\Aron\Documents\Java Projects\3D-Tests\lwjgl\*";"C:\Users\Aron\Documents\Java Projects\3D-Tests\src" main/Main
 package main.java;
 
 import main.java.debug.Logger;
@@ -47,7 +46,7 @@ class Main implements Runnable{
         window = new Window(1280, 720, false);
         GL.createCapabilities();
         /*---OpenGL code won't work before this---*/
-        //glfwSwapInterval(1);
+        glfwSwapInterval(1);
         glfwShowWindow(window.getWindow());
         Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
 
@@ -78,7 +77,7 @@ class Main implements Runnable{
         glfwSwapBuffers(window.getWindow());
     }
 
-    private double dt = 1.0d / frameRate;
+    private double updatePeriod = 1.0d / frameRate; //Kind of doesn't work??
     private double currentTime = glfwGetTime();
     private double timer = 0.0d;
     private int frames = 0;
@@ -101,7 +100,7 @@ class Main implements Runnable{
                 updates = 0;
             }
             while (frameTime > 0.0) {
-                double deltaTime = Math.min(frameTime, dt);
+                double deltaTime = Math.min(frameTime, updatePeriod);
                 if (currentTime > 2.0d){
                     update((float) deltaTime);
                     ++updates;
@@ -112,6 +111,7 @@ class Main implements Runnable{
             ++frames;
         }
         level.cleanUp();
+        Renderer.deleteShaders();
         glfwTerminate();
     }
 

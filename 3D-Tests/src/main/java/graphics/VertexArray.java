@@ -1,8 +1,5 @@
 package main.java.graphics;
 
-import static org.lwjgl.opengl.GL11.GL_LINES;
-import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
-import static org.lwjgl.opengl.GL15.glBufferSubData;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL46.GL_ARRAY_BUFFER;
@@ -23,7 +20,7 @@ import static org.lwjgl.opengl.GL46.glVertexAttribPointer;
 /**
  * Class for handling buffers containing the vertex data of an object.
  */
-public class VertexArray {
+class VertexArray {
 
     private int vao, vbo, tbo, ebo, length;
     private int renderMode;
@@ -87,44 +84,6 @@ public class VertexArray {
     }
 
     /**
-     * Constructor with just vertex data. Used for creating lines.
-     * @param vertices the vertices of the line. Just 4 floats/2 vertices.
-     */
-    public VertexArray(float[] vertices){ //LINE
-        int[] indices = {
-            0, 1
-        };
-        this.vao = glGenVertexArrays();
-        this.vbo = glGenBuffers();
-        this.ebo = glGenBuffers();
-        this.length = 2;
-        this.renderMode = GL_LINES;
-
-        glBindVertexArray(this.vao);
-
-        glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
-        glBufferData(GL_ARRAY_BUFFER, vertices, GL_DYNAMIC_DRAW);
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 8, 0);
-        glEnableVertexAttribArray(0);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this.ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_DYNAMIC_DRAW);
-
-        glBindVertexArray(0);
-    }
-
-    /**
-     * !!ONLY FOR LINES!!
-     * Updates the second vertex to which the line is drawn. The line's vertex buffer must be updated to render properly.
-     * @param otherVertex the other vertex to draw the line to.
-     */
-    public void updateVertexData(float[] otherVertex){
-        glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
-        glBufferSubData(GL_ARRAY_BUFFER, 8, otherVertex);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-    }
-
-    /**
      * Invokes an OpenGL draw call to draw using the contents of the bound buffers.
      */
     void draw(){
@@ -148,7 +107,7 @@ public class VertexArray {
     /**
      * Deletes the vertex array and associated buffers.
      */
-    public void delete(){
+    void delete(){
         unbind();
         glDeleteVertexArrays(this.vao);
         glDeleteBuffers(this.vbo);

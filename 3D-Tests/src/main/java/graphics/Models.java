@@ -15,11 +15,11 @@ public class Models {
             1, 3, 2
     };
 
-    public static final TexturedModel DEFAULT = new TexturedModel("src/main/java/shaders/square_shader", "src/main/resources/black.png");
-    public static final TexturedModel GRASS_TILE = new TexturedModel("src/main/java/shaders/square_shader", "src/main/resources/grass.png");
-    public static final TexturedModel DIRT_TILE = new TexturedModel("src/main/java/shaders/square_shader", "src/main/resources/dirt.png");
-    public static final TexturedModel STONE_TILE = new TexturedModel("src/main/java/shaders/square_shader", "src/main/resources/stone.png");
-    public static final TexturedModel SNOW_TILE = new TexturedModel("src/main/java/shaders/square_shader", "src/main/resources/snow.png");
+    public static final TexturedModel DEFAULT = new TexturedModel("src/main/resources/black.png");
+    public static final TexturedModel GRASS_TILE = new TexturedModel("src/main/resources/grass.png");
+    public static final TexturedModel DIRT_TILE = new TexturedModel("src/main/resources/dirt.png");
+    public static final TexturedModel STONE_TILE = new TexturedModel("src/main/resources/stone.png");
+    public static final TexturedModel SNOW_TILE = new TexturedModel("src/main/resources/snow.png");
 
     private static TexturedModel PLAYER = null;
     private static TexturedModel TREE = null;
@@ -58,7 +58,7 @@ public class Models {
     private static void initPlayerModel(float width, float height){
         if (PLAYER == null){
             HashMap<String, float[]> vertexData = createVertexData(new Vector3f(), width, height);
-            PLAYER = new TexturedModel(vertexData.get("vertices"), defIndices, vertexData.get("texcoords"), new Vector3f(), width, height, "src/main/java/shaders/player_shader", "src/main/resources/new_player.png");
+            PLAYER = new TexturedModel(vertexData.get("vertices"), defIndices, vertexData.get("texcoords"), new Vector3f(), width, height, "src/main/resources/new_player.png");
         }else{
             Logger.setWarningLevel();
             Logger.log("Tried to initialize models more than once!");
@@ -68,7 +68,7 @@ public class Models {
     private static void initTreeModel(float width, float height){
         if (TREE == null){
             HashMap<String, float[]> vertexData = createVertexData(new Vector3f(), width, height);
-            TREE = new TexturedModel(vertexData.get("vertices"), defIndices, vertexData.get("texcoords"), new Vector3f(), width, height, "src/main/java/shaders/square_shader", "src/main/resources/tree.png");
+            TREE = new TexturedModel(vertexData.get("vertices"), defIndices, vertexData.get("texcoords"), new Vector3f(), width, height, "src/main/resources/tree.png");
         }else{
             Logger.setWarningLevel();
             Logger.log("Tried to initialize models more than once!");

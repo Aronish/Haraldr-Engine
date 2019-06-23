@@ -2,9 +2,7 @@ package main.java.level;
 
 import main.java.Camera;
 import main.java.Input;
-import main.java.debug.DebugLines;
 import main.java.graphics.Renderer;
-import main.java.math.Vector3f;
 import main.java.physics.CollisionDetector;
 
 import java.util.HashSet;
@@ -16,7 +14,6 @@ public class Level {
 
     private World world;
     private Player player;
-    private DebugLines debugLines;
 
     private HashSet<Entity> visibleObjects;
 
@@ -27,7 +24,6 @@ public class Level {
         this.player = new Player();
         this.player.resetPosition();
         this.world = new World();
-        this.debugLines = new DebugLines();
         this.visibleObjects = new HashSet<>();
     }
 
@@ -39,9 +35,6 @@ public class Level {
         this.player.update(deltaTime); //Update Player no matter what.
         checkVisibility();
         doCollisions();
-        if (Input.isDebugEnabled()){
-            this.debugLines.setPlayerEnd(this.player.getPosition());
-        }
         updateMatrices();
     }
 
@@ -58,7 +51,6 @@ public class Level {
      * Updates all the matrices.
      */
     private void updateMatrices(){
-        this.debugLines.update();
         this.player.updateMatrix();
         this.visibleObjects.forEach(Entity::updateMatrix);
     }
@@ -67,9 +59,6 @@ public class Level {
      * Renders the game objects in this Level.
      */
     public void renderLevel(){
-        if (Input.isDebugEnabled()){
-            this.debugLines.render();
-        }
         this.visibleObjects.forEach(Renderer::render);
         Renderer.render(this.player);
     }
@@ -95,6 +84,5 @@ public class Level {
     public void cleanUp(){
         this.world.cleanUp();
         this.player.cleanUp();
-        this.debugLines.cleanUp();
     }
 }

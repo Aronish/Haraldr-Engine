@@ -1,8 +1,6 @@
 package main.java.graphics;
 
 import main.java.level.Entity;
-import main.java.debug.Line;
-import main.java.level.WorldTile;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
@@ -12,6 +10,8 @@ import static org.lwjgl.opengl.GL11.glClearColor;
  * Handles rendering of game objects.
  */
 public class Renderer {
+
+    private static final Shader SQUARE_SHADER = new Shader("src/main/java/shaders/square_shader");
 
     /**
      * Clears the buffer for the next render. Clear color is set in Main#init ATM.
@@ -37,8 +37,8 @@ public class Renderer {
      */
     public static void render(Entity entity){
         for (TexturedModel texturedModel : entity.getTexturedModels()){
-            texturedModel.getShader().use();
-            texturedModel.getShader().setMatrix(entity.getMatrix());
+            SQUARE_SHADER.use();
+            SQUARE_SHADER.setMatrix(entity.getMatrix());
             texturedModel.getVertexArray().bind();
             texturedModel.getTexture().bind();
             texturedModel.getVertexArray().draw();
@@ -46,14 +46,9 @@ public class Renderer {
     }
 
     /**
-     * Prepares and renders a line.
-     * @param line the line to render.
+     * Deletes the shaders.
      */
-    public static void render(Line line){
-        line.getShader().use();
-        line.setMatrixLocation();
-        line.setUniformMatrix();
-        line.getVertexArray().bind();
-        line.getVertexArray().draw();
+    public static void deleteShaders(){
+        SQUARE_SHADER.delete();
     }
 }

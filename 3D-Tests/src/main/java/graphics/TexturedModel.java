@@ -10,18 +10,15 @@ public class TexturedModel{
 
     private Vector3f relativePosition;
     private VertexArray vertexArray;
-    private Shader shader;
     private Texture texture;
     private AABB aabb;
 
     /**
      * Constructor with just the paths for the shader and texture.
-     * @param shaderPath the file path for the shaders.
      * @param texturePath the file path for the texture.
      */
-    TexturedModel(String shaderPath, String texturePath){
+    TexturedModel(String texturePath){
         setVertexArray();
-        setShader(shaderPath);
         setTexture(texturePath);
         this.relativePosition = new Vector3f();
         this.aabb = new AABB();
@@ -32,12 +29,10 @@ public class TexturedModel{
      * @param vertices the vertices of the model.
      * @param indices the indices, the order to render the vertices in.
      * @param texcoords the texture coordinates of the model.
-     * @param shaderPath the file path for the shaders.
      * @param texturePath the file path for the texture.
      */
-    TexturedModel(float[] vertices, int[] indices, float[] texcoords, Vector3f relativePosition, float width, float height, String shaderPath, String texturePath){
+    TexturedModel(float[] vertices, int[] indices, float[] texcoords, Vector3f relativePosition, float width, float height, String texturePath){
         setVertexArray(vertices, indices, texcoords);
-        setShader(shaderPath);
         setTexture(texturePath);
         this.relativePosition = relativePosition;
         this.aabb = new AABB(width, height);
@@ -59,15 +54,6 @@ public class TexturedModel{
      */
     private void setVertexArray(float[] vertices, int[] indices, float[] texcoords){
         this.vertexArray = new VertexArray(vertices, indices, texcoords);
-    }
-
-    /**
-     * Sets a new shader object containing a shader program with a vertex and fragment shader attached.
-     * @param shaderPath the general path of the vertex and fragment shader files, without the extension.
-     *                   Both files must have the same name.
-     */
-    private void setShader(String shaderPath){
-        this.shader = new Shader(shaderPath);
     }
 
     /**
@@ -96,14 +82,6 @@ public class TexturedModel{
     }
 
     /**
-     * Gets the shader.
-     * @return the shader.
-     */
-    Shader getShader(){
-        return this.shader;
-    }
-
-    /**
      * Gets the texture.
      * @return the texture.
      */
@@ -120,11 +98,10 @@ public class TexturedModel{
     }
 
     /**
-     * Deletes the shader program, buffer objects and textures.
+     * Deletes the buffer objects and textures.
      */
     public void cleanUp(){
         this.vertexArray.delete();
-        this.shader.delete();
         this.texture.delete();
     }
 }

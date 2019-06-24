@@ -1,6 +1,5 @@
 package main.java;
 
-import main.java.debug.Logger;
 import main.java.graphics.TexturedModel;
 import main.java.level.Entity;
 import main.java.math.Matrix4f;
@@ -93,9 +92,7 @@ public class Camera{
      * @param pos the position to add.
      */
     public static void addPosition(Vector3f pos){
-        position.x += pos.x;
-        position.y += pos.y;
-        position.z += pos.z;
+        position.addThis(pos);
         calculateViewMatrix();
     }
 
@@ -105,14 +102,14 @@ public class Camera{
      * @param entities the entities to check visibility against.
      */
     public static void isInView(HashSet<Entity> visibleObjects, Entity... entities){
-        float scaleAdjustedX = position.x / scale;
-        float scaleAdjustedY = position.y / scale;
+        float scaleAdjustedX = position.getX() / scale;
+        float scaleAdjustedY = position.getY() / scale;
         float xBoundary = 16.0f / scale;
         float yBoundary = 9.0f / scale;
         for (Entity entity : entities){
             for (TexturedModel texturedModel : entity.getTexturedModels()){
-                boolean collisionX = entity.getPosition().x + texturedModel.getRelativePosition().x + texturedModel.getAABB().getWidth() > scaleAdjustedX - xBoundary && entity.getPosition().x < scaleAdjustedX + xBoundary;
-                boolean collisionY = entity.getPosition().y + texturedModel.getRelativePosition().x - texturedModel.getAABB().getHeight() < scaleAdjustedY + yBoundary && entity.getPosition().y > scaleAdjustedY - yBoundary;
+                boolean collisionX = entity.getPosition().getX() + texturedModel.getRelativePosition().getX() + texturedModel.getAABB().getWidth() > scaleAdjustedX - xBoundary && entity.getPosition().getX() < scaleAdjustedX + xBoundary;
+                boolean collisionY = entity.getPosition().getY() + texturedModel.getRelativePosition().getY() - texturedModel.getAABB().getHeight() < scaleAdjustedY + yBoundary && entity.getPosition().getY() > scaleAdjustedY - yBoundary;
                 if (collisionX && collisionY){
                     visibleObjects.add(entity);
                     break;

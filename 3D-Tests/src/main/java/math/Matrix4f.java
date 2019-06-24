@@ -115,13 +115,13 @@ public class Matrix4f {
     private Matrix4f translate(Vector3f vector, boolean isCamera){
         Matrix4f result = identity();
         if (isCamera){
-            result.matrix[12] = -vector.x;
-            result.matrix[13] = -vector.y;
-            result.matrix[14] = -vector.z;
+            result.matrix[12] = -vector.getX();
+            result.matrix[13] = -vector.getY();
+            result.matrix[14] = -vector.getZ();
         }else{
-            result.matrix[12] = vector.x;
-            result.matrix[13] = vector.y;
-            result.matrix[14] = vector.z;
+            result.matrix[12] = vector.getX();
+            result.matrix[13] = vector.getY();
+            result.matrix[14] = vector.getZ();
         }
         return result;
     }

@@ -14,8 +14,10 @@ import java.util.Random;
  */
 public class World extends Entity {
 
-    private static final Random random = new Random();
+    private static final Random RANDOM = new Random();
+
     private static double noiseScale = 0.042d;
+    private Grid grid;
     private ArrayList<Entity> tiles;
 
     /**
@@ -42,33 +44,35 @@ public class World extends Entity {
     private World(Vector3f position, float rotation, float scale){
         super(position, rotation, scale);
         this.tiles = new ArrayList<>();
+        this.grid = new Grid();
         generateWorld();
     }
 
     /**
-     * Generates a list of WorldTiles with varying heights based on SimplexNoise with a random seed.
+     * Generates a list of WorldTiles with varying heights based on SimplexNoise with a RANDOM seed.
      */
     private void generateWorld(){
-        double seed = random.nextDouble() * 100000.0d;
-        for (int i = 0; i < 1500; ++i){
+        double seed = RANDOM.nextDouble() * 100000.0d;
+        for (int i = 0; i < 1000; ++i){
             int y = (int) ((SimplexNoise.noise(i * noiseScale, 0.0d, seed) + 1.0d) / 2.0d * 60.0d);
             fillColumn(new Vector3f(i, y + 20));
         }
+        this.grid.populateGrid(this.tiles);
     }
 
     private void fillColumn(Vector3f position){
-        if (position.y < 58.0f && random.nextBoolean()){
+        if (position.getY() < 58.0f && RANDOM.nextBoolean()){
             this.tiles.add(new Tree(position.add(new Vector3f(0.0f, 3.0f))));
         }
-        Tile topTile = new Tile(position, position.y > 55.0f ? Models.SNOW_TILE : Models.GRASS_TILE);
-        if (random.nextBoolean()){
+        Tile topTile = new Tile(position, position.getY() > 55.0f ? Models.SNOW_TILE : Models.GRASS_TILE);
+        if (RANDOM.nextBoolean()){
             topTile.setScale(new Vector2f(-1.0f, 1.0f));
         }
         this.tiles.add(topTile);
         {
             int counter = 0;
-            for (float i = position.subtractY(1.0f).y; i >= 0.0f; --i, ++counter) {
-                this.tiles.add(new Tile(new Vector3f(position.x, i), i < 40.0f ? (counter > 18 ? Models.STONE_TILE : Models.DIRT_TILE) : (counter > 20 ? Models.STONE_TILE : Models.DIRT_TILE)));
+            for (float i = position.subtractY(1.0f).getY(); i >= 0.0f; --i, ++counter) {
+                this.tiles.add(new Tile(new Vector3f(position.getX(), i), i < 40.0f ? (counter > 18 ? Models.STONE_TILE : Models.DIRT_TILE) : (counter > 20 ? Models.STONE_TILE : Models.DIRT_TILE)));
             }
         }
     }
@@ -78,6 +82,7 @@ public class World extends Entity {
      */
     public void regenerateWorld(){
         this.tiles.clear();
+        this.grid.clear();
         generateWorld();
     }
 
@@ -91,6 +96,10 @@ public class World extends Entity {
 
     public void resetNoiseScale(){
         noiseScale = 0.042d;
+    }
+
+    Grid getGrid(){
+        return this.grid;
     }
 
     /**

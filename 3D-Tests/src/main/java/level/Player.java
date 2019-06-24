@@ -109,7 +109,7 @@ public class Player extends MovableEntity {
     }
 
     public void resetPosition(){
-        setPosition(new Vector3f(0.0f, 80.0f));
+        setPosition(new Vector3f(0.0f, 55.0f));
     }
 
     /**

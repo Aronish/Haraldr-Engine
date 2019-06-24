@@ -7,7 +7,7 @@ import main.java.debug.Logger;
  */
 public class Vector3f {
 
-    public float x, y, z;
+    private float x, y, z;
 
     /**
      * Default constructor if no arguments are provided.
@@ -49,13 +49,31 @@ public class Vector3f {
         this.z = (float) z;
     }
 
+    public float getX(){
+        return this.x;
+    }
+
+    public float getY(){
+        return this.y;
+    }
+
+    public float getZ(){
+        return this.z;
+    }
+
     /**
      * Add the other vector to this vector.
      * @param other the other vector to add.
      * @return the sum Vector.
      */
     public Vector3f add(Vector3f other){
-        return new Vector3f(this.x + other.x, this.y + other.y, this.z + other.z);
+        return new Vector3f(this.x + other.getX(), this.y + other.getY(), this.z + other.getZ());
+    }
+
+    public void addThis(Vector3f other){
+        this.x += other.x;
+        this.y += other.y;
+        this.z += other.z;
     }
 
     /**
@@ -64,7 +82,7 @@ public class Vector3f {
      * @return the difference Vector.
      */
     public Vector3f subtract(Vector3f other){
-        return new Vector3f(this.x - other.x, this.y - other.y, this.z - other.z);
+        return new Vector3f(this.x - other.getX(), this.y - other.getY(), this.z - other.getZ());
     }
 
     public Vector3f subtractY(float dy){
@@ -78,29 +96,6 @@ public class Vector3f {
      */
     public Vector3f multiply(float scalar){
         return new Vector3f(this.x * scalar, this.y * scalar, this.z * scalar);
-    }
-
-    /**
-     * Normalizes the vector. ! NOT SURE THIS IS GOOD !
-     * @return the normalized vector.
-     */
-    public Vector3f normalize(){
-        double sqX = Math.pow((double) this.x, 2);
-        double sqY = Math.pow((double) this.y, 2);
-        double sqZ = Math.pow((double) this.z, 2);
-        double magnitude = Math.sqrt(sqX + sqY + sqZ);
-        double norm = 1.0f / magnitude;
-        return new Vector3f(this.x *= norm, this.y *= norm, this.z *= norm);
-    }
-
-    /**
-     * Calculates the distance between two (origin) Vector's.
-     * @param other the other Vector.
-     * @return the distance.
-     */
-    public double getDistance(Vector3f other){
-        Vector3f between = other.subtract(this);
-        return Math.sqrt(Math.pow(between.x, 2) + Math.pow(between.y, 2));
     }
 
     /**

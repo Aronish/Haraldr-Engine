@@ -1,5 +1,6 @@
 package main.java.level;
 
+import main.java.debug.Logger;
 import main.java.graphics.TexturedModel;
 import main.java.math.Matrix4f;
 import main.java.math.Vector2f;
@@ -18,7 +19,6 @@ public abstract class Entity {
     private Matrix4f matrix;
     private Vector2f scale;
     private float rotation;
-    private int gridBitMask;
 
     /**
      * Creates a new Entity with the specified properties.
@@ -34,7 +34,6 @@ public abstract class Entity {
         this.texturedModels = new ArrayList<>();
         this.texturedModels.addAll(Arrays.asList(texturedModels));
         this.texturedModels.forEach((texturedModel) -> texturedModel.getAABB().setScale(this.scale));
-        this.gridBitMask = 1 << ((int) this.position.x / 32);
     }
 
     /**
@@ -50,9 +49,7 @@ public abstract class Entity {
      * @param position the vector to add to the position.
      */
     public void addPosition(Vector3f position){
-        this.position.x += position.x;
-        this.position.y += position.y;
-        this.position.z += position.z;
+        this.position.addThis(position);
     }
 
     /**
@@ -91,7 +88,7 @@ public abstract class Entity {
      * @return the position vector.
      */
     public Vector3f getPosition(){
-        return new Vector3f(this.position.x, this.position.y, this.position.z);
+        return this.position;
     }
 
     /**

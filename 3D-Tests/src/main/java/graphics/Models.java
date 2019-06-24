@@ -38,10 +38,10 @@ public class Models {
      */
     private static HashMap<String, float[]> createVertexData(Vector3f relativePosition, float width, float height){
         float[] vertices = {
-            relativePosition.x + width,     relativePosition.y,
-            relativePosition.x + width,     relativePosition.y - height,
-            relativePosition.x,             relativePosition.y,
-            relativePosition.x,             relativePosition.y - height
+            relativePosition.getX() + width,     relativePosition.getY(),
+            relativePosition.getX() + width,     relativePosition.getY() - height,
+            relativePosition.getX(),             relativePosition.getY(),
+            relativePosition.getX(),             relativePosition.getY() - height
         };
         float[] texcoords = {
             -1.0f,  0.0f,

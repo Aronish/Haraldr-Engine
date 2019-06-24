@@ -37,8 +37,8 @@ public class CollisionDetector {
      * @return true if there was a collision on both axes.
      */
     private static boolean checkCollision(Entity entity, TexturedModel texturedModel, Player player){
-        boolean collisionX = player.getPosition().x + player.getWidth() > entity.getPosition().x + texturedModel.getRelativePosition().x && entity.getPosition().x + texturedModel.getRelativePosition().x + texturedModel.getAABB().getWidth() > player.getPosition().x;
-        boolean collisionY = player.getPosition().y - player.getHeight() < entity.getPosition().y + texturedModel.getRelativePosition().y && entity.getPosition().y + texturedModel.getRelativePosition().y - texturedModel.getAABB().getHeight() < player.getPosition().y;
+        boolean collisionX = player.getPosition().getX() + player.getWidth() > entity.getPosition().getX() + texturedModel.getRelativePosition().getX() && entity.getPosition().getX() + texturedModel.getRelativePosition().getX() + texturedModel.getAABB().getWidth() > player.getPosition().getX();
+        boolean collisionY = player.getPosition().getY() - player.getHeight() < entity.getPosition().getY() + texturedModel.getRelativePosition().getY() && entity.getPosition().getY() + texturedModel.getRelativePosition().getY() - texturedModel.getAABB().getHeight() < player.getPosition().getY();
         return collisionX && collisionY;
     }
 
@@ -50,10 +50,10 @@ public class CollisionDetector {
      * @return a custom data pair with the direction and overlap distance.
      */
     private static CollisionDataMap getCollisionDirection(Entity entity, TexturedModel texturedModel, Player player){
-        float topCollision = (entity.getPosition().y + texturedModel.getRelativePosition().y) - (player.getPosition().y - player.getHeight());
-        float rightCollision = (entity.getPosition().x + texturedModel.getRelativePosition().x) + texturedModel.getAABB().getWidth() - player.getPosition().x;
-        float leftCollision = player.getPosition().x + player.getWidth() - (entity.getPosition().x + texturedModel.getRelativePosition().x);
-        float bottomCollision = player.getPosition().y - ((entity.getPosition().y + texturedModel.getRelativePosition().y) - texturedModel.getAABB().getHeight());
+        float topCollision = (entity.getPosition().getY() + texturedModel.getRelativePosition().getY()) - (player.getPosition().getY() - player.getHeight());
+        float rightCollision = (entity.getPosition().getX() + texturedModel.getRelativePosition().getX()) + texturedModel.getAABB().getWidth() - player.getPosition().getX();
+        float leftCollision = player.getPosition().getX() + player.getWidth() - (entity.getPosition().getX() + texturedModel.getRelativePosition().getX());
+        float bottomCollision = player.getPosition().getY() - ((entity.getPosition().getY() + texturedModel.getRelativePosition().getY()) - texturedModel.getAABB().getHeight());
 
         if (topCollision < bottomCollision && topCollision < leftCollision && topCollision < rightCollision ) {
             return new CollisionDataMap(NORTH, topCollision);

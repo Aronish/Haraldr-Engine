@@ -1,5 +1,6 @@
 package main.java;
 
+import main.java.debug.Logger;
 import main.java.graphics.TexturedModel;
 import main.java.level.Entity;
 import main.java.math.Matrix4f;
@@ -20,6 +21,7 @@ public class Camera{
     public static float scale;
 
     private static final float MIN_SCALE = 0.30f;
+    private static final float MAX_SCALE = 2.0f;
     private static final float SCALE_SPEED = 1.0f;
 
     /**
@@ -65,10 +67,12 @@ public class Camera{
     static void calculateScale(boolean shouldIncrease, float deltaTime){
         if (shouldIncrease){
             scale += SCALE_SPEED * scale * deltaTime;
+            if (scale > MAX_SCALE){
+                scale = MAX_SCALE;
+            }
         }else {
-            if (scale > MIN_SCALE){
-                scale -= SCALE_SPEED * scale * deltaTime;
-            }else{
+            scale -= SCALE_SPEED * scale * deltaTime;
+            if (scale < MIN_SCALE){
                 scale = MIN_SCALE;
             }
         }

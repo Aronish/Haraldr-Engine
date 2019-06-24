@@ -1,5 +1,5 @@
 package main.java.level;
-//TODO:  Add layers for back- and foreground.
+
 import main.java.Camera;
 import main.java.Input;
 import main.java.graphics.Renderer;

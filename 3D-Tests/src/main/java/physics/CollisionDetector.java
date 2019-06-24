@@ -1,11 +1,9 @@
 package main.java.physics;
 
 import main.java.Camera;
-import main.java.debug.Logger;
 import main.java.graphics.TexturedModel;
 import main.java.level.Entity;
 import main.java.level.Player;
-import main.java.level.WorldTile;
 import main.java.math.Vector3f;
 
 import static main.java.physics.EnumDirection.EAST;
@@ -29,18 +27,6 @@ public class CollisionDetector {
         if (checkCollision(entity, texturedModel, player)){
             resolveCollision(getCollisionDirection(entity, texturedModel, player), player);
         }
-    }
-
-    /**
-     * Checks whether there is a collision between the Player in the Level and a WorldTile. Collision is then checked against every individual Tile in the WorldTile.
-     * @param worldTile the WorldTile to check collision against.
-     * @param player the Player to check collisions with.
-     * @return true if there was a collision on both axes.
-     */
-    public static boolean checkCollision(WorldTile worldTile, Player player){
-        boolean collisionX = player.getPosition().x + player.getWidth() > worldTile.getPosition().x && worldTile.getPosition().x + worldTile.getWidth() > player.getPosition().x;
-        boolean collisionY = player.getPosition().y - player.getHeight() < worldTile.getPosition().y && worldTile.getPosition().y - worldTile.getHeight() < player.getPosition().y;
-        return collisionX && collisionY;
     }
 
     /**

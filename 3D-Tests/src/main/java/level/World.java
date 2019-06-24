@@ -1,6 +1,8 @@
 package main.java.level;
 
+import main.java.graphics.Models;
 import main.java.math.SimplexNoise;
+import main.java.math.Vector2f;
 import main.java.math.Vector3f;
 
 import java.util.ArrayList;
@@ -12,9 +14,9 @@ import java.util.Random;
  */
 public class World extends Entity {
 
+    private static final Random random = new Random();
     private static double noiseScale = 0.042d;
-    private ArrayList<WorldTile> worldTiles;
-    private static Random random;
+    private ArrayList<Entity> tiles;
 
     /**
      * Constructor with the position of the Player in the same Level as this World.
@@ -39,8 +41,7 @@ public class World extends Entity {
      */
     private World(Vector3f position, float rotation, float scale){
         super(position, rotation, scale);
-        random = new Random();
-        this.worldTiles = new ArrayList<>();
+        this.tiles = new ArrayList<>();
         generateWorld();
     }
 
@@ -51,7 +52,24 @@ public class World extends Entity {
         double seed = random.nextDouble() * 100000.0d;
         for (int i = 0; i < 1500; ++i){
             int y = (int) ((SimplexNoise.noise(i * noiseScale, 0.0d, seed) + 1.0d) / 2.0d * 60.0d);
-            this.worldTiles.add(new WorldTile(new Vector3f(i - 750, y + 20)));
+            fillColumn(new Vector3f(i, y + 20));
+        }
+    }
+
+    private void fillColumn(Vector3f position){
+        if (position.y < 58.0f && random.nextBoolean()){
+            this.tiles.add(new Tree(position.add(new Vector3f(0.0f, 3.0f))));
+        }
+        Tile topTile = new Tile(position, position.y > 55.0f ? Models.SNOW_TILE : Models.GRASS_TILE);
+        if (random.nextBoolean()){
+            topTile.setScale(new Vector2f(-1.0f, 1.0f));
+        }
+        this.tiles.add(topTile);
+        {
+            int counter = 0;
+            for (float i = position.subtractY(1.0f).y; i >= 0.0f; --i, ++counter) {
+                this.tiles.add(new Tile(new Vector3f(position.x, i), i < 40.0f ? (counter > 18 ? Models.STONE_TILE : Models.DIRT_TILE) : (counter > 20 ? Models.STONE_TILE : Models.DIRT_TILE)));
+            }
         }
     }
 
@@ -59,7 +77,7 @@ public class World extends Entity {
      * Clears the world list an generates a new one.
      */
     public void regenerateWorld(){
-        this.worldTiles.clear();
+        this.tiles.clear();
         generateWorld();
     }
 
@@ -76,16 +94,16 @@ public class World extends Entity {
     }
 
     /**
-     * Gets the list of WorldTile'.
-     * @return the list of WorldTile's.
+     * Gets the list of tiles.
+     * @return the list of tiles.
      */
-    ArrayList<WorldTile> getWorldTiles(){
-        return this.worldTiles;
+    ArrayList<Entity> getTiles(){
+        return this.tiles;
     }
 
     @Override
     void cleanUp() {
         super.cleanUp();
-        this.worldTiles.forEach(WorldTile::cleanUp);
+        this.tiles.forEach(Entity::cleanUp);
     }
 }

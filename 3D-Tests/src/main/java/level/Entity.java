@@ -18,6 +18,7 @@ public abstract class Entity {
     private Matrix4f matrix;
     private Vector2f scale;
     private float rotation;
+    private int gridBitMask;
 
     /**
      * Creates a new Entity with the specified properties.
@@ -33,6 +34,7 @@ public abstract class Entity {
         this.texturedModels = new ArrayList<>();
         this.texturedModels.addAll(Arrays.asList(texturedModels));
         this.texturedModels.forEach((texturedModel) -> texturedModel.getAABB().setScale(this.scale));
+        this.gridBitMask = 1 << ((int) this.position.x / 32);
     }
 
     /**

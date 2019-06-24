@@ -1,5 +1,5 @@
 package main.java.level;
-
+//TODO:  Add layers for back- and foreground.
 import main.java.Camera;
 import main.java.Input;
 import main.java.graphics.Renderer;
@@ -8,7 +8,7 @@ import main.java.physics.CollisionDetector;
 import java.util.HashSet;
 
 /**
- * Main Level class to house everything contained in one level. (Should really only have one World Object)...
+ * Main Level class to house everything contained in one level.
  */
 public class Level {
 
@@ -40,10 +40,8 @@ public class Level {
 
     private void checkVisibility(){
         this.visibleObjects.clear();
-        for (WorldTile worldTile : this.world.getWorldTiles()){
-            for (Entity tile : worldTile.getTiles()){
-                Camera.isInView(this.visibleObjects, tile);
-            }
+        for (Entity entity : world.getTiles()){
+            Camera.isInView(this.visibleObjects, entity);
         }
     }
 
@@ -67,13 +65,9 @@ public class Level {
      * Does collision detection and resolution for the objects requiring collisions.
      */
     private void doCollisions() {
-        for (WorldTile worldTile : this.world.getWorldTiles()){
-            if (CollisionDetector.checkCollision(worldTile, this.player)){
-                for (Entity tile : worldTile.getTiles()){
-                    if (!(tile instanceof Tree)){
-                        CollisionDetector.doCollisions(tile, tile.getTexturedModels().get(0), this.player);
-                    }
-                }
+        for (Entity entity : this.visibleObjects){
+            if (!(entity instanceof Tree)){
+                CollisionDetector.doCollisions(entity, entity.getTexturedModels().get(0), this.player);
             }
         }
     }

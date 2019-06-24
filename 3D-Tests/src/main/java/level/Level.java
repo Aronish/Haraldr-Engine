@@ -66,7 +66,7 @@ public class Level {
      */
     private void doCollisions() {
         for (Entity entity : this.visibleObjects){
-            if (!(entity instanceof Tree)){
+            if (!(entity instanceof IBackground)){
                 CollisionDetector.doCollisions(entity, entity.getTexturedModels().get(0), this.player);
             }
         }

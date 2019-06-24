@@ -3,7 +3,7 @@ package main.java.level;
 import main.java.graphics.Models;
 import main.java.math.Vector3f;
 
-public class Tree extends Entity{
+public class Tree extends Entity implements IBackground{
 
     public Tree(){
         this(new Vector3f(), 0.0f, 1.0f);

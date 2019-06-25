@@ -1,6 +1,8 @@
 package main.java.level;
 
-import main.java.graphics.Models;
+import main.java.level.tiles.EnumTiles;
+import main.java.level.tiles.Tile;
+import main.java.level.tiles.TileFactory;
 import main.java.math.SimplexNoise;
 import main.java.math.Vector2f;
 import main.java.math.Vector3f;
@@ -14,6 +16,7 @@ import java.util.Random;
  */
 public class World extends Entity {
 
+    private static final TileFactory TILE_FACTORY = new TileFactory();
     private static final Random RANDOM = new Random();
     private static final int WORLD_SIZE = 1000;
 
@@ -69,7 +72,7 @@ public class World extends Entity {
         if (position.getY() < 58.0f && RANDOM.nextBoolean()){
             this.tiles.add(new Tree(position.add(new Vector3f(0.0f, 3.0f))));
         }
-        Tile topTile = new Tile(position, position.getY() > 55.0f ? Models.SNOW_TILE : Models.GRASS_TILE);
+        Tile topTile = TILE_FACTORY.createTile(position, position.getY() > 55.0f ? EnumTiles.GRASS_SNOW : EnumTiles.GRASS);
         if (RANDOM.nextBoolean()){
             topTile.setScale(new Vector2f(-1.0f, 1.0f));
         }
@@ -77,7 +80,7 @@ public class World extends Entity {
         {
             int counter = 0;
             for (float i = position.subtractY(1.0f).getY(); i >= 0.0f; --i, ++counter) {
-                this.tiles.add(new Tile(new Vector3f(position.getX(), i), i < 40.0f ? (counter > 18 ? Models.STONE_TILE : Models.DIRT_TILE) : (counter > 20 ? Models.STONE_TILE : Models.DIRT_TILE)));
+                this.tiles.add(TILE_FACTORY.createTile(new Vector3f(position.getX(), i), i < 40.0f ? (counter > 18 ? EnumTiles.STONE : EnumTiles.DIRT) : (counter > 20 ? EnumTiles.STONE : EnumTiles.DIRT)));
             }
         }
     }

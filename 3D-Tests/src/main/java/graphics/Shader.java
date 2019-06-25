@@ -30,7 +30,7 @@ public class Shader {
      * Both kinds of shaders must have the same name as the extensions are added afterwards for simplicity.
      * @param generalShaderPath the general shader file path, with no extension.
      */
-    public Shader(String generalShaderPath){
+    Shader(String generalShaderPath){
         this(generalShaderPath + ".vert", generalShaderPath + ".frag");
     }
 
@@ -69,14 +69,6 @@ public class Shader {
         int shader = glCreateShader(shaderType);
         glShaderSource(shader, source);
         return shader;
-    }
-
-    /**
-     * Gets the shader program.
-     * @return the shader program (ID).
-     */
-    public int getShaderProgram(){
-        return shaderProgram;
     }
 
     /**
@@ -129,7 +121,7 @@ public class Shader {
     /**
      * Deletes the shader program.
      */
-    public void delete(){
+    void delete(){
         unuse();
         glDeleteProgram(this.shaderProgram);
     }

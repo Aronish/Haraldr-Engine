@@ -15,10 +15,11 @@ import java.util.Random;
 public class World extends Entity {
 
     private static final Random RANDOM = new Random();
+    private static final int WORLD_SIZE = 1000;
 
     private static double noiseScale = 0.042d;
-    private Grid grid;
     private ArrayList<Entity> tiles;
+    private Grid grid;
 
     /**
      * Constructor with the position of the Player in the same Level as this World.
@@ -53,13 +54,17 @@ public class World extends Entity {
      */
     private void generateWorld(){
         double seed = RANDOM.nextDouble() * 100000.0d;
-        for (int i = 0; i < 1000; ++i){
+        for (int i = 0; i < WORLD_SIZE; ++i){
             int y = (int) ((SimplexNoise.noise(i * noiseScale, 0.0d, seed) + 1.0d) / 2.0d * 60.0d);
             fillColumn(new Vector3f(i, y + 20));
         }
         this.grid.populateGrid(this.tiles);
     }
 
+    /**
+     * Fills a one block wide column with different blocks according to the generation algorithm.
+     * @param position the position of the initial block.
+     */
     private void fillColumn(Vector3f position){
         if (position.getY() < 58.0f && RANDOM.nextBoolean()){
             this.tiles.add(new Tree(position.add(new Vector3f(0.0f, 3.0f))));
@@ -94,20 +99,19 @@ public class World extends Entity {
         noiseScale += dScale;
     }
 
+    /**
+     * Resets the noise scale to a specified value.
+     */
     public void resetNoiseScale(){
         noiseScale = 0.042d;
     }
 
+    /**
+     * Gets the grid of chunks.
+     * @return the grid.
+     */
     Grid getGrid(){
         return this.grid;
-    }
-
-    /**
-     * Gets the list of tiles.
-     * @return the list of tiles.
-     */
-    ArrayList<Entity> getTiles(){
-        return this.tiles;
     }
 
     @Override

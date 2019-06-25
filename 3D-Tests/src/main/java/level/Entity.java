@@ -1,6 +1,5 @@
 package main.java.level;
 
-import main.java.debug.Logger;
 import main.java.graphics.TexturedModel;
 import main.java.math.Matrix4f;
 import main.java.math.Vector2f;

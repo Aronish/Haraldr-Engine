@@ -38,7 +38,7 @@ public class Renderer {
     public static void render(Entity entity){
         for (TexturedModel texturedModel : entity.getTexturedModels()){
             SQUARE_SHADER.use();
-            SQUARE_SHADER.setMatrix(entity.getMatrix());
+            SQUARE_SHADER.setMatrix(entity.getMatrixArray());
             texturedModel.getVertexArray().bind();
             texturedModel.getTexture().bind();
             texturedModel.getVertexArray().draw();

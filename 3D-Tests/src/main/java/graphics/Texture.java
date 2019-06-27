@@ -97,7 +97,7 @@ class Texture {
     /**
      * Unbinds this texture to avoid weird conflicts.
      */
-    private void unbind(){
+    void unbind(){
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 

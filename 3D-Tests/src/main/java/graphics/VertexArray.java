@@ -1,7 +1,11 @@
 package main.java.graphics;
 
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
+import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
 import static org.lwjgl.opengl.GL46.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL46.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL46.GL_FLOAT;
@@ -90,6 +94,10 @@ class VertexArray {
         glDrawElements(this.renderMode, this.length, GL_UNSIGNED_INT, 0);
     }
 
+    void drawInstanced(int count){
+        glDrawElementsInstanced(this.renderMode, this.length, GL_UNSIGNED_INT, 0, count);
+    }
+
     /**
      * Binds the VAO for setting the state or drawing.
      */
@@ -100,7 +108,7 @@ class VertexArray {
     /**
      * Unbinds the VAO to avoid weird conflicts.
      */
-    private void unbind(){
+    void unbind(){
         glBindVertexArray(0);
     }
 

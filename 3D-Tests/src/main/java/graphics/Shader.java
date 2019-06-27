@@ -1,6 +1,10 @@
 package main.java.graphics;
 
+import main.java.debug.Logger;
+import main.java.math.Matrix4f;
+
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
@@ -102,6 +106,13 @@ public class Shader {
     void setMatrix(float[] matrix){
         int matrixLocation = glGetUniformLocation(this.shaderProgram, "matrix");
         glUniformMatrix4fv(matrixLocation, false, matrix);
+    }
+
+    void setMatrixArray(ArrayList<Matrix4f> matrices){
+        for (int i = 0; i < matrices.size(); ++i){
+            int arrayLocation = glGetUniformLocation(this.shaderProgram, "matrices[" + i + "]");
+            glUniformMatrix4fv(arrayLocation, false, matrices.get(i).matrix);
+        }
     }
 
     /**

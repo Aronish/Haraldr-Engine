@@ -4,14 +4,14 @@ import main.java.Camera;
 import main.java.Input;
 import main.java.Main;
 import main.java.debug.Logger;
+import main.java.graphics.InstancedRenderer;
 import main.java.graphics.Renderer;
+import main.java.level.tiles.EnumTiles;
 import main.java.math.Vector2f;
 import main.java.physics.CollisionDetector;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-
-import static main.java.Main.fastFloor;
 
 /**
  * Main Level class to house everything contained in one level.
@@ -39,8 +39,8 @@ public class Level {
     public void updateLevel(float deltaTime){
         Input.processInput(deltaTime, this.player, this.world);
         this.player.update(deltaTime); //Update Player no matter what.
-        checkVisibility();
-        doCollisions();
+        //checkVisibility();
+        //doCollisions();
         updateMatrices();
     }
 
@@ -53,7 +53,8 @@ public class Level {
     private void checkVisibility(){
         Vector2f playerGridPosition = this.world.getGrid().getPlayerGridPosition(this.player.getPosition());
         Grid grid = this.world.getGrid();
-        this.visibleObjects.clear();
+        //this.visibleObjects.clear();
+        /*
         for (int x = -Camera.chunkXRange; x <= Camera.chunkXRange; ++x){
             if (playerGridPosition.getX() + x < 0 || playerGridPosition.getX() + x > grid.getWidth()){
                 continue;
@@ -62,8 +63,8 @@ public class Level {
                 if (playerGridPosition.getY() + y < 0 || playerGridPosition.getY() + y > grid.getHeight()){
                     continue;
                 }
-                ArrayList<Entity> entities = grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y);
-                if (entities != null){
+                //ArrayList<Entity> entities = grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y);
+                /*if (entities != null){
                     for (Entity entity : entities){
                         Camera.isInView(this.visibleObjects, entity);
                     }
@@ -71,8 +72,15 @@ public class Level {
                     Logger.setWarningLevel();
                     Logger.log("Grid tile not found!");
                 }
+                Grid.GridCell gridCell = grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y);
+                /*InstancedRenderer.renderInstanced(gridCell.getGrassMatrices(), EnumTiles.GRASS);
+                InstancedRenderer.renderInstanced(gridCell.getDirtMatrices(), EnumTiles.DIRT);
+                InstancedRenderer.renderInstanced(gridCell.getSnowMatrices(), EnumTiles.GRASS_SNOW);
+                InstancedRenderer.renderInstanced(gridCell.getStoneMatrices(), EnumTiles.STONE);
+                gridCell.updateMatrices();
             }
         }
+        */
     }
 
     /**
@@ -80,14 +88,70 @@ public class Level {
      */
     private void updateMatrices(){
         this.player.updateMatrix();
-        this.visibleObjects.forEach(Entity::updateMatrix);
+        //this.visibleObjects.forEach(Entity::updateMatrix);
+        Vector2f playerGridPosition = this.world.getGrid().getPlayerGridPosition(this.player.getPosition());
+        Grid grid = this.world.getGrid();
+        //this.visibleObjects.clear();
+        for (int x = -Camera.chunkXRange; x <= Camera.chunkXRange; ++x){
+            if (playerGridPosition.getX() + x < 0 || playerGridPosition.getX() + x > grid.getWidth()){
+                continue;
+            }
+            for (int y = -2; y <= 2; ++y){
+                if (playerGridPosition.getY() + y < 0 || playerGridPosition.getY() + y > grid.getHeight()){
+                    continue;
+                }
+                //ArrayList<Entity> entities = grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y);
+                /*if (entities != null){
+                    for (Entity entity : entities){
+                        Camera.isInView(this.visibleObjects, entity);
+                    }
+                }else{
+                    Logger.setWarningLevel();
+                    Logger.log("Grid tile not found!");
+                }*/
+                Grid.GridCell gridCell = grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y);
+                /*InstancedRenderer.renderInstanced(gridCell.getGrassMatrices(), EnumTiles.GRASS);
+                InstancedRenderer.renderInstanced(gridCell.getDirtMatrices(), EnumTiles.DIRT);
+                InstancedRenderer.renderInstanced(gridCell.getSnowMatrices(), EnumTiles.GRASS_SNOW);
+                InstancedRenderer.renderInstanced(gridCell.getStoneMatrices(), EnumTiles.STONE);*/
+                gridCell.updateMatrices();
+            }
+        }
     }
 
     /**
      * Renders the game objects in this Level.
      */
     public void renderLevel(){
-        this.visibleObjects.forEach(Renderer::render);
+        //this.visibleObjects.forEach(Renderer::render);
+        Vector2f playerGridPosition = this.world.getGrid().getPlayerGridPosition(this.player.getPosition());
+        Grid grid = this.world.getGrid();
+        //this.visibleObjects.clear();
+        for (int x = -Camera.chunkXRange; x <= Camera.chunkXRange; ++x){
+            if (playerGridPosition.getX() + x < 0 || playerGridPosition.getX() + x > grid.getWidth()){
+                continue;
+            }
+            for (int y = -2; y <= 2; ++y){
+                if (playerGridPosition.getY() + y < 0 || playerGridPosition.getY() + y > grid.getHeight()){
+                    continue;
+                }
+                //ArrayList<Entity> entities = grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y);
+                /*if (entities != null){
+                    for (Entity entity : entities){
+                        Camera.isInView(this.visibleObjects, entity);
+                    }
+                }else{
+                    Logger.setWarningLevel();
+                    Logger.log("Grid tile not found!");
+                }*/
+                Grid.GridCell gridCell = grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y);
+                InstancedRenderer.renderInstanced(gridCell.getGrassMatrices(), EnumTiles.GRASS);
+                InstancedRenderer.renderInstanced(gridCell.getDirtMatrices(), EnumTiles.DIRT);
+                InstancedRenderer.renderInstanced(gridCell.getSnowMatrices(), EnumTiles.GRASS_SNOW);
+                InstancedRenderer.renderInstanced(gridCell.getStoneMatrices(), EnumTiles.STONE);
+                //gridCell.updateMatrices();
+            }
+        }
         Renderer.render(this.player);
     }
 
@@ -95,11 +159,11 @@ public class Level {
      * Does collision detection and resolution for the objects requiring collisions.
      */
     private void doCollisions() {
-        for (Entity entity : this.visibleObjects){
+        /*for (Entity entity : this.visibleObjects){
             if (!(entity instanceof IBackground)){
                 CollisionDetector.doCollisions(entity, entity.getTexturedModels().get(0), this.player);
             }
-        }
+        }*/
     }
 
     /**

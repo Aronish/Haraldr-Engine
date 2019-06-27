@@ -1,6 +1,7 @@
 package main.java;
 
 import main.java.debug.Logger;
+import main.java.graphics.InstancedRenderer;
 import main.java.graphics.Models;
 import main.java.graphics.Renderer;
 import main.java.level.Level;
@@ -51,6 +52,7 @@ public class Main implements Runnable{
         Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
 
         frameRate = 60.0d;
+        new Logger();
         new SimplexNoise();
         new CollisionDetector();
         new Models();
@@ -71,7 +73,8 @@ public class Main implements Runnable{
      * Render all objects and scenes.
      */
     private void render(){
-        Renderer.clear();
+        //Renderer.clear();
+        InstancedRenderer.clear();
         level.renderLevel();
         glfwSwapBuffers(window.getWindow());
     }
@@ -111,6 +114,7 @@ public class Main implements Runnable{
         }
         level.cleanUp();
         Renderer.deleteShaders();
+        InstancedRenderer.deleteShaders();
         glfwTerminate();
     }
 

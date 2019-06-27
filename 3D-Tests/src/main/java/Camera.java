@@ -8,6 +8,8 @@ import main.java.math.Vector3f;
 
 import java.util.HashSet;
 
+import static main.java.Main.fastFloor;
+
 /**
  * A virtual camera for the game. Is essentially a normal object except that the transformation matrix is inverted.
  * That matrix is then applied to all objects in the scene to make it appear as if the camera was moving.
@@ -18,8 +20,9 @@ public class Camera{
     private static Vector3f position;
     private static float rotation;
     public static float scale;
+    public static int chunkXRange;
 
-    private static final float MIN_SCALE = 0.30f;
+    private static final float MIN_SCALE = 0.125f;
     private static final float MAX_SCALE = 2.0f;
     private static final float SCALE_SPEED = 1.0f;
 
@@ -47,6 +50,7 @@ public class Camera{
         position = pos;
         rotation = rot;
         scale = scal;
+        calculateChunkXRange();
         calculateViewMatrix();
     }
 
@@ -75,7 +79,12 @@ public class Camera{
                 scale = MIN_SCALE;
             }
         }
+        calculateChunkXRange();
         calculateViewMatrix();
+    }
+
+    private static void calculateChunkXRange(){
+        chunkXRange = fastFloor(2.0f / Camera.scale);
     }
 
     /**

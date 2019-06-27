@@ -3,7 +3,7 @@ package main.java.level.tiles;
 import main.java.graphics.Models;
 import main.java.math.Vector3f;
 
-class TileGrassSnow extends Tile {
+public class TileGrassSnow extends Tile {
 
     TileGrassSnow(Vector3f position){
         super(position, 1.0f, Models.SNOW_TILE);

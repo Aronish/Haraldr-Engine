@@ -5,12 +5,14 @@ import main.java.math.Vector3f;
 
 import java.util.ArrayList;
 
+import static main.java.Main.fastFloor;
+
 /**
  * Contains all objects int the World in a grid system.
  */
 class Grid {
 
-    private static final int GRID_SIZE = 16;
+    static final int GRID_SIZE = 16;
 
     private int width, height;
 
@@ -33,7 +35,7 @@ class Grid {
      * @param entities the entities to be put in the grid.
      */
     void populateGrid(ArrayList<Entity> entities){
-        entities.forEach(entity -> addEntity((int) Math.floor(entity.getPosition().getX() / GRID_SIZE), (int) Math.floor(entity.getPosition().getY() / GRID_SIZE), entity));
+        entities.forEach(entity -> addEntity(fastFloor(entity.getPosition().getX() / GRID_SIZE), fastFloor(entity.getPosition().getY() / GRID_SIZE), entity));
     }
 
     /**
@@ -69,13 +71,13 @@ class Grid {
      * @return the grid coordinates.
      */
     Vector2f getPlayerGridPosition(Vector3f playerPosition){
-        return new Vector2f((float) Math.floor(playerPosition.getX() / GRID_SIZE), (float) Math.floor(playerPosition.getY() / GRID_SIZE));
+        return new Vector2f((float) fastFloor(playerPosition.getX() / GRID_SIZE), (float) fastFloor(playerPosition.getY() / GRID_SIZE));
     }
 
     /**
      * Clears the whole grid and resets its dimensions.
      */
-    void clear() {
+    void clear(){
         this.width = 0;
         this.height = 0;
         this.grid.clear();

@@ -2,6 +2,7 @@ package main.java.level;
 
 import main.java.Camera;
 import main.java.Input;
+import main.java.Main;
 import main.java.debug.Logger;
 import main.java.graphics.Renderer;
 import main.java.math.Vector2f;
@@ -9,6 +10,8 @@ import main.java.physics.CollisionDetector;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+
+import static main.java.Main.fastFloor;
 
 /**
  * Main Level class to house everything contained in one level.
@@ -51,7 +54,7 @@ public class Level {
         Vector2f playerGridPosition = this.world.getGrid().getPlayerGridPosition(this.player.getPosition());
         Grid grid = this.world.getGrid();
         this.visibleObjects.clear();
-        for (int x = -2; x <= 2; ++x){
+        for (int x = -Camera.chunkXRange; x <= Camera.chunkXRange; ++x){
             if (playerGridPosition.getX() + x < 0 || playerGridPosition.getX() + x > grid.getWidth()){
                 continue;
             }

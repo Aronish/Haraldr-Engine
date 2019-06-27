@@ -16,7 +16,7 @@ import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
-class Main implements Runnable{
+public class Main implements Runnable{
 
     private static double frameRate;
     private Level level;
@@ -51,7 +51,6 @@ class Main implements Runnable{
         Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
 
         frameRate = 60.0d;
-        new Logger();
         new SimplexNoise();
         new CollisionDetector();
         new Models();
@@ -113,6 +112,11 @@ class Main implements Runnable{
         level.cleanUp();
         Renderer.deleteShaders();
         glfwTerminate();
+    }
+
+    public static int fastFloor(double x) {
+        int xi = (int) x;
+        return x < xi ? xi - 1 : xi;
     }
 
     public static void main(String[] args){

@@ -114,7 +114,7 @@ public class World extends Entity {
      * Gets the grid of chunks.
      * @return the grid.
      */
-    Grid getGrid(){
+    public Grid getGrid(){
         return this.grid;
     }
 

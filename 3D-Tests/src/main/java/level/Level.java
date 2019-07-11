@@ -2,6 +2,7 @@ package main.java.level;
 
 import main.java.Camera;
 import main.java.Input;
+import main.java.WorldMapper;
 import main.java.graphics.InstancedRenderer;
 import main.java.graphics.Renderer;
 import main.java.level.tiles.EnumTiles;
@@ -71,11 +72,11 @@ public class Level {
         this.visibleGridCells.clear();
         this.frustumCulledObjects.clear();
         for (int x = -Camera.chunkXRange; x <= Camera.chunkXRange; ++x){
-            if (playerGridPosition.getX() + x < 0 || playerGridPosition.getX() + x > grid.getWidth()){
+            if (playerGridPosition.getX() + x < 0 || playerGridPosition.getX() + x > grid.getWidthI()){
                 continue;
             }
             for (int y = -Camera.chunkYRange; y <= Camera.chunkYRange; ++y){
-                if (playerGridPosition.getY() + y < 0 || playerGridPosition.getY() + y > grid.getHeight()){
+                if (playerGridPosition.getY() + y < 0 || playerGridPosition.getY() + y > grid.getHeightI()){
                     continue;
                 }
                 if (Input.usingInstancedRendering()){

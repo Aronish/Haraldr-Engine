@@ -1,9 +1,9 @@
 package main.java;
 
 import main.java.debug.Logger;
+import main.java.level.Grid;
 import main.java.level.Player;
 import main.java.level.World;
-import main.java.math.Vector3f;
 import main.java.physics.EnumPlayerMovementType;
 import org.lwjgl.glfw.GLFWKeyCallback;
 
@@ -19,7 +19,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_CONTROL;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_N;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
@@ -37,6 +36,7 @@ public class Input extends GLFWKeyCallback {
 
     private static boolean[] keys = new boolean[65536];
     private static boolean instancedRendering = true;
+    private static boolean shouldCreateMap = false;
 
     @Override
     public void invoke(long window, int key, int scancode, int action, int mods){
@@ -51,6 +51,9 @@ public class Input extends GLFWKeyCallback {
                 if (key == GLFW_KEY_I){
                     instancedRendering = !instancedRendering;
                     Logger.log(usingInstancedRendering());
+                }
+                if (key == GLFW_KEY_M){
+                    shouldCreateMap = true;
                 }
                 keys[key] = true;
             }else if (action == GLFW_RELEASE){
@@ -121,6 +124,10 @@ public class Input extends GLFWKeyCallback {
         }
         if (keys[GLFW_KEY_G]){
             world.regenerateWorld();
+        }
+        if (shouldCreateMap){
+            WorldMapper.generateWorldMap(world.getGrid().getWidth() * Grid.GRID_SIZE, world.getGrid().getHeight() * Grid.GRID_SIZE, world.getGrid(), "src/main/resources/maps/test.png");
+            shouldCreateMap = false;
         }
     }
 

@@ -12,9 +12,9 @@ import static main.java.Main.fastFloor;
 /**
  * Contains all objects int the World in a grid system.
  */
-class Grid {
+public class Grid {
 
-    static final int GRID_SIZE = 16;
+    public static final int GRID_SIZE = 16;
 
     private int width, height;
 
@@ -76,11 +76,19 @@ class Grid {
         this.grid.clear();
     }
 
+    public int getWidth(){
+        return this.width;
+    }
+
+    public int getHeight(){
+        return this.height;
+    }
+
     /**
      * Gets the width of the grid in indices.
      * @return the width of the grid in indices.
      */
-    int getWidth(){
+    int getWidthI(){
         return this.width - 1;
     }
 
@@ -88,7 +96,7 @@ class Grid {
      * Gets the height of the grid in indices.
      * @return the height of the grid in indices.
      */
-    int getHeight(){
+    int getHeightI(){
         return this.height - 1;
     }
 
@@ -98,7 +106,7 @@ class Grid {
      * @param y the y grid coordinate.
      * @return the GridCell.
      */
-    GridCell getContent(int x, int y){
+    public GridCell getContent(int x, int y){
         return this.grid.get(x).get(y);
     }
 
@@ -106,7 +114,7 @@ class Grid {
      * A cell in the Grid that contains Entities. Necessary for instanced rendering as matrices need to be collected according to the type of Entities.
      * At the moment it can only contain Tiles.
      */
-    class GridCell {
+    public class GridCell {
 
         private ArrayList<Tile> tiles;
 
@@ -140,7 +148,7 @@ class Grid {
         /**
          * @return all tiles in this GridCell.
          */
-        ArrayList<Tile> getTiles(){
+        public ArrayList<Tile> getTiles(){
             return this.tiles;
         }
 

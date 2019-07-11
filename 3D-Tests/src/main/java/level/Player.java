@@ -138,7 +138,7 @@ public class Player extends MovableEntity {
     }
 
     /**
-     * Calculates the motion from factors like speed, isJumping and isRunning.
+     * Calculates the motion from factors like speed, isJumping, isRunning and isBoosting.
      * @param deltaTime the delta time gotten from the timing circuit in Main.
      */
     @Override

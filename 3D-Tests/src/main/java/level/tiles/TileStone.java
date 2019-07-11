@@ -3,13 +3,9 @@ package main.java.level.tiles;
 import main.java.graphics.Models;
 import main.java.math.Vector3f;
 
-public class TileStone extends Tile {
+class TileStone extends Tile {
 
     TileStone(Vector3f position){
-        super(position, 1.0f, Models.STONE_TILE);
-    }
-
-    TileStone(Vector3f position, float scale) {
-        super(position, scale, Models.STONE_TILE);
+        super(position, EnumTiles.STONE, Models.STONE_TILE);
     }
 }

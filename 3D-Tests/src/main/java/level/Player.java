@@ -6,6 +6,9 @@ import main.java.math.Vector2f;
 import main.java.math.Vector3f;
 import main.java.physics.EnumPlayerMovementType;
 
+import static main.java.Main.fastFloor;
+import static main.java.level.Grid.GRID_SIZE;
+
 /**
  * The player that you move around in the world.
  */
@@ -16,6 +19,7 @@ public class Player extends MovableEntity {
     private static final float RUN_MULTIPLIER = 1.5f;
     private static final float BOOST_MULTIPLIER = 10.0f;
 
+    private Vector2f gridPosition;
     private EnumPlayerMovementType movementType;
     private boolean isJumping;
     private boolean isRunning;
@@ -43,12 +47,13 @@ public class Player extends MovableEntity {
 
     /**
      * Constructor with parameters for position, rotation and scale.
-     * @param position the position of this Player. Origion vector to the top left corner of the model.
+     * @param position the position of this Player. Origin vector to the top left corner of the model.
      * @param rotation the rotation around the z-axis, in degrees. CCW.
      * @param scale the scale multiplier of this Player.
      */
     private Player(Vector3f position, float rotation, float scale){
         super(position, rotation, scale, true, Models.getPLAYER());
+        this.gridPosition = new Vector2f();
         this.movementType = EnumPlayerMovementType.STAND;
         this.isJumping = false;
         this.isRunning = false;
@@ -88,6 +93,10 @@ public class Player extends MovableEntity {
         this.isFalling = isFalling;
     }
 
+    /**
+     * Set whether this Player is boosting.
+     * @param isBoosting whether the Player should be boosting.
+     */
     public void setBoosting(boolean isBoosting){
         this.isBoosting = isBoosting;
     }
@@ -108,8 +117,24 @@ public class Player extends MovableEntity {
         return this.isFalling;
     }
 
+    /**
+     * @return the grid coordinates of this Player.
+     */
+    Vector2f getGridPosition(){
+        return this.gridPosition;
+    }
+
+    /**
+     * Resets the position to some coordinate.
+     */
     public void resetPosition(){
-        setPosition(new Vector3f(0.0f, 55.0f));
+        setPosition(new Vector3f(0.0f, 100.0f));
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        super.update(deltaTime);
+        this.gridPosition.set((float) fastFloor(this.getPosition().getX() / GRID_SIZE), (float) fastFloor(this.getPosition().getY() / GRID_SIZE));
     }
 
     /**

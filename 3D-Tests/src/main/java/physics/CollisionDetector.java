@@ -1,6 +1,7 @@
 package main.java.physics;
 
 import main.java.Camera;
+import main.java.debug.Logger;
 import main.java.graphics.TexturedModel;
 import main.java.level.Entity;
 import main.java.level.Player;
@@ -96,8 +97,6 @@ public class CollisionDetector {
                 player.addPosition(new Vector3f(0.0f, -inside));
                 Camera.addPosition(new Vector3f(0.0f, -inside * Camera.scale));
                 break;
-            case INVALIDDIR:
-                player.resetPosition();
         }
     }
 }

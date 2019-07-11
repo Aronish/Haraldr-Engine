@@ -3,6 +3,7 @@ package main.java.level;
 import main.java.level.tiles.EnumTiles;
 import main.java.level.tiles.Tile;
 import main.java.level.tiles.TileFactory;
+import main.java.level.tiles.TileTree;
 import main.java.math.SimplexNoise;
 import main.java.math.Vector2f;
 import main.java.math.Vector3f;
@@ -18,7 +19,7 @@ public class World extends Entity {
 
     private static final TileFactory TILE_FACTORY = new TileFactory();
     private static final Random RANDOM = new Random();
-    private static final int WORLD_SIZE = 1000;
+    private static final int WORLD_SIZE = 10000;
 
     private static double noiseScale = 0.042d;
     private ArrayList<Entity> tiles;
@@ -70,7 +71,7 @@ public class World extends Entity {
      */
     private void fillColumn(Vector3f position){
         if (position.getY() < 58.0f && RANDOM.nextBoolean()){
-            this.tiles.add(new Tree(position.add(new Vector3f(0.0f, 3.0f))));
+            this.tiles.add(new TileTree(position.add(new Vector3f(0.0f, 3.0f))));
         }
         Tile topTile = TILE_FACTORY.createTile(position, position.getY() > 55.0f ? EnumTiles.GRASS_SNOW : EnumTiles.GRASS);
         if (RANDOM.nextBoolean()){

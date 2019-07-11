@@ -14,7 +14,7 @@ public class Renderer {
     private static final Shader SQUARE_SHADER = new Shader("src/main/java/shaders/square_shader");
 
     /**
-     * Clears the buffer for the next render. Clear color is set in Main#init ATM.
+     * Clears the framebuffer for the next render. Clear color is set in Main#init ATM.
      */
     public static void clear(){
         glClear(GL_COLOR_BUFFER_BIT);

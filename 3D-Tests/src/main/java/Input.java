@@ -14,6 +14,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_G;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_I;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_CONTROL;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
@@ -35,30 +36,29 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 public class Input extends GLFWKeyCallback {
 
     private static boolean[] keys = new boolean[65536];
-    private static boolean debugEnabled = false;
+    private static boolean instancedRendering = true;
 
     @Override
     public void invoke(long window, int key, int scancode, int action, int mods){
-        if (action == GLFW_PRESS){
-            if (key == GLFW_KEY_ESCAPE){
-                glfwSetWindowShouldClose(window, true);
-            }
-            if (key == GLFW_KEY_F){
-                Main.window.changeFullscreen();
-            }
-            if (key > 0){
+        if (key > 0){
+            if (action == GLFW_PRESS){
+                if (key == GLFW_KEY_ESCAPE){
+                    glfwSetWindowShouldClose(window, true);
+                }
+                if (key == GLFW_KEY_F){
+                    Main.window.changeFullscreen();
+                }
+                if (key == GLFW_KEY_I){
+                    instancedRendering = !instancedRendering;
+                    Logger.log(usingInstancedRendering());
+                }
                 keys[key] = true;
-            }else{
-                Logger.setWarningLevel();
-                Logger.log("Invalid keycode: " + key);
-            }
-        }else if (action == GLFW_RELEASE){
-            if (key > 0){
+            }else if (action == GLFW_RELEASE){
                 keys[key] = false;
-            }else{
-                Logger.setWarningLevel();
-                Logger.log("Invalid keycode: " + key);
             }
+        }else{
+            Logger.setWarningLevel();
+            Logger.log("Invalid keycode: " + key);
         }
     }
 
@@ -66,82 +66,68 @@ public class Input extends GLFWKeyCallback {
      * Performs operations based on the keys pressed.
      * @param deltaTime the delta time gotten from the timing circuit in Main.
      * @param player the Player that should move with the Camera.
-     * @param world the World which, in this case is used to regenerate the World.
+     * @param world the World which, for now, to regenerate.
      */
     public static void processInput(float deltaTime, Player player, World world){
         player.setMovementType(EnumPlayerMovementType.STAND);
-        if(keys[GLFW_KEY_LEFT_SHIFT]){
+        if (keys[GLFW_KEY_LEFT_SHIFT]){
             player.setRunning(true);
         }else{
             player.setRunning(false);
         }
-        if(keys[GLFW_KEY_LEFT_CONTROL]){
+        if (keys[GLFW_KEY_LEFT_CONTROL]){
             player.setBoosting(true);
         }else{
             player.setBoosting(false);
         }
-        if(keys[GLFW_KEY_A]) {
+        if (keys[GLFW_KEY_A]) {
             player.setMovementType(EnumPlayerMovementType.LEFT);
         }
-        if(keys[GLFW_KEY_D]) {
+        if (keys[GLFW_KEY_D]) {
             player.setMovementType(EnumPlayerMovementType.RIGHT);
         }
-        if(keys[GLFW_KEY_R]){
+        if (keys[GLFW_KEY_R]){
             player.resetGravityAcceleration();
             player.resetPosition();
             Camera.scale = 1.0f;
             Camera.setPosition(player.getPosition());
         }
-        if(keys[GLFW_KEY_C]){
+        if (keys[GLFW_KEY_C]){
             player.setHasGravity(false);
         }
-        if(keys[GLFW_KEY_V]){
+        if (keys[GLFW_KEY_V]){
             player.setHasGravity(true);
         }
-        if(keys[GLFW_KEY_Z]){
+        if (keys[GLFW_KEY_Z]){
             world.resetNoiseScale();
         }
-        if(keys[GLFW_KEY_UP]){
+        if (keys[GLFW_KEY_UP]){
             Camera.calculateScale(true, deltaTime);
         }
-        if(keys[GLFW_KEY_DOWN]){
+        if (keys[GLFW_KEY_DOWN]){
             Camera.calculateScale(false, deltaTime);
         }
-        if(keys[GLFW_KEY_LEFT]){
+        if (keys[GLFW_KEY_LEFT]){
             world.increaseNoiseScale(0.001d);
         }
-        if(keys[GLFW_KEY_RIGHT]){
+        if (keys[GLFW_KEY_RIGHT]){
             world.increaseNoiseScale(-0.001d);
         }
-        if(keys[GLFW_KEY_M]){
-            setDebugEnabled(true);
-        }
-        if(keys[GLFW_KEY_N]){
-            setDebugEnabled(false);
-        }
-        if(keys[GLFW_KEY_SPACE]) {
+        if (keys[GLFW_KEY_SPACE]) {
             if (!player.isFalling()) {
                 player.setJumping(true);
                 player.setFalling(true);
             }
         }
-        if(keys[GLFW_KEY_G]){
+        if (keys[GLFW_KEY_G]){
             world.regenerateWorld();
         }
     }
 
     /**
-     * Sets whether debug info should be rendered.
-     * @param debugEnabled whether debug info should be rendered.
+     * @return whether the game should be rendered with instancing.
      */
-    private static void setDebugEnabled(boolean debugEnabled){
-        Input.debugEnabled = debugEnabled;
-    }
-
-    /**
-     * Gets whether debug info should be rendered.
-     */
-    public static boolean isDebugEnabled(){
-        return debugEnabled;
+    public static boolean usingInstancedRendering(){
+        return instancedRendering;
     }
 }

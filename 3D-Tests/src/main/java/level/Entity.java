@@ -13,7 +13,7 @@ import java.util.Arrays;
  */
 public abstract class Entity {
 
-    private ArrayList<TexturedModel> texturedModels;
+    private ArrayList<TexturedModel> texturedModels; //TODO: Should no longer be needed, at least not this high in the hierachy/at least not for Tiles.
     private Vector3f position;
     private Matrix4f matrix;
     private Vector2f scale;

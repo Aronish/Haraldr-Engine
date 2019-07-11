@@ -13,7 +13,7 @@ import java.util.Arrays;
  */
 public abstract class Entity {
 
-    private ArrayList<TexturedModel> texturedModels;
+    private ArrayList<TexturedModel> texturedModels; //TODO: Should no longer be needed, at least not this high in the hierachy/at least not for Tiles.
     private Vector3f position;
     private Matrix4f matrix;
     private Vector2f scale;
@@ -33,6 +33,7 @@ public abstract class Entity {
         this.texturedModels = new ArrayList<>();
         this.texturedModels.addAll(Arrays.asList(texturedModels));
         this.texturedModels.forEach((texturedModel) -> texturedModel.getAABB().setScale(this.scale));
+        updateMatrix();
     }
 
     /**
@@ -70,7 +71,7 @@ public abstract class Entity {
     /**
      * Updates the Model-View-Projection matrix with the current attribute values.
      */
-    void updateMatrix(){
+    public void updateMatrix(){
         this.matrix = new Matrix4f().MVP(this.position, this.rotation, this.scale);
     }
 
@@ -78,8 +79,12 @@ public abstract class Entity {
      * Gets the float array form of the matrix of this Entity.
      * @return the matrix in float array form.
      */
-    public float[] getMatrix(){
+    public float[] getMatrixArray(){
         return this.matrix.matrix;
+    }
+
+    public Matrix4f getMatrix(){
+        return this.matrix;
     }
 
     /**

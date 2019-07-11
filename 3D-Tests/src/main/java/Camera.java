@@ -8,6 +8,8 @@ import main.java.math.Vector3f;
 
 import java.util.HashSet;
 
+import static main.java.Main.fastFloor;
+
 /**
  * A virtual camera for the game. Is essentially a normal object except that the transformation matrix is inverted.
  * That matrix is then applied to all objects in the scene to make it appear as if the camera was moving.
@@ -18,6 +20,7 @@ public class Camera{
     private static Vector3f position;
     private static float rotation;
     public static float scale;
+    public static int chunkXRange, chunkYRange;
 
     private static final float MIN_SCALE = 0.125f;
     private static final float MAX_SCALE = 2.0f;
@@ -47,6 +50,7 @@ public class Camera{
         position = pos;
         rotation = rot;
         scale = scal;
+        calculateChunkRanges();
         calculateViewMatrix();
     }
 
@@ -75,7 +79,13 @@ public class Camera{
                 scale = MIN_SCALE;
             }
         }
+        calculateChunkRanges();
         calculateViewMatrix();
+    }
+
+    private static void calculateChunkRanges(){
+        chunkXRange = fastFloor(2.0f / Camera.scale);
+        chunkYRange = fastFloor(1.0f / Camera.scale);
     }
 
     /**
@@ -99,21 +109,19 @@ public class Camera{
     /**
      * Checks if the provided entities are in the view of the Camera. If they are, they are added to the provided list.
      * @param visibleObjects a list, which keeps track of all the visible entities.
-     * @param entities the entities to check visibility against.
+     * @param entity the entity to check visibility against.
      */
-    public static void isInView(HashSet<Entity> visibleObjects, Entity... entities){
+    public static void isInView(HashSet<Entity> visibleObjects, Entity entity){
         float scaleAdjustedX = position.getX() / scale;
         float scaleAdjustedY = position.getY() / scale;
         float xBoundary = 16.0f / scale;
         float yBoundary = 9.0f / scale;
-        for (Entity entity : entities){
-            for (TexturedModel texturedModel : entity.getTexturedModels()){
-                boolean collisionX = entity.getPosition().getX() + texturedModel.getRelativePosition().getX() + texturedModel.getAABB().getWidth() > scaleAdjustedX - xBoundary && entity.getPosition().getX() < scaleAdjustedX + xBoundary;
-                boolean collisionY = entity.getPosition().getY() + texturedModel.getRelativePosition().getY() - texturedModel.getAABB().getHeight() < scaleAdjustedY + yBoundary && entity.getPosition().getY() > scaleAdjustedY - yBoundary;
-                if (collisionX && collisionY){
-                    visibleObjects.add(entity);
-                    break;
-                }
+        for (TexturedModel texturedModel : entity.getTexturedModels()){
+            boolean collisionX = entity.getPosition().getX() + texturedModel.getRelativePosition().getX() + texturedModel.getAABB().getWidth() > scaleAdjustedX - xBoundary && entity.getPosition().getX() < scaleAdjustedX + xBoundary;
+            boolean collisionY = entity.getPosition().getY() + texturedModel.getRelativePosition().getY() - texturedModel.getAABB().getHeight() < scaleAdjustedY + yBoundary && entity.getPosition().getY() > scaleAdjustedY - yBoundary;
+            if (collisionX && collisionY){
+                visibleObjects.add(entity);
+                break;
             }
         }
     }

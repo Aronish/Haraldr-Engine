@@ -1,23 +1,27 @@
 package main.java.level;
 
-import main.java.math.Vector2f;
-import main.java.math.Vector3f;
+import main.java.debug.Logger;
+import main.java.level.tiles.EnumTiles;
+import main.java.level.tiles.Tile;
+import main.java.math.Matrix4f;
 
 import java.util.ArrayList;
+
+import static main.java.Main.fastFloor;
 
 /**
  * Contains all objects int the World in a grid system.
  */
 class Grid {
 
-    private static final int GRID_SIZE = 16;
+    static final int GRID_SIZE = 16;
 
     private int width, height;
 
     /**
-     * List of lists on the x axis which contain lists of entities.
+     * List of lists on the x axis which contain lists of tiles.
      */
-    private ArrayList<ArrayList<ArrayList<Entity>>> grid;
+    private ArrayList<ArrayList<GridCell>> grid;
 
     /**
      * Initializes the grid lists and sets width and height to 0.
@@ -29,11 +33,11 @@ class Grid {
     }
 
     /**
-     * Populates the grid with the supplied entities.
-     * @param entities the entities to be put in the grid.
+     * Populates the grid with the supplied tiles.
+     * @param entities the tiles to be put in the grid.
      */
     void populateGrid(ArrayList<Entity> entities){
-        entities.forEach(entity -> addEntity((int) Math.floor(entity.getPosition().getX() / GRID_SIZE), (int) Math.floor(entity.getPosition().getY() / GRID_SIZE), entity));
+        entities.forEach(entity -> addEntity(fastFloor(entity.getPosition().getX() / GRID_SIZE), fastFloor(entity.getPosition().getY() / GRID_SIZE), entity));
     }
 
     /**
@@ -46,36 +50,27 @@ class Grid {
         while (!succeeded){
             if (this.width <= x){
                 this.grid.add(new ArrayList<>());
-                ArrayList<ArrayList<Entity>> last = this.grid.get(this.grid.size() - 1);
+                ArrayList<GridCell> last = this.grid.get(this.grid.size() - 1);
                 for (int i = 0; i <= this.height; ++i){
-                    last.add(new ArrayList<>());
+                    last.add(new GridCell());
                 }
                 ++width;
                 continue;
             }
             if (this.height <= y){
-                this.grid.forEach(xAxis -> xAxis.add(new ArrayList<>()));
+                this.grid.forEach(xAxis -> xAxis.add(new GridCell()));
                 ++height;
                 continue;
             }
-            this.grid.get(x).get(y).add(entity);
+            this.grid.get(x).get(y).addEntity(entity);
             succeeded = true;
         }
     }
 
     /**
-     * Calculates in which grid the Player is.
-     * @param playerPosition the position of the Player.
-     * @return the grid coordinates.
-     */
-    Vector2f getPlayerGridPosition(Vector3f playerPosition){
-        return new Vector2f((float) Math.floor(playerPosition.getX() / GRID_SIZE), (float) Math.floor(playerPosition.getY() / GRID_SIZE));
-    }
-
-    /**
      * Clears the whole grid and resets its dimensions.
      */
-    void clear() {
+    void clear(){
         this.width = 0;
         this.height = 0;
         this.grid.clear();
@@ -98,17 +93,69 @@ class Grid {
     }
 
     /**
-     * Gets the list of entities in the grid cell att grid coordinates (x, y).
+     * Gets the GridCell at the specified grid coordinates.
      * @param x the x grid coordinate.
      * @param y the y grid coordinate.
-     * @return the list of entities. Can return null but shouldn't.
+     * @return the GridCell.
      */
-    ArrayList<Entity> getContent(int x, int y){
-        try{
-            return this.grid.get(x).get(y);
-        }catch (IndexOutOfBoundsException e){
-            e.printStackTrace();
+    GridCell getContent(int x, int y){
+        return this.grid.get(x).get(y);
+    }
+
+    /**
+     * A cell in the Grid that contains Entities. Necessary for instanced rendering as matrices need to be collected according to the type of Entities.
+     * At the moment it can only contain Tiles.
+     */
+    class GridCell {
+
+        private ArrayList<Tile> tiles;
+
+        /**
+         * Initializes the ArrayLists.
+         */
+        GridCell(){
+            this.tiles = new ArrayList<>();
         }
-        return null;
+
+        /**
+         * Adds a entity to this GridCell.
+         * @param entity the Entity to add.
+         */
+        private void addEntity(Entity entity){
+            if (entity instanceof Tile){
+                this.tiles.add((Tile) entity);
+            }else{
+                Logger.setErrorLevel();
+                Logger.log("Grid doesn't support any other Entities than Tiles!");
+            }
+        }
+
+        /**
+         * Updates the matrices for all the Entities in this GridCell.
+         */
+        void updateMatrices(){
+            this.tiles.forEach(Tile::updateMatrix);
+        }
+
+        /**
+         * @return all tiles in this GridCell.
+         */
+        ArrayList<Tile> getTiles(){
+            return this.tiles;
+        }
+
+        /**
+         * @param tileType the type of Tiles whose matrices will be collected.
+         * @return all the matrices of all the Tiles of the specified Type.
+         */
+        ArrayList<Matrix4f> getTileMatrices(EnumTiles tileType){
+            ArrayList<Matrix4f> matrices = new ArrayList<>();
+            this.tiles.forEach(tile -> {
+                if (tile.getTileType() == tileType){
+                    matrices.add(tile.getMatrix());
+                }
+            });
+            return matrices;
+        }
     }
 }

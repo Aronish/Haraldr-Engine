@@ -1,6 +1,7 @@
 package main.java;
 
 import main.java.debug.Logger;
+import main.java.graphics.InstancedRenderer;
 import main.java.graphics.Models;
 import main.java.graphics.Renderer;
 import main.java.level.Level;
@@ -16,7 +17,7 @@ import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
-class Main implements Runnable{
+public class Main implements Runnable{
 
     private static double frameRate;
     private Level level;
@@ -72,7 +73,8 @@ class Main implements Runnable{
      * Render all objects and scenes.
      */
     private void render(){
-        Renderer.clear();
+        //Renderer.clear();
+        InstancedRenderer.clear();
         level.renderLevel();
         glfwSwapBuffers(window.getWindow());
     }
@@ -112,7 +114,13 @@ class Main implements Runnable{
         }
         level.cleanUp();
         Renderer.deleteShaders();
+        InstancedRenderer.deleteShaders();
         glfwTerminate();
+    }
+
+    public static int fastFloor(double x) {
+        int xi = (int) x;
+        return x < xi ? xi - 1 : xi;
     }
 
     public static void main(String[] args){

@@ -41,7 +41,7 @@ public abstract class MovableEntity extends Entity {
      * Calculates the motion and updates the main matrix.
      * @param deltaTime the delta time gotten from the timing circuit in Main.
      */
-    void update(float deltaTime) {
+    public void update(float deltaTime) {
         resetVelocity();
         calculateMotion(deltaTime);
     }

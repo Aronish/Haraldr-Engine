@@ -14,7 +14,7 @@ public class Renderer {
     private static final Shader SQUARE_SHADER = new Shader("src/main/java/shaders/square_shader");
 
     /**
-     * Clears the buffer for the next render. Clear color is set in Main#init ATM.
+     * Clears the framebuffer for the next render. Clear color is set in Main#init ATM.
      */
     public static void clear(){
         glClear(GL_COLOR_BUFFER_BIT);
@@ -38,7 +38,7 @@ public class Renderer {
     public static void render(Entity entity){
         for (TexturedModel texturedModel : entity.getTexturedModels()){
             SQUARE_SHADER.use();
-            SQUARE_SHADER.setMatrix(entity.getMatrix());
+            SQUARE_SHADER.setMatrix(entity.getMatrixArray());
             texturedModel.getVertexArray().bind();
             texturedModel.getTexture().bind();
             texturedModel.getVertexArray().draw();

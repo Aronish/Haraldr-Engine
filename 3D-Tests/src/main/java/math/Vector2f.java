@@ -27,11 +27,21 @@ public class Vector2f {
     }
 
     /**
-     * Sets the positions to the provided ones.
+     * Sets the components to the provided ones.
      * @param x the x component.
      * @param y the y component.
      */
     public Vector2f(float x, float y){
+        this.x = x;
+        this.y = y;
+    }
+
+    /**
+     * Sets both components.
+     * @param x the x component.
+     * @param y the y component.
+     */
+    public void set(float x, float y){
         this.x = x;
         this.y = y;
     }

@@ -19,7 +19,7 @@ public class Models {
     public static final TexturedModel GRASS_TILE = new TexturedModel("src/main/resources/grass.png");
     public static final TexturedModel DIRT_TILE = new TexturedModel("src/main/resources/dirt.png");
     public static final TexturedModel STONE_TILE = new TexturedModel("src/main/resources/stone.png");
-    public static final TexturedModel SNOW_TILE = new TexturedModel("src/main/resources/snow.png");
+    public static final TexturedModel GRASS_SNOW_TILE = new TexturedModel("src/main/resources/snow.png");
 
     private static TexturedModel PLAYER = null;
     private static TexturedModel TREE = null;

@@ -20,6 +20,7 @@ public class Camera{
     private static Vector3f position;
     private static float rotation;
     public static float scale;
+    private static Vector2f scaleVector;
     public static int chunkXRange, chunkYRange;
 
     private static final float MIN_SCALE = 0.125f;
@@ -50,6 +51,7 @@ public class Camera{
         position = pos;
         rotation = rot;
         scale = scal;
+        scaleVector = new Vector2f(scale);
         calculateChunkRanges();
         calculateViewMatrix();
     }
@@ -58,7 +60,7 @@ public class Camera{
      * Calculates a new view matrix (an inverted transformation matrix) from the current attribute values.
      */
     private static void calculateViewMatrix(){
-        viewMatrix = new Matrix4f().transform(position, rotation, new Vector2f(scale), true);
+        viewMatrix = new Matrix4f().transform(position, rotation, scaleVector, true);
     }
 
     /**
@@ -79,6 +81,7 @@ public class Camera{
                 scale = MIN_SCALE;
             }
         }
+        scaleVector.setBoth(scale);
         calculateChunkRanges();
         calculateViewMatrix();
     }

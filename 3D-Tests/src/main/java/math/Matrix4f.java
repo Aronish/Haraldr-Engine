@@ -18,8 +18,8 @@ public class Matrix4f {
      * Initializes every cell to 0.0f.
      */
     public Matrix4f(){
-        for (int i = 0; i < this.matrix.length; i++){
-            this.matrix[i] = 0.0f;
+        for (int i = 0; i < matrix.length; i++){
+            matrix[i] = 0.0f;
         }
     }
 
@@ -47,7 +47,7 @@ public class Matrix4f {
             for (int x = 0; x < 4; x++){
                 float sum = 0.0f;
                 for (int e = 0; e < 4; e++){
-                    sum += this.matrix[x + e * 4] * multiplicand.matrix[e + y * 4];
+                    sum += matrix[x + e * 4] * multiplicand.matrix[e + y * 4];
                 }
                 result.matrix[x + y * 4] = sum;
             }

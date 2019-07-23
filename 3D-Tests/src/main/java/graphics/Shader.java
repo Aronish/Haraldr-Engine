@@ -53,9 +53,9 @@ public class Shader {
         glCompileShader(fragmentShader);
         //System.out.println(glGetShaderInfoLog(fragmentShader));
 
-        this.shaderProgram = glCreateProgram();
-        glAttachShader(this.shaderProgram, vertexShader);
-        glAttachShader(this.shaderProgram, fragmentShader);
+        shaderProgram = glCreateProgram();
+        glAttachShader(shaderProgram, vertexShader);
+        glAttachShader(shaderProgram, fragmentShader);
         glLinkProgram(shaderProgram);
         glValidateProgram(shaderProgram);
         //System.out.println(glGetProgramInfoLog(shaderProgram));
@@ -104,13 +104,14 @@ public class Shader {
     }
 
     void setMatrix(float[] matrix){
-        int matrixLocation = glGetUniformLocation(this.shaderProgram, "matrix");
+        int matrixLocation = glGetUniformLocation(shaderProgram, "matrix");
         glUniformMatrix4fv(matrixLocation, false, matrix);
     }
 
     void setMatrixArray(ArrayList<Matrix4f> matrices){
+        Logger.log(matrices.size());
         for (int i = 0; i < matrices.size(); ++i){
-            int arrayLocation = glGetUniformLocation(this.shaderProgram, "matrices[" + i + "]");
+            int arrayLocation = glGetUniformLocation(shaderProgram, "matrices[" + i + "]");
             glUniformMatrix4fv(arrayLocation, false, matrices.get(i).matrix);
         }
     }
@@ -134,6 +135,6 @@ public class Shader {
      */
     void delete(){
         unuse();
-        glDeleteProgram(this.shaderProgram);
+        glDeleteProgram(shaderProgram);
     }
 }

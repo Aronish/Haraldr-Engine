@@ -8,8 +8,8 @@ class CollisionDataMap {
     private final EnumDirection collisionDirection;
     private final float inside;
 
-    CollisionDataMap(EnumDirection direction, float inside){
-        this.collisionDirection = direction;
+    CollisionDataMap(EnumDirection collisionDirection, float inside){
+        this.collisionDirection = collisionDirection;
         this.inside = inside;
     }
 
@@ -18,7 +18,7 @@ class CollisionDataMap {
      * @return the direction
      */
     EnumDirection getCollisionDirection(){
-        return this.collisionDirection;
+        return collisionDirection;
     }
 
     /**
@@ -26,6 +26,6 @@ class CollisionDataMap {
      * @return the overlap distance.
      */
     float getInside(){
-        return this.inside;
+        return inside;
     }
 }

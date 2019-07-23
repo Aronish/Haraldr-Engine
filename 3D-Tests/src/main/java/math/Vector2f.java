@@ -13,8 +13,8 @@ public class Vector2f {
      * Default constructor if no arguments are provided.
      */
     public Vector2f(){
-        this.x = 0.0f;
-        this.y = 0.0f;
+        x = 0.0f;
+        y = 0.0f;
     }
 
     /**
@@ -22,8 +22,8 @@ public class Vector2f {
      * @param both the value to apply to both x and y.
      */
     public Vector2f(float both){
-        this.x = both;
-        this.y = both;
+        x = both;
+        y = both;
     }
 
     /**
@@ -46,18 +46,23 @@ public class Vector2f {
         this.y = y;
     }
 
+    public void setBoth(float both){
+        x = both;
+        y = both;
+    }
+
     /**
      * Sets the x component to 0.
      */
     public void setX(){
-        this.x = 0.0f;
+        x = 0.0f;
     }
 
     /**
      * Sets the y component to 0.
      */
     public void setY(){
-        this.y = 0.0f;
+        y = 0.0f;
     }
 
     /**
@@ -80,8 +85,8 @@ public class Vector2f {
      * Resets the x and y values to 0.
      */
     public void reset(){
-        this.x = 0.0f;
-        this.y = 0.0f;
+        x = 0.0f;
+        y = 0.0f;
     }
 
     /**
@@ -89,7 +94,7 @@ public class Vector2f {
      * @return the x value.
      */
     public float getX(){
-        return this.x;
+        return x;
     }
 
     /**
@@ -97,7 +102,7 @@ public class Vector2f {
      * @return the y value.
      */
     public float getY(){
-        return this.y;
+        return y;
     }
 
     /**
@@ -105,8 +110,8 @@ public class Vector2f {
      * @param other the other Vector2d to add.
      */
     public void add(Vector2f other){
-        this.x += other.getX();
-        this.y += other.getY();
+        x += other.getX();
+        y += other.getY();
     }
 
     /**
@@ -114,7 +119,7 @@ public class Vector2f {
      * @param dx the value to add.
      */
     public void addX(float dx){
-        this.x += dx;
+        x += dx;
     }
 
     /**
@@ -122,7 +127,7 @@ public class Vector2f {
      * @param dy the value to add.
      */
     public void addY(float dy){
-        this.y += dy;
+        y += dy;
     }
 
     /**
@@ -130,7 +135,7 @@ public class Vector2f {
      * @param dx the value to subtract.
      */
     public void subtractX(float dx){
-        this.x -= dx;
+        x -= dx;
     }
 
     /**
@@ -138,7 +143,7 @@ public class Vector2f {
      * @param dy the value to subtract.
      */
     public void subtractY(float dy){
-        this.y -= dy;
+        y -= dy;
     }
 
     /**
@@ -146,6 +151,6 @@ public class Vector2f {
      */
     public void printVector(){
         Logger.setInfoLevel();
-        Logger.log("X: " + this.x + " Y: " + this.y);
+        Logger.log("X: " + x + " Y: " + y);
     }
 }

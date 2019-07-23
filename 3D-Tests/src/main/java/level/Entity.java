@@ -72,7 +72,7 @@ public abstract class Entity {
      * Updates the Model-View-Projection matrix with the current attribute values.
      */
     public void updateMatrix(){
-        this.matrix = new Matrix4f().MVP(this.position, this.rotation, this.scale);
+        matrix = new Matrix4f().MVP(this.position, this.rotation, this.scale);
     }
 
     /**
@@ -80,11 +80,14 @@ public abstract class Entity {
      * @return the matrix in float array form.
      */
     public float[] getMatrixArray(){
-        return this.matrix.matrix;
+        return matrix.matrix;
     }
 
+    /**
+     * @return the model matrix.
+     */
     public Matrix4f getMatrix(){
-        return this.matrix;
+        return matrix;
     }
 
     /**
@@ -92,7 +95,7 @@ public abstract class Entity {
      * @return the position vector.
      */
     public Vector3f getPosition(){
-        return this.position;
+        return position;
     }
 
     /**
@@ -100,7 +103,7 @@ public abstract class Entity {
      * @return the scale.
      */
     public Vector2f getScale(){
-        return this.scale;
+        return scale;
     }
 
     /**
@@ -108,7 +111,7 @@ public abstract class Entity {
      * @return a HashMap<Integer, TexturedModel> with the TexturedModel's
      */
     public ArrayList<TexturedModel> getTexturedModels(){
-        return this.texturedModels;
+        return texturedModels;
     }
 
     /**
@@ -139,6 +142,6 @@ public abstract class Entity {
      * Cleans up every TexturedModel that this Entity has.
      */
     void cleanUp(){
-        this.texturedModels.forEach(TexturedModel::cleanUp);
+        texturedModels.forEach(TexturedModel::cleanUp);
     }
 }

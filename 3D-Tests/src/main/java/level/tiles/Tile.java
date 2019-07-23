@@ -49,6 +49,6 @@ public abstract class Tile extends Entity {
      * @return the type of this Tile.
      */
     public EnumTiles getTileType(){
-        return this.tileType;
+        return tileType;
     }
 }

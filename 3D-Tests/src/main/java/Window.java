@@ -23,6 +23,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowMonitor;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
+import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.opengl.GL46.GL_TRUE;
@@ -36,6 +37,7 @@ class Window {
 
     private long window;
     private boolean isFullscreen;
+    private boolean VSyncOn;
     private int windowWidth, windowHeight;
     private GLFWVidMode vidmode;
 
@@ -46,8 +48,9 @@ class Window {
      * @param height the window height, in pixels.
      * @param fullscreen whether the window will be fullscreen upon creation.
      */
-    Window(int width, int height, boolean fullscreen){
+    Window(int width, int height, boolean fullscreen, boolean VSync){
         isFullscreen = fullscreen;
+        VSyncOn = VSync;
         if (!glfwInit()){
             throw new IllegalStateException("Couldn't init GLFW!");
         }
@@ -58,22 +61,23 @@ class Window {
         glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
         glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
-        this.vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        if (this.vidmode == null){
+        vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        if (vidmode == null){
             throw new IllegalStateException("Vidmode was not found!");
         }
-        windowWidth = fullscreen ? this.vidmode.width() : width;
-        windowHeight = fullscreen ? this.vidmode.height() : height;
+        windowWidth = fullscreen ? vidmode.width() : width;
+        windowHeight = fullscreen ? vidmode.height() : height;
         window = glfwCreateWindow(windowWidth, windowHeight, "OpenGL Game", (fullscreen ? glfwGetPrimaryMonitor() : NULL), NULL);
         if (window == NULL) {
             glfwTerminate();
             throw new RuntimeException("Window failed to be created");
         }
-        if(fullscreen){
+        if (isFullscreen){
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         }
+        changeVSync();
         glfwSetKeyCallback(window, new Input());
-        glfwSetWindowPos(window, (this.vidmode.width() - windowWidth) / 2, (this.vidmode.height() - windowHeight) / 2);
+        glfwSetWindowPos(window, (vidmode.width() - windowWidth) / 2, (vidmode.height() - windowHeight) / 2);
         glfwMakeContextCurrent(window);
     }
 
@@ -83,14 +87,27 @@ class Window {
     void changeFullscreen(){
         if (isFullscreen){
             isFullscreen = false;
-            glfwSetWindowMonitor(window, 0, this.vidmode.width() / 2 - windowWidth / 2, this.vidmode.height() / 2 - windowHeight / 2, windowWidth, windowHeight, 60);
+            glfwSetWindowMonitor(window, 0, vidmode.width() / 2 - windowWidth / 2, vidmode.height() / 2 - windowHeight / 2, windowWidth, windowHeight, 60);
             glViewport(0, 0, windowWidth, windowHeight);
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         }else{
             isFullscreen = true;
-            glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, this.vidmode.width(), this.vidmode.height(), 60);
-            glViewport(0, 0, this.vidmode.width(), this.vidmode.height());
+            glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, vidmode.width(), vidmode.height(), 60);
+            glViewport(0, 0, vidmode.width(), vidmode.height());
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        }
+    }
+
+    /**
+     * Toggles VSync.
+     */
+    void changeVSync(){
+        if (VSyncOn){
+            VSyncOn = false;
+            glfwSwapInterval(0);
+        }else{
+            VSyncOn = true;
+            glfwSwapInterval(1);
         }
     }
 
@@ -99,7 +116,11 @@ class Window {
      * @param title the new title.
      */
     void setTitle(String title){
-        glfwSetWindowTitle(this.window, title);
+        glfwSetWindowTitle(window, title);
+    }
+
+    boolean VSyncOn(){
+        return VSyncOn;
     }
 
     /**

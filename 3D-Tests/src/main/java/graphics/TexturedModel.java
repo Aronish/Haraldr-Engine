@@ -20,8 +20,8 @@ public class TexturedModel{
     TexturedModel(String texturePath){
         setVertexArray();
         setTexture(texturePath);
-        this.relativePosition = new Vector3f();
-        this.aabb = new AABB();
+        relativePosition = new Vector3f();
+        aabb = new AABB();
     }
 
     /**
@@ -35,14 +35,14 @@ public class TexturedModel{
         setVertexArray(vertices, indices, texcoords);
         setTexture(texturePath);
         this.relativePosition = relativePosition;
-        this.aabb = new AABB(width, height);
+        aabb = new AABB(width, height);
     }
 
     /**
      * Sets the vertex array to the default configuration.
      */
     private void setVertexArray(){
-        this.vertexArray = new VertexArray();
+        vertexArray = new VertexArray();
     }
 
     /**
@@ -53,7 +53,7 @@ public class TexturedModel{
      * @param texcoords an array of integers, the coordinates of the texture coordinates.
      */
     private void setVertexArray(float[] vertices, int[] indices, float[] texcoords){
-        this.vertexArray = new VertexArray(vertices, indices, texcoords);
+        vertexArray = new VertexArray(vertices, indices, texcoords);
     }
 
     /**
@@ -61,7 +61,7 @@ public class TexturedModel{
      * @param filePath the path of the texture file, with extension.
      */
     private void setTexture(String filePath){
-        this.texture = new Texture(filePath);
+        texture = new Texture(filePath);
     }
 
     /**
@@ -69,7 +69,7 @@ public class TexturedModel{
      * @return the relative position.
      */
     public Vector3f getRelativePosition(){
-        return this.relativePosition;
+        return relativePosition;
     }
 
     /**
@@ -78,7 +78,7 @@ public class TexturedModel{
      * @return the vertex array object.
      */
     VertexArray getVertexArray(){
-        return this.vertexArray;
+        return vertexArray;
     }
 
     /**
@@ -86,7 +86,7 @@ public class TexturedModel{
      * @return the texture.
      */
     Texture getTexture(){
-        return this.texture;
+        return texture;
     }
 
     /**
@@ -94,14 +94,14 @@ public class TexturedModel{
      * @return the bounding box.
      */
     public AABB getAABB(){
-        return this.aabb;
+        return aabb;
     }
 
     /**
      * Deletes the buffer objects and textures.
      */
     public void cleanUp(){
-        this.vertexArray.delete();
-        this.texture.delete();
+        vertexArray.delete();
+        texture.delete();
     }
 }

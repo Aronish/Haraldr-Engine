@@ -50,15 +50,15 @@ public class Vector3f {
     }
 
     public float getX(){
-        return this.x;
+        return x;
     }
 
     public float getY(){
-        return this.y;
+        return y;
     }
 
     public float getZ(){
-        return this.z;
+        return z;
     }
 
     /**
@@ -67,13 +67,13 @@ public class Vector3f {
      * @return the sum Vector.
      */
     public Vector3f add(Vector3f other){
-        return new Vector3f(this.x + other.getX(), this.y + other.getY(), this.z + other.getZ());
+        return new Vector3f(x + other.getX(), y + other.getY(), z + other.getZ());
     }
 
     public void addThis(Vector3f other){
-        this.x += other.x;
-        this.y += other.y;
-        this.z += other.z;
+        x += other.x;
+        y += other.y;
+        z += other.z;
     }
 
     /**
@@ -82,11 +82,11 @@ public class Vector3f {
      * @return the difference Vector.
      */
     public Vector3f subtract(Vector3f other){
-        return new Vector3f(this.x - other.getX(), this.y - other.getY(), this.z - other.getZ());
+        return new Vector3f(x - other.getX(), y - other.getY(), z - other.getZ());
     }
 
     public Vector3f subtractY(float dy){
-        return new Vector3f(this.x, this.y - dy);
+        return new Vector3f(x, y - dy);
     }
 
     /**
@@ -95,7 +95,7 @@ public class Vector3f {
      * @return the product Vector.
      */
     public Vector3f multiply(float scalar){
-        return new Vector3f(this.x * scalar, this.y * scalar, this.z * scalar);
+        return new Vector3f(x * scalar, y * scalar, z * scalar);
     }
 
     /**
@@ -103,6 +103,6 @@ public class Vector3f {
      */
     public void printVector(){
         Logger.setInfoLevel();
-        Logger.log("X: " + this.x + " Y: " + this.y + " Z: " + this.z);
+        Logger.log("X: " + x + " Y: " + y + " Z: " + z);
     }
 }

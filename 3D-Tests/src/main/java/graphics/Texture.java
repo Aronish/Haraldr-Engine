@@ -52,17 +52,17 @@ class Texture {
         int[] pixels = null;
         try{
             BufferedImage image = ImageIO.read(new FileInputStream(path));
-            this.width = image.getWidth();
-            this.height = image.getHeight();
-            pixels = new int[this.width * this.height];
-            image.getRGB(0, 0, this.width, this.height, pixels, 0, this.width);
+            width = image.getWidth();
+            height = image.getHeight();
+            pixels = new int[width * height];
+            image.getRGB(0, 0, width, height, pixels, 0, width);
         }catch (IOException e){
             e.printStackTrace();
         }
 
-        int[] data = new int[this.width * this.height];
+        int[] data = new int[width * height];
         if (pixels != null) {
-            for (int i = 0; i < this.width * this.height; i++) {
+            for (int i = 0; i < width * height; i++) {
                 int a = (pixels[i] & 0xff000000) >> 24;
                 int r = (pixels[i] & 0xff0000) >> 16;
                 int g = (pixels[i] & 0xff00) >> 8;
@@ -81,7 +81,7 @@ class Texture {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this.width, this.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, 0);
         return result;
@@ -91,13 +91,13 @@ class Texture {
      * Binds this texture for drawing.
      */
     void bind(){
-        glBindTexture(GL_TEXTURE_2D, this.texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
     }
 
     /**
      * Unbinds this texture to avoid weird conflicts.
      */
-    void unbind(){
+    private void unbind(){
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
@@ -106,6 +106,6 @@ class Texture {
      */
     void delete(){
         unbind();
-        glDeleteTextures(this.texture);
+        glDeleteTextures(texture);
     }
 }

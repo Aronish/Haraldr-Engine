@@ -7,10 +7,7 @@ public class Logger {
 
     private static LogLevels logLevel;
 
-    /**
-     * Initializes the logger with info level.
-     */
-    public Logger(){
+    static {
         logLevel = LogLevels.INFO;
     }
 
@@ -61,7 +58,7 @@ public class Logger {
         }
 
         public String toString(){
-            return this.string;
+            return string;
         }
     }
 }

@@ -26,9 +26,9 @@ public abstract class MovableEntity extends Entity {
      */
     MovableEntity(Vector3f position, float rotation, float scale, boolean hasGravity, TexturedModel ... texturedModels) {
         super(position, rotation, scale, texturedModels);
-        this.velocity = new Vector2f();
         this.hasGravity = hasGravity;
-        this.gravityAcceleration = 0.0f;
+        velocity = new Vector2f();
+        gravityAcceleration = 0.0f;
     }
 
     /**
@@ -52,13 +52,13 @@ public abstract class MovableEntity extends Entity {
      * @param deltaTime the delta time gotten from the timing circuit in Main.
      */
     void calculateGravity(float compensation, float deltaTime){
-        if (this.hasGravity){
-            if (this.gravityAcceleration > MAX_GRAVITY_ACCELERATION - compensation){
-                this.gravityAcceleration += GRAVITY_CONSTANT * deltaTime;
+        if (hasGravity){
+            if (gravityAcceleration > MAX_GRAVITY_ACCELERATION - compensation){
+                gravityAcceleration += GRAVITY_CONSTANT * deltaTime;
             }else{
-                this.gravityAcceleration = MAX_GRAVITY_ACCELERATION - compensation;
+                gravityAcceleration = MAX_GRAVITY_ACCELERATION - compensation;
             }
-            this.velocity.addY(this.gravityAcceleration + compensation);
+            velocity.addY(gravityAcceleration + compensation);
         }
     }
 
@@ -70,14 +70,14 @@ public abstract class MovableEntity extends Entity {
      * Resets the X and Y velocities to 0.
      */
     private void resetVelocity(){
-        this.velocity.reset();
+        velocity.reset();
     }
 
     /**
      * Resets the gravity acceleration to 0.
      */
     public void resetGravityAcceleration(){
-        this.gravityAcceleration = 0.0f;
+        gravityAcceleration = 0.0f;
     }
 
     /**
@@ -85,7 +85,7 @@ public abstract class MovableEntity extends Entity {
      * @return a Vector2d containing the X and Y velocities.
      */
     Vector2f getVelocity() {
-        return this.velocity;
+        return velocity;
     }
 
     /**
@@ -93,6 +93,6 @@ public abstract class MovableEntity extends Entity {
      * @return the gravity acceleration
      */
     float getGravityAcceleration(){
-        return this.gravityAcceleration;
+        return gravityAcceleration;
     }
 }

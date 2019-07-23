@@ -53,12 +53,12 @@ public class Player extends MovableEntity {
      */
     private Player(Vector3f position, float rotation, float scale){
         super(position, rotation, scale, true, Models.getPLAYER());
-        this.gridPosition = new Vector2f();
-        this.movementType = EnumPlayerMovementType.STAND;
-        this.isJumping = false;
-        this.isRunning = false;
-        this.isFalling = false;
-        this.isBoosting = false;
+        gridPosition = new Vector2f();
+        movementType = EnumPlayerMovementType.STAND;
+        isJumping = false;
+        isRunning = false;
+        isFalling = false;
+        isBoosting = false;
     }
 
     /**
@@ -106,7 +106,7 @@ public class Player extends MovableEntity {
      * @return whether this Player is jumping.
      */
     public boolean isJumping(){
-        return this.isJumping;
+        return isJumping;
     }
 
     /**
@@ -114,14 +114,14 @@ public class Player extends MovableEntity {
      * @return whether this Player is falling.
      */
     public boolean isFalling(){
-        return this.isFalling;
+        return isFalling;
     }
 
     /**
      * @return the grid coordinates of this Player.
      */
     Vector2f getGridPosition(){
-        return this.gridPosition;
+        return gridPosition;
     }
 
     /**
@@ -134,7 +134,7 @@ public class Player extends MovableEntity {
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
-        this.gridPosition.set((float) fastFloor(this.getPosition().getX() / GRID_SIZE), (float) fastFloor(this.getPosition().getY() / GRID_SIZE));
+        gridPosition.set((float) fastFloor(getPosition().getX() / GRID_SIZE), (float) fastFloor(getPosition().getY() / GRID_SIZE));
     }
 
     /**
@@ -144,30 +144,30 @@ public class Player extends MovableEntity {
     @Override
     public void calculateMotion(float deltaTime){
         //---Walking Calculations---\\
-        if (this.movementType != EnumPlayerMovementType.STAND){
-            setScale(new Vector2f(-this.movementType.directionFactor, 1.0f));
+        if (movementType != EnumPlayerMovementType.STAND){
+            setScale(new Vector2f(-movementType.directionFactor, 1.0f));
         }
-        if (this.isBoosting){
-            getVelocity().addX(WALK_SPEED * BOOST_MULTIPLIER * this.movementType.directionFactor);
-        }else if (this.isRunning){
-            getVelocity().addX(WALK_SPEED * RUN_MULTIPLIER * this.movementType.directionFactor);
+        if (isBoosting){
+            getVelocity().addX(WALK_SPEED * BOOST_MULTIPLIER * movementType.directionFactor);
+        }else if (isRunning){
+            getVelocity().addX(WALK_SPEED * RUN_MULTIPLIER * movementType.directionFactor);
         }else{
-            getVelocity().addX(WALK_SPEED * this.movementType.directionFactor);
+            getVelocity().addX(WALK_SPEED * movementType.directionFactor);
         }
         //---Jumping-Calculations---\\
-        if (this.isJumping) {
+        if (isJumping) {
             if (Math.abs(getGravityAcceleration()) < JUMP_STRENGTH) {
                 getVelocity().addY(JUMP_STRENGTH);
                 calculateGravity(0.0f, deltaTime);
             } else {
-                this.isJumping = false;
+                isJumping = false;
             }
-        }else if (this.isFalling){
+        }else if (isFalling){
             calculateGravity(JUMP_STRENGTH, deltaTime);
         }else{
             calculateGravity(0.0f, deltaTime);
         }
-        addPosition(new Vector3f(this.getVelocity().getX() * deltaTime, this.getVelocity().getY() * deltaTime));
+        addPosition(new Vector3f(getVelocity().getX() * deltaTime, getVelocity().getY() * deltaTime));
         Camera.setPosition(getPosition().add(getMiddle()));
     }
 }

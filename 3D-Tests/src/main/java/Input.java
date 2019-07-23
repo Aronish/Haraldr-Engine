@@ -32,6 +32,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 /**
  * Class for handling user input. Uses GLFWKeyCallback.
  */
+//TODO: Own event system to avoid weird code in invoke.
 public class Input extends GLFWKeyCallback {
 
     private static boolean[] keys = new boolean[65536];
@@ -40,20 +41,24 @@ public class Input extends GLFWKeyCallback {
 
     @Override
     public void invoke(long window, int key, int scancode, int action, int mods){
-        if (key > 0){
+        if (key > 0){ //Key responses won't get repeated if put here instead of in processInput.
             if (action == GLFW_PRESS){
                 if (key == GLFW_KEY_ESCAPE){
                     glfwSetWindowShouldClose(window, true);
                 }
                 if (key == GLFW_KEY_F){
-                    Main.window.changeFullscreen();
+                    Main.getApplication().getWindow().changeFullscreen();
                 }
                 if (key == GLFW_KEY_I){
                     instancedRendering = !instancedRendering;
-                    Logger.log(usingInstancedRendering());
+                    Logger.log("Instanced Rendering: " + instancedRendering);
                 }
                 if (key == GLFW_KEY_M){
                     shouldCreateMap = true;
+                }
+                if (key == GLFW_KEY_V){
+                    Main.getApplication().getWindow().changeVSync();
+                    Logger.log("VSync: " + Main.getApplication().getWindow().VSyncOn());
                 }
                 keys[key] = true;
             }else if (action == GLFW_RELEASE){

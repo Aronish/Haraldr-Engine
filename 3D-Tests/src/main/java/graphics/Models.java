@@ -24,7 +24,7 @@ public class Models {
     private static TexturedModel PLAYER = null;
     private static TexturedModel TREE = null;
 
-    public Models(){
+    static {
         initPlayerModel(1.0f, 2.86f);
         initTreeModel(1.0f, 3.0f);
     }

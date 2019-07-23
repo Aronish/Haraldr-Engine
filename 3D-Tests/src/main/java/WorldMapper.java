@@ -13,7 +13,7 @@ import java.io.IOException;
 
 import static main.java.Main.fastFloor;
 
-public class WorldMapper {
+class WorldMapper {
 
     /**
      * Creates a simple map with one pixel representing 1x1 in game coordinates.

@@ -14,7 +14,7 @@ import static main.java.Main.fastFloor;
  */
 public class Grid {
 
-    public static final int GRID_SIZE = 16;
+    public static final int GRID_SIZE = 16; //Apparently, this cannot be larger due to GLSL limitations.
 
     private int width, height;
 
@@ -27,9 +27,9 @@ public class Grid {
      * Initializes the grid lists and sets width and height to 0.
      */
     Grid(){
-        this.width = 0;
-        this.height = 0;
-        this.grid = new ArrayList<>();
+        width = 0;
+        height = 0;
+        grid = new ArrayList<>();
     }
 
     /**
@@ -48,21 +48,21 @@ public class Grid {
     private void addEntity(int x, int y, Entity entity){
         boolean succeeded = false;
         while (!succeeded){
-            if (this.width <= x){
-                this.grid.add(new ArrayList<>());
-                ArrayList<GridCell> last = this.grid.get(this.grid.size() - 1);
-                for (int i = 0; i <= this.height; ++i){
+            if (width <= x){
+                grid.add(new ArrayList<>());
+                ArrayList<GridCell> last = grid.get(grid.size() - 1);
+                for (int i = 0; i <= height; ++i){
                     last.add(new GridCell());
                 }
                 ++width;
                 continue;
             }
-            if (this.height <= y){
-                this.grid.forEach(xAxis -> xAxis.add(new GridCell()));
+            if (height <= y){
+                grid.forEach(xAxis -> xAxis.add(new GridCell()));
                 ++height;
                 continue;
             }
-            this.grid.get(x).get(y).addEntity(entity);
+            grid.get(x).get(y).addEntity(entity);
             succeeded = true;
         }
     }
@@ -71,17 +71,17 @@ public class Grid {
      * Clears the whole grid and resets its dimensions.
      */
     void clear(){
-        this.width = 0;
-        this.height = 0;
-        this.grid.clear();
+        width = 0;
+        height = 0;
+        grid.clear();
     }
 
     public int getWidth(){
-        return this.width;
+        return width;
     }
 
     public int getHeight(){
-        return this.height;
+        return height;
     }
 
     /**
@@ -89,7 +89,7 @@ public class Grid {
      * @return the width of the grid in indices.
      */
     int getWidthI(){
-        return this.width - 1;
+        return width - 1;
     }
 
     /**
@@ -97,7 +97,7 @@ public class Grid {
      * @return the height of the grid in indices.
      */
     int getHeightI(){
-        return this.height - 1;
+        return height - 1;
     }
 
     /**
@@ -107,7 +107,7 @@ public class Grid {
      * @return the GridCell.
      */
     public GridCell getContent(int x, int y){
-        return this.grid.get(x).get(y);
+        return grid.get(x).get(y);
     }
 
     /**
@@ -122,7 +122,7 @@ public class Grid {
          * Initializes the ArrayLists.
          */
         GridCell(){
-            this.tiles = new ArrayList<>();
+            tiles = new ArrayList<>();
         }
 
         /**
@@ -131,7 +131,7 @@ public class Grid {
          */
         private void addEntity(Entity entity){
             if (entity instanceof Tile){
-                this.tiles.add((Tile) entity);
+                tiles.add((Tile) entity);
             }else{
                 Logger.setErrorLevel();
                 Logger.log("Grid doesn't support any other Entities than Tiles!");
@@ -142,14 +142,14 @@ public class Grid {
          * Updates the matrices for all the Entities in this GridCell.
          */
         void updateMatrices(){
-            this.tiles.forEach(Tile::updateMatrix);
+            tiles.forEach(Tile::updateMatrix);
         }
 
         /**
          * @return all tiles in this GridCell.
          */
         public ArrayList<Tile> getTiles(){
-            return this.tiles;
+            return tiles;
         }
 
         /**
@@ -158,7 +158,7 @@ public class Grid {
          */
         ArrayList<Matrix4f> getTileMatrices(EnumTiles tileType){
             ArrayList<Matrix4f> matrices = new ArrayList<>();
-            this.tiles.forEach(tile -> {
+            tiles.forEach(tile -> {
                 if (tile.getTileType() == tileType){
                     matrices.add(tile.getMatrix());
                 }

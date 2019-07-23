@@ -15,9 +15,9 @@ public class AABB {
      * Default constructor without parameters. Sets a 1x1 bounding box.
      */
     public AABB(){
-        this.width = 1.0f;
-        this.height = 1.0f;
-        this.middle = new Vector3f(0.5f, -0.5f);
+        width = 1.0f;
+        height = 1.0f;
+        middle = new Vector3f(0.5f, -0.5f);
     }
 
     /**
@@ -36,8 +36,8 @@ public class AABB {
      * @param scale the scale to multiply by.
      */
     public void setScale(Vector2f scale){
-        this.width *= scale.getX();
-        this.height *= scale.getY();
+        width *= scale.getX();
+        height *= scale.getY();
         calculateMiddle();
     }
 
@@ -45,7 +45,7 @@ public class AABB {
      * Calculates the middle of this bounding box.
      */
     private void calculateMiddle(){
-        this.middle = new Vector3f(this.width / 2.0f, -(this.height / 2.0f));
+        middle = new Vector3f(width / 2.0f, -(height / 2.0f));
     }
 
     /**
@@ -53,7 +53,7 @@ public class AABB {
      * @return the width.
      */
     public float getWidth(){
-        return this.width;
+        return width;
     }
 
     /**
@@ -61,7 +61,7 @@ public class AABB {
      * @return the height.
      */
     public float getHeight(){
-        return this.height;
+        return height;
     }
 
     /**
@@ -69,6 +69,6 @@ public class AABB {
      * @return the middle of this bounding box.
      */
     public Vector3f getMiddle(){
-        return this.middle;
+        return middle;
     }
 }

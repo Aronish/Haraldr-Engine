@@ -2,7 +2,6 @@ package main.java.level;
 
 import main.java.Camera;
 import main.java.Input;
-import main.java.WorldMapper;
 import main.java.graphics.InstancedRenderer;
 import main.java.graphics.Renderer;
 import main.java.level.tiles.EnumTiles;
@@ -26,19 +25,19 @@ public class Level {
      * Constructs a Level.
      */
     public Level(){
-        this.player = new Player();
-        this.player.resetPosition();
-        this.world = new World();
-        this.visibleGridCells = new HashSet<>();
-        this.frustumCulledObjects = new HashSet<>();
+        player = new Player();
+        player.resetPosition();
+        world = new World();
+        visibleGridCells = new HashSet<>();
+        frustumCulledObjects = new HashSet<>();
     }
 
     /**
      * Process input, update physics/movement, do collisions, update matrices last.
      */
     public void updateLevel(float deltaTime){
-        Input.processInput(deltaTime, this.player, this.world);
-        this.player.update(deltaTime); //Update Player no matter what.
+        Input.processInput(deltaTime, player, world);
+        player.update(deltaTime); //Update Player no matter what.
         checkVisibleGridCells();
         doCollisions();
         updateMatrices();
@@ -49,15 +48,15 @@ public class Level {
      */
     public void renderLevel(){
         if (Input.usingInstancedRendering()){
-            for (Grid.GridCell gridCell : this.visibleGridCells){
+            for (Grid.GridCell gridCell : visibleGridCells){
                 for (EnumTiles tileType : EnumTiles.values()){
                     InstancedRenderer.renderInstanced(gridCell.getTileMatrices(tileType), tileType);
                 }
             }
         }else{
-            this.frustumCulledObjects.forEach(Renderer::render);
+            frustumCulledObjects.forEach(Renderer::render);
         }
-        Renderer.render(this.player);
+        Renderer.render(player);
     }
 
     /**
@@ -67,10 +66,10 @@ public class Level {
      * O(1) vs. O(n)
      */
     private void checkVisibleGridCells(){
-        Vector2f playerGridPosition = this.player.getGridPosition();
-        Grid grid = this.world.getGrid();
-        this.visibleGridCells.clear();
-        this.frustumCulledObjects.clear();
+        Vector2f playerGridPosition = player.getGridPosition();
+        Grid grid = world.getGrid();
+        visibleGridCells.clear();
+        frustumCulledObjects.clear();
         for (int x = -Camera.chunkXRange; x <= Camera.chunkXRange; ++x){
             if (playerGridPosition.getX() + x < 0 || playerGridPosition.getX() + x > grid.getWidthI()){
                 continue;
@@ -80,10 +79,10 @@ public class Level {
                     continue;
                 }
                 if (Input.usingInstancedRendering()){
-                    this.visibleGridCells.add(grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y)); //TODO: Int cast not good for negative values.
+                    visibleGridCells.add(grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y)); //TODO: Int cast not good for negative values.
                 }else{
                     for (Entity entity : grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y).getTiles()){
-                        Camera.isInView(this.frustumCulledObjects, entity);
+                        Camera.isInView(frustumCulledObjects, entity);
                     }
                 }
             }
@@ -97,9 +96,9 @@ public class Level {
      * Performs orthographic frustum culling on the visible GridCells. Only used with instanced rendering.
      */
     private void frustumCull(){
-        for (Grid.GridCell gridCell : this.visibleGridCells){
+        for (Grid.GridCell gridCell : visibleGridCells){
             for (Entity entity : gridCell.getTiles()){
-                Camera.isInView(this.frustumCulledObjects, entity);
+                Camera.isInView(frustumCulledObjects, entity);
             }
         }
     }
@@ -108,13 +107,13 @@ public class Level {
      * Updates all the matrices.
      */
     private void updateMatrices(){
-        this.player.updateMatrix();
-        if (Input.usingInstancedRendering()){
-            for (Grid.GridCell gridCell : this.visibleGridCells){
+        player.updateMatrix();
+        if (Input.usingInstancedRendering()){ //TODO: What is this supposed to be??
+            for (Grid.GridCell gridCell : visibleGridCells){
                 gridCell.updateMatrices();
             }
         }else{
-            this.frustumCulledObjects.forEach(Entity::updateMatrix);
+            frustumCulledObjects.forEach(Entity::updateMatrix);
         }
     }
 
@@ -122,9 +121,9 @@ public class Level {
      * Does collision detection and resolution for the objects requiring collisions.
      */
     private void doCollisions() {
-        for (Entity entity : this.frustumCulledObjects){
+        for (Entity entity : frustumCulledObjects){
             if (!(entity instanceof IBackground)){
-                CollisionDetector.doCollisions(entity, entity.getTexturedModels().get(0), this.player);
+                CollisionDetector.doCollisions(entity, entity.getTexturedModels().get(0), player);
             }
         }
     }
@@ -133,7 +132,7 @@ public class Level {
      * Deletes all shader programs, buffer objects and textures.
      */
     public void cleanUp(){
-        this.world.cleanUp();
-        this.player.cleanUp();
+        world.cleanUp();
+        player.cleanUp();
     }
 }

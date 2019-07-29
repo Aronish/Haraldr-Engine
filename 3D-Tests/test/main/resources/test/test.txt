@@ -1,0 +1,3 @@
+Hello World!
+This was read with an InputStream, rather than a Scanner.
+---------------------------------------------------------

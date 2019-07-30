@@ -128,7 +128,7 @@ public class Player extends MovableEntity {
      * Resets the position to some coordinate.
      */
     public void resetPosition(){
-        setPosition(new Vector3f(0.0f, 100.0f));
+        setPosition(new Vector3f(0.0f, 250.0f));
     }
 
     @Override
@@ -143,7 +143,7 @@ public class Player extends MovableEntity {
      */
     @Override
     public void calculateMotion(float deltaTime){
-        //---Walking Calculations---\\
+        ///// WALKING ///////////////////////////
         if (movementType != EnumPlayerMovementType.STAND){
             setScale(new Vector2f(movementType.directionFactor, 1.0f));
         }
@@ -154,7 +154,7 @@ public class Player extends MovableEntity {
         }else{
             getVelocity().addX(WALK_SPEED * movementType.directionFactor);
         }
-        //---Jumping-Calculations---\\
+        ///// JUMPING ///////////////////////////
         if (isJumping) {
             if (Math.abs(getGravityAcceleration()) < JUMP_STRENGTH) {
                 getVelocity().addY(JUMP_STRENGTH);

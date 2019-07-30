@@ -37,7 +37,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 public class Input extends GLFWKeyCallback {
 
     private static boolean[] keys = new boolean[65536];
-    private static boolean instancedRendering = true;
+    private static boolean instancedRendering = false;
     private static boolean limitedInstancing = true;
     private static boolean shouldCreateMap = false;
 
@@ -103,8 +103,8 @@ public class Input extends GLFWKeyCallback {
         if (keys[GLFW_KEY_R]){
             player.resetGravityAcceleration();
             player.resetPosition();
-            Camera.scale = 1.0f;
-            Camera.setPosition(player.getPosition());
+            Camera.setScale(1.0f);
+            Camera.setPosition(player.getPosition().add(player.getMiddle()));
         }
         if (keys[GLFW_KEY_C]){
             player.setHasGravity(false);

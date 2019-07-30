@@ -16,7 +16,7 @@ public class Grid {
 
     public static final int GRID_SIZE = 16; //Apparently, this cannot be larger due to GLSL limitations. TO BE FIXED! OR NOT!
     public static final int CONT_MAT4_ARRAY_LENGTH = (int) Math.pow(GRID_SIZE, 2) * 16;
-    private static final int CONT_VEC2_ARRAY_LENGTH = (int) Math.pow(GRID_SIZE, 2) * 8;
+    public static final int CONT_VEC2_ARRAY_LENGTH = (int) Math.pow(GRID_SIZE, 2) * 8;
 
     private int width, height;
 
@@ -116,7 +116,7 @@ public class Grid {
      * A cell in the Grid that contains Entities. Necessary for instanced rendering as matrices need to be collected according to the type of Entities.
      * At the moment it can only contain Tiles.
      */
-    public class GridCell {
+    public static class GridCell {
 
         private ArrayList<Tile> tiles;
 

@@ -33,29 +33,23 @@ class InstancedVertexArray {
 
     InstancedVertexArray(){
         vao = glGenVertexArrays();
+        mbo = glGenBuffers();
         vbo = glGenBuffers();
         ebo = glGenBuffers();
         tbo = glGenBuffers();
-        mbo = glGenBuffers();
         length = defIndices.length;
-        int tilesPerGridCell = (int) Math.pow(Grid.GRID_SIZE, 2);
 
         glBindVertexArray(vao);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, 32 * tilesPerGridCell, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, 4 * Grid.CONT_VEC2_ARRAY_LENGTH, GL_DYNAMIC_DRAW);
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 8, 0);
         glEnableVertexAttribArray(0);
-        glVertexAttribDivisor(0, 1);
 
         glBindBuffer(GL_ARRAY_BUFFER, tbo);
-        glBufferData(GL_ARRAY_BUFFER, 32 * tilesPerGridCell, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, 4 * Grid.CONT_VEC2_ARRAY_LENGTH, GL_DYNAMIC_DRAW);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, 8, 0);
         glEnableVertexAttribArray(1);
-        glVertexAttribDivisor(1, 1);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, defIndices, GL_STATIC_DRAW);
 
         glBindBuffer(GL_ARRAY_BUFFER, mbo);
         glBufferData(GL_ARRAY_BUFFER, 4 * Grid.CONT_MAT4_ARRAY_LENGTH, GL_DYNAMIC_DRAW);
@@ -68,10 +62,15 @@ class InstancedVertexArray {
         glEnableVertexAttribArray(5);
         glVertexAttribPointer(5, 4, GL_FLOAT, false, 64, 48);
 
+        glVertexAttribDivisor(0, 1);
+        glVertexAttribDivisor(1, 1);
         glVertexAttribDivisor(2, 1);
         glVertexAttribDivisor(3, 1);
         glVertexAttribDivisor(4, 1);
         glVertexAttribDivisor(5, 1);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, defIndices, GL_STATIC_DRAW);
 
         glBindVertexArray(0);
     }

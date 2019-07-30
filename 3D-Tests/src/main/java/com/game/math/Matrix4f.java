@@ -8,19 +8,10 @@ import com.game.Camera;
 public class Matrix4f {
 
     public float[] matrix = new float[16];
-    private static Matrix4f orthographic;
+    private static final Matrix4f orthographic;
 
     static{
         orthographic = new Matrix4f().orthographic(16f, -16f, 9f, -9f, -5f, 5f);
-    }
-
-    /**
-     * Initializes every cell to 0.0f.
-     */
-    public Matrix4f(){
-        for (int i = 0; i < matrix.length; i++){
-            matrix[i] = 0.0f;
-        }
     }
 
     /**

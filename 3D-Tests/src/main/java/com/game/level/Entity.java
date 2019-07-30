@@ -134,7 +134,7 @@ public abstract class Entity {
      * Gets the middle of the default bouding box.
      * @return the middle of the bounding box.
      */
-    Vector3f getMiddle() {
+    public Vector3f getMiddle() {
         return getTexturedModels().get(0).getAABB().getMiddle();
     }
 

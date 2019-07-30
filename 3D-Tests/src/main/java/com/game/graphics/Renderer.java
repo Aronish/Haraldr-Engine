@@ -1,6 +1,8 @@
 package com.game.graphics;
 
+import com.game.Camera;
 import com.game.level.Entity;
+import com.game.math.Matrix4f;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
@@ -11,7 +13,7 @@ import static org.lwjgl.opengl.GL11.glClearColor;
  */
 public class Renderer {
 
-    private static final Shader SQUARE_SHADER = new Shader("shaders/square_shader");
+    private static final Shader SHADER = new Shader("shaders/shader");
 
     /**
      * Clears the framebuffer for the next render. Clear color is set in Main#init ATM.
@@ -37,9 +39,9 @@ public class Renderer {
      */
     public static void render(Entity entity){
         Models.SPRITE_SHEET.bind();
-        SQUARE_SHADER.use();
+        SHADER.use();
         for (TexturedModel texturedModel : entity.getTexturedModels()){
-            SQUARE_SHADER.setMatrix(entity.getMatrixArray());
+            SHADER.setMatrix(entity.getMatrixArray(), "matrix");
             texturedModel.getVertexArray().bind();
             texturedModel.getVertexArray().draw();
         }
@@ -49,6 +51,6 @@ public class Renderer {
      * Deletes the shaders.
      */
     public static void deleteShaders(){
-        SQUARE_SHADER.delete();
+        SHADER.delete();
     }
 }

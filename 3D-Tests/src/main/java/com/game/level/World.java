@@ -19,7 +19,7 @@ public class World {
 
     private static final TileFactory TILE_FACTORY = new TileFactory();
     private static final Random RANDOM = new Random();
-    private static final int WORLD_SIZE = 10000;
+    private static final int WORLD_SIZE = 4000;
 
     private static double noiseScale = 0.042d;
     private ArrayList<Entity> tiles;
@@ -41,7 +41,7 @@ public class World {
         double seed = RANDOM.nextDouble() * 100000.0d;
         for (int i = 0; i < WORLD_SIZE; ++i){
             int y = (int) ((SimplexNoise.noise(i * noiseScale, 0.0d, seed) + 1.0d) / 2.0d * 60.0d);
-            fillColumn(new Vector3f(i, y + 20));
+            fillColumn(new Vector3f(i, y + 200));
         }
         grid.populateGrid(tiles);
     }

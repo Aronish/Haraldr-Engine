@@ -6,7 +6,7 @@ import com.game.math.Matrix4f;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
 import static com.game.Main.fastFloor;
 
@@ -87,7 +87,7 @@ public class Camera{
     }
 
     private static void calculateChunkRanges(){
-        chunkXRange = fastFloor(2.0f / Camera.scale);
+        chunkXRange = fastFloor(1.0f / Camera.scale);
         chunkYRange = fastFloor(1.0f / Camera.scale);
     }
 
@@ -109,12 +109,18 @@ public class Camera{
         calculateViewMatrix();
     }
 
+    public static void setScale(float scal){
+        scale = scal;
+        scaleVector.setBoth(scale);
+        calculateViewMatrix();
+    }
+
     /**
      * Checks if the provided entities are in the view of the Camera. If they are, they are added to the provided list.
      * @param visibleObjects a list, which keeps track of all the visible entities.
      * @param entity the entity to check visibility against.
      */
-    public static void isInView(HashSet<Entity> visibleObjects, Entity entity){
+    public static void isInView(ArrayList<Entity> visibleObjects, Entity entity){
         float scaleAdjustedX = position.getX() / scale;
         float scaleAdjustedY = position.getY() / scale;
         float xBoundary = 16.0f / scale;

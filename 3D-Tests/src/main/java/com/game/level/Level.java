@@ -2,13 +2,14 @@ package com.game.level;
 
 import com.game.Camera;
 import com.game.Input;
+import com.game.debug.Logger;
 import com.game.graphics.InstancedRenderer;
 import com.game.graphics.Renderer;
 import com.game.level.tiles.EnumTiles;
 import com.game.math.Vector2f;
 import com.game.physics.CollisionDetector;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
 /**
  * Main Level class to house everything contained in one level.
@@ -18,8 +19,8 @@ public class Level {
     private World world;
     private Player player;
 
-    private HashSet<Grid.GridCell> visibleGridCells;
-    private HashSet<Entity> frustumCulledObjects;
+    private ArrayList<Grid.GridCell> visibleGridCells;
+    private ArrayList<Entity> frustumCulledObjects;
 
     /**
      * Constructs a Level.
@@ -28,8 +29,8 @@ public class Level {
         player = new Player();
         player.resetPosition();
         world = new World();
-        visibleGridCells = new HashSet<>();
-        frustumCulledObjects = new HashSet<>();
+        visibleGridCells = new ArrayList<>();
+        frustumCulledObjects = new ArrayList<>();
     }
 
     /**
@@ -49,19 +50,15 @@ public class Level {
     public void renderLevel(){
         if (Input.usingInstancedRendering()){
             for (Grid.GridCell gridCell : visibleGridCells){
-                /*
+
                 for (EnumTiles tileType : EnumTiles.values()){
-                    if (Input.usingLimitedInstancing()){
-                        InstancedRenderer.renderInstancedLimited(gridCell.getTileMatrices(tileType), tileType);
-                    }else{
-                        InstancedRenderer.renderInstanced(gridCell.getTileContinuousArray(tileType), tileType);
-                    }
+                    InstancedRenderer.renderInstancedLimited(gridCell.getTileMatrices(tileType), tileType);
 
                     //InstancedRenderer.renderInstancedLimited(gridCell.getTileMatrices(tileType), tileType);
                     //InstancedRenderer.renderInstanced(gridCell.getMatrices(), tileType);
                 }
-                */
-                InstancedRenderer.renderInstanced(gridCell);
+
+                //InstancedRenderer.renderInstanced(gridCell);
             }
         }else{
             frustumCulledObjects.forEach(Renderer::render);
@@ -97,6 +94,9 @@ public class Level {
                 }
             }
         }
+        if (Input.usingInstancedRendering()){
+            frustumCull();
+        }
     }
 
     /**
@@ -115,7 +115,7 @@ public class Level {
      */
     private void updateMatrices(){
         player.updateMatrix();
-        if (Input.usingInstancedRendering()){ //TODO: What is this supposed to be??
+        if (Input.usingInstancedRendering()){
             for (Grid.GridCell gridCell : visibleGridCells){
                 gridCell.updateMatrices();
             }

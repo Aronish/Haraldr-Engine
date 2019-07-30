@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
+import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
+import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL46.GL_FRAGMENT_SHADER;
@@ -96,8 +98,8 @@ public class Shader {
         return sb.toString();
     }
 
-    void setMatrix(float[] matrix){
-        int matrixLocation = glGetUniformLocation(shaderProgram, "matrix");
+    void setMatrix(float[] matrix, String name){
+        int matrixLocation = glGetUniformLocation(shaderProgram, name);
         glUniformMatrix4fv(matrixLocation, false, matrix);
     }
 

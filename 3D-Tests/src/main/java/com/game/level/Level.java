@@ -2,10 +2,8 @@ package com.game.level;
 
 import com.game.Camera;
 import com.game.Input;
-import com.game.debug.Logger;
 import com.game.graphics.InstancedRenderer;
 import com.game.graphics.Renderer;
-import com.game.level.tiles.EnumTiles;
 import com.game.math.Vector2f;
 import com.game.physics.CollisionDetector;
 
@@ -31,6 +29,7 @@ public class Level {
         world = new World();
         visibleGridCells = new ArrayList<>();
         frustumCulledObjects = new ArrayList<>();
+        InstancedRenderer.setupInstancedBuffer();
     }
 
     /**
@@ -41,7 +40,8 @@ public class Level {
         player.update(deltaTime); //Update Player no matter what.
         checkVisibleGridCells();
         doCollisions();
-        updateMatrices();
+        //updateMatrices();
+        player.updateMatrix();
     }
 
     /**
@@ -49,17 +49,7 @@ public class Level {
      */
     public void renderLevel(){
         if (Input.usingInstancedRendering()){
-            for (Grid.GridCell gridCell : visibleGridCells){
-
-                for (EnumTiles tileType : EnumTiles.values()){
-                    InstancedRenderer.renderInstancedLimited(gridCell.getTileMatrices(tileType), tileType);
-
-                    //InstancedRenderer.renderInstancedLimited(gridCell.getTileMatrices(tileType), tileType);
-                    //InstancedRenderer.renderInstanced(gridCell.getMatrices(), tileType);
-                }
-
-                //InstancedRenderer.renderInstanced(gridCell);
-            }
+            InstancedRenderer.renderGridCells(visibleGridCells);
         }else{
             frustumCulledObjects.forEach(Renderer::render);
         }

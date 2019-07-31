@@ -58,7 +58,6 @@ class Application {
      */
     private void render(){
         Renderer.clear();
-        InstancedRenderer.clear();
         level.renderLevel();
         glfwSwapBuffers(window.getWindow());
     }

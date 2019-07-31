@@ -72,7 +72,7 @@ public abstract class Entity {
      * Updates the Model-View-Projection matrix with the current attribute values.
      */
     public void updateMatrix(){
-        matrix = new Matrix4f().MVP(this.position, this.rotation, this.scale);
+        matrix = Matrix4f.transform(this.position, this.rotation, this.scale, false);
     }
 
     /**

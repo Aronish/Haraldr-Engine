@@ -8,17 +8,13 @@ import com.game.Camera;
 public class Matrix4f {
 
     public float[] matrix = new float[16];
-    private static final Matrix4f orthographic;
-
-    static{
-        orthographic = new Matrix4f().orthographic(16f, -16f, 9f, -9f, -5f, 5f);
-    }
+    public static final Matrix4f _orthographic = orthographic(16f, -16f, 9f, -9f, -5f, 5f);
 
     /**
      * Creates an identity matrix.
      * @return the identity matrix.
      */
-    private Matrix4f identity(){
+    private static Matrix4f identity(){
         Matrix4f identity = new Matrix4f();
         identity.matrix[0] = 1.0f;
         identity.matrix[5] = 1.0f;
@@ -54,21 +50,9 @@ public class Matrix4f {
      * @param scale the scale multiplier.
      * @return the resulting MVP matrix.
      */
-    public Matrix4f MVP(Vector3f position, float angle, Vector2f scale){
+    public static Matrix4f MVP(Vector3f position, float angle, Vector2f scale){
         // Resolution must have the aspect ratio 16:9 as of now.
-        return orthographic.multiply(Camera.viewMatrix).multiply(transform(scale.getX() == -1 ? position.add(new Vector3f(1.0f, 0.0f)) : position, angle, scale, false));
-    }
-
-    /**
-     * Creates a Model-Projection matrix. Does not include the view matrix of the camera.
-     * Used for static objects.
-     * @param position the position in world space.
-     * @param angle the rotation around the z-axis, in degrees.
-     * @param scale the scale multiplier.
-     * @return the resulting MP matrix.
-     */
-    public Matrix4f MP(Vector3f position, float angle, Vector2f scale){
-        return orthographic.multiply(transform(position, angle, scale, false));
+        return _orthographic.multiply(Camera.viewMatrix).multiply(transform(scale.getX() == -1 ? position.add(new Vector3f(1.0f, 0.0f)) : position, angle, scale, false));
     }
 
     /**
@@ -79,8 +63,8 @@ public class Matrix4f {
      * @param isCamera if the transformation matrix is the view matrix of a camera. If <code>true</code>, the translation and rotation will be inverted.
      * @return the resulting transformation matrix.
      */
-    public Matrix4f transform(Vector3f position, float angle, Vector2f scale, boolean isCamera){
-        return translate(position, isCamera).multiply(rotate(angle, isCamera)).multiply(scale(scale));
+    public static Matrix4f transform(Vector3f position, float angle, Vector2f scale, boolean isCamera){
+        return translate(scale.getX() == -1 ? position.add(new Vector3f(1.0f, 0.0f)) : position, isCamera).multiply(rotate(angle, isCamera)).multiply(scale(scale));
     }
 
     /**
@@ -88,7 +72,7 @@ public class Matrix4f {
      * @param scale a Vector2f containing the scale values for x and y.
      * @return the resulting scale matrix.
      */
-    private Matrix4f scale(Vector2f scale){
+    private static Matrix4f scale(Vector2f scale){
         Matrix4f result = new Matrix4f();
         result.matrix[0] = scale.getX();
         result.matrix[5] = scale.getY();
@@ -103,7 +87,7 @@ public class Matrix4f {
      * @param isCamera if this is the translation matrix of a camera. If true, it will be inverted.
      * @return the resulting translation matrix.
      */
-    private Matrix4f translate(Vector3f vector, boolean isCamera){
+    private static Matrix4f translate(Vector3f vector, boolean isCamera){
         Matrix4f result = identity();
         if (isCamera){
             result.matrix[12] = -vector.getX();
@@ -123,7 +107,7 @@ public class Matrix4f {
      * @param isCamera if this is the rotation matrix of a camera. If true, it will be inverted.
      * @return the resulting rotation matrix.
      */
-    private Matrix4f rotate(float angle, boolean isCamera){
+    private static Matrix4f rotate(float angle, boolean isCamera){
         Matrix4f result = identity();
         float radians;
         if (isCamera) {
@@ -152,7 +136,7 @@ public class Matrix4f {
      * @param near the near clipping plane.
      * @return the resulting orthographic projection matrix.
      */
-    private Matrix4f orthographic(float right, float left, float top, float bottom, float far, float near){
+    private static Matrix4f orthographic(float right, float left, float top, float bottom, float far, float near){
         Matrix4f result = identity();
         result.matrix[0] = 2.0f / (right - left);
         result.matrix[5] = 2.0f / (top - bottom);
@@ -169,7 +153,7 @@ public class Matrix4f {
      * @param FOV the field-of-view of the camera frustum.
      * @return the resulting perspective projection matrix.
      */
-    public Matrix4f perspective(float FOV){
+    public static Matrix4f perspective(float FOV){
         Matrix4f result = new Matrix4f();
         float ar = 1280.0f/720.0f;
         float near = -1.0f;

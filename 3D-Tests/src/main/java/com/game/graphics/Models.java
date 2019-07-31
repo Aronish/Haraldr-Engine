@@ -10,7 +10,7 @@ import java.util.HashMap;
  */
 public class Models {
 
-    static final Texture SPRITE_SHEET = new Texture("textures/sprite_sheet.png", true);
+    static final Texture SPRITE_SHEET = new Texture("textures/sprite_sheet.png");
     private static final float SPRITE_SHEET_SIZE = SPRITE_SHEET.getWidth();
 
     public static final TexturedModel DIRT_TILE = new TexturedModel(SPRITE_SHEET, createTextureCoordinates(new Vector2f(), 16, 16));

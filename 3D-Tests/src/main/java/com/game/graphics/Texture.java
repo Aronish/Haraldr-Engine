@@ -39,8 +39,8 @@ class Texture {
      * Constructor for the texture.
      * @param path the path of the texture.
      */
-    Texture(String path, boolean isSpriteSheet){
-        texture = load(path, isSpriteSheet);
+    Texture(String path){
+        texture = load(path);
     }
 
     /**
@@ -48,7 +48,7 @@ class Texture {
      * @param path the path of the texture.
      * @return the OpenGL texture ID.
      */
-    private int load(String path, boolean isSpriteSheet){
+    private int load(String path){
         int[] pixels = null;
         try{
             InputStream imageStream = Texture.class.getClassLoader().getResourceAsStream(path);
@@ -82,17 +82,11 @@ class Texture {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        if (!isSpriteSheet){
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-        }else{
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        }
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        if (!isSpriteSheet){
-            glGenerateMipmap(GL_TEXTURE_2D);
-        }
+        glGenerateMipmap(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, 0);
         return result;
     }

@@ -1,7 +1,11 @@
 package com.game.graphics;
 
+import com.game.debug.Logger;
 import com.game.level.Grid;
 
+import java.util.ArrayList;
+
+import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBufferSubData;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
@@ -26,12 +30,9 @@ import static org.lwjgl.opengl.GL46.glVertexAttribPointer;
 /**
  * Class for handling buffers containing the vertex data of an object.
  */
-public class VertexArray {
+class VertexArray {
 
     private int vao, vbo, tbo, ebo, length;
-    private static int instancedMatrixBuffer, instancedTBO;
-
-    private float[] vertices, textureCoordinates;
 
     private static final float[] defVertices = {
             1.0f, 0.0f,     //Top-right
@@ -79,8 +80,6 @@ public class VertexArray {
         ebo = glGenBuffers();
         tbo = glGenBuffers();
         length = indices.length;
-        this.vertices = vertices;
-        this.textureCoordinates = textureCoordinates;
 
         glBindVertexArray(vao);
 
@@ -96,24 +95,6 @@ public class VertexArray {
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
-
-        /*
-        glBindBuffer(GL_ARRAY_BUFFER, instancedMatrixBuffer);
-        glBufferData(GL_ARRAY_BUFFER, 4 * Grid.CONT_MAT4_ARRAY_LENGTH, GL_DYNAMIC_DRAW);
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 4, GL_FLOAT, false, 64, 0);
-        glEnableVertexAttribArray(3);
-        glVertexAttribPointer(3, 4, GL_FLOAT, false, 64, 16);
-        glEnableVertexAttribArray(4);
-        glVertexAttribPointer(4, 4, GL_FLOAT, false, 64, 32);
-        glEnableVertexAttribArray(5);
-        glVertexAttribPointer(5, 4, GL_FLOAT, false, 64, 48);
-
-        glVertexAttribDivisor(2, 1);
-        glVertexAttribDivisor(3, 1);
-        glVertexAttribDivisor(4, 1);
-        glVertexAttribDivisor(5, 1);
-        */
 
         glBindVertexArray(0);
     }
@@ -141,14 +122,6 @@ public class VertexArray {
      */
     private void unbind(){
         glBindVertexArray(0);
-    }
-
-    public float[] getVertices(){
-        return vertices;
-    }
-
-    public float[] getTextureCoordinates(){
-        return textureCoordinates;
     }
 
     /**

@@ -77,7 +77,7 @@ public class TexturedModel{
      * @param filePath the path of the texture file, with extension.
      */
     private void setTexture(String filePath){
-        texture = new Texture(filePath, false);
+        texture = new Texture(filePath);
     }
 
     private void setTexture(Texture texture){
@@ -97,7 +97,7 @@ public class TexturedModel{
      * Used to retrieve information about the vertices and rarely the indices and texture coordinates.
      * @return the vertex array object.
      */
-    public VertexArray getVertexArray(){
+    VertexArray getVertexArray(){
         return vertexArray;
     }
 

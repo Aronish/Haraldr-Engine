@@ -40,6 +40,8 @@ public class Renderer {
     public static void render(Entity entity){
         Models.SPRITE_SHEET.bind();
         SHADER.use();
+        SHADER.setMatrix(Camera.viewMatrix.matrix, "view");
+        SHADER.setMatrix(Matrix4f._orthographic.matrix, "projection");
         for (TexturedModel texturedModel : entity.getTexturedModels()){
             SHADER.setMatrix(entity.getMatrixArray(), "matrix");
             texturedModel.getVertexArray().bind();

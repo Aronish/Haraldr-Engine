@@ -6,6 +6,7 @@ import com.game.level.tiles.Tile;
 import com.game.math.Matrix4f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static com.game.Main.fastFloor;
 
@@ -14,7 +15,7 @@ import static com.game.Main.fastFloor;
  */
 public class Grid {
 
-    public static final int GRID_SIZE = 16; //Apparently, this cannot be larger due to GLSL limitations. TO BE FIXED! OR NOT!
+    public static final int GRID_SIZE = 32; //Apparently, this cannot be larger due to GLSL limitations. TO BE FIXED! OR NOT!
     public static final int CONT_MAT4_ARRAY_LENGTH = (int) Math.pow(GRID_SIZE, 2) * 16;
     public static final int CONT_VEC2_ARRAY_LENGTH = (int) Math.pow(GRID_SIZE, 2) * 8;
 
@@ -40,6 +41,15 @@ public class Grid {
      */
     void populateGrid(ArrayList<Entity> entities){
         entities.forEach(entity -> addEntity(fastFloor(entity.getPosition().getX() / GRID_SIZE), fastFloor(entity.getPosition().getY() / GRID_SIZE), entity));
+        cacheMatrices();
+    }
+
+    private void cacheMatrices(){
+        for (ArrayList<GridCell> yAxis : grid){
+            for (GridCell gridCell : yAxis){
+                gridCell.cacheMatrices();
+            }
+        }
     }
 
     /**
@@ -119,24 +129,14 @@ public class Grid {
     public static class GridCell {
 
         private ArrayList<Tile> tiles;
+        private HashMap<EnumTiles, ArrayList<Float>> matrices;
 
-        private float[] matrices;
-        private int matrixInsertIndex;
-
-        private float[] vertices;
-        private int vertexInsertIndex;
-
-        private float[] textureCoordinates;
-        private int texCoordInsertIndex;
+        private ArrayList<Float> intermeditateArray;
 
         GridCell(){
             tiles = new ArrayList<>();
-            matrices = new float[CONT_MAT4_ARRAY_LENGTH];
-            matrixInsertIndex = 0;
-            vertices = new float[CONT_VEC2_ARRAY_LENGTH];
-            vertexInsertIndex = 0;
-            textureCoordinates = new float[CONT_VEC2_ARRAY_LENGTH];
-            texCoordInsertIndex = 0;
+            matrices = new HashMap<>();
+            intermeditateArray = new ArrayList<>();
         }
 
         /**
@@ -146,21 +146,6 @@ public class Grid {
         private void addEntity(Entity entity){
             if (entity instanceof Tile){
                 tiles.add((Tile) entity);
-                float[] vertices = ((Tile) entity).getTileType().texturedModel.getVertexArray().getVertices();
-                for (float vertex : vertices){
-                    this.vertices[vertexInsertIndex] = vertex;
-                    ++vertexInsertIndex;
-                }
-                float[] textureCoordinates = ((Tile) entity).getTileType().texturedModel.getVertexArray().getTextureCoordinates();
-                for (float texcoord : textureCoordinates){
-                    this.textureCoordinates[texCoordInsertIndex] = texcoord;
-                    ++texCoordInsertIndex;
-                }
-                float[] matrix = entity.getMatrix().matrix;
-                for (float element : matrix){
-                    matrices[matrixInsertIndex] = element;
-                    ++matrixInsertIndex;
-                }
             }else{
                 Logger.setErrorLevel();
                 Logger.log("Grid doesn't support any other Entities than Tiles!");
@@ -172,18 +157,19 @@ public class Grid {
          */
         void updateMatrices(){
             tiles.forEach(Tile::updateMatrix);
-            updateMatrixArray();
         }
 
-        void updateMatrixArray(){
-            matrices = new float[CONT_MAT4_ARRAY_LENGTH];
-            matrixInsertIndex = 0;
-            for (Tile tile : tiles){
-                float[] matrix = tile.getMatrix().matrix;
-                for (float element : matrix){
-                    matrices[matrixInsertIndex] = element;
-                    ++matrixInsertIndex;
+        void cacheMatrices(){
+            for (EnumTiles tileType : EnumTiles.values()){
+                intermeditateArray.clear();
+                for (Tile tile : tiles){
+                    if (tile.getTileType() == tileType){
+                        for (float element : tile.getMatrixArray()){
+                            intermeditateArray.add(element);
+                        }
+                    }
                 }
+                matrices.put(tileType, new ArrayList<>(intermeditateArray));
             }
         }
 
@@ -198,30 +184,8 @@ public class Grid {
          * @param tileType the type of Tiles whose matrices will be collected.
          * @return all the matrices of all the Tiles of the specified Type.
          */
-        ArrayList<Matrix4f> getTileMatrices(EnumTiles tileType){
-            ArrayList<Matrix4f> matrices = new ArrayList<>();
-            tiles.forEach(tile -> {
-                if (tile.getTileType() == tileType){
-                    matrices.add(tile.getMatrix());
-                }
-            });
-            return matrices;
-        }
-
-        public int getCount(){
-            return tiles.size();
-        }
-
-        public float[] getVertices(){
-            return vertices;
-        }
-
-        public float[] getTextureCoordinates(){
-            return textureCoordinates;
-        }
-
-        public float[] getMatrices(){
-            return matrices;
+        public ArrayList<Float> getMatrices(EnumTiles tileType){
+            return matrices.get(tileType);
         }
     }
 }

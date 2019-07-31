@@ -35,7 +35,7 @@ public class Logger {
      */
     public static <T> void info(T message){
         setInfoLevel();
-        System.out.print(logLevel.label + ": " + message.toString());
+        System.out.println(logLevel.label + ": " + message.toString());
     }
 
     /**
@@ -45,7 +45,7 @@ public class Logger {
      */
     public static <T> void warn(T message){
         setWarningLevel();
-        System.out.print(logLevel.label + ": " + message.toString());
+        System.out.println(logLevel.label + ": " + message.toString());
     }
 
     /**
@@ -55,7 +55,7 @@ public class Logger {
      */
     public static <T> void error(T message){
         setErrorLevel();
-        System.out.print(logLevel.label + ": " + message.toString());
+        System.out.println(logLevel.label + ": " + message.toString());
     }
 
     /**

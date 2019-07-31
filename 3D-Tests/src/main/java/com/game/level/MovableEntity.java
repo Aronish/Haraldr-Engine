@@ -1,6 +1,6 @@
 package com.game.level;
 
-import com.game.level.gameobject.EnumGameObjects;
+import com.game.level.gameobject.GameObject;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
 
@@ -23,7 +23,7 @@ public abstract class MovableEntity extends Entity {
      * @param scale the initial scale of this MovableEntity.
      * @param hasGravity whether it is affected by gravity.
      */
-    MovableEntity(Vector3f position, float rotation, float scale, boolean hasGravity, EnumGameObjects gameObjectType) {
+    MovableEntity(Vector3f position, float rotation, float scale, boolean hasGravity, GameObject gameObjectType) {
         super(position, rotation, scale, gameObjectType);
         this.hasGravity = hasGravity;
         velocity = new Vector2f();

@@ -6,7 +6,7 @@ import com.game.graphics.Model;
 /**
  * All possible types of game objects. Holds a reference to the Model to be associated with the object.
  */
-public enum EnumGameObjects {
+public enum GameObject {
 
     ///// WORLD TILES /////////////////////////////////
     GRASS(Models.GRASS_TILE),
@@ -20,7 +20,7 @@ public enum EnumGameObjects {
 
     public final Model model;
 
-    EnumGameObjects(Model model){
+    GameObject(Model model){
         this.model = model;
     }
 }

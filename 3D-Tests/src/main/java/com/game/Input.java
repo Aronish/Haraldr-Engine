@@ -4,10 +4,11 @@ import com.game.debug.Logger;
 import com.game.level.Grid;
 import com.game.level.Player;
 import com.game.level.World;
-import com.game.physics.EnumPlayerMovementType;
+import com.game.physics.PlayerMovementType;
 import org.lwjgl.glfw.GLFWKeyCallback;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_B;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
@@ -56,8 +57,8 @@ public class Input extends GLFWKeyCallback {
                 if (key == GLFW_KEY_M){
                     shouldCreateMap = true;
                 }
-                if (key == GLFW_KEY_V){
-                    Main.getApplication().getWindow().changeVSync();
+                if (key == GLFW_KEY_B){
+                    Main.getApplication().getWindow().setVSync(!Main.getApplication().getWindow().VSyncOn());
                     Logger.info("VSync: " + Main.getApplication().getWindow().VSyncOn());
                 }
                 keys[key] = true;
@@ -76,7 +77,7 @@ public class Input extends GLFWKeyCallback {
      * @param world the World which, for now, to regenerate.
      */
     public static void processInput(float deltaTime, Player player, World world){
-        player.setMovementType(EnumPlayerMovementType.STAND);
+        player.setMovementType(PlayerMovementType.STAND);
         if (keys[GLFW_KEY_LEFT_SHIFT]){
             player.setRunning(true);
         }else{
@@ -88,10 +89,10 @@ public class Input extends GLFWKeyCallback {
             player.setBoosting(false);
         }
         if (keys[GLFW_KEY_A]) {
-            player.setMovementType(EnumPlayerMovementType.LEFT);
+            player.setMovementType(PlayerMovementType.LEFT);
         }
         if (keys[GLFW_KEY_D]) {
-            player.setMovementType(EnumPlayerMovementType.RIGHT);
+            player.setMovementType(PlayerMovementType.RIGHT);
         }
         if (keys[GLFW_KEY_R]){
             player.resetGravityAcceleration();

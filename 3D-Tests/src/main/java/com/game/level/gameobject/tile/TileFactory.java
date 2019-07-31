@@ -1,7 +1,7 @@
 package com.game.level.gameobject.tile;
 
 import com.game.debug.Logger;
-import com.game.level.gameobject.EnumGameObjects;
+import com.game.level.gameobject.GameObject;
 import com.game.math.Vector3f;
 
 public class TileFactory {
@@ -13,7 +13,7 @@ public class TileFactory {
      * @param tileType the type of the Tile.
      * @return the new Tile.
      */
-    public Tile createTile(Vector3f position, EnumGameObjects tileType){
+    public Tile createTile(Vector3f position, GameObject tileType){
         switch (tileType){
             case DIRT:
                 return new TileDirt(position);

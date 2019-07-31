@@ -5,10 +5,10 @@ package com.game.physics;
  */
 class CollisionDataMap {
 
-    private final EnumDirection collisionDirection;
+    private final Direction collisionDirection;
     private final float inside;
 
-    CollisionDataMap(EnumDirection collisionDirection, float inside){
+    CollisionDataMap(Direction collisionDirection, float inside){
         this.collisionDirection = collisionDirection;
         this.inside = inside;
     }
@@ -17,7 +17,7 @@ class CollisionDataMap {
      * Gets the direction.
      * @return the direction
      */
-    EnumDirection getCollisionDirection(){
+    Direction getCollisionDirection(){
         return collisionDirection;
     }
 

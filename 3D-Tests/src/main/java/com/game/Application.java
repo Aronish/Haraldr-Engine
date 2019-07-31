@@ -1,5 +1,10 @@
 package com.game;
 
+import com.game.debug.Logger;
+import com.game.event.Event;
+import com.game.event.EventType;
+import com.game.event.IEventCallback;
+import com.game.event.KeyPressedEvent;
 import com.game.graphics.InstancedRenderer;
 import com.game.graphics.Models;
 import com.game.graphics.Renderer;
@@ -35,6 +40,7 @@ class Application {
      */
     private void init(){
         window = new Window(1280, 720, false, false);
+        window.setEventCallback(new EventCallback());
         GL.createCapabilities();
         /*---OpenGL code won't work before this---*/
         glfwShowWindow(window.getWindow());
@@ -43,6 +49,15 @@ class Application {
         frameRate = 60.0d;
         new Camera(0.5f);
         level = new Level();
+    }
+
+    public class EventCallback implements IEventCallback {
+        @Override
+        public void onEvent(Event e) {
+            if (e.eventType == EventType.KEY_PRESSED){
+                Logger.info("Key: " + ((KeyPressedEvent) e).keyCode);
+            }
+        }
     }
 
     /**
@@ -81,10 +96,8 @@ class Application {
             }
             while (frameTime > 0.0) {
                 double deltaTime = Math.min(frameTime, updatePeriod);
-                if (currentTime > 2.0d){
-                    update((float) deltaTime);
-                    ++updates;
-                }
+                update((float) deltaTime);
+                ++updates;
                 frameTime -= deltaTime;
             }
             render();

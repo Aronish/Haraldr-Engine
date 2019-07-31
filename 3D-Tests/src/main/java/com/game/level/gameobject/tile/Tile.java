@@ -1,7 +1,7 @@
 package com.game.level.gameobject.tile;
 
 import com.game.level.Entity;
-import com.game.level.gameobject.EnumGameObjects;
+import com.game.level.gameobject.GameObject;
 import com.game.math.Vector3f;
 
 /**
@@ -14,7 +14,7 @@ public abstract class Tile extends Entity {
      * @param position the initial position of this Tile.
      * @param tileType the type of this Tile.
      */
-    Tile(Vector3f position, EnumGameObjects tileType){
+    Tile(Vector3f position, GameObject tileType){
         this(position, 0.0f, 1.0f, tileType);
     }
 
@@ -25,7 +25,7 @@ public abstract class Tile extends Entity {
      * @param scale the initial scale of this Tile.
      * @param gameObjectType the type of this Tile.
      */
-    private Tile(Vector3f position, float rotation, float scale, EnumGameObjects gameObjectType) {
+    private Tile(Vector3f position, float rotation, float scale, GameObject gameObjectType) {
         super(position, rotation, scale, gameObjectType);
     }
 }

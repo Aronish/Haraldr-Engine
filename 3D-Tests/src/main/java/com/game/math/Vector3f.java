@@ -49,14 +49,23 @@ public class Vector3f {
         this.z = (float) z;
     }
 
+    /**
+     * @return the x component.
+     */
     public float getX(){
         return x;
     }
 
+    /**
+     * @return the y component.
+     */
     public float getY(){
         return y;
     }
 
+    /**
+     * @return the z component.
+     */
     float getZ(){
         return z;
     }
@@ -70,6 +79,10 @@ public class Vector3f {
         return new Vector3f(x + other.getX(), y + other.getY(), z + other.getZ());
     }
 
+    /**
+     * Adds another vector to this vector.
+     * @param other the other vector to add.
+     */
     public void addThis(Vector3f other){
         x += other.x;
         y += other.y;
@@ -85,6 +98,11 @@ public class Vector3f {
         return new Vector3f(x - other.getX(), y - other.getY(), z - other.getZ());
     }
 
+    /**
+     * Subtracts a value from the y component.
+     * @param dy the value to subtract.
+     * @return the resulting vector.
+     */
     public Vector3f subtractY(float dy){
         return new Vector3f(x, y - dy);
     }
@@ -102,7 +120,6 @@ public class Vector3f {
      * Prints this vector for debugging purposes.
      */
     public void printVector(){
-        Logger.setInfoLevel();
-        Logger.log("X: " + x + " Y: " + y + " Z: " + z);
+        Logger.info("X: " + x + " Y: " + y + " Z: " + z);
     }
 }

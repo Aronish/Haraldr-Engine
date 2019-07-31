@@ -28,7 +28,7 @@ import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 /**
- * Class for handling the creation and loading of textures into OpenGl.
+ * Represents an OpenGL texture.
  */
 class Texture {
 
@@ -36,7 +36,6 @@ class Texture {
     private int texture;
 
     /**
-     * Constructor for the texture.
      * @param path the path of the texture.
      */
     Texture(String path){
@@ -44,7 +43,7 @@ class Texture {
     }
 
     /**
-     * Reads the pixel data of the picture and creates an OpenGL texture.
+     * Reads the pixel data of the texture file and creates an OpenGL texture.
      * @param path the path of the texture.
      * @return the OpenGL texture ID.
      */
@@ -91,19 +90,22 @@ class Texture {
         return result;
     }
 
+    /**
+     * @return the width of this texture in pixels.
+     */
     int getWidth(){
         return width;
     }
 
     /**
-     * Binds this texture for drawing.
+     * Binds this texture.
      */
     void bind(){
         glBindTexture(GL_TEXTURE_2D, texture);
     }
 
     /**
-     * Unbinds this texture to avoid weird conflicts.
+     * Unbinds this texture.
      */
     private void unbind(){
         glBindTexture(GL_TEXTURE_2D, 0);

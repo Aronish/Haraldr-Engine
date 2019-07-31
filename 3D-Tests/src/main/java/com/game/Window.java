@@ -31,7 +31,7 @@ import static org.lwjgl.opengl.GL46.glViewport;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
- * A class for handling window creation.
+ * A class for handling GLFW window creation.
  */
 class Window {
 
@@ -42,11 +42,12 @@ class Window {
     private GLFWVidMode vidmode;
 
     /**
-     * Constructor with parameters for window width and height and whether is will be fullscreen upon creation.
+     * Constructor with parameters for window width and height, whether is will be fullscreen and have VSync turned on upon creation.
      * Creates a GLFW window and sets appropriate settings and attributes.
      * @param width the window width, in pixels.
      * @param height the window height, in pixels.
      * @param fullscreen whether the window will be fullscreen upon creation.
+     * @param VSync whether the window will have VSync turned on upon creation.
      */
     Window(int width, int height, boolean fullscreen, boolean VSync){
         isFullscreen = fullscreen;
@@ -119,6 +120,9 @@ class Window {
         glfwSetWindowTitle(window, title);
     }
 
+    /**
+     * @return whether VSync is turned on.
+     */
     boolean VSyncOn(){
         return VSyncOn;
     }

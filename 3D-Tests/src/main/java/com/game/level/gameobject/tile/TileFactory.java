@@ -1,6 +1,7 @@
-package com.game.level.tiles;
+package com.game.level.gameobject.tile;
 
 import com.game.debug.Logger;
+import com.game.level.gameobject.EnumGameObjects;
 import com.game.math.Vector3f;
 
 public class TileFactory {
@@ -12,7 +13,7 @@ public class TileFactory {
      * @param tileType the type of the Tile.
      * @return the new Tile.
      */
-    public Tile createTile(Vector3f position, EnumTiles tileType){
+    public Tile createTile(Vector3f position, EnumGameObjects tileType){
         switch (tileType){
             case DIRT:
                 return new TileDirt(position);
@@ -23,8 +24,7 @@ public class TileFactory {
             case GRASS_SNOW:
                 return new TileGrassSnow(position);
             default:
-                Logger.setErrorLevel();
-                Logger.log("Invalid TileType");
+                Logger.error("Invalid TileType");
                 return null;
         }
     }

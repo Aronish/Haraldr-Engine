@@ -1,10 +1,7 @@
 package com.game.graphics;
 
-import com.game.math.Matrix4f;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
@@ -24,7 +21,7 @@ import static org.lwjgl.opengl.GL46.glUseProgram;
 import static org.lwjgl.opengl.GL46.glValidateProgram;
 
 /**
- * Class for handling the creation and loading of shader files. Both vertex and fragment shaders.
+ * Loads a shader program with a vertex and fragment shader.
  */
 public class Shader {
 
@@ -40,8 +37,7 @@ public class Shader {
     }
 
     /**
-     * Private constructor that takes in the different paths of the shader files. Reads the shader files, creates shaders
-     * and compiles them into a shader program.
+     * Private constructor that takes in the different paths of the shader files. Reads the shader files, creates shaders and compiles them into a shader program.
      * @param vertexShaderPath the path of the vertex shader.
      * @param fragmentShaderPath the path of the fragment shader.
      */
@@ -66,7 +62,7 @@ public class Shader {
 
     /**
      * Creates a shader object for the specified shader type with the specified source code.
-     * @param shaderType an integer constant (usually from OpenGl), tells OpenGL what shader type to create.
+     * @param shaderType the shader type to create (GL_VERTEX_SHADER or GL_FRAGMENT_SHADER).
      * @param source the source code in a single string.
      * @return the shader object ID.
      */
@@ -98,27 +94,25 @@ public class Shader {
         return sb.toString();
     }
 
+    /**
+     * Sets data of a uniform mat4 with the specified name.
+     * @param matrix the matrix data.
+     * @param name the name of the mat4 uniform.
+     */
     void setMatrix(float[] matrix, String name){
         int matrixLocation = glGetUniformLocation(shaderProgram, name);
         glUniformMatrix4fv(matrixLocation, false, matrix);
     }
 
-    void setMatrixArray(ArrayList<Matrix4f> matrices){
-        for (int i = 0; i < matrices.size(); ++i){
-            int arrayLocation = glGetUniformLocation(shaderProgram, "matrices[" + i + "]");
-            glUniformMatrix4fv(arrayLocation, false, matrices.get(i).matrix);
-        }
-    }
-
     /**
-     * Uses the shader program, ready for drawing.
+     * Uses the shader program.
      */
     public void use(){
         glUseProgram(shaderProgram);
     }
 
     /**
-     * Unuses the shader program to avoid weird conflicts.
+     * Unuses the shader program.
      */
     private void unuse(){
         glUseProgram(0);

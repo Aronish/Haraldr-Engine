@@ -46,6 +46,10 @@ public class Vector2f {
         this.y = y;
     }
 
+    /**
+     * Sets both components to the same value.
+     * @param both the value of both components.
+     */
     public void setBoth(float both){
         x = both;
         y = both;
@@ -90,7 +94,6 @@ public class Vector2f {
     }
 
     /**
-     * Gets the x value.
      * @return the x value.
      */
     public float getX(){
@@ -98,7 +101,6 @@ public class Vector2f {
     }
 
     /**
-     * Gets the y value.
      * @return the y value.
      */
     public float getY(){
@@ -150,7 +152,6 @@ public class Vector2f {
      * Prints this vector for debugging purposes.
      */
     public void printVector(){
-        Logger.setInfoLevel();
-        Logger.log("X: " + x + " Y: " + y);
+        Logger.info("X: " + x + " Y: " + y);
     }
 }

@@ -2,8 +2,8 @@ package com.game;
 
 import com.game.debug.Logger;
 import com.game.level.Grid;
-import com.game.level.tiles.Tile;
-import com.game.level.tiles.TileTree;
+import com.game.level.gameobject.tile.Tile;
+import com.game.level.gameobject.tile.TileTree;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -37,7 +37,7 @@ class WorldMapper {
                 for (Tile tile : grid.getContent(x, y).getTiles()){
                     if (!(tile instanceof TileTree)){
                         Color color = null;
-                        switch (tile.getTileType()){
+                        switch (tile.getGameObjectType()){
                             case GRASS:
                                 color = new Color(0, 180, 50, 255);
                                 break;
@@ -68,6 +68,6 @@ class WorldMapper {
         }catch (IOException e){
             e.printStackTrace();
         }
-        Logger.log("Map Complete!");
+        Logger.info("Map Complete!");
     }
 }

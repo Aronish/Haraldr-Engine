@@ -1,12 +1,12 @@
-package com.game.level.tiles;
+package com.game.level.gameobject.tile;
 
-import com.game.graphics.Models;
 import com.game.level.IBackground;
+import com.game.level.gameobject.EnumGameObjects;
 import com.game.math.Vector3f;
 
 public class TileTree extends Tile implements IBackground {
 
     public TileTree(Vector3f position){
-        super(position, EnumTiles.TREE, Models.TREE);
+        super(position, EnumGameObjects.TREE);
     }
 }

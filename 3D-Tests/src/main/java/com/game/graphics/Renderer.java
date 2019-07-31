@@ -9,7 +9,7 @@ import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
 /**
- * Handles rendering of game objects.
+ * Normal renderer that renders objects which don't need to use instancing. (Players, ev. machines...).
  */
 public class Renderer {
 
@@ -17,6 +17,7 @@ public class Renderer {
 
     /**
      * Clears the framebuffer for the next render. Clear color is set in Main#init ATM.
+     * (No need to clear in InstancedRenderer.)
      */
     public static void clear(){
         glClear(GL_COLOR_BUFFER_BIT);
@@ -34,7 +35,8 @@ public class Renderer {
     }
 
     /**
-     * Prepares and renders an Entity. Don't bother to unbind everything.
+     * Binds all the normal stuff like, sprite sheets, shaders and sets the view and projection uniforms.
+     * Issues a normal draw call.
      * @param entity the entity to render.
      */
     public static void render(Entity entity){
@@ -42,11 +44,9 @@ public class Renderer {
         SHADER.use();
         SHADER.setMatrix(Camera.viewMatrix.matrix, "view");
         SHADER.setMatrix(Matrix4f._orthographic.matrix, "projection");
-        for (TexturedModel texturedModel : entity.getTexturedModels()){
-            SHADER.setMatrix(entity.getMatrixArray(), "matrix");
-            texturedModel.getVertexArray().bind();
-            texturedModel.getVertexArray().draw();
-        }
+        SHADER.setMatrix(entity.getMatrixArray(), "matrix");
+        entity.getGameObjectType().model.getVertexArray().bind();
+        entity.getGameObjectType().model.getVertexArray().draw();
     }
 
     /**

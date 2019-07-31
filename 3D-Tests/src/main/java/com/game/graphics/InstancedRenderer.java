@@ -2,7 +2,7 @@ package com.game.graphics;
 
 import com.game.Camera;
 import com.game.level.Grid;
-import com.game.level.tiles.EnumTiles;
+import com.game.level.gameobject.EnumGameObjects;
 import com.game.math.Matrix4f;
 
 import java.util.ArrayList;
@@ -29,6 +29,9 @@ public class InstancedRenderer {
     private static ArrayList<Float> matrices = new ArrayList<>();
     private static int instancedMBO = glGenBuffers();
 
+    /**
+     * @return the ArrayList matrices as a primitive array.
+     */
     private static float[] matricesAsPrimitiveArray(){
         float[] primitiveArray = new float[matrices.size()];
         int i = 0;
@@ -38,12 +41,16 @@ public class InstancedRenderer {
         return primitiveArray;
     }
 
+    /**
+     * Sets up all vertex arrays to know about the instanced matrix attribute.
+     * (At current zoom level, a buffer size of ~10 Mb should be enough.)
+     */
     public static void setupInstancedBuffer(){
         glBindBuffer(GL_ARRAY_BUFFER, instancedMBO);
         glBufferData(GL_ARRAY_BUFFER, 10000000, GL_DYNAMIC_DRAW);
 
-        for (EnumTiles tileType : EnumTiles.values()){
-            tileType.texturedModel.getVertexArray().bind();
+        for (EnumGameObjects tileType : EnumGameObjects.values()){
+            tileType.model.getVertexArray().bind();
             glEnableVertexAttribArray(2);
             glVertexAttribPointer(2, 4, GL_FLOAT, false, 64, 0);
             glEnableVertexAttribArray(3);
@@ -62,8 +69,11 @@ public class InstancedRenderer {
         }
     }
 
+    /**
+     * Renders every type of tile in the provided list of GridCells using instancing.
+     */
     public static void renderGridCells(ArrayList<Grid.GridCell> gridCells){
-        for (EnumTiles tileType : EnumTiles.values()){
+        for (EnumGameObjects tileType : EnumGameObjects.values()){
             matrices.clear();
             for (Grid.GridCell gridCell : gridCells){
                 matrices.addAll(gridCell.getMatrices(tileType));
@@ -74,15 +84,20 @@ public class InstancedRenderer {
         }
     }
 
-    private static void renderInstanced(EnumTiles tileType){
+    /**
+     * Binds all the normal stuff like, sprite sheets, shaders and sets the view and projection uniforms.
+     * Sends all matrices to be rendered to the buffer and issues an instanced draw call.
+     * @param tileType the type of tile currently being rendered.
+     */
+    private static void renderInstanced(EnumGameObjects tileType){
         Models.SPRITE_SHEET.bind();
         INSTANCED_SHADER.use();
         INSTANCED_SHADER.setMatrix(Camera.viewMatrix.matrix, "view");
         INSTANCED_SHADER.setMatrix(Matrix4f._orthographic.matrix, "projection");
         glBindBuffer(GL_ARRAY_BUFFER, instancedMBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, matricesAsPrimitiveArray());
-        tileType.texturedModel.getVertexArray().bind();
-        tileType.texturedModel.getVertexArray().drawInstanced(matrices.size() / 16);
+        tileType.model.getVertexArray().bind();
+        tileType.model.getVertexArray().drawInstanced(matrices.size() / 16);
     }
 
     /**

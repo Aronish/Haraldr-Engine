@@ -1,9 +1,8 @@
 package com.game.physics;
 
 import com.game.Camera;
-import com.game.graphics.TexturedModel;
-import com.game.level.Entity;
 import com.game.level.Player;
+import com.game.level.gameobject.tile.Tile;
 import com.game.math.Vector3f;
 
 import static com.game.physics.EnumDirection.EAST;
@@ -19,41 +18,38 @@ public class CollisionDetector {
 
     /**
      * Does all the collision related operations.
-     * @param entity the Entity, whose TexturedModel is currently checked.
-     * @param texturedModel the TexturedModel to check collision against.
+     * @param tile the Entity, whose TexturedModel is currently checked.
      * @param player the Player to check collisions with.
      */
-    public static void doCollisions(Entity entity, TexturedModel texturedModel, Player player){
-        if (checkCollision(entity, texturedModel, player)){
-            resolveCollision(getCollisionDirection(entity, texturedModel, player), player);
+    public static void doCollisions(Tile tile, Player player){
+        if (checkCollision(tile, player)){
+            resolveCollision(getCollisionDirection(tile, player), player);
         }
     }
 
     /**
      * Checks whether there is a collision between the Player in the Level and the current TexturedModel in the Entity.
      * @param player the Player to check collisions with.
-     * @param entity the Entity, whose TexturedModel is currently checked.
-     * @param texturedModel the TexturedModel to check collision against.
+     * @param tile the Entity, whose TexturedModel is currently checked.
      * @return true if there was a collision on both axes.
      */
-    private static boolean checkCollision(Entity entity, TexturedModel texturedModel, Player player){
-        boolean collisionX = player.getPosition().getX() + player.getWidth() > entity.getPosition().getX() + texturedModel.getRelativePosition().getX() && entity.getPosition().getX() + texturedModel.getRelativePosition().getX() + texturedModel.getAABB().getWidth() > player.getPosition().getX();
-        boolean collisionY = player.getPosition().getY() - player.getHeight() < entity.getPosition().getY() + texturedModel.getRelativePosition().getY() && entity.getPosition().getY() + texturedModel.getRelativePosition().getY() - texturedModel.getAABB().getHeight() < player.getPosition().getY();
+    private static boolean checkCollision(Tile tile, Player player){
+        boolean collisionX = player.getPosition().getX() + player.getGameObjectType().model.getAABB().getWidth() > tile.getPosition().getX() && tile.getPosition().getX() + tile.getGameObjectType().model.getAABB().getWidth() > player.getPosition().getX();
+        boolean collisionY = player.getPosition().getY() - player.getGameObjectType().model.getAABB().getHeight() < tile.getPosition().getY() && tile.getPosition().getY() - tile.getGameObjectType().model.getAABB().getHeight() < player.getPosition().getY();
         return collisionX && collisionY;
     }
 
     /**
      * Gets the direction, in which the collision most likely happened.
      * @param player the Player to check collisions with.
-     * @param entity the Entity, whose TexturedModel is currently checked.
-     * @param texturedModel the TexturedModel to check collision against.
+     * @param tile the Entity, whose TexturedModel is currently checked.
      * @return a custom data pair with the direction and overlap distance.
      */
-    private static CollisionDataMap getCollisionDirection(Entity entity, TexturedModel texturedModel, Player player){
-        float topCollision = (entity.getPosition().getY() + texturedModel.getRelativePosition().getY()) - (player.getPosition().getY() - player.getHeight());
-        float rightCollision = (entity.getPosition().getX() + texturedModel.getRelativePosition().getX()) + texturedModel.getAABB().getWidth() - player.getPosition().getX();
-        float leftCollision = player.getPosition().getX() + player.getWidth() - (entity.getPosition().getX() + texturedModel.getRelativePosition().getX());
-        float bottomCollision = player.getPosition().getY() - ((entity.getPosition().getY() + texturedModel.getRelativePosition().getY()) - texturedModel.getAABB().getHeight());
+    private static CollisionDataMap getCollisionDirection(Tile tile, Player player){
+        float topCollision = tile.getPosition().getY() - (player.getPosition().getY() - player.getGameObjectType().model.getAABB().getHeight());
+        float rightCollision = tile.getPosition().getX() + tile.getGameObjectType().model.getAABB().getWidth() - player.getPosition().getX();
+        float leftCollision = player.getPosition().getX() + player.getGameObjectType().model.getAABB().getWidth() - tile.getPosition().getX();
+        float bottomCollision = player.getPosition().getY() - (tile.getPosition().getY() - tile.getGameObjectType().model.getAABB().getHeight());
 
         if (topCollision < bottomCollision && topCollision < leftCollision && topCollision < rightCollision ) {
             return new CollisionDataMap(NORTH, topCollision);

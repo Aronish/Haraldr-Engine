@@ -19,7 +19,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_CONTROL;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_O;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
@@ -33,12 +32,11 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 /**
  * Class for handling user input. Uses GLFWKeyCallback.
  */
-//TODO: Own event system to avoid weird code in invoke.
+//TODO: NEW EVENT SYSTEM WILL MAKE THIS CLASS OBSOLETE.
 public class Input extends GLFWKeyCallback {
 
     private static boolean[] keys = new boolean[65536];
-    private static boolean instancedRendering = false;
-    private static boolean limitedInstancing = true;
+    private static boolean instancedRendering = true;
     private static boolean shouldCreateMap = false;
 
     @Override
@@ -53,26 +51,21 @@ public class Input extends GLFWKeyCallback {
                 }
                 if (key == GLFW_KEY_I){
                     instancedRendering = !instancedRendering;
-                    Logger.log("Instanced Rendering: " + instancedRendering);
-                }
-                if (key == GLFW_KEY_O){
-                    limitedInstancing = !limitedInstancing;
-                    Logger.log("Limited Instancing: " + limitedInstancing);
+                    Logger.info("Instanced Rendering: " + instancedRendering);
                 }
                 if (key == GLFW_KEY_M){
                     shouldCreateMap = true;
                 }
                 if (key == GLFW_KEY_V){
                     Main.getApplication().getWindow().changeVSync();
-                    Logger.log("VSync: " + Main.getApplication().getWindow().VSyncOn());
+                    Logger.info("VSync: " + Main.getApplication().getWindow().VSyncOn());
                 }
                 keys[key] = true;
             }else if (action == GLFW_RELEASE){
                 keys[key] = false;
             }
         }else{
-            Logger.setWarningLevel();
-            Logger.log("Invalid keycode: " + key);
+            Logger.warn("Invalid keycode: " + key);
         }
     }
 
@@ -104,7 +97,7 @@ public class Input extends GLFWKeyCallback {
             player.resetGravityAcceleration();
             player.resetPosition();
             Camera.setScale(1.0f);
-            Camera.setPosition(player.getPosition().add(player.getMiddle()));
+            Camera.setPosition(player.getPosition().add(player.getGameObjectType().model.getAABB().getMiddle()));
         }
         if (keys[GLFW_KEY_C]){
             player.setHasGravity(false);
@@ -147,9 +140,5 @@ public class Input extends GLFWKeyCallback {
      */
     public static boolean usingInstancedRendering(){
         return instancedRendering;
-    }
-
-    public static boolean usingLimitedInstancing() {
-        return limitedInstancing;
     }
 }

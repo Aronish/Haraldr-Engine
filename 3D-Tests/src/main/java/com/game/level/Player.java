@@ -1,7 +1,7 @@
 package com.game.level;
 
 import com.game.Camera;
-import com.game.graphics.Models;
+import com.game.level.gameobject.EnumGameObjects;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
 import com.game.physics.EnumPlayerMovementType;
@@ -41,18 +41,23 @@ public class Player extends MovableEntity {
         this(position, 0.0f, 1.0f);
     }
 
+    /**
+     * Constructor with the initial position and scale.
+     * @param position the initial position of this Player.
+     * @param scale the initial scale of this Player.
+     */
     Player(Vector3f position, float scale){
         this(position, 0.0f, scale);
     }
 
     /**
      * Constructor with parameters for position, rotation and scale.
-     * @param position the position of this Player. Origin vector to the top left corner of the model.
-     * @param rotation the rotation around the z-axis, in degrees. CCW.
-     * @param scale the scale multiplier of this Player.
+     * @param position the initial position of this Player.
+     * @param rotation the initial rotation around the z-axis, in degrees. CCW.
+     * @param scale the initial scale multiplier of this Player.
      */
     private Player(Vector3f position, float rotation, float scale){
-        super(position, rotation, scale, true, Models.PLAYER);
+        super(position, rotation, scale, true, EnumGameObjects.PLAYER);
         gridPosition = new Vector2f();
         movementType = EnumPlayerMovementType.STAND;
         isJumping = false;
@@ -102,7 +107,6 @@ public class Player extends MovableEntity {
     }
 
     /**
-     * Gets whether this Player is jumping.
      * @return whether this Player is jumping.
      */
     public boolean isJumping(){
@@ -110,7 +114,6 @@ public class Player extends MovableEntity {
     }
 
     /**
-     * Gets whether this Player is falling.
      * @return whether this Player is falling.
      */
     public boolean isFalling(){
@@ -168,6 +171,6 @@ public class Player extends MovableEntity {
             calculateGravity(0.0f, deltaTime);
         }
         addPosition(new Vector3f(getVelocity().getX() * deltaTime, getVelocity().getY() * deltaTime));
-        Camera.setPosition(getPosition().add(getMiddle()));
+        Camera.setPosition(getPosition().add(getGameObjectType().model.getAABB().getMiddle()));
     }
 }

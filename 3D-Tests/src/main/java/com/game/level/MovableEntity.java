@@ -1,6 +1,6 @@
 package com.game.level;
 
-import com.game.graphics.TexturedModel;
+import com.game.level.gameobject.EnumGameObjects;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
 
@@ -22,10 +22,9 @@ public abstract class MovableEntity extends Entity {
      * @param rotation the initial rotation of this MovableEntity.
      * @param scale the initial scale of this MovableEntity.
      * @param hasGravity whether it is affected by gravity.
-     * @param texturedModels TexturedModel's that this Entity should contain. Variable amount.
      */
-    MovableEntity(Vector3f position, float rotation, float scale, boolean hasGravity, TexturedModel ... texturedModels) {
-        super(position, rotation, scale, texturedModels);
+    MovableEntity(Vector3f position, float rotation, float scale, boolean hasGravity, EnumGameObjects gameObjectType) {
+        super(position, rotation, scale, gameObjectType);
         this.hasGravity = hasGravity;
         velocity = new Vector2f();
         gravityAcceleration = 0.0f;
@@ -33,13 +32,13 @@ public abstract class MovableEntity extends Entity {
 
     /**
      * Motion calculation should be done by individual child classes as it may differ a lot.
-     * @param deltaTime the delta time gotten from the timing circuit in Main.
+     * @param deltaTime the delta time gotten from the timing circuit in Application.
      */
     public abstract void calculateMotion(float deltaTime);
 
     /**
-     * Calculates the motion and updates the main matrix.
-     * @param deltaTime the delta time gotten from the timing circuit in Main.
+     * Calculates the motion.
+     * @param deltaTime the delta time gotten from the timing circuit in Application.
      */
     public void update(float deltaTime) {
         resetVelocity();
@@ -47,9 +46,9 @@ public abstract class MovableEntity extends Entity {
     }
 
     /**
-     * Calculates gravity for this MovableEntity. Subject to change, refactoring and movement.
+     * Calculates gravity for this MovableEntity.
      * @param compensation a value with which the gravity is compensated. E.g. gravity becomes stronger to account for the jumping velocity.
-     * @param deltaTime the delta time gotten from the timing circuit in Main.
+     * @param deltaTime the delta time gotten from the timing circuit in Application.
      */
     void calculateGravity(float compensation, float deltaTime){
         if (hasGravity){
@@ -62,6 +61,9 @@ public abstract class MovableEntity extends Entity {
         }
     }
 
+    /**
+     * @param hasGravity whether this MovableEntity should be affected by gravity.
+     */
     public void setHasGravity(boolean hasGravity){
         this.hasGravity = hasGravity;
     }
@@ -81,7 +83,6 @@ public abstract class MovableEntity extends Entity {
     }
 
     /**
-     * Gets the X and Y velocities.
      * @return a Vector2d containing the X and Y velocities.
      */
     Vector2f getVelocity() {
@@ -89,7 +90,6 @@ public abstract class MovableEntity extends Entity {
     }
 
     /**
-     * Gets the gravity acceleration.
      * @return the gravity acceleration
      */
     float getGravityAcceleration(){

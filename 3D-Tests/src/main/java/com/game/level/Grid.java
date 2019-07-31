@@ -1,9 +1,7 @@
 package com.game.level;
 
-import com.game.debug.Logger;
-import com.game.level.tiles.EnumTiles;
-import com.game.level.tiles.Tile;
-import com.game.math.Matrix4f;
+import com.game.level.gameobject.EnumGameObjects;
+import com.game.level.gameobject.tile.Tile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,15 +13,10 @@ import static com.game.Main.fastFloor;
  */
 public class Grid {
 
-    public static final int GRID_SIZE = 32; //Apparently, this cannot be larger due to GLSL limitations. TO BE FIXED! OR NOT!
-    public static final int CONT_MAT4_ARRAY_LENGTH = (int) Math.pow(GRID_SIZE, 2) * 16;
-    public static final int CONT_VEC2_ARRAY_LENGTH = (int) Math.pow(GRID_SIZE, 2) * 8;
+    public static final int GRID_SIZE = 20; //20x20 seems like a good size.
 
     private int width, height;
 
-    /**
-     * List of lists on the x axis which contain lists of tiles.
-     */
     private ArrayList<ArrayList<GridCell>> grid;
 
     /**
@@ -36,14 +29,17 @@ public class Grid {
     }
 
     /**
-     * Populates the grid with the supplied tiles.
-     * @param entities the tiles to be put in the grid.
+     * Populates the grid with the supplied tiles. Caches the matrices in the grid cells.
+     * @param tiles the tiles to be put in the grid.
      */
-    void populateGrid(ArrayList<Entity> entities){
-        entities.forEach(entity -> addEntity(fastFloor(entity.getPosition().getX() / GRID_SIZE), fastFloor(entity.getPosition().getY() / GRID_SIZE), entity));
+    void populateGrid(ArrayList<Tile> tiles){
+        tiles.forEach(entity -> addEntity(fastFloor(entity.getPosition().getX() / GRID_SIZE), fastFloor(entity.getPosition().getY() / GRID_SIZE), entity));
         cacheMatrices();
     }
 
+    /**
+     * Creates a store of matrices in the grid cells to avoid dynamic queries based on game object type.
+     */
     private void cacheMatrices(){
         for (ArrayList<GridCell> yAxis : grid){
             for (GridCell gridCell : yAxis){
@@ -53,11 +49,11 @@ public class Grid {
     }
 
     /**
-     * Adds an entity at the grid coordinate (x, y). Has bounds checking.
+     * Adds a tile at the grid coordinate (x, y). Has bounds checking.
      * If x is larger than the current width, another x list is added with the current height.
      * If y is larger than the current height, heights of all x lists are increased by one.
      */
-    private void addEntity(int x, int y, Entity entity){
+    private void addEntity(int x, int y, Tile tile){
         boolean succeeded = false;
         while (!succeeded){
             if (width <= x){
@@ -74,7 +70,7 @@ public class Grid {
                 ++height;
                 continue;
             }
-            grid.get(x).get(y).addEntity(entity);
+            grid.get(x).get(y).addEntity(tile);
             succeeded = true;
         }
     }
@@ -88,16 +84,21 @@ public class Grid {
         grid.clear();
     }
 
+    /**
+     * @return the real width of this Grid.
+     */
     public int getWidth(){
         return width;
     }
 
+    /**
+     * @return the real height of this Grid.
+     */
     public int getHeight(){
         return height;
     }
 
     /**
-     * Gets the width of the grid in indices.
      * @return the width of the grid in indices.
      */
     int getWidthI(){
@@ -105,7 +106,6 @@ public class Grid {
     }
 
     /**
-     * Gets the height of the grid in indices.
      * @return the height of the grid in indices.
      */
     int getHeightI(){
@@ -123,13 +123,13 @@ public class Grid {
     }
 
     /**
-     * A cell in the Grid that contains Entities. Necessary for instanced rendering as matrices need to be collected according to the type of Entities.
+     * A cell in the Grid that contains Tiles. Necessary for instanced rendering as matrices need to be collected.
      * At the moment it can only contain Tiles.
      */
     public static class GridCell {
 
         private ArrayList<Tile> tiles;
-        private HashMap<EnumTiles, ArrayList<Float>> matrices;
+        private HashMap<EnumGameObjects, ArrayList<Float>> matrices;
 
         private ArrayList<Float> intermeditateArray;
 
@@ -141,29 +141,20 @@ public class Grid {
 
         /**
          * Adds a entity to this GridCell.
-         * @param entity the Entity to add.
+         * @param tile the Tile to add.
          */
-        private void addEntity(Entity entity){
-            if (entity instanceof Tile){
-                tiles.add((Tile) entity);
-            }else{
-                Logger.setErrorLevel();
-                Logger.log("Grid doesn't support any other Entities than Tiles!");
-            }
+        private void addEntity(Tile tile){
+            tiles.add(tile);
         }
 
         /**
-         * Updates the matrices for all the Entities in this GridCell.
+         * Creates a HashMap that, for every type of game object, stores all matrices of that type with the type as a key.
          */
-        void updateMatrices(){
-            tiles.forEach(Tile::updateMatrix);
-        }
-
         void cacheMatrices(){
-            for (EnumTiles tileType : EnumTiles.values()){
+            for (EnumGameObjects tileType : EnumGameObjects.values()){
                 intermeditateArray.clear();
                 for (Tile tile : tiles){
-                    if (tile.getTileType() == tileType){
+                    if (tile.getGameObjectType() == tileType){
                         for (float element : tile.getMatrixArray()){
                             intermeditateArray.add(element);
                         }
@@ -184,7 +175,7 @@ public class Grid {
          * @param tileType the type of Tiles whose matrices will be collected.
          * @return all the matrices of all the Tiles of the specified Type.
          */
-        public ArrayList<Float> getMatrices(EnumTiles tileType){
+        public ArrayList<Float> getMatrices(EnumGameObjects tileType){
             return matrices.get(tileType);
         }
     }

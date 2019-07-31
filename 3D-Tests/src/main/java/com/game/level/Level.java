@@ -4,13 +4,14 @@ import com.game.Camera;
 import com.game.Input;
 import com.game.graphics.InstancedRenderer;
 import com.game.graphics.Renderer;
+import com.game.level.gameobject.tile.Tile;
 import com.game.math.Vector2f;
 import com.game.physics.CollisionDetector;
 
 import java.util.ArrayList;
 
 /**
- * Main Level class to house everything contained in one level.
+ * Main Level class to house everything contained in one level. //TODO Move to Layer system to make the new event system possible.
  */
 public class Level {
 
@@ -18,7 +19,7 @@ public class Level {
     private Player player;
 
     private ArrayList<Grid.GridCell> visibleGridCells;
-    private ArrayList<Entity> frustumCulledObjects;
+    private ArrayList<Tile> frustumCulledObjects;
 
     /**
      * Constructs a Level.
@@ -33,14 +34,13 @@ public class Level {
     }
 
     /**
-     * Process input, update physics/movement, do collisions, update matrices last.
+     * Process input, update physics/movement, do collisions, update necessary matrices last.
      */
     public void updateLevel(float deltaTime){
         Input.processInput(deltaTime, player, world);
-        player.update(deltaTime); //Update Player no matter what.
+        player.update(deltaTime);
         checkVisibleGridCells();
         doCollisions();
-        //updateMatrices();
         player.updateMatrix();
     }
 
@@ -78,8 +78,8 @@ public class Level {
                 if (Input.usingInstancedRendering()){
                     visibleGridCells.add(grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y)); //TODO: Int cast not good for negative values.
                 }else{
-                    for (Entity entity : grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y).getTiles()){
-                        Camera.isInView(frustumCulledObjects, entity);
+                    for (Tile tile : grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y).getTiles()){
+                        Camera.isInView(frustumCulledObjects, tile);
                     }
                 }
             }
@@ -90,27 +90,14 @@ public class Level {
     }
 
     /**
-     * Performs orthographic frustum culling on the visible GridCells. Only used with instanced rendering.
+     * Performs orthographic frustum culling on the visible GridCells. Optimization for "legacy rendering", but is, for now, used to determine
+     * the object to check collisions against.
      */
     private void frustumCull(){
         for (Grid.GridCell gridCell : visibleGridCells){
-            for (Entity entity : gridCell.getTiles()){
-                Camera.isInView(frustumCulledObjects, entity);
+            for (Tile tile : gridCell.getTiles()){
+                Camera.isInView(frustumCulledObjects, tile);
             }
-        }
-    }
-
-    /**
-     * Updates all the matrices.
-     */
-    private void updateMatrices(){
-        player.updateMatrix();
-        if (Input.usingInstancedRendering()){
-            for (Grid.GridCell gridCell : visibleGridCells){
-                gridCell.updateMatrices();
-            }
-        }else{
-            frustumCulledObjects.forEach(Entity::updateMatrix);
         }
     }
 
@@ -118,18 +105,10 @@ public class Level {
      * Does collision detection and resolution for the objects requiring collisions.
      */
     private void doCollisions() {
-        for (Entity entity : frustumCulledObjects){
-            if (!(entity instanceof IBackground)){
-                CollisionDetector.doCollisions(entity, entity.getTexturedModels().get(0), player);
+        for (Tile tile : frustumCulledObjects){
+            if (!(tile instanceof IBackground)){
+                CollisionDetector.doCollisions(tile, player);
             }
         }
-    }
-
-    /**
-     * Deletes all shader programs, buffer objects and textures.
-     */
-    public void cleanUp(){
-        world.cleanUp();
-        player.cleanUp();
     }
 }

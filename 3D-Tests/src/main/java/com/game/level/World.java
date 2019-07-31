@@ -1,9 +1,9 @@
 package com.game.level;
 
-import com.game.level.tiles.EnumTiles;
-import com.game.level.tiles.Tile;
-import com.game.level.tiles.TileFactory;
-import com.game.level.tiles.TileTree;
+import com.game.level.gameobject.EnumGameObjects;
+import com.game.level.gameobject.tile.Tile;
+import com.game.level.gameobject.tile.TileFactory;
+import com.game.level.gameobject.tile.TileTree;
 import com.game.math.SimplexNoise;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
@@ -12,17 +12,17 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * Main world object, on which everything should be located to be inside the world.
- * For future development style, this class should manage everything to do with the world in a com.game.level.
+ * Generates and keeps track of a world.
+ * For future development style, this class should manage everything to do with the world in a level.
  */
 public class World {
 
     private static final TileFactory TILE_FACTORY = new TileFactory();
     private static final Random RANDOM = new Random();
-    private static final int WORLD_SIZE = 4000;
+    private static final int WORLD_WIDTH = 4000;
 
     private static double noiseScale = 0.042d;
-    private ArrayList<Entity> tiles;
+    private ArrayList<Tile> tiles;
     private Grid grid;
 
     /**
@@ -39,7 +39,7 @@ public class World {
      */
     private void generateWorld(){
         double seed = RANDOM.nextDouble() * 100000.0d;
-        for (int i = 0; i < WORLD_SIZE; ++i){
+        for (int i = 0; i < WORLD_WIDTH; ++i){
             int y = (int) ((SimplexNoise.noise(i * noiseScale, 0.0d, seed) + 1.0d) / 2.0d * 60.0d);
             fillColumn(new Vector3f(i, y + 200));
         }
@@ -54,7 +54,7 @@ public class World {
         if (position.getY() < 58.0f && RANDOM.nextBoolean()){
             tiles.add(new TileTree(position.add(new Vector3f(0.0f, 3.0f))));
         }
-        Tile topTile = TILE_FACTORY.createTile(position, position.getY() > 55.0f ? EnumTiles.GRASS_SNOW : EnumTiles.GRASS);
+        Tile topTile = TILE_FACTORY.createTile(position, position.getY() > 55.0f ? EnumGameObjects.GRASS_SNOW : EnumGameObjects.GRASS);
         if (RANDOM.nextBoolean()){
             topTile.setScale(new Vector2f(-1.0f, 1.0f));
         }
@@ -62,7 +62,7 @@ public class World {
         {
             int counter = 0;
             for (float i = position.subtractY(1.0f).getY(); i >= 0.0f; --i, ++counter) {
-                tiles.add(TILE_FACTORY.createTile(new Vector3f(position.getX(), i), i < 40.0f ? (counter > 18 ? EnumTiles.STONE : EnumTiles.DIRT) : (counter > 20 ? EnumTiles.STONE : EnumTiles.DIRT)));
+                tiles.add(TILE_FACTORY.createTile(new Vector3f(position.getX(), i), i < 40.0f ? (counter > 18 ? EnumGameObjects.STONE : EnumGameObjects.DIRT) : (counter > 20 ? EnumGameObjects.STONE : EnumGameObjects.DIRT)));
             }
         }
     }
@@ -92,17 +92,9 @@ public class World {
     }
 
     /**
-     * Gets the grid of chunks.
-     * @return the grid.
+     * @return the grid of chunks.
      */
     public Grid getGrid(){
         return grid;
-    }
-
-    /**
-     * Cleans up the all the Tiles.
-     */
-    void cleanUp() {
-        tiles.forEach(Entity::cleanUp);
     }
 }

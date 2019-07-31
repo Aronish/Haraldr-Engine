@@ -1,7 +1,6 @@
 package com.game;
 
-import com.game.graphics.TexturedModel;
-import com.game.level.Entity;
+import com.game.level.gameobject.tile.Tile;
 import com.game.math.Matrix4f;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
@@ -43,9 +42,9 @@ public class Camera{
     }
 
     /**
-     * Constructor with parameters for position and rotation. Can probably be private, since it's always set to the position of the Player.
-     * @param pos the position of the camera, an origin vector.
-     * @param rot the rotation of the camera around the z-axis, in degrees.
+     * Constructor with parameters for position and rotation.
+     * @param pos the initial position of the camera, an origin vector.
+     * @param rot the initial rotation of the camera around the z-axis, in degrees.
      */
     private Camera(Vector3f pos, float rot, float scal){
         position = pos;
@@ -60,11 +59,11 @@ public class Camera{
      * Calculates a new view matrix (an inverted transformation matrix) from the current attribute values.
      */
     private static void calculateViewMatrix(){
-        viewMatrix = new Matrix4f().transform(position, rotation, scaleVector, true);
+        viewMatrix = Matrix4f.transform(position, rotation, scaleVector, true);
     }
 
     /**
-     * Calculates the scale/zoom based on the delta time from Main#update. Also takes scale into account to make the speed constant.
+     * Calculates the scale/zoom based on the delta time from Application#update. Also takes scale into account to make the speed constant.
      * Constants are defined in the top of this class.
      * @param shouldIncrease whether the scale should increase or not. If true, it increases, meaning zooming in.
      * @param deltaTime the delta time used to make the scaling uniform.
@@ -86,13 +85,16 @@ public class Camera{
         calculateViewMatrix();
     }
 
+    /**
+     * Calculates how many GridCells/chunks should be visible.
+     */
     private static void calculateChunkRanges(){
         chunkXRange = fastFloor(1.0f / Camera.scale);
         chunkYRange = fastFloor(1.0f / Camera.scale);
     }
 
     /**
-     * Sets the position of the camera.
+     * Sets the position of this Camera.
      * @param pos the new position vector.
      */
     public static void setPosition(Vector3f pos){
@@ -109,6 +111,10 @@ public class Camera{
         calculateViewMatrix();
     }
 
+    /**
+     * Sets the scale of this Camera.
+     * @param scal the new scale.
+     */
     public static void setScale(float scal){
         scale = scal;
         scaleVector.setBoth(scale);
@@ -118,20 +124,17 @@ public class Camera{
     /**
      * Checks if the provided entities are in the view of the Camera. If they are, they are added to the provided list.
      * @param visibleObjects a list, which keeps track of all the visible entities.
-     * @param entity the entity to check visibility against.
+     * @param tile the tile to check visibility against.
      */
-    public static void isInView(ArrayList<Entity> visibleObjects, Entity entity){
+    public static void isInView(ArrayList<Tile> visibleObjects, Tile tile){
         float scaleAdjustedX = position.getX() / scale;
         float scaleAdjustedY = position.getY() / scale;
         float xBoundary = 16.0f / scale;
         float yBoundary = 9.0f / scale;
-        for (TexturedModel texturedModel : entity.getTexturedModels()){
-            boolean collisionX = entity.getPosition().getX() + texturedModel.getRelativePosition().getX() + texturedModel.getAABB().getWidth() > scaleAdjustedX - xBoundary && entity.getPosition().getX() < scaleAdjustedX + xBoundary;
-            boolean collisionY = entity.getPosition().getY() + texturedModel.getRelativePosition().getY() - texturedModel.getAABB().getHeight() < scaleAdjustedY + yBoundary && entity.getPosition().getY() > scaleAdjustedY - yBoundary;
-            if (collisionX && collisionY){
-                visibleObjects.add(entity);
-                break;
-            }
+        boolean collisionX = tile.getPosition().getX() + tile.getGameObjectType().model.getAABB().getWidth() > scaleAdjustedX - xBoundary && tile.getPosition().getX() < scaleAdjustedX + xBoundary;
+        boolean collisionY = tile.getPosition().getY() - tile.getGameObjectType().model.getAABB().getHeight() < scaleAdjustedY + yBoundary && tile.getPosition().getY() > scaleAdjustedY - yBoundary;
+        if (collisionX && collisionY){
+            visibleObjects.add(tile);
         }
     }
 }

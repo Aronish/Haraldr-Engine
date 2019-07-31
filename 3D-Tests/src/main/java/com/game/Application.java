@@ -1,6 +1,7 @@
 package com.game;
 
 import com.game.graphics.InstancedRenderer;
+import com.game.graphics.Models;
 import com.game.graphics.Renderer;
 import com.game.level.Level;
 import org.lwjgl.opengl.GL;
@@ -92,7 +93,7 @@ class Application {
     }
 
     void cleanUp(){
-        level.cleanUp();
+        Models.cleanUp();
         Renderer.deleteShaders();
         InstancedRenderer.deleteShaders();
         glfwTerminate();

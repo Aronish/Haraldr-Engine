@@ -5,60 +5,72 @@ package com.game.debug;
  */
 public class Logger {
 
-    private static LogLevels logLevel;
+    private static LogLevels logLevel = LogLevels.INFO;
 
-    static {
+    /**
+     * Sets the log level to Info.
+     */
+    private static void setInfoLevel(){
         logLevel = LogLevels.INFO;
     }
 
     /**
-     * Sets the log com.game.level to info.
+     * Sets the log level to Warning.
      */
-    public static void setInfoLevel(){
-        logLevel = LogLevels.INFO;
-    }
-
-    /**
-     * Sets the log com.game.level to warning.
-     */
-    public static void setWarningLevel(){
+    private static void setWarningLevel(){
         logLevel = LogLevels.WARNING;
     }
 
     /**
-     * Sets the log com.game.level to error.
+     * Sets the log level to Error.
      */
-    public static void setErrorLevel(){
+    private static void setErrorLevel(){
         logLevel = LogLevels.ERROR;
     }
 
     /**
-     * Logs a message with the currently set log com.game.level.
+     * Logs a message as info.
      * @param message the message to log. Accepts any type.
      * @param <T> the type of the message.
      */
-    public static <T> void log(T message){
-        System.out.print(logLevel.toString() + ": ");
-        System.out.println(message);
+    public static <T> void info(T message){
         setInfoLevel();
+        System.out.print(logLevel.label + ": " + message.toString());
+    }
+
+    /**
+     * Logs a message as a warning.
+     * @param message the message to log. Accepts any type.
+     * @param <T> the type of the message.
+     */
+    public static <T> void warn(T message){
+        setWarningLevel();
+        System.out.print(logLevel.label + ": " + message.toString());
+    }
+
+    /**
+     * Logs an error message.
+     * @param message the message to log. Accepts any type.
+     * @param <T> the type of the message.
+     */
+    public static <T> void error(T message){
+        setErrorLevel();
+        System.out.print(logLevel.label + ": " + message.toString());
     }
 
     /**
      * Contains the available log levels.
      */
     private enum LogLevels {
+
         ERROR("[ERROR]"),
         WARNING("[WARNING]"),
         INFO("[INFO]");
 
-        private final String string;
+        public final String label;
 
-        LogLevels(String string){
-            this.string = string;
-        }
-
-        public String toString(){
-            return string;
+        LogLevels(String label){
+            this.label = label;
         }
     }
 }

@@ -4,6 +4,8 @@ import com.game.debug.Logger;
 import com.game.level.gameobject.GameObject;
 import com.game.math.Vector3f;
 
+import static com.game.Application.MAIN_LOGGER;
+
 public class TileFactory {
 
     /**
@@ -24,7 +26,7 @@ public class TileFactory {
             case GRASS_SNOW:
                 return new TileGrassSnow(position);
             default:
-                Logger.error("Invalid TileType");
+                MAIN_LOGGER.error("Invalid TileType");
                 return null;
         }
     }

@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import static com.game.Application.MAIN_LOGGER;
 import static com.game.Main.fastFloor;
 
 class WorldMapper {
@@ -68,6 +69,6 @@ class WorldMapper {
         }catch (IOException e){
             e.printStackTrace();
         }
-        Logger.info("Map Complete!");
+        MAIN_LOGGER.info("Map Complete!");
     }
 }

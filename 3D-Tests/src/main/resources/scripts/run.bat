@@ -1,0 +1,1 @@
+start cmd.exe /c java -jar "c:/dev/openglgame/3d-tests/out/artifacts/3d_tests_jar/3d-tests.jar"

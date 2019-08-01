@@ -7,6 +7,7 @@ import com.game.level.World;
 import com.game.physics.PlayerMovementType;
 import org.lwjgl.glfw.GLFWKeyCallback;
 
+import static com.game.Application.MAIN_LOGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_B;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
@@ -52,21 +53,21 @@ public class Input extends GLFWKeyCallback {
                 }
                 if (key == GLFW_KEY_I){
                     instancedRendering = !instancedRendering;
-                    Logger.info("Instanced Rendering: " + instancedRendering);
+                    MAIN_LOGGER.info("Instanced Rendering: " + instancedRendering);
                 }
                 if (key == GLFW_KEY_M){
                     shouldCreateMap = true;
                 }
                 if (key == GLFW_KEY_B){
                     Main.getApplication().getWindow().setVSync(!Main.getApplication().getWindow().VSyncOn());
-                    Logger.info("VSync: " + Main.getApplication().getWindow().VSyncOn());
+                    MAIN_LOGGER.info("VSync: " + Main.getApplication().getWindow().VSyncOn());
                 }
                 keys[key] = true;
             }else if (action == GLFW_RELEASE){
                 keys[key] = false;
             }
         }else{
-            Logger.warn("Invalid keycode: " + key);
+            MAIN_LOGGER.warn("Invalid keycode: " + key);
         }
     }
 

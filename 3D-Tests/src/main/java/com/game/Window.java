@@ -4,6 +4,11 @@ import com.game.debug.Logger;
 import com.game.event.Event;
 import com.game.event.IEventCallback;
 import com.game.event.KeyPressedEvent;
+import com.game.event.MouseMovedEvent;
+import com.game.event.MousePressedEvent;
+import com.game.event.MouseReleasedEvent;
+import com.game.event.MouseScrolledEvent;
+import com.game.event.WindowResizedEvent;
 import org.lwjgl.glfw.GLFWVidMode;
 
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
@@ -14,6 +19,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
 import static org.lwjgl.glfw.GLFW.GLFW_MAXIMIZED;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
+import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
@@ -22,8 +29,11 @@ import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowMonitor;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowRefreshCallback;
@@ -92,6 +102,26 @@ class Window {
         setVSync(VSync);
         ///// CALLBACKS ///////////////////////////////
         glfwSetKeyCallback(window, new Input());
+
+        glfwSetWindowSizeCallback(window, (window, w, h) -> {
+            eventCallback.onEvent(new WindowResizedEvent(w, h));
+        });
+
+        glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
+            if (action == GLFW_PRESS){
+                eventCallback.onEvent(new MousePressedEvent(button));
+            }else if (action == GLFW_RELEASE){
+                eventCallback.onEvent(new MouseReleasedEvent(button));
+            }
+        });
+
+        glfwSetScrollCallback(window, (window, xOffset, yOffset) -> {
+            eventCallback.onEvent(new MouseScrolledEvent(xOffset, yOffset));
+        });
+
+        glfwSetCursorPosCallback(window, (window, xPos, yPos) -> {
+            eventCallback.onEvent(new MouseMovedEvent(xPos, yPos));
+        });
 
     }
 

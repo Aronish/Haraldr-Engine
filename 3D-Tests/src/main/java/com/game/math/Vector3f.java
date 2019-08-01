@@ -2,6 +2,8 @@ package com.game.math;
 
 import com.game.debug.Logger;
 
+import static com.game.Application.MAIN_LOGGER;
+
 /**
  * A simple class to represent a 3D vector of floats.
  */
@@ -120,6 +122,6 @@ public class Vector3f {
      * Prints this vector for debugging purposes.
      */
     public void printVector(){
-        Logger.info("X: " + x + " Y: " + y + " Z: " + z);
+        MAIN_LOGGER.info("X: " + x + " Y: " + y + " Z: " + z);
     }
 }

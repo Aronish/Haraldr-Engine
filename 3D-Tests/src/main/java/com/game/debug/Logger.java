@@ -5,27 +5,33 @@ package com.game.debug;
  */
 public class Logger {
 
-    private static LogLevels logLevel = LogLevels.INFO;
+    private LogLevel logLevel;
+    private String prefix;
+
+    public Logger(String prefix){
+        this.logLevel = LogLevel.INFO;
+        this.prefix = prefix;
+    }
 
     /**
      * Sets the log level to Info.
      */
-    private static void setInfoLevel(){
-        logLevel = LogLevels.INFO;
+    private void setInfoLevel(){
+        logLevel = LogLevel.INFO;
     }
 
     /**
      * Sets the log level to Warning.
      */
-    private static void setWarningLevel(){
-        logLevel = LogLevels.WARNING;
+    private void setWarningLevel(){
+        logLevel = LogLevel.WARNING;
     }
 
     /**
      * Sets the log level to Error.
      */
-    private static void setErrorLevel(){
-        logLevel = LogLevels.ERROR;
+    private void setErrorLevel(){
+        logLevel = LogLevel.ERROR;
     }
 
     /**
@@ -33,9 +39,9 @@ public class Logger {
      * @param message the message to log. Accepts any type.
      * @param <T> the type of the message.
      */
-    public static <T> void info(T message){
+    public <T> void info(T message){
         setInfoLevel();
-        System.out.println(logLevel.label + ": " + message.toString());
+        log(message);
     }
 
     /**
@@ -43,9 +49,9 @@ public class Logger {
      * @param message the message to log. Accepts any type.
      * @param <T> the type of the message.
      */
-    public static <T> void warn(T message){
+    public <T> void warn(T message){
         setWarningLevel();
-        System.out.println(logLevel.label + ": " + message.toString());
+        log(message);
     }
 
     /**
@@ -53,15 +59,19 @@ public class Logger {
      * @param message the message to log. Accepts any type.
      * @param <T> the type of the message.
      */
-    public static <T> void error(T message){
+    public <T> void error(T message){
         setErrorLevel();
-        System.out.println(logLevel.label + ": " + message.toString());
+        log(message);
+    }
+
+    private <T> void log(T message){
+        System.out.println(String.format("{%s} [%s]: %s", prefix, logLevel, message));
     }
 
     /**
      * Contains the available log levels.
      */
-    private enum LogLevels {
+    private enum LogLevel {
 
         ERROR("[ERROR]"),
         WARNING("[WARNING]"),
@@ -69,7 +79,7 @@ public class Logger {
 
         public final String label;
 
-        LogLevels(String label){
+        LogLevel(String label){
             this.label = label;
         }
     }

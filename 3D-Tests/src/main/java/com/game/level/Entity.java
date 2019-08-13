@@ -1,6 +1,6 @@
 package com.game.level;
 
-import com.game.level.gameobject.EnumGameObjects;
+import com.game.level.gameobject.GameObject;
 import com.game.math.Matrix4f;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
@@ -10,7 +10,7 @@ import com.game.math.Vector3f;
  */
 public abstract class Entity {
 
-    private EnumGameObjects gameObjectType;
+    private GameObject gameObjectType;
 
     private Vector3f position;
     private float rotation;
@@ -24,7 +24,7 @@ public abstract class Entity {
      * @param scale the initial scale of this Entity.
      * @param gameObjectType the type of game object that this Entity will be.
      */
-    public Entity(Vector3f position, float rotation, float scale, EnumGameObjects gameObjectType){
+    public Entity(Vector3f position, float rotation, float scale, GameObject gameObjectType){
         this.position = position;
         this.rotation = rotation;
         this.scale = new Vector2f(scale);
@@ -95,7 +95,7 @@ public abstract class Entity {
     /**
      * @return the game object type.
      */
-    public EnumGameObjects getGameObjectType(){
+    public GameObject getGameObjectType(){
         return gameObjectType;
     }
 }

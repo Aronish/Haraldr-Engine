@@ -1,6 +1,6 @@
 package com.game.graphics;
 
-import com.game.level.gameobject.EnumGameObjects;
+import com.game.level.gameobject.GameObject;
 import com.game.math.Vector2f;
 
 import java.util.HashMap;
@@ -78,7 +78,7 @@ public class Models {
      */
     public static void cleanUp(){
         SPRITE_SHEET.delete();
-        for (EnumGameObjects gameObjectType : EnumGameObjects.values()){
+        for (GameObject gameObjectType : GameObject.values()){
             gameObjectType.model.cleanUp();
         }
     }

@@ -1,0 +1,9 @@
+package com.game.event;
+
+public enum EventType {
+
+    KEY_PRESSED, KEY_RELEASED, KEY_TYPED,
+    MOUSE_PRESSED, MOUSE_RELEASED, MOUSE_SCROLLED, MOUSE_MOVED,
+    WINDOW_RESIZED, WINDOW_CLOSED
+
+}

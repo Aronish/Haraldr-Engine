@@ -5,11 +5,11 @@ import com.game.level.Player;
 import com.game.level.gameobject.tile.Tile;
 import com.game.math.Vector3f;
 
-import static com.game.physics.EnumDirection.EAST;
-import static com.game.physics.EnumDirection.INVALIDDIR;
-import static com.game.physics.EnumDirection.NORTH;
-import static com.game.physics.EnumDirection.SOUTH;
-import static com.game.physics.EnumDirection.WEST;
+import static com.game.physics.Direction.EAST;
+import static com.game.physics.Direction.INVALIDDIR;
+import static com.game.physics.Direction.NORTH;
+import static com.game.physics.Direction.SOUTH;
+import static com.game.physics.Direction.WEST;
 
 /**
  * Class that handles collision detection.

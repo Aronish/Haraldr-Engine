@@ -1,6 +1,8 @@
 package com.game.math;
 
-import com.game.debug.Logger;
+import com.game.Application;
+
+import static com.game.Application.MAIN_LOGGER;
 
 /**
  * A simple class to represent a 2D vector of floats.
@@ -152,6 +154,6 @@ public class Vector2f {
      * Prints this vector for debugging purposes.
      */
     public void printVector(){
-        Logger.info("X: " + x + " Y: " + y);
+        MAIN_LOGGER.info("X: " + x + " Y: " + y);
     }
 }

@@ -1,6 +1,6 @@
 package com.game.level;
 
-import com.game.level.gameobject.EnumGameObjects;
+import com.game.level.gameobject.GameObject;
 import com.game.level.gameobject.tile.Tile;
 import com.game.level.gameobject.tile.TileFactory;
 import com.game.level.gameobject.tile.TileTree;
@@ -54,7 +54,7 @@ public class World {
         if (position.getY() < 58.0f && RANDOM.nextBoolean()){
             tiles.add(new TileTree(position.add(new Vector3f(0.0f, 3.0f))));
         }
-        Tile topTile = TILE_FACTORY.createTile(position, position.getY() > 55.0f ? EnumGameObjects.GRASS_SNOW : EnumGameObjects.GRASS);
+        Tile topTile = TILE_FACTORY.createTile(position, position.getY() > 55.0f ? GameObject.GRASS_SNOW : GameObject.GRASS);
         if (RANDOM.nextBoolean()){
             topTile.setScale(new Vector2f(-1.0f, 1.0f));
         }
@@ -62,7 +62,7 @@ public class World {
         {
             int counter = 0;
             for (float i = position.subtractY(1.0f).getY(); i >= 0.0f; --i, ++counter) {
-                tiles.add(TILE_FACTORY.createTile(new Vector3f(position.getX(), i), i < 40.0f ? (counter > 18 ? EnumGameObjects.STONE : EnumGameObjects.DIRT) : (counter > 20 ? EnumGameObjects.STONE : EnumGameObjects.DIRT)));
+                tiles.add(TILE_FACTORY.createTile(new Vector3f(position.getX(), i), i < 40.0f ? (counter > 18 ? GameObject.STONE : GameObject.DIRT) : (counter > 20 ? GameObject.STONE : GameObject.DIRT)));
             }
         }
     }

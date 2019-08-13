@@ -1,6 +1,6 @@
 package com.game.level;
 
-import com.game.level.gameobject.EnumGameObjects;
+import com.game.level.gameobject.GameObject;
 import com.game.level.gameobject.tile.Tile;
 
 import java.util.ArrayList;
@@ -129,11 +129,11 @@ public class Grid {
     public static class GridCell {
 
         private ArrayList<Tile> tiles;
-        private HashMap<EnumGameObjects, ArrayList<Float>> matrices;
+        private HashMap<GameObject, ArrayList<Float>> matrices;
 
         private ArrayList<Float> intermeditateArray;
 
-        GridCell(){
+        private GridCell(){
             tiles = new ArrayList<>();
             matrices = new HashMap<>();
             intermeditateArray = new ArrayList<>();
@@ -150,8 +150,8 @@ public class Grid {
         /**
          * Creates a HashMap that, for every type of game object, stores all matrices of that type with the type as a key.
          */
-        void cacheMatrices(){
-            for (EnumGameObjects tileType : EnumGameObjects.values()){
+        private void cacheMatrices(){
+            for (GameObject tileType : GameObject.values()){
                 intermeditateArray.clear();
                 for (Tile tile : tiles){
                     if (tile.getGameObjectType() == tileType){
@@ -175,7 +175,7 @@ public class Grid {
          * @param tileType the type of Tiles whose matrices will be collected.
          * @return all the matrices of all the Tiles of the specified Type.
          */
-        public ArrayList<Float> getMatrices(EnumGameObjects tileType){
+        public ArrayList<Float> getMatrices(GameObject tileType){
             return matrices.get(tileType);
         }
     }

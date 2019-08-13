@@ -1,10 +1,10 @@
 package com.game.level;
 
 import com.game.Camera;
-import com.game.level.gameobject.EnumGameObjects;
+import com.game.level.gameobject.GameObject;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
-import com.game.physics.EnumPlayerMovementType;
+import com.game.physics.PlayerMovementType;
 
 import static com.game.Main.fastFloor;
 import static com.game.level.Grid.GRID_SIZE;
@@ -20,7 +20,7 @@ public class Player extends MovableEntity {
     private static final float BOOST_MULTIPLIER = 10.0f;
 
     private Vector2f gridPosition;
-    private EnumPlayerMovementType movementType;
+    private PlayerMovementType movementType;
     private boolean isJumping;
     private boolean isRunning;
     private boolean isFalling;
@@ -57,9 +57,9 @@ public class Player extends MovableEntity {
      * @param scale the initial scale multiplier of this Player.
      */
     private Player(Vector3f position, float rotation, float scale){
-        super(position, rotation, scale, true, EnumGameObjects.PLAYER);
+        super(position, rotation, scale, true, GameObject.PLAYER);
         gridPosition = new Vector2f();
-        movementType = EnumPlayerMovementType.STAND;
+        movementType = PlayerMovementType.STAND;
         isJumping = false;
         isRunning = false;
         isFalling = false;
@@ -70,7 +70,7 @@ public class Player extends MovableEntity {
      * Sets the movement type.
      * @param movementType one of the available movement types for the Player.
      */
-    public void setMovementType(EnumPlayerMovementType movementType){
+    public void setMovementType(PlayerMovementType movementType){
         this.movementType = movementType;
     }
 
@@ -147,7 +147,7 @@ public class Player extends MovableEntity {
     @Override
     public void calculateMotion(float deltaTime){
         ///// WALKING ///////////////////////////
-        if (movementType != EnumPlayerMovementType.STAND){
+        if (movementType != PlayerMovementType.STAND){
             setScale(new Vector2f(movementType.directionFactor, 1.0f));
         }
         if (isBoosting){

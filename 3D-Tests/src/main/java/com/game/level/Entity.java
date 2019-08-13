@@ -12,7 +12,7 @@ public abstract class Entity {
 
     private GameObject gameObjectType;
 
-    private Vector3f position;
+    protected Vector3f position;
     private float rotation;
     private Vector2f scale;
     private Matrix4f matrix;
@@ -67,7 +67,7 @@ public abstract class Entity {
     /**
      * Updates the model matrix with the current attribute values.
      */
-    void updateMatrix(){
+    public void updateMatrix(){
         matrix = Matrix4f.transform(this.position, this.rotation, this.scale, false);
     }
 

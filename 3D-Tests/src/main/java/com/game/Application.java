@@ -2,19 +2,21 @@ package com.game;
 
 import com.game.debug.Logger;
 import com.game.event.Event;
+import com.game.event.EventHandler;
+import com.game.event.EventType;
+import com.game.event.IDispatchCallback;
 import com.game.event.IEventCallback;
 import com.game.graphics.InstancedRenderer;
 import com.game.graphics.Models;
 import com.game.graphics.Renderer;
 import com.game.layer.Layer;
 import com.game.layer.LayerStack;
-import com.game.layer.WindowLayer;
 import com.game.layer.WorldLayer;
-import com.game.level.Level;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
@@ -22,25 +24,29 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 public class Application {
 
-    private static double frameRate;
+    public static final Logger MAIN_LOGGER = new Logger("Main");
+
+    private static double frameRate = 60.0d;
     private double updatePeriod = 1.0d / frameRate;
     private double currentTime = glfwGetTime();
     private double timer = 0.0d;
     private int frames = 0;
     private int updates = 0;
 
-    public static final Logger MAIN_LOGGER = new Logger("Main");
-
     private LayerStack layerStack;
     private WorldLayer worldLayer;
-    private WindowLayer windowLayer;
 
-    private Level level;
+    private EventHandler eventHandler;
     private Window window;
 
-    void run(){
+    void start(){
         init();
         loop();
+    }
+
+    private void stop(Event e){
+        glfwSetWindowShouldClose(window.getWindow(), true);
+        e.setHandled(true);
     }
 
     /**
@@ -48,31 +54,34 @@ public class Application {
      */
     private void init(){
         layerStack = new LayerStack();
-        worldLayer = new WorldLayer("World Layer 1");
-        windowLayer = new WindowLayer("Window");
-        layerStack.pushLayer(windowLayer);
-        layerStack.pushLayer(worldLayer);
-
+        eventHandler = new EventHandler();
+        eventHandler.setDispatchCallback(new EventDispatcher());
         window = new Window(1280, 720, false, false);
         window.setEventCallback(new EventCallback());
         GL.createCapabilities();
         glfwShowWindow(window.getWindow());
         Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
         /*---OpenGL code won't work before this---*/
-
-        frameRate = 60.0d;
-        new Camera(0.5f);
-        level = new Level();
+        worldLayer = new WorldLayer("World");
+        layerStack.pushLayer(worldLayer);
     }
 
     public class EventCallback implements IEventCallback {
         @Override
-        public void onEvent(Event e) {
-            for (Layer layer : layerStack.layerStack){
-                layer.onEvent(e);
-                if (e.isHandled()){
-                    break;
-                }
+        public void onEvent(Event event) {
+            MAIN_LOGGER.info(event.toString());
+            if (event.eventType == EventType.WINDOW_CLOSED) stop(event);
+            eventHandler.queueEvent(event);
+        }
+    }
+
+    public class EventDispatcher implements IDispatchCallback {
+        @Override
+        public void dispatchEvent(Event event) {
+            MAIN_LOGGER.info("DISP: " + event.toString());
+            for (Layer layer : layerStack){
+                if (event.isHandled()) break;
+                layer.onEvent(event);
             }
         }
     }
@@ -82,7 +91,7 @@ public class Application {
      * @param deltaTime the delta time gotten from the timing circuit of the main loop. Used for com.game.physics.
      */
     private void update(float deltaTime){
-        level.updateLevel(deltaTime);
+        worldLayer.updateLevel(deltaTime);
         glfwPollEvents();
     }
 
@@ -91,7 +100,7 @@ public class Application {
      */
     private void render(){
         Renderer.clear();
-        level.renderLevel();
+        worldLayer.renderLevel();
         glfwSwapBuffers(window.getWindow());
     }
 
@@ -111,6 +120,7 @@ public class Application {
                 frames = 0;
                 updates = 0;
             }
+            eventHandler.processEvents();
             while (frameTime > 0.0) {
                 double deltaTime = Math.min(frameTime, updatePeriod);
                 update((float) deltaTime);

@@ -5,10 +5,10 @@ import com.game.math.Matrix4f;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import static com.game.Main.fastFloor;
-
+//TODO: Non-static-ify
 /**
  * A virtual camera for the game. Is essentially a normal object except that the transformation matrix is inverted.
  * That matrix is then applied to all objects in the scene to make it appear as if the camera was moving.
@@ -29,7 +29,7 @@ public class Camera{
     /**
      * Default constructor if no arguments are provided.
      */
-    Camera(){
+    public Camera(){
         this(new Vector3f(), 0.0f, 1.0f);
     }
 
@@ -37,7 +37,7 @@ public class Camera{
      * Constructor with just the scale.
      * @param scale the scale to scale the world by.
      */
-    Camera(float scale){
+    public Camera(float scale){
         this(new Vector3f(), 0.0f, scale);
     }
 
@@ -68,7 +68,7 @@ public class Camera{
      * @param shouldIncrease whether the scale should increase or not. If true, it increases, meaning zooming in.
      * @param deltaTime the delta time used to make the scaling uniform.
      */
-    static void calculateScale(boolean shouldIncrease, float deltaTime){
+    public static void calculateScale(boolean shouldIncrease, float deltaTime){
         if (shouldIncrease){
             scale += SCALE_SPEED * scale * deltaTime;
             if (scale > MAX_SCALE){
@@ -126,7 +126,7 @@ public class Camera{
      * @param visibleObjects a list, which keeps track of all the visible entities.
      * @param tile the tile to check visibility against.
      */
-    public static void isInView(ArrayList<Tile> visibleObjects, Tile tile){
+    public static void isInView(List<Tile> visibleObjects, Tile tile){
         float scaleAdjustedX = position.getX() / scale;
         float scaleAdjustedY = position.getY() / scale;
         float xBoundary = 16.0f / scale;

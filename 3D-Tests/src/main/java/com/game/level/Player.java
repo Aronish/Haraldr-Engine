@@ -29,7 +29,7 @@ public class Player extends MovableEntity {
     /**
      * Default constructor if no arguments are provided.
      */
-    Player(){
+    public Player(){
         this(new Vector3f(), 0.0f, 1.0f);
     }
 
@@ -37,7 +37,7 @@ public class Player extends MovableEntity {
      * Constructor with the initial position.
      * @param position the initial position of this Player.
      */
-    Player(Vector3f position){
+    public Player(Vector3f position){
         this(position, 0.0f, 1.0f);
     }
 
@@ -46,7 +46,7 @@ public class Player extends MovableEntity {
      * @param position the initial position of this Player.
      * @param scale the initial scale of this Player.
      */
-    Player(Vector3f position, float scale){
+    public Player(Vector3f position, float scale){
         this(position, 0.0f, scale);
     }
 
@@ -123,15 +123,12 @@ public class Player extends MovableEntity {
     /**
      * @return the grid coordinates of this Player.
      */
-    Vector2f getGridPosition(){
+    public Vector2f getGridPosition(){
         return gridPosition;
     }
 
-    /**
-     * Resets the position to some coordinate.
-     */
     public void resetPosition(){
-        setPosition(new Vector3f(0.0f, 250.0f));
+        position.set(0.0f, 250.0f);
     }
 
     @Override

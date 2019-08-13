@@ -6,7 +6,7 @@ public class Main {
 
     public static void main(String[] args){
         application = new Application();
-        application.run();
+        application.start();
         application.cleanUp();
     }
 

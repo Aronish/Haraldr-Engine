@@ -101,14 +101,14 @@ public class Grid {
     /**
      * @return the width of the grid in indices.
      */
-    int getWidthI(){
+    public int getWidthI(){
         return width - 1;
     }
 
     /**
      * @return the height of the grid in indices.
      */
-    int getHeightI(){
+    public int getHeightI(){
         return height - 1;
     }
 

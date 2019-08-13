@@ -1,7 +1,5 @@
 package com.game.math;
 
-import com.game.debug.Logger;
-
 import static com.game.Application.MAIN_LOGGER;
 
 /**
@@ -49,6 +47,11 @@ public class Vector3f {
         this.x = (float) x;
         this.y = (float) y;
         this.z = (float) z;
+    }
+
+    public void set(float x, float y){
+        this.x = x;
+        this.y = y;
     }
 
     /**

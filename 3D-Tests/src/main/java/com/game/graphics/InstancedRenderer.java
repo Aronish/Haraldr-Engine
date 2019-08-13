@@ -6,6 +6,7 @@ import com.game.level.gameobject.GameObject;
 import com.game.math.Matrix4f;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
@@ -72,7 +73,7 @@ public class InstancedRenderer {
     /**
      * Renders every type of tile in the provided list of GridCells using instancing.
      */
-    public static void renderGridCells(ArrayList<Grid.GridCell> gridCells){
+    public static void renderGridCells(List<Grid.GridCell> gridCells){
         for (GameObject tileType : GameObject.values()){
             matrices.clear();
             for (Grid.GridCell gridCell : gridCells){

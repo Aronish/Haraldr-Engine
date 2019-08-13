@@ -1,10 +1,13 @@
 package com.game;
 
 import com.game.event.IEventCallback;
+import com.game.event.KeyPressedEvent;
+import com.game.event.KeyReleasedEvent;
 import com.game.event.MouseMovedEvent;
 import com.game.event.MousePressedEvent;
 import com.game.event.MouseReleasedEvent;
 import com.game.event.MouseScrolledEvent;
+import com.game.event.WindowClosedEvent;
 import com.game.event.WindowResizedEvent;
 import org.lwjgl.glfw.GLFWVidMode;
 
@@ -30,10 +33,12 @@ import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowCloseCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowMonitor;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowUserPointer;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
@@ -96,7 +101,14 @@ class Window {
         glfwMakeContextCurrent(window);
         setVSync(VSync);
         ///// CALLBACKS ///////////////////////////////
-        glfwSetKeyCallback(window, new Input());
+        //glfwSetKeyCallback(window, new Input());
+        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+            if (action == GLFW_PRESS){
+                eventCallback.onEvent(new KeyPressedEvent(key));
+            }else if (action == GLFW_RELEASE){
+                eventCallback.onEvent(new KeyReleasedEvent(key));
+            }
+        });
 
         glfwSetWindowSizeCallback(window, (window, w, h) -> {
             eventCallback.onEvent(new WindowResizedEvent(w, h));
@@ -118,6 +130,9 @@ class Window {
             eventCallback.onEvent(new MouseMovedEvent(xPos, yPos));
         });
 
+        glfwSetWindowCloseCallback(window, (window) -> {
+            eventCallback.onEvent(new WindowClosedEvent());
+        });
     }
 
     void setEventCallback(IEventCallback eventCallback){

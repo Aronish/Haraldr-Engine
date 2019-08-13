@@ -1,6 +1,5 @@
 package com.game;
 
-import com.game.debug.Logger;
 import com.game.level.Grid;
 import com.game.level.Player;
 import com.game.level.World;
@@ -29,6 +28,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_V;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+import static org.lwjgl.glfw.GLFW.glfwGetWindowUserPointer;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 /**
@@ -46,7 +46,7 @@ public class Input extends GLFWKeyCallback {
         if (key > 0){ //Key responses won't get repeated if put here instead of in processInput.
             if (action == GLFW_PRESS){
                 if (key == GLFW_KEY_ESCAPE){
-                    glfwSetWindowShouldClose(window, true);
+
                 }
                 if (key == GLFW_KEY_F){
                     Main.getApplication().getWindow().changeFullscreen();

@@ -28,7 +28,7 @@ public class World {
     /**
      * Initializes the grid, list of tiles and generates the world.
      */
-    World(){
+    public World(){
         tiles = new ArrayList<>();
         grid = new Grid();
         generateWorld();

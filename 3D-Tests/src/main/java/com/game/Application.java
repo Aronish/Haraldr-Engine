@@ -68,7 +68,7 @@ public class Application {
     public class EventCallback implements IEventCallback {
         @Override
         public void onEvent(Event e) {
-            for (Layer layer : layerStack.layerStack){
+            for (Layer layer : layerStack){
                 layer.onEvent(e);
                 if (e.isHandled()){
                     break;

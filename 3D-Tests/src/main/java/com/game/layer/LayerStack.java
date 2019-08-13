@@ -1,8 +1,9 @@
 package com.game.layer;
 
 import java.util.ArrayDeque;
+import java.util.Iterator;
 
-public class LayerStack {
+public class LayerStack implements Iterable<Layer> {
 
     public final ArrayDeque<Layer> layerStack;
 
@@ -14,4 +15,8 @@ public class LayerStack {
         layerStack.push(layer);
     }
 
+    @Override
+    public Iterator<Layer> iterator() {
+        return layerStack.iterator();
+    }
 }

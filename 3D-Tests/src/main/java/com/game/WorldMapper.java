@@ -1,9 +1,8 @@
 package com.game;
 
-import com.game.debug.Logger;
-import com.game.level.Grid;
-import com.game.level.gameobject.tile.Tile;
-import com.game.level.gameobject.tile.TileTree;
+import com.game.world.Grid;
+import com.game.gameobject.tile.Tile;
+import com.game.gameobject.tile.TileTree;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

@@ -2,10 +2,10 @@ package com.game.graphics;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
-import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
-import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL46.GL_FRAGMENT_SHADER;
@@ -26,6 +26,7 @@ import static org.lwjgl.opengl.GL46.glValidateProgram;
 public class Shader {
 
     private int shaderProgram;
+    private Map<String, Integer> uniformLocations;
 
     /**
      * Constructor with a parameter for the general shader file path.
@@ -36,12 +37,8 @@ public class Shader {
         this(generalShaderPath + ".vert", generalShaderPath + ".frag");
     }
 
-    /**
-     * Private constructor that takes in the different paths of the shader files. Reads the shader files, creates shaders and compiles them into a shader program.
-     * @param vertexShaderPath the path of the vertex shader.
-     * @param fragmentShaderPath the path of the fragment shader.
-     */
     Shader(String vertexShaderPath, String fragmentShaderPath){
+        uniformLocations = new HashMap<>();
         int vertexShader = createShader(GL_VERTEX_SHADER, readShaderFile(vertexShaderPath));
         int fragmentShader = createShader(GL_FRAGMENT_SHADER, readShaderFile(fragmentShaderPath));
 
@@ -95,32 +92,25 @@ public class Shader {
     }
 
     /**
-     * Sets data of a uniform mat4 with the specified name.
+     * Sets data of a uniform mat4 with the specified name. Caches the location.
      * @param matrix the matrix data.
      * @param name the name of the mat4 uniform.
      */
     void setMatrix(float[] matrix, String name){
-        int matrixLocation = glGetUniformLocation(shaderProgram, name);
-        glUniformMatrix4fv(matrixLocation, false, matrix);
+        if (!uniformLocations.containsKey(name)){
+            uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
+        }
+        glUniformMatrix4fv(uniformLocations.get(name), false, matrix);
     }
 
-    /**
-     * Uses the shader program.
-     */
     public void use(){
         glUseProgram(shaderProgram);
     }
 
-    /**
-     * Unuses the shader program.
-     */
     private void unuse(){
         glUseProgram(0);
     }
 
-    /**
-     * Deletes the shader program.
-     */
     void delete(){
         unuse();
         glDeleteProgram(shaderProgram);

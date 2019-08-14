@@ -1,6 +1,6 @@
-package com.game.level.gameobject.tile;
+package com.game.gameobject.tile;
 
-import com.game.level.gameobject.GameObject;
+import com.game.gameobject.GameObject;
 import com.game.math.Vector3f;
 
 class TileDirt extends Tile {

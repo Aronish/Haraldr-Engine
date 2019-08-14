@@ -2,9 +2,7 @@ package com.game;
 
 import com.game.debug.Logger;
 import com.game.event.Event;
-import com.game.event.EventHandler;
 import com.game.event.EventType;
-import com.game.event.IDispatchCallback;
 import com.game.event.IEventCallback;
 import com.game.graphics.InstancedRenderer;
 import com.game.graphics.Models;
@@ -36,7 +34,6 @@ public class Application {
     private LayerStack layerStack;
     private WorldLayer worldLayer;
 
-    private EventHandler eventHandler;
     private Window window;
 
     void start(){
@@ -54,8 +51,6 @@ public class Application {
      */
     private void init(){
         layerStack = new LayerStack();
-        eventHandler = new EventHandler();
-        eventHandler.setDispatchCallback(new EventDispatcher());
         window = new Window(1280, 720, false, false);
         window.setEventCallback(new EventCallback());
         GL.createCapabilities();
@@ -69,44 +64,29 @@ public class Application {
     public class EventCallback implements IEventCallback {
         @Override
         public void onEvent(Event event) {
-            MAIN_LOGGER.info(event.toString());
             if (event.eventType == EventType.WINDOW_CLOSED) stop(event);
-            eventHandler.queueEvent(event);
-        }
-    }
-
-    public class EventDispatcher implements IDispatchCallback {
-        @Override
-        public void dispatchEvent(Event event) {
-            MAIN_LOGGER.info("DISP: " + event.toString());
             for (Layer layer : layerStack){
                 if (event.isHandled()) break;
-                layer.onEvent(event);
+                layer.onEvent(window, event);
             }
         }
     }
 
     /**
      * Updates object attributes, checks for user input, calculates game logic and checks for collisions.
-     * @param deltaTime the delta time gotten from the timing circuit of the main loop. Used for com.game.physics.
+     * @param deltaTime the delta time gotten from the timing circuit of the main loop. Used for physics.
      */
     private void update(float deltaTime){
-        worldLayer.updateLevel(deltaTime);
+        worldLayer.updateLevel(window, deltaTime);
         glfwPollEvents();
     }
 
-    /**
-     * Render all objects and scenes.
-     */
     private void render(){
         Renderer.clear();
         worldLayer.renderLevel();
         glfwSwapBuffers(window.getWindow());
     }
 
-    /**
-     * The main game loop. Uses variable update time step and fixed rendering time step (I think). Cleans up afterwards.
-     */
     private void loop(){
         update(0.0f);
         while (!glfwWindowShouldClose(window.getWindow())) {
@@ -120,7 +100,6 @@ public class Application {
                 frames = 0;
                 updates = 0;
             }
-            eventHandler.processEvents();
             while (frameTime > 0.0) {
                 double deltaTime = Math.min(frameTime, updatePeriod);
                 update((float) deltaTime);
@@ -132,14 +111,14 @@ public class Application {
         }
     }
 
+    Window getWindow(){
+        return window;
+    }
+
     void cleanUp(){
         Models.cleanUp();
         Renderer.deleteShaders();
         InstancedRenderer.deleteShaders();
         glfwTerminate();
-    }
-
-    Window getWindow(){
-        return window;
     }
 }

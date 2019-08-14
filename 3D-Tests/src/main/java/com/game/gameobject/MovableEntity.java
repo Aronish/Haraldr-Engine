@@ -1,6 +1,6 @@
-package com.game.level;
+package com.game.gameobject;
 
-import com.game.level.gameobject.GameObject;
+import com.game.Camera;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
 
@@ -12,17 +12,10 @@ public abstract class MovableEntity extends Entity {
     private static final float GRAVITY_CONSTANT = -25.0f;
     private static final float MAX_GRAVITY_ACCELERATION = -30.0f;
 
-    private Vector2f velocity;
+    protected Vector2f velocity;
+    protected float gravityAcceleration;
     private boolean hasGravity;
-    private float gravityAcceleration;
 
-    /**
-     * Constructor for all the normal entity things but with the ability to choose if it's affected by gravity.
-     * @param position the initial position of this MovableEntity.
-     * @param rotation the initial rotation of this MovableEntity.
-     * @param scale the initial scale of this MovableEntity.
-     * @param hasGravity whether it is affected by gravity.
-     */
     MovableEntity(Vector3f position, float rotation, float scale, boolean hasGravity, GameObject gameObjectType) {
         super(position, rotation, scale, gameObjectType);
         this.hasGravity = hasGravity;
@@ -32,17 +25,19 @@ public abstract class MovableEntity extends Entity {
 
     /**
      * Motion calculation should be done by individual child classes as it may differ a lot.
+     * @param camera the current camera.
      * @param deltaTime the delta time gotten from the timing circuit in Application.
      */
-    public abstract void calculateMotion(float deltaTime);
+    public abstract void calculateMotion(Camera camera, float deltaTime);
 
     /**
-     * Calculates the motion.
-     * @param deltaTime the delta time gotten from the timing circuit in Application.
+     * Resets velocities and calculates the motion from factors like speed, isJumping, isRunning and isBoosting.
+     * @param camera the current camera.
+     * @param deltaTime the delta time gotten from the timing circuit in Main.
      */
-    public void update(float deltaTime) {
+    public void update(Camera camera, float deltaTime) {
         resetVelocity();
-        calculateMotion(deltaTime);
+        calculateMotion(camera, deltaTime);
     }
 
     /**
@@ -61,38 +56,15 @@ public abstract class MovableEntity extends Entity {
         }
     }
 
-    /**
-     * @param hasGravity whether this MovableEntity should be affected by gravity.
-     */
     public void setHasGravity(boolean hasGravity){
         this.hasGravity = hasGravity;
     }
 
-    /**
-     * Resets the X and Y velocities to 0.
-     */
     private void resetVelocity(){
         velocity.reset();
     }
 
-    /**
-     * Resets the gravity acceleration to 0.
-     */
     public void resetGravityAcceleration(){
         gravityAcceleration = 0.0f;
-    }
-
-    /**
-     * @return a Vector2d containing the X and Y velocities.
-     */
-    Vector2f getVelocity() {
-        return velocity;
-    }
-
-    /**
-     * @return the gravity acceleration
-     */
-    float getGravityAcceleration(){
-        return gravityAcceleration;
     }
 }

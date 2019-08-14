@@ -1,4 +1,4 @@
-package com.game.level.gameobject;
+package com.game.gameobject;
 
 import com.game.graphics.Models;
 import com.game.graphics.Model;

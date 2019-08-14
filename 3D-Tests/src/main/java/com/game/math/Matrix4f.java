@@ -1,7 +1,5 @@
 package com.game.math;
 
-import com.game.Camera;
-
 /**
  * Math helper class for calculating 4x4 matrices.
  */
@@ -10,10 +8,6 @@ public class Matrix4f {
     public float[] matrix = new float[16];
     public static final Matrix4f _orthographic = orthographic(16f, -16f, 9f, -9f, -5f, 5f);
 
-    /**
-     * Creates an identity matrix.
-     * @return the identity matrix.
-     */
     private static Matrix4f identity(){
         Matrix4f identity = new Matrix4f();
         identity.matrix[0] = 1.0f;
@@ -24,9 +18,8 @@ public class Matrix4f {
     }
 
     /**
-     * Multiplies another matrix with this matrix.
-     * @param multiplicand the other matrix.
-     * @return the resulting matrix.
+     * Multiplies this matrix with another.
+     * Doesn't change this current matrix.
      */
     private Matrix4f multiply(Matrix4f multiplicand){
         Matrix4f result = identity();
@@ -42,6 +35,7 @@ public class Matrix4f {
         return result;
     }
 
+    /*
     /**
      * Creates a Model-View-Projection matrix including the transformation matrix, the view matrix of the camera
      * and and orthographic projection matrix.
@@ -50,13 +44,15 @@ public class Matrix4f {
      * @param scale the scale multiplier.
      * @return the resulting MVP matrix.
      */
+    /*
     public static Matrix4f MVP(Vector3f position, float angle, Vector2f scale){
         // Resolution must have the aspect ratio 16:9 as of now.
         return _orthographic.multiply(Camera.viewMatrix).multiply(transform(scale.getX() == -1 ? position.add(new Vector3f(1.0f, 0.0f)) : position, angle, scale, false));
     }
+    */
 
     /**
-     * Creates a transformation matrix that applies all three transformations to a vector (in the shader).
+     * Creates a transformation/model matrix.
      * @param position the position in world space.
      * @param angle the rotation around the z-axis, in degrees.
      * @param scale the scale multiplier.
@@ -64,14 +60,9 @@ public class Matrix4f {
      * @return the resulting transformation matrix.
      */
     public static Matrix4f transform(Vector3f position, float angle, Vector2f scale, boolean isCamera){
-        return translate(scale.getX() == -1 ? position.add(new Vector3f(1.0f, 0.0f)) : position, isCamera).multiply(rotate(angle, isCamera)).multiply(scale(scale));
+        return translate(scale.getX() == -1 ? position.add(new Vector3f(1.0f, 0.0f)) : position, isCamera).multiply(scale(scale));
     }
 
-    /**
-     * Creates a scale matrix with scale values for both x and y.
-     * @param scale a Vector2f containing the scale values for x and y.
-     * @return the resulting scale matrix.
-     */
     private static Matrix4f scale(Vector2f scale){
         Matrix4f result = new Matrix4f();
         result.matrix[0] = scale.getX();
@@ -81,12 +72,6 @@ public class Matrix4f {
         return result;
     }
 
-    /**
-     * Creates a translation matrix.
-     * @param vector the position in world space.
-     * @param isCamera if this is the translation matrix of a camera. If true, it will be inverted.
-     * @return the resulting translation matrix.
-     */
     private static Matrix4f translate(Vector3f vector, boolean isCamera){
         Matrix4f result = identity();
         if (isCamera){
@@ -102,10 +87,7 @@ public class Matrix4f {
     }
 
     /**
-     * Creates a rotation matrix for the z-axis.
-     * @param angle the angle, in degrees.
-     * @param isCamera if this is the rotation matrix of a camera. If true, it will be inverted.
-     * @return the resulting rotation matrix.
+     * Not even supported ATM, so rarely used.
      */
     private static Matrix4f rotate(float angle, boolean isCamera){
         Matrix4f result = identity();

@@ -38,7 +38,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowMonitor;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowUserPointer;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
@@ -49,7 +48,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 /**
  * A class for handling GLFW window creation.
  */
-class Window {
+public class Window {
 
     private long window;
     private int windowWidth, windowHeight;
@@ -101,17 +100,12 @@ class Window {
         glfwMakeContextCurrent(window);
         setVSync(VSync);
         ///// CALLBACKS ///////////////////////////////
-        //glfwSetKeyCallback(window, new Input());
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
             if (action == GLFW_PRESS){
                 eventCallback.onEvent(new KeyPressedEvent(key));
             }else if (action == GLFW_RELEASE){
                 eventCallback.onEvent(new KeyReleasedEvent(key));
             }
-        });
-
-        glfwSetWindowSizeCallback(window, (window, w, h) -> {
-            eventCallback.onEvent(new WindowResizedEvent(w, h));
         });
 
         glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
@@ -122,26 +116,19 @@ class Window {
             }
         });
 
-        glfwSetScrollCallback(window, (window, xOffset, yOffset) -> {
-            eventCallback.onEvent(new MouseScrolledEvent(xOffset, yOffset));
-        });
+        glfwSetScrollCallback(window, (window, xOffset, yOffset) -> eventCallback.onEvent(new MouseScrolledEvent(xOffset, yOffset)));
 
-        glfwSetCursorPosCallback(window, (window, xPos, yPos) -> {
-            eventCallback.onEvent(new MouseMovedEvent(xPos, yPos));
-        });
+        glfwSetCursorPosCallback(window, (window, xPos, yPos) -> eventCallback.onEvent(new MouseMovedEvent(xPos, yPos)));
 
-        glfwSetWindowCloseCallback(window, (window) -> {
-            eventCallback.onEvent(new WindowClosedEvent());
-        });
+        glfwSetWindowCloseCallback(window, (window) -> eventCallback.onEvent(new WindowClosedEvent()));
+
+        glfwSetWindowSizeCallback(window, (window, w, h) -> eventCallback.onEvent(new WindowResizedEvent(w, h)));
     }
 
     void setEventCallback(IEventCallback eventCallback){
         this.eventCallback = eventCallback;
     }
 
-    /**
-     * Changes between fullscreen and windowed mode.
-     */
     void changeFullscreen(){
         if (isFullscreen){
             isFullscreen = false;
@@ -156,34 +143,20 @@ class Window {
         }
     }
 
-    /**
-     * Sets VSync.
-     */
     void setVSync(boolean enabled){
         VSyncOn = enabled;
         glfwSwapInterval(enabled ? 1 : 0);
     }
 
-    /**
-     * Sets the title to the provided one.
-     * @param title the new title.
-     */
     void setTitle(String title){
         glfwSetWindowTitle(window, title);
     }
 
-    /**
-     * @return whether VSync is turned on.
-     */
     boolean VSyncOn(){
         return VSyncOn;
     }
 
-    /**
-     * Gets the window object ID.
-     * @return the window object ID.
-     */
-    long getWindow(){
+    public long getWindow(){
         return window;
     }
 }

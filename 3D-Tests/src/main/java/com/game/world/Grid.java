@@ -1,7 +1,7 @@
-package com.game.level;
+package com.game.world;
 
-import com.game.level.gameobject.GameObject;
-import com.game.level.gameobject.tile.Tile;
+import com.game.gameobject.GameObject;
+import com.game.gameobject.tile.Tile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,15 +13,12 @@ import static com.game.Main.fastFloor;
  */
 public class Grid {
 
-    public static final int GRID_SIZE = 20; //20x20 seems like a good size.
+    public static final int GRID_SIZE = 20;
 
     private int width, height;
 
     private ArrayList<ArrayList<GridCell>> grid;
 
-    /**
-     * Initializes the grid lists and sets width and height to 0.
-     */
     Grid(){
         width = 0;
         height = 0;
@@ -75,9 +72,6 @@ public class Grid {
         }
     }
 
-    /**
-     * Clears the whole grid and resets its dimensions.
-     */
     void clear(){
         width = 0;
         height = 0;
@@ -112,12 +106,6 @@ public class Grid {
         return height - 1;
     }
 
-    /**
-     * Gets the GridCell at the specified grid coordinates.
-     * @param x the x grid coordinate.
-     * @param y the y grid coordinate.
-     * @return the GridCell.
-     */
     public GridCell getContent(int x, int y){
         return grid.get(x).get(y);
     }
@@ -139,16 +127,12 @@ public class Grid {
             intermeditateArray = new ArrayList<>();
         }
 
-        /**
-         * Adds a entity to this GridCell.
-         * @param tile the Tile to add.
-         */
         private void addEntity(Tile tile){
             tiles.add(tile);
         }
 
         /**
-         * Creates a HashMap that, for every type of game object, stores all matrices of that type with the type as a key.
+         * Creates a HashMap that, for every type of game object, stores all matrices of that type with the type as the key.
          */
         private void cacheMatrices(){
             for (GameObject tileType : GameObject.values()){
@@ -164,17 +148,10 @@ public class Grid {
             }
         }
 
-        /**
-         * @return all tiles in this GridCell.
-         */
         public ArrayList<Tile> getTiles(){
             return tiles;
         }
 
-        /**
-         * @param tileType the type of Tiles whose matrices will be collected.
-         * @return all the matrices of all the Tiles of the specified Type.
-         */
         public ArrayList<Float> getMatrices(GameObject tileType){
             return matrices.get(tileType);
         }

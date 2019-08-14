@@ -13,18 +13,10 @@ class CollisionDataMap {
         this.inside = inside;
     }
 
-    /**
-     * Gets the direction.
-     * @return the direction
-     */
     Direction getCollisionDirection(){
         return collisionDirection;
     }
 
-    /**
-     * Gets the overlap distance.
-     * @return the overlap distance.
-     */
     float getInside(){
         return inside;
     }

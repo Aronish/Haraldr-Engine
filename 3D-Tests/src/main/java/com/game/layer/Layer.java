@@ -1,5 +1,6 @@
 package com.game.layer;
 
+import com.game.Window;
 import com.game.debug.Logger;
 import com.game.event.Event;
 
@@ -13,7 +14,7 @@ public abstract class Layer {
         LOGGER = new Logger(name);
     }
 
-    public abstract void onEvent(Event e);
+    public abstract void onEvent(Window window, Event event);
 
     public String getName(){
         return name;

@@ -37,29 +37,14 @@ class VertexArray {
             2, 1, 3
     };
 
-    /**
-     * Creates a VertexArray with default vertices and indices and custom texture coordinates.
-     * @param textureCoordinates the texture coordinates.
-     */
     VertexArray(float[] textureCoordinates){
         this(defVertices, defIndices, textureCoordinates);
     }
 
-    /**
-     * Creates a VertexArray with default indices and custom vertices and texture coordinates.
-     * @param vertices the vertices.
-     * @param textureCoordinates the texture coordinates.
-     */
     VertexArray(float[] vertices, float[] textureCoordinates){
         this(vertices, defIndices, textureCoordinates);
     }
 
-    /**
-     * Creates a VertexArray with custom vertices, indices and texture coordinates.
-     * @param vertices the vertices.
-     * @param indices the indices.
-     * @param textureCoordinates texture coordinates.
-     */
     private VertexArray(float[] vertices, int[] indices, float[] textureCoordinates){
         vao = glGenVertexArrays();
         vbo = glGenBuffers();
@@ -85,38 +70,22 @@ class VertexArray {
         glBindVertexArray(0);
     }
 
-    /**
-     * Invokes a normal OpenGL draw call.
-     */
     void draw(){
         glDrawElements(GL_TRIANGLES, length, GL_UNSIGNED_INT, 0);
     }
 
-    /**
-     * Invokes an instanced draw call.
-     * @param count the number of instances to draw.
-     */
     void drawInstanced(int count){
         glDrawElementsInstanced(GL_TRIANGLES, length, GL_UNSIGNED_INT, 0, count);
     }
 
-    /**
-     * Binds the VAO.
-     */
     void bind(){
         glBindVertexArray(vao);
     }
 
-    /**
-     * Unbinds the VAO.
-     */
     void unbind(){
         glBindVertexArray(0);
     }
 
-    /**
-     * Deletes the vertex array and associated buffers.
-     */
     void delete(){
         unbind();
         glDeleteVertexArrays(vao);

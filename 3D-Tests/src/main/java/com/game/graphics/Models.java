@@ -1,6 +1,6 @@
 package com.game.graphics;
 
-import com.game.level.gameobject.GameObject;
+import com.game.gameobject.GameObject;
 import com.game.math.Vector2f;
 
 import java.util.HashMap;
@@ -73,9 +73,6 @@ public class Models {
         return new Model(vertexData.get("vertices"), vertexData.get("texcoords"), 1.0f, height);
     }
 
-    /**
-     * Cleans up the Models.
-     */
     public static void cleanUp(){
         SPRITE_SHEET.delete();
         for (GameObject gameObjectType : GameObject.values()){

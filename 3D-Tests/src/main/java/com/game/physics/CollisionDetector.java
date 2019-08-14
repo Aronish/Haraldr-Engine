@@ -1,8 +1,8 @@
 package com.game.physics;
 
 import com.game.Camera;
-import com.game.level.Player;
-import com.game.level.gameobject.tile.Tile;
+import com.game.gameobject.Player;
+import com.game.gameobject.tile.Tile;
 import com.game.math.Vector3f;
 
 import static com.game.physics.Direction.EAST;
@@ -21,9 +21,9 @@ public class CollisionDetector {
      * @param tile the Entity, whose TexturedModel is currently checked.
      * @param player the Player to check collisions with.
      */
-    public static void doCollisions(Tile tile, Player player){
+    public static void doCollisions(Camera camera, Tile tile, Player player){
         if (checkCollision(tile, player)){
-            resolveCollision(getCollisionDirection(tile, player), player);
+            resolveCollision(camera, getCollisionDirection(tile, player), player);
         }
     }
 
@@ -69,7 +69,7 @@ public class CollisionDetector {
      * @param collisionDataMap the data pair with direction and overlap distance.
      * @param player the player that collided.
      */
-    private static void resolveCollision(CollisionDataMap collisionDataMap, Player player) {
+    private static void resolveCollision(Camera camera, CollisionDataMap collisionDataMap, Player player) {
         float inside = collisionDataMap.getInside();
         switch (collisionDataMap.getCollisionDirection()) {
             case NORTH:
@@ -78,19 +78,19 @@ public class CollisionDetector {
                     player.setFalling(false);
                 }
                 player.addPosition(new Vector3f(0.0f, inside));
-                Camera.addPosition(new Vector3f(0.0f, inside * Camera.scale));
+                camera.addPosition(new Vector3f(0.0f, inside * camera.getScale()));
                 break;
             case EAST:
                 player.addPosition(new Vector3f(inside, 0.0f));
-                Camera.addPosition(new Vector3f(inside * Camera.scale, 0.0f));
+                camera.addPosition(new Vector3f(inside * camera.getScale(), 0.0f));
                 break;
             case WEST:
                 player.addPosition(new Vector3f(-inside, 0.0f));
-                Camera.addPosition(new Vector3f(-inside * Camera.scale, 0.0f));
+                camera.addPosition(new Vector3f(-inside * camera.getScale(), 0.0f));
                 break;
             case SOUTH:
                 player.addPosition(new Vector3f(0.0f, -inside));
-                Camera.addPosition(new Vector3f(0.0f, -inside * Camera.scale));
+                camera.addPosition(new Vector3f(0.0f, -inside * camera.getScale()));
                 break;
         }
     }

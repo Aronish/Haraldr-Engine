@@ -1,6 +1,6 @@
 package com.game;
 
-import com.game.level.gameobject.tile.Tile;
+import com.game.gameobject.tile.Tile;
 import com.game.math.Matrix4f;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
@@ -8,57 +8,42 @@ import com.game.math.Vector3f;
 import java.util.List;
 
 import static com.game.Main.fastFloor;
-//TODO: Non-static-ify
+
 /**
  * A virtual camera for the game. Is essentially a normal object except that the transformation matrix is inverted.
  * That matrix is then applied to all objects in the scene to make it appear as if the camera was moving.
  */
-public class Camera{
+public class Camera {
 
-    public static Matrix4f viewMatrix;
-    private static Vector3f position;
-    private static float rotation;
-    public static float scale;
-    private static Vector2f scaleVector;
-    public static int chunkXRange, chunkYRange;
+    private Matrix4f viewMatrix;
+    private Vector3f position;
+    private float rotation;
+    private float scale;
+    private Vector2f scaleVector;
+    private int chunkXRange, chunkYRange;
 
     private static final float MIN_SCALE = 0.125f;
     private static final float MAX_SCALE = 2.0f;
     private static final float SCALE_SPEED = 1.0f;
 
-    /**
-     * Default constructor if no arguments are provided.
-     */
     public Camera(){
-        this(new Vector3f(), 0.0f, 1.0f);
+        this(new Vector3f(), 0.0f, 0.5f);
     }
 
-    /**
-     * Constructor with just the scale.
-     * @param scale the scale to scale the world by.
-     */
     public Camera(float scale){
         this(new Vector3f(), 0.0f, scale);
     }
 
-    /**
-     * Constructor with parameters for position and rotation.
-     * @param pos the initial position of the camera, an origin vector.
-     * @param rot the initial rotation of the camera around the z-axis, in degrees.
-     */
-    private Camera(Vector3f pos, float rot, float scal){
-        position = pos;
-        rotation = rot;
-        scale = scal;
+    private Camera(Vector3f position, float rotation, float scale){
+        this.position = position;
+        this.rotation = rotation;
+        this.scale = scale;
         scaleVector = new Vector2f(scale);
         calculateChunkRanges();
         calculateViewMatrix();
     }
 
-    /**
-     * Calculates a new view matrix (an inverted transformation matrix) from the current attribute values.
-     */
-    private static void calculateViewMatrix(){
+    private void calculateViewMatrix(){
         viewMatrix = Matrix4f.transform(position, rotation, scaleVector, true);
     }
 
@@ -68,7 +53,7 @@ public class Camera{
      * @param shouldIncrease whether the scale should increase or not. If true, it increases, meaning zooming in.
      * @param deltaTime the delta time used to make the scaling uniform.
      */
-    public static void calculateScale(boolean shouldIncrease, float deltaTime){
+    public void calculateScale(boolean shouldIncrease, float deltaTime){
         if (shouldIncrease){
             scale += SCALE_SPEED * scale * deltaTime;
             if (scale > MAX_SCALE){
@@ -88,34 +73,22 @@ public class Camera{
     /**
      * Calculates how many GridCells/chunks should be visible.
      */
-    private static void calculateChunkRanges(){
-        chunkXRange = fastFloor(1.0f / Camera.scale);
-        chunkYRange = fastFloor(1.0f / Camera.scale);
+    private void calculateChunkRanges(){
+        chunkXRange = fastFloor(1.0f / scale);
+        chunkYRange = fastFloor(1.0f / scale);
     }
 
-    /**
-     * Sets the position of this Camera.
-     * @param pos the new position vector.
-     */
-    public static void setPosition(Vector3f pos){
+    public void setPosition(Vector3f pos){
         position = pos.multiply(scale);
         calculateViewMatrix();
     }
 
-    /**
-     * Adds the specified vector to the current position.
-     * @param pos the position to add.
-     */
-    public static void addPosition(Vector3f pos){
+    public void addPosition(Vector3f pos){
         position.addThis(pos);
         calculateViewMatrix();
     }
 
-    /**
-     * Sets the scale of this Camera.
-     * @param scal the new scale.
-     */
-    public static void setScale(float scal){
+    public void setScale(float scal){
         scale = scal;
         scaleVector.setBoth(scale);
         calculateViewMatrix();
@@ -126,7 +99,7 @@ public class Camera{
      * @param visibleObjects a list, which keeps track of all the visible entities.
      * @param tile the tile to check visibility against.
      */
-    public static void isInView(List<Tile> visibleObjects, Tile tile){
+    public void isInView(List<Tile> visibleObjects, Tile tile){
         float scaleAdjustedX = position.getX() / scale;
         float scaleAdjustedY = position.getY() / scale;
         float xBoundary = 16.0f / scale;
@@ -136,5 +109,21 @@ public class Camera{
         if (collisionX && collisionY){
             visibleObjects.add(tile);
         }
+    }
+
+    public Matrix4f getViewMatrix(){
+        return viewMatrix;
+    }
+
+    public float getScale(){
+        return scale;
+    }
+
+    public int getChunkXRange(){
+        return chunkXRange;
+    }
+
+    public int getChunkYRange(){
+        return chunkYRange;
     }
 }

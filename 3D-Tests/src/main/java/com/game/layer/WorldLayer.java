@@ -1,24 +1,23 @@
 package com.game.layer;
 
 import com.game.Camera;
-import com.game.Input;
+import com.game.KeyInputHandler;
+import com.game.Window;
 import com.game.event.Event;
 import com.game.event.EventCategory;
-import com.game.event.EventType;
 import com.game.event.KeyEvent;
 import com.game.graphics.InstancedRenderer;
 import com.game.graphics.Renderer;
-import com.game.level.Grid;
-import com.game.level.IBackground;
-import com.game.level.Player;
-import com.game.level.World;
-import com.game.level.gameobject.tile.Tile;
+import com.game.world.Grid;
+import com.game.gameobject.IBackground;
+import com.game.gameobject.Player;
+import com.game.world.World;
+import com.game.gameobject.tile.Tile;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
 import com.game.physics.CollisionDetector;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class WorldLayer extends Layer {
@@ -26,8 +25,7 @@ public class WorldLayer extends Layer {
     private World world;
     private Player player;
     private Camera camera;
-
-    private InputHandler inputHandler;
+    private KeyInputHandler keyInputHandler;
 
     private List<Grid.GridCell> visibleGridCells;
     private List<Tile> frustumCulledObjects;
@@ -35,25 +33,28 @@ public class WorldLayer extends Layer {
     public WorldLayer(String name) {
         super(name);
         world = new World();
-        player = new Player(new Vector3f(0.0f, 250.0f));
-        camera = new Camera(0.5f);
-        inputHandler = new InputHandler();
+        player = new Player(new Vector3f(0.0f, 255.0f));
+        camera = new Camera();
+        keyInputHandler = new KeyInputHandler();
         visibleGridCells = new ArrayList<>();
         frustumCulledObjects = new ArrayList<>();
         InstancedRenderer.setupInstancedBuffer();
     }
 
     @Override
-    public void onEvent(Event event) {
-
+    public void onEvent(Window window, Event event) {
+        if (event.isInCategory(EventCategory.CATEGORY_KEYBOARD)){
+            keyInputHandler.processKeyEvent(window, (KeyEvent) event);
+            event.setHandled(true);
+        }
     }
 
     /**
      * Process input, update physics/movement, do collisions, update necessary matrices last.
      */
-    public void updateLevel(float deltaTime){
-        //Input.processInput(deltaTime, player, world);
-        player.update(deltaTime);
+    public void updateLevel(Window window, float deltaTime){
+        keyInputHandler.processInput(camera, window.getWindow(), deltaTime, player, world);
+        player.update(camera, deltaTime);
         checkVisibleGridCells();
         doCollisions();
         player.updateMatrix();
@@ -63,12 +64,8 @@ public class WorldLayer extends Layer {
      * Renders the game objects in this Level.
      */
     public void renderLevel(){
-        if (Input.usingInstancedRendering()){
-            InstancedRenderer.renderGridCells(visibleGridCells);
-        }else{
-            frustumCulledObjects.forEach(Renderer::render);
-        }
-        Renderer.render(player);
+        InstancedRenderer.renderGridCells(camera, visibleGridCells);
+        Renderer.render(camera, player);
     }
 
     /**
@@ -82,36 +79,28 @@ public class WorldLayer extends Layer {
         Grid grid = world.getGrid();
         visibleGridCells.clear();
         frustumCulledObjects.clear();
-        for (int x = -Camera.chunkXRange; x <= Camera.chunkXRange; ++x){
+        for (int x = -camera.getChunkXRange(); x <= camera.getChunkXRange(); ++x){
             if (playerGridPosition.getX() + x < 0 || playerGridPosition.getX() + x > grid.getWidthI()){
                 continue;
             }
-            for (int y = -Camera.chunkYRange; y <= Camera.chunkYRange; ++y){
+            for (int y = -camera.getChunkYRange(); y <= camera.getChunkYRange(); ++y){
                 if (playerGridPosition.getY() + y < 0 || playerGridPosition.getY() + y > grid.getHeightI()){
                     continue;
                 }
-                if (Input.usingInstancedRendering()){
-                    visibleGridCells.add(grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y)); //TODO: Int cast not good for negative values.
-                }else{
-                    for (Tile tile : grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y).getTiles()){
-                        Camera.isInView(frustumCulledObjects, tile);
-                    }
-                }
+                visibleGridCells.add(grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y)); //TODO: Int cast not good for negative values.
             }
         }
-        if (Input.usingInstancedRendering()){
-            frustumCull();
-        }
+        frustumCull();
     }
 
     /**
-     * Performs orthographic frustum culling on the visible GridCells. Optimization for "legacy rendering", but is, for now, used to determine
-     * the object to check collisions against.
+     * Performs orthographic frustum culling on the visible GridCells. For now, used to determine the objects to check collisions against.
+     * TODO: Make better system for this.
      */
     private void frustumCull(){
         for (Grid.GridCell gridCell : visibleGridCells){
             for (Tile tile : gridCell.getTiles()){
-                Camera.isInView(frustumCulledObjects, tile);
+                camera.isInView(frustumCulledObjects, tile);
             }
         }
     }
@@ -122,21 +111,8 @@ public class WorldLayer extends Layer {
     private void doCollisions() {
         for (Tile tile : frustumCulledObjects){
             if (!(tile instanceof IBackground)){
-                CollisionDetector.doCollisions(tile, player);
+                CollisionDetector.doCollisions(camera, tile, player);
             }
-        }
-    }
-
-    private class InputHandler {
-
-        private List<Event> eventQueue;
-
-        private InputHandler(){
-            eventQueue = new LinkedList<>();
-        }
-
-        private void processInput(KeyEvent event){
-
         }
     }
 }

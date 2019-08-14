@@ -1,8 +1,8 @@
 package com.game.graphics;
 
 import com.game.Camera;
-import com.game.level.Grid;
-import com.game.level.gameobject.GameObject;
+import com.game.world.Grid;
+import com.game.gameobject.GameObject;
 import com.game.math.Matrix4f;
 
 import java.util.ArrayList;
@@ -30,9 +30,6 @@ public class InstancedRenderer {
     private static ArrayList<Float> matrices = new ArrayList<>();
     private static int instancedMBO = glGenBuffers();
 
-    /**
-     * @return the ArrayList matrices as a primitive array.
-     */
     private static float[] matricesAsPrimitiveArray(){
         float[] primitiveArray = new float[matrices.size()];
         int i = 0;
@@ -73,14 +70,14 @@ public class InstancedRenderer {
     /**
      * Renders every type of tile in the provided list of GridCells using instancing.
      */
-    public static void renderGridCells(List<Grid.GridCell> gridCells){
+    public static void renderGridCells(Camera camera, List<Grid.GridCell> gridCells){
         for (GameObject tileType : GameObject.values()){
             matrices.clear();
             for (Grid.GridCell gridCell : gridCells){
                 matrices.addAll(gridCell.getMatrices(tileType));
             }
             if (matrices.size() != 0){
-                renderInstanced(tileType);
+                renderInstanced(camera, tileType);
             }
         }
     }
@@ -90,10 +87,10 @@ public class InstancedRenderer {
      * Sends all matrices to be rendered to the buffer and issues an instanced draw call.
      * @param tileType the type of tile currently being rendered.
      */
-    private static void renderInstanced(GameObject tileType){
+    private static void renderInstanced(Camera camera, GameObject tileType){
         Models.SPRITE_SHEET.bind();
         INSTANCED_SHADER.use();
-        INSTANCED_SHADER.setMatrix(Camera.viewMatrix.matrix, "view");
+        INSTANCED_SHADER.setMatrix(camera.getViewMatrix().matrix, "view");
         INSTANCED_SHADER.setMatrix(Matrix4f._orthographic.matrix, "projection");
         glBindBuffer(GL_ARRAY_BUFFER, instancedMBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, matricesAsPrimitiveArray());
@@ -101,9 +98,6 @@ public class InstancedRenderer {
         tileType.model.getVertexArray().drawInstanced(matrices.size() / 16);
     }
 
-    /**
-     * Deletes the shaders.
-     */
     public static void deleteShaders(){
         INSTANCED_SHADER.delete();
     }

@@ -35,9 +35,6 @@ class Texture {
     private int width, height;
     private int texture;
 
-    /**
-     * @param path the path of the texture.
-     */
     Texture(String path){
         texture = load(path);
     }
@@ -90,30 +87,18 @@ class Texture {
         return result;
     }
 
-    /**
-     * @return the width of this texture in pixels.
-     */
     int getWidth(){
         return width;
     }
 
-    /**
-     * Binds this texture.
-     */
     void bind(){
         glBindTexture(GL_TEXTURE_2D, texture);
     }
 
-    /**
-     * Unbinds this texture.
-     */
     private void unbind(){
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    /**
-     * Deletes the texture.
-     */
     void delete(){
         unbind();
         glDeleteTextures(texture);

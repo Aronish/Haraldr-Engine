@@ -1,7 +1,7 @@
-package com.game.level.gameobject.tile;
+package com.game.gameobject.tile;
 
-import com.game.level.IBackground;
-import com.game.level.gameobject.GameObject;
+import com.game.gameobject.IBackground;
+import com.game.gameobject.GameObject;
 import com.game.math.Vector3f;
 
 public class TileTree extends Tile implements IBackground {

@@ -1,9 +1,9 @@
-package com.game.level;
+package com.game.world;
 
-import com.game.level.gameobject.GameObject;
-import com.game.level.gameobject.tile.Tile;
-import com.game.level.gameobject.tile.TileFactory;
-import com.game.level.gameobject.tile.TileTree;
+import com.game.gameobject.GameObject;
+import com.game.gameobject.tile.Tile;
+import com.game.gameobject.tile.TileFactory;
+import com.game.gameobject.tile.TileTree;
 import com.game.math.SimplexNoise;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
@@ -12,8 +12,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * Generates and keeps track of a world.
- * For future development style, this class should manage everything to do with the world in a level.
+ * The main tile world.
  */
 public class World {
 
@@ -25,9 +24,6 @@ public class World {
     private ArrayList<Tile> tiles;
     private Grid grid;
 
-    /**
-     * Initializes the grid, list of tiles and generates the world.
-     */
     public World(){
         tiles = new ArrayList<>();
         grid = new Grid();
@@ -67,33 +63,20 @@ public class World {
         }
     }
 
-    /**
-     * Clears the world list an generates a new one.
-     */
     public void regenerateWorld(){
         tiles.clear();
         grid.clear();
         generateWorld();
     }
 
-    /**
-     * Increases/decreases the noise scale with the provided value.
-     * @param dScale how much to change the noise scale.
-     */
     public void increaseNoiseScale(double dScale){
         noiseScale += dScale;
     }
 
-    /**
-     * Resets the noise scale to a specified value.
-     */
     public void resetNoiseScale(){
         noiseScale = 0.042d;
     }
 
-    /**
-     * @return the grid of chunks.
-     */
     public Grid getGrid(){
         return grid;
     }

@@ -1,7 +1,7 @@
 package com.game.graphics;
 
 import com.game.Camera;
-import com.game.level.Entity;
+import com.game.gameobject.Entity;
 import com.game.math.Matrix4f;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
@@ -39,19 +39,16 @@ public class Renderer {
      * Issues a normal draw call.
      * @param entity the entity to render.
      */
-    public static void render(Entity entity){
+    public static void render(Camera camera, Entity entity){
         Models.SPRITE_SHEET.bind();
         SHADER.use();
-        SHADER.setMatrix(Camera.viewMatrix.matrix, "view");
+        SHADER.setMatrix(camera.getViewMatrix().matrix, "view");
         SHADER.setMatrix(Matrix4f._orthographic.matrix, "projection");
         SHADER.setMatrix(entity.getMatrixArray(), "matrix");
         entity.getGameObjectType().model.getVertexArray().bind();
         entity.getGameObjectType().model.getVertexArray().draw();
     }
 
-    /**
-     * Deletes the shaders.
-     */
     public static void deleteShaders(){
         SHADER.delete();
     }

@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 public class LayerStack implements Iterable<Layer> {
 
-    public final ArrayDeque<Layer> layerStack;
+    private final ArrayDeque<Layer> layerStack;
 
     public LayerStack(){
         layerStack = new ArrayDeque<>();

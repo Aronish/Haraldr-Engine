@@ -13,23 +13,14 @@ public class Logger {
         this.prefix = prefix;
     }
 
-    /**
-     * Sets the log level to Info.
-     */
     private void setInfoLevel(){
         logLevel = LogLevel.INFO;
     }
 
-    /**
-     * Sets the log level to Warning.
-     */
     private void setWarningLevel(){
         logLevel = LogLevel.WARNING;
     }
 
-    /**
-     * Sets the log level to Error.
-     */
     private void setErrorLevel(){
         logLevel = LogLevel.ERROR;
     }
@@ -65,12 +56,9 @@ public class Logger {
     }
 
     private <T> void log(T message){
-        System.out.println(String.format("{%s} [%s]: %s", prefix, logLevel, message));
+        System.out.println(String.format("[%s] [%s]: %s", prefix, logLevel, message));
     }
 
-    /**
-     * Contains the available log levels.
-     */
     private enum LogLevel {
 
         ERROR("[ERROR]"),

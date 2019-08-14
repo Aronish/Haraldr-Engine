@@ -31,40 +31,22 @@ public class Model {
         aabb = new AABB(width, height);
     }
 
-    /**
-     * Instantiates the VertexArray of this Model with the provided texture coordinates.
-     * @param textureCoordinates the texture coordinates.
-     */
     private void setVertexArray(float[] textureCoordinates){
         vertexArray = new VertexArray(textureCoordinates);
     }
 
-    /**
-     * Instantiates the VertexArray of this Model with the provided vertices and texture coordinates.
-     * @param vertices the vertices.
-     * @param textureCoordinates the texture coordinates.
-     */
     private void setVertexArray(float[] vertices, float[] textureCoordinates){
         vertexArray = new VertexArray(vertices, textureCoordinates);
     }
 
-    /**
-     * @return the VertexArray.
-     */
     VertexArray getVertexArray(){
         return vertexArray;
     }
 
-    /**
-     * @return the AABB.
-     */
     public AABB getAABB(){
         return aabb;
     }
 
-    /**
-     * Deletes the buffer objects.
-     */
     void cleanUp(){
         vertexArray.unbind();
         vertexArray.delete();

@@ -84,7 +84,7 @@ public class Camera {
     }
 
     public void addPosition(Vector3f pos){
-        position.addThis(pos);
+        position.add(pos);
         calculateViewMatrix();
     }
 

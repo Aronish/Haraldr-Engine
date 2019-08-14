@@ -9,7 +9,7 @@ import com.game.math.Vector3f;
  */
 public abstract class Entity {
 
-    private GameObject gameObjectType;
+    protected GameObject gameObjectType;
 
     protected Vector3f position;
     protected Vector2f scale;
@@ -29,7 +29,7 @@ public abstract class Entity {
     }
 
     public void addPosition(Vector3f position){
-        this.position.addThis(position);
+        this.position.add(position);
     }
 
     public void setRotation(float rotation){

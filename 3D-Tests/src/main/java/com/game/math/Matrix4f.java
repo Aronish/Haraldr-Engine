@@ -60,7 +60,7 @@ public class Matrix4f {
      * @return the resulting transformation matrix.
      */
     public static Matrix4f transform(Vector3f position, float angle, Vector2f scale, boolean isCamera){
-        return translate(scale.getX() == -1 ? position.add(new Vector3f(1.0f, 0.0f)) : position, isCamera).multiply(scale(scale));
+        return translate(scale.getX() == -1 ? position.addReturn(new Vector3f(1.0f, 0.0f)) : position, isCamera).multiply(scale(scale));
     }
 
     private static Matrix4f scale(Vector2f scale){

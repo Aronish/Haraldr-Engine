@@ -51,7 +51,7 @@ public class Vector3f {
      * @param other the other vector to add.
      * @return the sum Vector.
      */
-    public Vector3f add(Vector3f other){
+    public Vector3f addReturn(Vector3f other){
         return new Vector3f(x + other.getX(), y + other.getY(), z + other.getZ());
     }
 
@@ -59,7 +59,7 @@ public class Vector3f {
      * Adds another vector to this vector.
      * @param other the other vector to add.
      */
-    public void addThis(Vector3f other){
+    public void add(Vector3f other){
         x += other.x;
         y += other.y;
         z += other.z;

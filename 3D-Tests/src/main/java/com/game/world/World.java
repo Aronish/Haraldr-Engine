@@ -1,5 +1,6 @@
 package com.game.world;
 
+import com.game.gameobject.Entity;
 import com.game.gameobject.GameObject;
 import com.game.gameobject.tile.Tile;
 import com.game.gameobject.tile.TileFactory;
@@ -18,7 +19,7 @@ public class World {
 
     private static final TileFactory TILE_FACTORY = new TileFactory();
     private static final Random RANDOM = new Random();
-    private static final int WORLD_WIDTH = 4000;
+    private static final int WORLD_WIDTH = 1000;
     private static final int WORLD_HEIGHT = 150;
 
     private static double noiseScale = 0.042d;
@@ -68,6 +69,10 @@ public class World {
         tiles.clear();
         grid.clear();
         generateWorld();
+    }
+
+    public void serialize(){
+        tiles.forEach(Entity::serialize);
     }
 
     public void increaseNoiseScale(double dScale){

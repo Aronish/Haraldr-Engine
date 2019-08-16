@@ -1,6 +1,8 @@
 package com.game.physics;
 
-public enum PlayerMovementType {
+import java.io.Serializable;
+
+public enum PlayerMovementType implements Serializable {
     LEFT(-1.0f),
     RIGHT(1.0f),
     STAND(0.0f);

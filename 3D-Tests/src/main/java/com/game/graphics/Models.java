@@ -3,12 +3,13 @@ package com.game.graphics;
 import com.game.gameobject.GameObject;
 import com.game.math.Vector2f;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  * Container for the sprite sheets and all the Models in the game.
  */
-public class Models {
+public class Models implements Serializable {
 
     private static HashMap<String, float[]> vertexData = new HashMap<>();
 

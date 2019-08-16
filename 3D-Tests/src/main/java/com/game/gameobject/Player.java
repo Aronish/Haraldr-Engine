@@ -5,13 +5,18 @@ import com.game.math.Vector2f;
 import com.game.math.Vector3f;
 import com.game.physics.PlayerMovementType;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 import static com.game.Main.fastFloor;
 import static com.game.world.Grid.GRID_SIZE;
 
 /**
  * The player that you move around in the world.
  */
-public class Player extends MovableEntity {
+public class Player extends MovableEntity implements Serializable {
 
     private static final float WALK_SPEED = 4.0f;
     private static final float JUMP_STRENGTH = 13.0f;
@@ -19,11 +24,11 @@ public class Player extends MovableEntity {
     private static final float BOOST_MULTIPLIER = 10.0f;
 
     private Vector2f gridPosition;
-    private PlayerMovementType movementType;
-    private boolean isJumping;
-    private boolean isRunning;
-    private boolean isFalling;
-    private boolean isBoosting;
+    private transient PlayerMovementType movementType;
+    private transient boolean isJumping;
+    private transient boolean isRunning;
+    private transient boolean isFalling;
+    private transient boolean isBoosting;
 
     public Player(){
         this(new Vector3f(), 0.0f, 1.0f);

@@ -1,9 +1,11 @@
 package com.game.math;
 
+import java.io.Serializable;
+
 /**
  * Math helper class for calculating 4x4 matrices.
  */
-public class Matrix4f {
+public class Matrix4f implements Serializable {
 
     public float[] matrix = new float[16];
     public static final Matrix4f _orthographic = orthographic(16f, -16f, 9f, -9f, -5f, 5f);

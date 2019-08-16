@@ -43,9 +43,8 @@ public class WorldLayer extends Layer {
 
     @Override
     public void onEvent(Window window, Event event) {
-        LOGGER.info(event.toString());
         if (event.isInCategory(EventCategory.CATEGORY_KEYBOARD)){
-            keyInputHandler.processKeyEvent(window, (KeyEvent) event);
+            keyInputHandler.processKeyEvent(window, world, (KeyEvent) event);
             event.setHandled(true);
         }
     }

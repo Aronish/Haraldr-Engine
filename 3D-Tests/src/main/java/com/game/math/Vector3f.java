@@ -1,13 +1,11 @@
 package com.game.math;
 
-import java.io.Serializable;
-
 import static com.game.Application.MAIN_LOGGER;
 
 /**
  * A simple class to represent a 3D vector of floats.
  */
-public class Vector3f implements Serializable {
+public class Vector3f {
 
     private float x, y, z;
 

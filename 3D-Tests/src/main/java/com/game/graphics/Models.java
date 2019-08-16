@@ -3,13 +3,12 @@ package com.game.graphics;
 import com.game.gameobject.GameObject;
 import com.game.math.Vector2f;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  * Container for the sprite sheets and all the Models in the game.
  */
-public class Models implements Serializable {
+public class Models {
 
     private static HashMap<String, float[]> vertexData = new HashMap<>();
 
@@ -24,22 +23,26 @@ public class Models implements Serializable {
     public static final Model PLAYER = initModel(2.86f, new Vector2f(16.0f, 16.0f), 14, 40);
     public static final Model TREE = initModel(3.0f, new Vector2f(0.0f, 16.0f), 16, 48);
 
-
     /**
      * Helper method that creates an array of texture coordinates from the provided information.
      * ((0, 0) is apparently in the upper left corner in my case. (It's usually in the lower left.))
-     * @param pixelOrigin the upper left corner of the sprite in the sprite sheet.
-     * @param pixelWidth the width of the sprite in pixels.
-     * @param pixelHeight the height of the sprite in pixels.
+     * @param origin the upper left corner of the sprite in the sprite sheet.
+     * @param width the width of the sprite in pixels.
+     * @param height the height of the sprite in pixels.
      * @return the array of texture coordinates.
      */
-    private static float[] createTextureCoordinates(Vector2f pixelOrigin, int pixelWidth, int pixelHeight){
-        return new float[]{
-                (pixelOrigin.getX() + pixelWidth) / SPRITE_SHEET_SIZE,  pixelOrigin.getY() / SPRITE_SHEET_SIZE,
-                (pixelOrigin.getX() + pixelWidth) / SPRITE_SHEET_SIZE, (pixelOrigin.getY() + pixelHeight) / SPRITE_SHEET_SIZE,
-                 pixelOrigin.getX() / SPRITE_SHEET_SIZE,                pixelOrigin.getY() / SPRITE_SHEET_SIZE,
-                 pixelOrigin.getX() / SPRITE_SHEET_SIZE,               (pixelOrigin.getY() + pixelHeight) / SPRITE_SHEET_SIZE
+    private static float[] createTextureCoordinates(Vector2f origin, int width, int height){
+        float[] temp = new float[]{
+                (origin.getX() + width) / SPRITE_SHEET_SIZE,     origin.getY() / SPRITE_SHEET_SIZE,
+                (origin.getX() + width) / SPRITE_SHEET_SIZE,    (origin.getY() + height) / SPRITE_SHEET_SIZE,
+                origin.getX() / SPRITE_SHEET_SIZE,              origin.getY() / SPRITE_SHEET_SIZE,
+                origin.getX() / SPRITE_SHEET_SIZE,             (origin.getY() + height) / SPRITE_SHEET_SIZE
         };
+        for (float e : temp){
+            System.out.print(e + " ");
+        }
+        System.out.println();
+        return temp;
     }
 
     /**

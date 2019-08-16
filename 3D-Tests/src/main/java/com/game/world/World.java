@@ -1,6 +1,5 @@
 package com.game.world;
 
-import com.game.gameobject.Entity;
 import com.game.gameobject.GameObject;
 import com.game.gameobject.tile.Tile;
 import com.game.gameobject.tile.TileFactory;
@@ -69,10 +68,6 @@ public class World {
         tiles.clear();
         grid.clear();
         generateWorld();
-    }
-
-    public void serialize(){
-        tiles.forEach(Entity::serialize);
     }
 
     public void increaseNoiseScale(double dScale){

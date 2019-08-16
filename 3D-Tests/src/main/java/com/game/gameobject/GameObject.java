@@ -18,7 +18,7 @@ public enum GameObject {
     ///// MOVABLES ////////////////////////////////////
     PLAYER(Models.PLAYER);
 
-    public final transient Model model;
+    public final Model model;
 
     GameObject(Model model){
         this.model = model;

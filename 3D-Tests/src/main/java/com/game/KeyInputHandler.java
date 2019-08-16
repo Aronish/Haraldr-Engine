@@ -18,7 +18,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_G;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_CONTROL;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_P;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
@@ -100,7 +99,7 @@ public class KeyInputHandler {
      * @param window the current window.
      * @param event the key event.
      */
-    public void processKeyEvent(Window window, World world, KeyEvent event){
+    public void processKeyEvent(Window window, KeyEvent event){
         if (event.eventType == EventType.KEY_PRESSED){
             if (event.keyCode == GLFW_KEY_ESCAPE){
                 glfwSetWindowShouldClose(window.getWindow(), true);
@@ -111,9 +110,6 @@ public class KeyInputHandler {
             if (event.keyCode == GLFW_KEY_B){
                 window.setVSync(!Main.getApplication().getWindow().VSyncOn());
                 MAIN_LOGGER.info("VSync: " + window.VSyncOn());
-            }
-            if (event.keyCode == GLFW_KEY_P){
-
             }
         }
     }

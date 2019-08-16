@@ -51,7 +51,7 @@ public class World {
         if (position.getY() < 58.0f + WORLD_HEIGHT && RANDOM.nextBoolean()){
             tiles.add(new TileTree(position.addReturn(new Vector3f(0.0f, 3.0f))));
         }
-        Tile topTile = TILE_FACTORY.createTile(position, position.getY() > 55.0f + WORLD_HEIGHT ? GameObject.GRASS_SNOW : GameObject.GRASS);
+        Tile topTile = TILE_FACTORY.createTile(position, position.getY() > 45.0f + WORLD_HEIGHT ? GameObject.GRASS_SNOW : GameObject.GRASS);
         if (RANDOM.nextBoolean()){
             topTile.setScale(new Vector2f(-1.0f, 1.0f));
         }

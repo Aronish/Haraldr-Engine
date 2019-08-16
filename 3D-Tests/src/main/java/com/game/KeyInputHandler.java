@@ -101,7 +101,6 @@ public class KeyInputHandler {
      */
     public void processKeyEvent(Window window, KeyEvent event){
         if (event.eventType == EventType.KEY_PRESSED){
-            MAIN_LOGGER.info(event.toString());
             if (event.keyCode == GLFW_KEY_ESCAPE){
                 glfwSetWindowShouldClose(window.getWindow(), true);
             }

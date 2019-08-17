@@ -12,16 +12,17 @@ public class Models {
 
     private static HashMap<String, float[]> vertexData = new HashMap<>();
 
-    static final Texture SPRITE_SHEET = new Texture("textures/sprite_sheet.png");
+    static final Texture SPRITE_SHEET = new Texture("textures/sprite_sheet_2.png");
     private static final float SPRITE_SHEET_SIZE = SPRITE_SHEET.getWidth();
 
-    public static final Model DIRT_TILE = new Model(createTextureCoordinates(new Vector2f(), 16, 16));
-    public static final Model GRASS_TILE = new Model(createTextureCoordinates(new Vector2f(16.0f, 0.0f), 16, 16));
-    public static final Model GRASS_SNOW_TILE = new Model(createTextureCoordinates(new Vector2f(32.0f, 0.0f), 16, 16));
-    public static final Model STONE_TILE = new Model(createTextureCoordinates(new Vector2f(48.0f, 0.0f), 16, 16));
+    //IMPORTANT! To avoid texture atlas bleeding, textures need duplicate edges so that filtering won't use colors from neighboring textures.
+    public static final Model DIRT_TILE = new Model(createTextureCoordinates(new Vector2f(1.0f, 1.0f), 16, 16));
+    public static final Model GRASS_TILE = new Model(createTextureCoordinates(new Vector2f(19.0f, 1.0f), 16, 16));
+    public static final Model GRASS_SNOW_TILE = new Model(createTextureCoordinates(new Vector2f(37.0f, 1.0f), 16, 16));
+    public static final Model STONE_TILE = new Model(createTextureCoordinates(new Vector2f(55.0f, 1.0f), 16, 16));
 
-    public static final Model PLAYER = initModel(2.86f, new Vector2f(16.0f, 16.0f), 14, 40);
-    public static final Model TREE = initModel(3.0f, new Vector2f(0.0f, 16.0f), 16, 48);
+    public static final Model PLAYER = initModel(2.86f, new Vector2f(19.0f, 19.0f), 14, 40);
+    public static final Model TREE = initModel(3.0f, new Vector2f(1.0f, 19.0f), 16, 48);
 
     /**
      * Helper method that creates an array of texture coordinates from the provided information.
@@ -32,17 +33,12 @@ public class Models {
      * @return the array of texture coordinates.
      */
     private static float[] createTextureCoordinates(Vector2f origin, int width, int height){
-        float[] temp = new float[]{
+        return new float[]{
                 (origin.getX() + width) / SPRITE_SHEET_SIZE,     origin.getY() / SPRITE_SHEET_SIZE,
                 (origin.getX() + width) / SPRITE_SHEET_SIZE,    (origin.getY() + height) / SPRITE_SHEET_SIZE,
                 origin.getX() / SPRITE_SHEET_SIZE,              origin.getY() / SPRITE_SHEET_SIZE,
                 origin.getX() / SPRITE_SHEET_SIZE,             (origin.getY() + height) / SPRITE_SHEET_SIZE
         };
-        for (float e : temp){
-            System.out.print(e + " ");
-        }
-        System.out.println();
-        return temp;
     }
 
     /**

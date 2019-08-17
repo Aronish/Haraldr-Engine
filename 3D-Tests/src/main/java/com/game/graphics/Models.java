@@ -20,6 +20,7 @@ public class Models {
     public static final Model GRASS_TILE = new Model(createTextureCoordinates(new Vector2f(19.0f, 1.0f), 16, 16));
     public static final Model GRASS_SNOW_TILE = new Model(createTextureCoordinates(new Vector2f(37.0f, 1.0f), 16, 16));
     public static final Model STONE_TILE = new Model(createTextureCoordinates(new Vector2f(55.0f, 1.0f), 16, 16));
+    public static final Model GRASS_TUFT = initModel(0.25f, new Vector2f(73.0f, 14.0f), 16, 4);
 
     public static final Model PLAYER = initModel(2.86f, new Vector2f(19.0f, 19.0f), 14, 40);
     public static final Model TREE = initModel(3.0f, new Vector2f(1.0f, 19.0f), 16, 48);

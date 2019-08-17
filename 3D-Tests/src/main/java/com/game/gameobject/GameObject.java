@@ -14,6 +14,7 @@ public enum GameObject {
     STONE(Models.STONE_TILE),
     GRASS_SNOW(Models.GRASS_SNOW_TILE),
     TREE(Models.TREE),
+    GRASS_TUFT(Models.GRASS_TUFT),
 
     ///// MOVABLES ////////////////////////////////////
     PLAYER(Models.PLAYER);

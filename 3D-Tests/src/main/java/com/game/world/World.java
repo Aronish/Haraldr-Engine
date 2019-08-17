@@ -3,6 +3,7 @@ package com.game.world;
 import com.game.gameobject.GameObject;
 import com.game.gameobject.tile.Tile;
 import com.game.gameobject.tile.TileFactory;
+import com.game.gameobject.tile.TileGrassTuft;
 import com.game.gameobject.tile.TileTree;
 import com.game.math.SimplexNoise;
 import com.game.math.Vector2f;
@@ -48,8 +49,10 @@ public class World {
      * @param position the position of the initial block.
      */
     private void fillColumn(Vector3f position){
-        if (position.getY() < 58.0f + WORLD_HEIGHT && RANDOM.nextBoolean()){
+        if (position.getY() < 58.0f + WORLD_HEIGHT && RANDOM.nextInt() % 3 == 0){
             tiles.add(new TileTree(position.addReturn(new Vector3f(0.0f, 3.0f))));
+        }else{
+            tiles.add(new TileGrassTuft(position.addReturn(new Vector3f(0.0f, 0.25f))));
         }
         Tile topTile = TILE_FACTORY.createTile(position, position.getY() > 45.0f + WORLD_HEIGHT ? GameObject.GRASS_SNOW : GameObject.GRASS);
         if (RANDOM.nextBoolean()){

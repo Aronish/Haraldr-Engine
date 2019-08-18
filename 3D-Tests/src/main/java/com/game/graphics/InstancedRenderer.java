@@ -30,6 +30,8 @@ public class InstancedRenderer {
     private static ArrayList<Float> matrices = new ArrayList<>();
     private static int instancedMBO = glGenBuffers();
 
+    static { setupInstancedBuffer(); }
+
     private static float[] matricesAsPrimitiveArray(){
         float[] primitiveArray = new float[matrices.size()];
         int i = 0;
@@ -43,7 +45,7 @@ public class InstancedRenderer {
      * Sets up all vertex arrays to know about the instanced matrix attribute.
      * (At current zoom level, a buffer size of ~10 Mb should be enough.)
      */
-    public static void setupInstancedBuffer(){
+    private static void setupInstancedBuffer(){
         glBindBuffer(GL_ARRAY_BUFFER, instancedMBO);
         glBufferData(GL_ARRAY_BUFFER, 10000000, GL_DYNAMIC_DRAW);
 

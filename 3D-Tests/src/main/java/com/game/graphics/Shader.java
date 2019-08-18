@@ -5,7 +5,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.game.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
+import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
+import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL46.GL_FRAGMENT_SHADER;
@@ -42,16 +45,16 @@ public class Shader {
         int fragmentShader = createShader(GL_FRAGMENT_SHADER, readShaderFile(fragmentShaderPath));
 
         glCompileShader(vertexShader);
-        //System.out.println(glGetShaderInfoLog(vertexShader));
+        System.out.println(glGetShaderInfoLog(vertexShader));
         glCompileShader(fragmentShader);
-        //System.out.println(glGetShaderInfoLog(fragmentShader));
+        System.out.println(glGetShaderInfoLog(fragmentShader));
 
         shaderProgram = glCreateProgram();
         glAttachShader(shaderProgram, vertexShader);
         glAttachShader(shaderProgram, fragmentShader);
         glLinkProgram(shaderProgram);
         glValidateProgram(shaderProgram);
-        //System.out.println(glGetProgramInfoLog(shaderProgram));
+        System.out.println(glGetProgramInfoLog(shaderProgram));
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
     }

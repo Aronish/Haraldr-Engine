@@ -94,7 +94,7 @@ class Texture {
         glBindTexture(GL_TEXTURE_2D, texture);
     }
 
-    private void unbind(){
+    void unbind(){
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 

@@ -90,7 +90,7 @@ public class Grid {
         return height - 1;
     }
 
-    public GridCell getContent(int x, int y){
+    public GridCell getGridCell(int x, int y){
         return grid.get(x).get(y);
     }
 

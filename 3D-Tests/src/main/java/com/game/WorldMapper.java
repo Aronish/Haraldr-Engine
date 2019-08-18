@@ -34,7 +34,7 @@ class WorldMapper {
 
         for (int x = 0; x < grid.getWidth(); ++x){
             for (int y = 0; y < grid.getHeight(); ++y){
-                for (Tile tile : grid.getContent(x, y).getTiles()){
+                for (Tile tile : grid.getGridCell(x, y).getTiles()){
                     if (!(tile instanceof TileTree)){
                         Color color = null;
                         switch (tile.getGameObjectType()){

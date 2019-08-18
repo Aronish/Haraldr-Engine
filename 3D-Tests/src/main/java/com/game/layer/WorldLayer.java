@@ -8,6 +8,7 @@ import com.game.event.EventCategory;
 import com.game.event.EventType;
 import com.game.event.KeyEvent;
 import com.game.event.MouseScrolledEvent;
+import com.game.graphics.FontRenderer;
 import com.game.graphics.InstancedRenderer;
 import com.game.graphics.Renderer;
 import com.game.world.Grid;
@@ -24,24 +25,15 @@ import java.util.List;
 
 public class WorldLayer extends Layer {
 
-    private World world;
-    private Player player;
-    private Camera camera;
-    private EventHandler eventHandler;
+    private World world = new World();
+    private Player player = new Player(new Vector3f(0.0f, 255.0f));
+    private Camera camera = new Camera();
+    private EventHandler eventHandler = new EventHandler();
 
-    private List<Grid.GridCell> visibleGridCells;
-    private List<Tile> frustumCulledObjects;
+    private List<Grid.GridCell> visibleGridCells = new ArrayList<>();
+    private List<Tile> frustumCulledObjects = new ArrayList<>();
 
-    public WorldLayer(String name) {
-        super(name);
-        world = new World();
-        player = new Player(new Vector3f(0.0f, 255.0f));
-        camera = new Camera();
-        eventHandler = new EventHandler();
-        visibleGridCells = new ArrayList<>();
-        frustumCulledObjects = new ArrayList<>();
-        InstancedRenderer.setupInstancedBuffer();
-    }
+    public WorldLayer(String name) { super(name); }
 
     @Override
     public void onEvent(Window window, Event event) {
@@ -72,6 +64,7 @@ public class WorldLayer extends Layer {
     public void renderLevel(){
         InstancedRenderer.renderGridCells(camera, visibleGridCells);
         Renderer.render(camera, player);
+        FontRenderer.renderText(camera);
     }
 
     /**
@@ -86,14 +79,10 @@ public class WorldLayer extends Layer {
         visibleGridCells.clear();
         frustumCulledObjects.clear();
         for (int x = -camera.getChunkXRange(); x <= camera.getChunkXRange(); ++x){
-            if (playerGridPosition.getX() + x < 0 || playerGridPosition.getX() + x > grid.getWidthI()){
-                continue;
-            }
+            if (playerGridPosition.getX() + x < 0 || playerGridPosition.getX() + x > grid.getWidthI()) continue;
             for (int y = -camera.getChunkYRange(); y <= camera.getChunkYRange(); ++y){
-                if (playerGridPosition.getY() + y < 0 || playerGridPosition.getY() + y > grid.getHeightI()){
-                    continue;
-                }
-                visibleGridCells.add(grid.getContent((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y)); //TODO: Int cast not good for negative values.
+                if (playerGridPosition.getY() + y < 0 || playerGridPosition.getY() + y > grid.getHeightI()) continue;
+                visibleGridCells.add(grid.getGridCell((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y)); //TODO: Int cast not good for negative values.
             }
         }
         frustumCull();
@@ -111,9 +100,6 @@ public class WorldLayer extends Layer {
         }
     }
 
-    /**
-     * Does collision detection and resolution for the objects requiring collisions.
-     */
     private void doCollisions() {
         for (Tile tile : frustumCulledObjects){
             if (!(tile instanceof IBackground)){

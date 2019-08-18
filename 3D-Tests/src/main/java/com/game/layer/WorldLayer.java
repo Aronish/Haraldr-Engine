@@ -47,11 +47,11 @@ public class WorldLayer extends Layer {
     public void onEvent(Window window, Event event) {
         //LOGGER.info(event.toString());
         if (event.isInCategory(EventCategory.CATEGORY_KEYBOARD)){
-            eventHandler.processKeyEvent(window, (KeyEvent) event);
+            eventHandler.processKeyEvent((KeyEvent) event, window);
             event.setHandled(true);
         }
         if (event.eventType == EventType.MOUSE_SCROLLED){
-            eventHandler.processScrollEvent(camera, (MouseScrolledEvent) event);
+            eventHandler.processScrollEvent((MouseScrolledEvent) event, camera);
         }
     }
 
@@ -59,7 +59,7 @@ public class WorldLayer extends Layer {
      * Process input, update physics/movement, do collisions, update necessary matrices last.
      */
     public void updateLevel(Window window, float deltaTime){
-        eventHandler.processInput(camera, window.getWindow(), deltaTime, player, world);
+        eventHandler.processInput(camera, window.getWindow(), player, world);
         player.update(camera, deltaTime);
         checkVisibleGridCells();
         doCollisions();

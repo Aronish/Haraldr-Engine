@@ -12,7 +12,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_B;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_G;
@@ -22,7 +21,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_V;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
 import static org.lwjgl.glfw.GLFW.glfwGetKey;
@@ -35,11 +33,10 @@ public class EventHandler {
      * This is better for movement, etc. because of the way key repeating works. Makes for smooth movement.
      * @param camera the current camera.
      * @param window the current window.
-     * @param deltaTime the delta time.
      * @param player the current player.
      * @param world the current world
      */
-    public void processInput(Camera camera, long window, float deltaTime, Player player, World world){
+    public void processInput(Camera camera, long window, Player player, World world){
         player.setMovementType(PlayerMovementType.STAND);
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != 0){
             player.setRunning(true);
@@ -71,13 +68,7 @@ public class EventHandler {
         }
         if (glfwGetKey(window, GLFW_KEY_Z) != 0){
             world.resetNoiseScale();
-        }/*
-        if (glfwGetKey(window, GLFW_KEY_UP) != 0){
-            camera.calculateScale(true, deltaTime);
         }
-        if (glfwGetKey(window, GLFW_KEY_DOWN) != 0){
-            camera.calculateScale(false, deltaTime);
-        }*/
         if (glfwGetKey(window, GLFW_KEY_LEFT) != 0){
             world.increaseNoiseScale(0.001d);
         }
@@ -100,7 +91,7 @@ public class EventHandler {
      * @param window the current window.
      * @param event the key event.
      */
-    public void processKeyEvent(Window window, KeyEvent event){
+    public void processKeyEvent(KeyEvent event, Window window){
         if (event.eventType == EventType.KEY_PRESSED){
             if (event.keyCode == GLFW_KEY_ESCAPE){
                 glfwSetWindowShouldClose(window.getWindow(), true);
@@ -115,7 +106,7 @@ public class EventHandler {
         }
     }
 
-    public void processScrollEvent(Camera camera, MouseScrolledEvent event){
+    public void processScrollEvent(MouseScrolledEvent event, Camera camera){
         if (event.yOffset < 0){
             camera.zoomOut();
         }else{

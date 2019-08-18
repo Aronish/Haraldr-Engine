@@ -1,11 +1,13 @@
 package com.game.layer;
 
 import com.game.Camera;
-import com.game.KeyInputHandler;
+import com.game.EventHandler;
 import com.game.Window;
 import com.game.event.Event;
 import com.game.event.EventCategory;
+import com.game.event.EventType;
 import com.game.event.KeyEvent;
+import com.game.event.MouseScrolledEvent;
 import com.game.graphics.InstancedRenderer;
 import com.game.graphics.Renderer;
 import com.game.world.Grid;
@@ -25,7 +27,7 @@ public class WorldLayer extends Layer {
     private World world;
     private Player player;
     private Camera camera;
-    private KeyInputHandler keyInputHandler;
+    private EventHandler eventHandler;
 
     private List<Grid.GridCell> visibleGridCells;
     private List<Tile> frustumCulledObjects;
@@ -35,7 +37,7 @@ public class WorldLayer extends Layer {
         world = new World();
         player = new Player(new Vector3f(0.0f, 255.0f));
         camera = new Camera();
-        keyInputHandler = new KeyInputHandler();
+        eventHandler = new EventHandler();
         visibleGridCells = new ArrayList<>();
         frustumCulledObjects = new ArrayList<>();
         InstancedRenderer.setupInstancedBuffer();
@@ -43,10 +45,13 @@ public class WorldLayer extends Layer {
 
     @Override
     public void onEvent(Window window, Event event) {
-        LOGGER.info(event.toString());
+        //LOGGER.info(event.toString());
         if (event.isInCategory(EventCategory.CATEGORY_KEYBOARD)){
-            keyInputHandler.processKeyEvent(window, (KeyEvent) event);
+            eventHandler.processKeyEvent(window, (KeyEvent) event);
             event.setHandled(true);
+        }
+        if (event.eventType == EventType.MOUSE_SCROLLED){
+            eventHandler.processScrollEvent(camera, (MouseScrolledEvent) event);
         }
     }
 
@@ -54,7 +59,7 @@ public class WorldLayer extends Layer {
      * Process input, update physics/movement, do collisions, update necessary matrices last.
      */
     public void updateLevel(Window window, float deltaTime){
-        keyInputHandler.processInput(camera, window.getWindow(), deltaTime, player, world);
+        eventHandler.processInput(camera, window.getWindow(), deltaTime, player, world);
         player.update(camera, deltaTime);
         checkVisibleGridCells();
         doCollisions();

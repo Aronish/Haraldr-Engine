@@ -5,6 +5,8 @@ import com.game.gameobject.tile.Tile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.game.Main.fastFloor;
 
@@ -17,19 +19,13 @@ public class Grid {
 
     private int width, height;
 
-    private ArrayList<ArrayList<GridCell>> grid;
-
-    Grid(){
-        width = 0;
-        height = 0;
-        grid = new ArrayList<>();
-    }
+    private List<List<GridCell>> grid = new ArrayList<>();
 
     /**
      * Populates the grid with the supplied tiles. Caches the matrices in the grid cells.
      * @param tiles the tiles to be put in the grid.
      */
-    void populateGrid(ArrayList<Tile> tiles){
+    void populateGrid(List<Tile> tiles){
         tiles.forEach(entity -> addEntity(fastFloor(entity.getPosition().getX() / GRID_SIZE), fastFloor(entity.getPosition().getY() / GRID_SIZE), entity));
         cacheMatrices();
     }
@@ -38,7 +34,7 @@ public class Grid {
      * Creates a store of matrices in the grid cells to avoid dynamic queries based on game object type.
      */
     private void cacheMatrices(){
-        for (ArrayList<GridCell> yAxis : grid){
+        for (List<GridCell> yAxis : grid){
             for (GridCell gridCell : yAxis){
                 gridCell.cacheMatrices();
             }
@@ -55,7 +51,7 @@ public class Grid {
         while (!succeeded){
             if (width <= x){
                 grid.add(new ArrayList<>());
-                ArrayList<GridCell> last = grid.get(grid.size() - 1);
+                List<GridCell> last = grid.get(grid.size() - 1);
                 for (int i = 0; i <= height; ++i){
                     last.add(new GridCell());
                 }
@@ -78,30 +74,18 @@ public class Grid {
         grid.clear();
     }
 
-    /**
-     * @return the real width of this Grid.
-     */
     public int getWidth(){
         return width;
     }
 
-    /**
-     * @return the real height of this Grid.
-     */
     public int getHeight(){
         return height;
     }
 
-    /**
-     * @return the width of the grid in indices.
-     */
     public int getWidthI(){
         return width - 1;
     }
 
-    /**
-     * @return the height of the grid in indices.
-     */
     public int getHeightI(){
         return height - 1;
     }
@@ -116,16 +100,12 @@ public class Grid {
      */
     public static class GridCell {
 
-        private ArrayList<Tile> tiles;
-        private HashMap<GameObject, ArrayList<Float>> matrices;
+        private List<Tile> tiles = new ArrayList<>();
+        private Map<GameObject, List<Float>> matrices = new HashMap<>();
 
-        private ArrayList<Float> intermeditateArray;
+        private List<Float> intermeditateArray = new ArrayList<>();
 
-        private GridCell(){
-            tiles = new ArrayList<>();
-            matrices = new HashMap<>();
-            intermeditateArray = new ArrayList<>();
-        }
+        private GridCell(){}
 
         private void addEntity(Tile tile){
             tiles.add(tile);
@@ -148,11 +128,11 @@ public class Grid {
             }
         }
 
-        public ArrayList<Tile> getTiles(){
+        public List<Tile> getTiles(){
             return tiles;
         }
 
-        public ArrayList<Float> getMatrices(GameObject tileType){
+        public List<Float> getMatrices(GameObject tileType){
             return matrices.get(tileType);
         }
     }

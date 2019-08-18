@@ -8,4 +8,9 @@ public abstract class KeyEvent extends Event {
         super(eventType, eventCategories);
         this.keyCode = keyCode;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s: Key Code: %d", super.toString(), keyCode);
+    }
 }

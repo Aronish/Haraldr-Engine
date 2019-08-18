@@ -5,11 +5,10 @@ package com.game.debug;
  */
 public class Logger {
 
-    private LogLevel logLevel;
+    private LogLevel logLevel = LogLevel.INFO;
     private String prefix;
 
     public Logger(String prefix){
-        this.logLevel = LogLevel.INFO;
         this.prefix = prefix;
     }
 

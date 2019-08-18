@@ -12,15 +12,13 @@ public abstract class MovableEntity extends Entity {
     private static final float GRAVITY_CONSTANT = -25.0f;
     private static final float MAX_GRAVITY_ACCELERATION = -30.0f;
 
-    protected Vector2f velocity;
-    protected float gravityAcceleration;
+    protected Vector2f velocity = new Vector2f();
+    protected float gravityAcceleration = 0.0f;
     private boolean hasGravity;
 
     MovableEntity(Vector3f position, float rotation, float scale, boolean hasGravity, GameObject gameObjectType) {
         super(position, rotation, scale, gameObjectType);
         this.hasGravity = hasGravity;
-        velocity = new Vector2f();
-        gravityAcceleration = 0.0f;
     }
 
     /**

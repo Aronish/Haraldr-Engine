@@ -18,12 +18,12 @@ public class Player extends MovableEntity {
     private static final float RUN_MULTIPLIER = 1.5f;
     private static final float BOOST_MULTIPLIER = 10.0f;
 
-    private Vector2f gridPosition;
-    private PlayerMovementType movementType;
-    private boolean isJumping;
-    private boolean isRunning;
-    private boolean isFalling;
-    private boolean isBoosting;
+    private Vector2f gridPosition = new Vector2f();
+    private PlayerMovementType movementType = PlayerMovementType.STAND;
+    private boolean isJumping = false;
+    private boolean isRunning = false;
+    private boolean isFalling = false;
+    private boolean isBoosting = false;
 
     public Player(){
         this(new Vector3f(), 0.0f, 1.0f);
@@ -39,12 +39,6 @@ public class Player extends MovableEntity {
 
     private Player(Vector3f position, float rotation, float scale){
         super(position, rotation, scale, true, GameObject.PLAYER);
-        gridPosition = new Vector2f();
-        movementType = PlayerMovementType.STAND;
-        isJumping = false;
-        isRunning = false;
-        isFalling = false;
-        isBoosting = false;
     }
 
     public void setMovementType(PlayerMovementType movementType){

@@ -111,10 +111,6 @@ public class Application {
         }
     }
 
-    Window getWindow(){
-        return window;
-    }
-
     void cleanUp(){
         Models.cleanUp();
         Renderer.deleteShaders();

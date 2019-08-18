@@ -7,12 +7,10 @@ import com.game.math.Vector3f;
  */
 public class AABB {
 
-    private float width, height;
+    private float width = 1.0f, height = 1.0f;
     private Vector3f middle;
 
     public AABB(){
-        width = 1.0f;
-        height = 1.0f;
         middle = new Vector3f(0.5f, -0.5f);
     }
 

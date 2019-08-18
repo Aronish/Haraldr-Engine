@@ -8,7 +8,7 @@ import com.game.physics.AABB;
 public class Model {
 
     private VertexArray vertexArray;
-    private AABB aabb;
+    private AABB aabb = new AABB();
 
     /**
      * Constructor for setting only custom texture coordinates.
@@ -16,7 +16,6 @@ public class Model {
      */
     Model(float[] textureCoordinates){
         setVertexArray(textureCoordinates);
-        aabb = new AABB();
     }
 
     /**

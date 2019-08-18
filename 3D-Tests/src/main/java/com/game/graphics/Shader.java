@@ -26,7 +26,7 @@ import static org.lwjgl.opengl.GL46.glValidateProgram;
 public class Shader {
 
     private int shaderProgram;
-    private Map<String, Integer> uniformLocations;
+    private Map<String, Integer> uniformLocations = new HashMap<>();
 
     /**
      * Constructor with a parameter for the general shader file path.
@@ -38,7 +38,6 @@ public class Shader {
     }
 
     Shader(String vertexShaderPath, String fragmentShaderPath){
-        uniformLocations = new HashMap<>();
         int vertexShader = createShader(GL_VERTEX_SHADER, readShaderFile(vertexShaderPath));
         int fragmentShader = createShader(GL_FRAGMENT_SHADER, readShaderFile(fragmentShaderPath));
 

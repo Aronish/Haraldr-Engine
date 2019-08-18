@@ -15,57 +15,41 @@ import static com.game.Main.fastFloor;
  */
 public class Camera {
 
+    private final float[] zooms = { 0.125f, 0.25f, 0.5f, 1.0f, 2.0f, 4.0f };
+
     private Matrix4f viewMatrix;
     private Vector3f position;
-    private float rotation;
-    private float scale;
-    private Vector2f scaleVector;
+    private int currentZoom = 2;
+    private float scale = zooms[currentZoom];
+    private Vector2f scaleVector = new Vector2f();
     private int chunkXRange, chunkYRange;
 
-    private static final float MIN_SCALE = 0.125f;
-    private static final float MAX_SCALE = 2.0f;
-    private static final float SCALE_SPEED = 1.0f;
-
     public Camera(){
-        this(new Vector3f(), 0.0f, 0.5f);
+        this(new Vector3f());
     }
 
-    public Camera(float scale){
-        this(new Vector3f(), 0.0f, scale);
-    }
-
-    private Camera(Vector3f position, float rotation, float scale){
+    private Camera(Vector3f position){
         this.position = position;
-        this.rotation = rotation;
-        this.scale = scale;
-        scaleVector = new Vector2f(scale);
         calculateChunkRanges();
         calculateViewMatrix();
     }
 
     private void calculateViewMatrix(){
-        viewMatrix = Matrix4f.transform(position, rotation, scaleVector, true);
+        viewMatrix = Matrix4f.transform(position, 0.0f, scaleVector.setBoth(scale), true);
     }
 
-    /**
-     * Calculates the scale/zoom based on the delta time from Application#update. Also takes scale into account to make the speed constant.
-     * Constants are defined in the top of this class.
-     * @param shouldIncrease whether the scale should increase or not. If true, it increases, meaning zooming in.
-     * @param deltaTime the delta time used to make the scaling uniform.
-     */
-    public void calculateScale(boolean shouldIncrease, float deltaTime){
-        if (shouldIncrease){
-            scale += SCALE_SPEED * scale * deltaTime;
-            if (scale > MAX_SCALE){
-                scale = MAX_SCALE;
-            }
-        }else {
-            scale -= SCALE_SPEED * scale * deltaTime;
-            if (scale < MIN_SCALE){
-                scale = MIN_SCALE;
-            }
-        }
-        scaleVector.setBoth(scale);
+    public void zoomIn(){
+        ++currentZoom;
+        if (currentZoom >= zooms.length) currentZoom = zooms.length - 1;
+        scale = zooms[currentZoom];
+        calculateChunkRanges();
+        calculateViewMatrix();
+    }
+
+    public void zoomOut(){
+        --currentZoom;
+        if (currentZoom < 0) currentZoom = 0;
+        scale = zooms[currentZoom];
         calculateChunkRanges();
         calculateViewMatrix();
     }
@@ -76,6 +60,8 @@ public class Camera {
     private void calculateChunkRanges(){
         chunkXRange = fastFloor(1.0f / scale);
         chunkYRange = fastFloor(1.0f / scale);
+        if (chunkXRange < 1) chunkXRange = 1;
+        if (chunkYRange < 1) chunkYRange = 1;
     }
 
     public void setPosition(Vector3f pos){

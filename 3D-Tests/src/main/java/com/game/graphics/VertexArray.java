@@ -23,18 +23,18 @@ import static org.lwjgl.opengl.GL46.glVertexAttribPointer;
  */
 class VertexArray {
 
-    private int vao, vbo, tbo, ebo, length;
+    private int vao = glGenVertexArrays(), vbo = glGenBuffers(), tbo = glGenBuffers(), ebo = glGenBuffers(), length;
 
     private static final float[] defVertices = {
+            0.0f, 0.0f,     //Top-left
             1.0f, 0.0f,     //Top-right
             1.0f, -1.0f,    //Bottom-right
-            0.0f, 0.0f,     //Top-left
             0.0f, -1.0f     //Bottom-left
     };
 
     private static final int[] defIndices = {
-            2, 0, 1,
-            2, 1, 3
+            0, 1, 2,
+            0, 2, 3
     };
 
     VertexArray(float[] textureCoordinates){
@@ -46,10 +46,6 @@ class VertexArray {
     }
 
     private VertexArray(float[] vertices, int[] indices, float[] textureCoordinates){
-        vao = glGenVertexArrays();
-        vbo = glGenBuffers();
-        ebo = glGenBuffers();
-        tbo = glGenBuffers();
         length = indices.length;
 
         glBindVertexArray(vao);

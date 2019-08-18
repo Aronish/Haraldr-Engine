@@ -9,10 +9,7 @@ public class Vector2f {
 
     private float x, y;
 
-    public Vector2f(){
-        x = 0.0f;
-        y = 0.0f;
-    }
+    public Vector2f(){}
 
     public Vector2f(float both){
         x = both;
@@ -29,9 +26,10 @@ public class Vector2f {
         this.y = y;
     }
 
-    public void setBoth(float both){
+    public Vector2f setBoth(float both){
         x = both;
         y = both;
+        return this;
     }
 
     public void reset(){

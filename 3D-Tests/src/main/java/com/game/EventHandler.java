@@ -2,6 +2,7 @@ package com.game;
 
 import com.game.event.EventType;
 import com.game.event.KeyEvent;
+import com.game.event.MouseScrolledEvent;
 import com.game.gameobject.Player;
 import com.game.world.World;
 import com.game.physics.PlayerMovementType;
@@ -27,7 +28,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
 import static org.lwjgl.glfw.GLFW.glfwGetKey;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
-public class KeyInputHandler {
+public class EventHandler {
 
     /**
      * These key checks are queried every frame. Using glfwGetKey, the state of the key at that time is checked.
@@ -70,13 +71,13 @@ public class KeyInputHandler {
         }
         if (glfwGetKey(window, GLFW_KEY_Z) != 0){
             world.resetNoiseScale();
-        }
+        }/*
         if (glfwGetKey(window, GLFW_KEY_UP) != 0){
             camera.calculateScale(true, deltaTime);
         }
         if (glfwGetKey(window, GLFW_KEY_DOWN) != 0){
             camera.calculateScale(false, deltaTime);
-        }
+        }*/
         if (glfwGetKey(window, GLFW_KEY_LEFT) != 0){
             world.increaseNoiseScale(0.001d);
         }
@@ -108,9 +109,17 @@ public class KeyInputHandler {
                 window.changeFullscreen();
             }
             if (event.keyCode == GLFW_KEY_B){
-                window.setVSync(!Main.getApplication().getWindow().VSyncOn());
+                window.setVSync(!window.VSyncOn());
                 MAIN_LOGGER.info("VSync: " + window.VSyncOn());
             }
+        }
+    }
+
+    public void processScrollEvent(Camera camera, MouseScrolledEvent event){
+        if (event.yOffset < 0){
+            camera.zoomOut();
+        }else{
+            camera.zoomIn();
         }
     }
 }

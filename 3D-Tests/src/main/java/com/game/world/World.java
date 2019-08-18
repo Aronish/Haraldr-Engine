@@ -10,6 +10,7 @@ import com.game.math.Vector2f;
 import com.game.math.Vector3f;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -23,12 +24,10 @@ public class World {
     private static final int WORLD_HEIGHT = 150;
 
     private static double noiseScale = 0.042d;
-    private ArrayList<Tile> tiles;
-    private Grid grid;
+    private List<Tile> tiles = new ArrayList<>();
+    private Grid grid = new Grid();
 
     public World(){
-        tiles = new ArrayList<>();
-        grid = new Grid();
         generateWorld();
     }
 

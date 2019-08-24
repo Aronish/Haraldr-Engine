@@ -1,15 +1,15 @@
 #version 460 core
 
-layout(location = 0) in float x;
-layout(location = 1) in float y;
-
+layout(location = 0) in vec2 a_Vertex;
+layout(location = 1) in vec2 a_TexCoord;
+/*
 uniform mat4 model;
+*/
 uniform mat4 view;
 uniform mat4 projection;
-
-out vec4 v_Color;
+out vec2 v_TexCoord;
 
 void main(){
-    v_Color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    gl_Position = projection * view * model * vec4(x, y, 1.0f, 1.0f);
+    v_TexCoord = a_TexCoord;
+    gl_Position = projection * view * vec4(a_Vertex, 1.0f, 0.0f);
 }

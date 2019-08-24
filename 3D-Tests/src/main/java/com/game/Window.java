@@ -10,6 +10,9 @@ import com.game.event.MouseScrolledEvent;
 import com.game.event.WindowClosedEvent;
 import com.game.event.WindowResizedEvent;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.system.MemoryStack;
+
+import java.nio.FloatBuffer;
 
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
@@ -24,6 +27,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
+import static org.lwjgl.glfw.GLFW.glfwGetMonitorContentScale;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwInit;
@@ -43,6 +47,7 @@ import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.opengl.GL46.GL_TRUE;
 import static org.lwjgl.opengl.GL46.glViewport;
+import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
@@ -55,6 +60,8 @@ public class Window {
     private boolean VSyncOn;
     private boolean isFullscreen;
     private GLFWVidMode vidmode;
+
+    public float contentScaleX, contentScaleY;
 
     private IEventCallback eventCallback;
 
@@ -86,6 +93,16 @@ public class Window {
         }
         windowWidth = fullscreen ? vidmode.width() : width;
         windowHeight = fullscreen ? vidmode.height() : height;
+
+        try (MemoryStack s = stackPush()) {
+            FloatBuffer px = s.mallocFloat(1);
+            FloatBuffer py = s.mallocFloat(1);
+
+            glfwGetMonitorContentScale(glfwGetPrimaryMonitor(), px, py);
+
+            contentScaleX = px.get(0);
+            contentScaleY = py.get(0);
+        }
 
         window = glfwCreateWindow(windowWidth, windowHeight, "OpenGL Game", (fullscreen ? glfwGetPrimaryMonitor() : NULL), NULL);
         if (window == NULL) {

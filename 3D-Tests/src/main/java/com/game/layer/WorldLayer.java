@@ -33,11 +33,13 @@ public class WorldLayer extends Layer {
     private List<Grid.GridCell> visibleGridCells = new ArrayList<>();
     private List<Tile> frustumCulledObjects = new ArrayList<>();
 
-    public WorldLayer(String name) { super(name); }
+    public WorldLayer(String name) {
+        super(name);
+    }
 
     @Override
     public void onEvent(Window window, Event event) {
-        //LOGGER.info(event.toString());
+        LOGGER.info(event.toString());
         if (event.isInCategory(EventCategory.CATEGORY_KEYBOARD)){
             eventHandler.processKeyEvent((KeyEvent) event, window);
             event.setHandled(true);
@@ -64,7 +66,6 @@ public class WorldLayer extends Layer {
     public void renderLevel(){
         InstancedRenderer.renderGridCells(camera, visibleGridCells);
         Renderer.render(camera, player);
-        FontRenderer.renderText(camera);
     }
 
     /**

@@ -17,7 +17,7 @@ public class Camera {
 
     private final float[] zooms = { 0.125f, 0.25f, 0.5f, 1.0f, 2.0f, 4.0f };
 
-    private Matrix4f viewMatrix;
+    public static Matrix4f viewMatrix;
     private Vector3f position;
     private int currentZoom = 2;
     private float scale = zooms[currentZoom];

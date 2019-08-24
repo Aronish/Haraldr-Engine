@@ -4,9 +4,11 @@ import com.game.Camera;
 import com.game.gameobject.Entity;
 import com.game.math.Matrix4f;
 
+import static com.game.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glGetError;
 
 /**
  * Normal renderer that renders objects which don't need to use instancing. (Players, ev. machines...).

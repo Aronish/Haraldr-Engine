@@ -7,6 +7,7 @@ import com.game.event.IEventCallback;
 import com.game.graphics.InstancedRenderer;
 import com.game.graphics.Models;
 import com.game.graphics.Renderer;
+import com.game.layer.GUILayer;
 import com.game.layer.Layer;
 import com.game.layer.LayerStack;
 import com.game.layer.WorldLayer;
@@ -33,6 +34,7 @@ public class Application {
 
     private LayerStack layerStack;
     private WorldLayer worldLayer;
+    private GUILayer guiLayer;
 
     private Window window;
 
@@ -58,7 +60,10 @@ public class Application {
         Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
         /*---OpenGL code won't work before this---*/
         worldLayer = new WorldLayer("World");
+        guiLayer = new GUILayer("GUI");
+        guiLayer.init(window);
         layerStack.pushLayer(worldLayer);
+        layerStack.pushLayer(guiLayer);
     }
 
     public class EventCallback implements IEventCallback {
@@ -84,6 +89,7 @@ public class Application {
     private void render(){
         Renderer.clear();
         worldLayer.renderLevel();
+        guiLayer.render();
         glfwSwapBuffers(window.getWindow());
     }
 

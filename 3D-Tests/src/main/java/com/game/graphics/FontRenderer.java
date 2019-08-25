@@ -1,6 +1,5 @@
 package com.game.graphics;
-
-import com.game.Application;
+//TODO: Clean the hell out of this file.
 import com.game.Camera;
 import com.game.Window;
 import com.game.math.Matrix4f;
@@ -11,10 +10,7 @@ import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTBakedChar;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.system.MemoryStack;
-import sun.nio.ch.IOUtil;
-import sun.nio.fs.WindowsFileSystemProvider;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -23,27 +19,17 @@ import java.nio.IntBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
-import java.nio.file.AccessMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.spi.FileSystemProvider;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.game.Application.MAIN_LOGGER;
 import static org.lwjgl.BufferUtils.createByteBuffer;
-import static org.lwjgl.opengl.GL11.GL_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_BLUE;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_RED;
-import static org.lwjgl.opengl.GL11.GL_RGB;
-import static org.lwjgl.opengl.GL11.GL_RGBA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
@@ -51,16 +37,11 @@ import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
-import static org.lwjgl.opengl.GL12.GL_BGRA;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
@@ -86,26 +67,22 @@ public class FontRenderer {
     private static int ascent;
     private static int descent;
     private static int lineGap;
-    private static String text = "HELLO!";
+    private static String text = "Hello!";
     private static int fontHeight = 100;
     private static int BITMAP_W, BITMAP_H;
     private static final Shader FONT_SHADER = new Shader("shaders/font");
     private static int texID;
-    private static Matrix4f model = Matrix4f.transform(new Vector3f(0.0f, 220.0f), 0.0f, new Vector2f(0.05f), false);
+    private static Matrix4f model = Matrix4f.transform(new Vector3f(0.0f, 180.0f), 0.0f, new Vector2f(0.05f), false);
     private static Texture texture = new Texture("textures/pixel_test.png");
 
-    private static final int[] defIndices = {
-            0, 1, 2,
-            0, 2, 3
-    };
     private static List<Integer> indices;
     private static List<Float> vertexData;
     private int vao = glCreateVertexArrays(), vbo = glGenBuffers(), ebo = glGenBuffers();
 
-    public FontRenderer(Window _window){
+    public FontRenderer(Window _window) {
         window = _window;
         try {
-            ttf = ioResourceToByteBuffer("fonts/VCR_OSD_MONO_1.001.ttf", 512 * 1024);
+            ttf = ioResourceToByteBuffer("fonts/Roboto-Thin.ttf", 512 * 1024);
         }catch (IOException e){
             throw new RuntimeException(e);
         }
@@ -133,7 +110,7 @@ public class FontRenderer {
         data = init(BITMAP_W, BITMAP_H);
     }
 
-    private void createIndices(){
+    private static void createIndices(){
         indices = new ArrayList<>();
         for (int i = 0; i < text.length(); ++i) {
             indices.add(4 * i);
@@ -146,16 +123,12 @@ public class FontRenderer {
     }
 
     public void setup(){
-        renderText(data, BITMAP_W, BITMAP_H);
+        createTextRenderData(data, BITMAP_W, BITMAP_H);
         createIndices();
-        /*for (float e : vertexData)
-        {
-            MAIN_LOGGER.info(e);
-        }*/
 
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, toPrimitiveArray(vertexData), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, toFloatArray(vertexData), GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 16, 0);
         glEnableVertexAttribArray(1);
@@ -174,12 +147,11 @@ public class FontRenderer {
         glBindVertexArray(vao);
         glBindTexture(GL_TEXTURE_2D, texID);
         glDrawElements(GL_TRIANGLES, text.length() * 6, GL_UNSIGNED_INT, 0);
-        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     ///// UTILS //////////////////////////////////////////////
 
-    private static float[] toPrimitiveArray(List<Float> list){
+    private static float[] toFloatArray(List<Float> list){
         float[] primitiveArray = new float[list.size()];
         int i = 0;
         for (Float element : list){
@@ -197,10 +169,10 @@ public class FontRenderer {
         return primitiveArray;
     }
 
-    private static void renderText(STBTTBakedChar.Buffer cdata, int BITMAP_W, int BITMAP_H) {
+    private static void createTextRenderData(STBTTBakedChar.Buffer cdata, int BITMAP_W, int BITMAP_H) {
         float scale = stbtt_ScaleForPixelHeight(info, fontHeight);
         vertexData = new ArrayList<>();
-
+        //TODO: Readd kerning support.
         try (MemoryStack stack = stackPush()) {
             IntBuffer pCodePoint = stack.mallocInt(1);
 
@@ -221,7 +193,6 @@ public class FontRenderer {
                 if (cp == '\n') {
                     y.put(0, lineY = y.get(0) + (ascent - descent + lineGap) * scale);
                     x.put(0, 0.0f);
-
                     continue;
                 } else if (cp < 32 || 128 <= cp) {
                     continue;
@@ -237,39 +208,48 @@ public class FontRenderer {
                         y0 = scale(lineY, q.y0(), factorY),
                         y1 = scale(lineY, q.y1(), factorY);
 
+                //Top Left
                 vertexData.add(x0);
                 vertexData.add(y1);
                 vertexData.add(q.s0());
                 vertexData.add(q.t0());
-
-                //glTexCoord2f(q.s0(), q.t1()); //Top Left
-                //glVertex2f(x0, y1);
-
+                //Top Right
                 vertexData.add(x1);
                 vertexData.add(y1);
                 vertexData.add(q.s1());
                 vertexData.add(q.t0());
-
-                //glTexCoord2f(q.s1(), q.t1()); //Top Right
-                //glVertex2f(x1, y1);
-
+                //Bottom Right
                 vertexData.add(x1);
                 vertexData.add(y0);
                 vertexData.add(q.s1());
                 vertexData.add(q.t1());
-
-                //glTexCoord2f(q.s1(), q.t0()); //Bottom Right
-                //glVertex2f(x1, y0);
-
+                //Bottom Left
                 vertexData.add(x0);
                 vertexData.add(y0);
                 vertexData.add(q.s0());
                 vertexData.add(q.t1());
-
-                //glTexCoord2f(q.s0(), q.t0()); //Bottom Left
-                //glVertex2f(x0, y0);
             }
         }
+    }
+
+    private static STBTTBakedChar.Buffer init(int BITMAP_W, int BITMAP_H) {
+        texID = glGenTextures();
+        STBTTBakedChar.Buffer cdata = STBTTBakedChar.malloc(96);
+
+        ByteBuffer bitmap = BufferUtils.createByteBuffer(BITMAP_W * BITMAP_H);
+        stbtt_BakeFontBitmap(ttf, fontHeight * window.contentScaleY, bitmap, BITMAP_W, BITMAP_H, 32, cdata);
+
+        glBindTexture(GL_TEXTURE_2D, texID);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, BITMAP_W, BITMAP_H, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        return cdata;
+    }
+
+    private static float scale(float center, float offset, float factor) {
+        return (offset - center) * factor + center;
     }
 
     private static int getCP(String text, int to, int i, IntBuffer cpOut) {
@@ -285,26 +265,6 @@ public class FontRenderer {
         return 1;
     }
 
-    private static float scale(float center, float offset, float factor) {
-        return (offset - center) * factor + center;
-    }
-
-    private static STBTTBakedChar.Buffer init(int BITMAP_W, int BITMAP_H) {
-        texID = glGenTextures();
-        STBTTBakedChar.Buffer cdata = STBTTBakedChar.malloc(96);
-
-        ByteBuffer bitmap = BufferUtils.createByteBuffer(BITMAP_W * BITMAP_H);
-        MAIN_LOGGER.info(stbtt_BakeFontBitmap(ttf, fontHeight * window.contentScaleY, bitmap, BITMAP_W, BITMAP_H, 32, cdata));
-
-        glBindTexture(GL_TEXTURE_2D, texID);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, BITMAP_W, BITMAP_H, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        return cdata;
-    }
-
     private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
         ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
         buffer.flip();
@@ -314,25 +274,23 @@ public class FontRenderer {
 
     private static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {
         ByteBuffer buffer;
-
         Path path = Paths.get(resource);
         if (Files.isReadable(path)) {
             try (SeekableByteChannel fc = Files.newByteChannel(path)) {
                 buffer = BufferUtils.createByteBuffer((int)fc.size() + 1);
-                while (fc.read(buffer) != -1) {
-                    ;
-                }
+                while (fc.read(buffer) != -1) { MAIN_LOGGER.info(fc.size()); }
             }
         } else {
-            try (
-                    InputStream source = FontRenderer.class.getClassLoader().getResourceAsStream(resource);
-                    ReadableByteChannel rbc = Channels.newChannel(source)
-            ) {
+            try (InputStream source = FontRenderer.class.getClassLoader().getResourceAsStream(resource)) {
+                if (source == null){
+                    throw new RuntimeException("Source was null! (Font not readable/found)");
+                }
+                ReadableByteChannel rbc = Channels.newChannel(source);
                 buffer = createByteBuffer(bufferSize);
-
                 while (true) {
                     int bytes = rbc.read(buffer);
                     if (bytes == -1) {
+                        rbc.close();
                         break;
                     }
                     if (buffer.remaining() == 0) {
@@ -341,7 +299,6 @@ public class FontRenderer {
                 }
             }
         }
-
         buffer.flip();
         return buffer;
     }

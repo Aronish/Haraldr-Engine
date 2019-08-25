@@ -23,6 +23,6 @@ public class GUILayer extends Layer {
 
     @Override
     public void onEvent(Window window, Event event) {
-        LOGGER.info(event.toString());
+        //LOGGER.info(event.toString());
     }
 }

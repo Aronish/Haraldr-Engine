@@ -35,9 +35,14 @@ import static com.game.Application.MAIN_LOGGER;
 import static org.lwjgl.BufferUtils.createByteBuffer;
 import static org.lwjgl.opengl.GL11.GL_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_BLUE;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_RED;
+import static org.lwjgl.opengl.GL11.GL_RGB;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
@@ -47,11 +52,13 @@ import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
+import static org.lwjgl.opengl.GL12.GL_BGRA;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
@@ -79,17 +86,19 @@ public class FontRenderer {
     private static int ascent;
     private static int descent;
     private static int lineGap;
-    private static String text = "HELLO, WORLD";
-    private static int fontHeight = 24;
+    private static String text = "HELLO!";
+    private static int fontHeight = 100;
     private static int BITMAP_W, BITMAP_H;
     private static final Shader FONT_SHADER = new Shader("shaders/font");
     private static int texID;
-    private static Matrix4f model = Matrix4f.transform(new Vector3f(0.0f, 250.0f), 0.0f, new Vector2f(1.0f), false);
+    private static Matrix4f model = Matrix4f.transform(new Vector3f(0.0f, 220.0f), 0.0f, new Vector2f(0.05f), false);
+    private static Texture texture = new Texture("textures/pixel_test.png");
 
     private static final int[] defIndices = {
             0, 1, 2,
             0, 2, 3
     };
+    private static List<Integer> indices;
     private static List<Float> vertexData;
     private int vao = glCreateVertexArrays(), vbo = glGenBuffers(), ebo = glGenBuffers();
 
@@ -124,8 +133,21 @@ public class FontRenderer {
         data = init(BITMAP_W, BITMAP_H);
     }
 
+    private void createIndices(){
+        indices = new ArrayList<>();
+        for (int i = 0; i < text.length(); ++i) {
+            indices.add(4 * i);
+            indices.add(4 * i + 1);
+            indices.add(4 * i + 2);
+            indices.add(4 * i);
+            indices.add(4 * i + 2);
+            indices.add(4 * i + 3);
+        }
+    }
+
     public void setup(){
         renderText(data, BITMAP_W, BITMAP_H);
+        createIndices();
         /*for (float e : vertexData)
         {
             MAIN_LOGGER.info(e);
@@ -135,24 +157,23 @@ public class FontRenderer {
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, toPrimitiveArray(vertexData), GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 8, 0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, false, 16, 0);
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, 8, 8);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, 16, 8);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, defIndices, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, toIntArray(indices), GL_STATIC_DRAW);
         glBindVertexArray(0);
     }
 
     public void render(){
         FONT_SHADER.use();
-        //FONT_SHADER.setMatrix(model.matrix, "model");
+        FONT_SHADER.setMatrix(model.matrix, "model");
         FONT_SHADER.setMatrix(Camera.viewMatrix.matrix, "view");
         FONT_SHADER.setMatrix(Matrix4f._orthographic.matrix, "projection");
         glBindVertexArray(vao);
         glBindTexture(GL_TEXTURE_2D, texID);
-        //Models.SPRITE_SHEET.bind();
-        glDrawElements(GL_TRIANGLES, vertexData.size() / 4, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, text.length() * 6, GL_UNSIGNED_INT, 0);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
@@ -162,6 +183,15 @@ public class FontRenderer {
         float[] primitiveArray = new float[list.size()];
         int i = 0;
         for (Float element : list){
+            primitiveArray[i++] = element;
+        }
+        return primitiveArray;
+    }
+
+    private static int[] toIntArray(List<Integer> list){
+        int[] primitiveArray = new int[list.size()];
+        int i = 0;
+        for (Integer element : list){
             primitiveArray[i++] = element;
         }
         return primitiveArray;
@@ -208,36 +238,36 @@ public class FontRenderer {
                         y1 = scale(lineY, q.y1(), factorY);
 
                 vertexData.add(x0);
-                vertexData.add(y0);
+                vertexData.add(y1);
                 vertexData.add(q.s0());
                 vertexData.add(q.t0());
 
-                //glTexCoord2f(q.s0(), q.t0());
-                //glVertex2f(x0, y0);
-
-                vertexData.add(x1);
-                vertexData.add(y0);
-                vertexData.add(q.s1());
-                vertexData.add(q.t0());
-
-                //glTexCoord2f(q.s1(), q.t0());
-                //glVertex2f(x1, y0);
+                //glTexCoord2f(q.s0(), q.t1()); //Top Left
+                //glVertex2f(x0, y1);
 
                 vertexData.add(x1);
                 vertexData.add(y1);
                 vertexData.add(q.s1());
-                vertexData.add(q.t1());
+                vertexData.add(q.t0());
 
-                //glTexCoord2f(q.s1(), q.t1());
+                //glTexCoord2f(q.s1(), q.t1()); //Top Right
                 //glVertex2f(x1, y1);
 
+                vertexData.add(x1);
+                vertexData.add(y0);
+                vertexData.add(q.s1());
+                vertexData.add(q.t1());
+
+                //glTexCoord2f(q.s1(), q.t0()); //Bottom Right
+                //glVertex2f(x1, y0);
+
                 vertexData.add(x0);
-                vertexData.add(y1);
+                vertexData.add(y0);
                 vertexData.add(q.s0());
                 vertexData.add(q.t1());
 
-                //glTexCoord2f(q.s0(), q.t1());
-                //glVertex2f(x0, y1);
+                //glTexCoord2f(q.s0(), q.t0()); //Bottom Left
+                //glVertex2f(x0, y0);
             }
         }
     }
@@ -264,18 +294,12 @@ public class FontRenderer {
         STBTTBakedChar.Buffer cdata = STBTTBakedChar.malloc(96);
 
         ByteBuffer bitmap = BufferUtils.createByteBuffer(BITMAP_W * BITMAP_H);
-        stbtt_BakeFontBitmap(ttf, fontHeight * window.contentScaleY, bitmap, BITMAP_W, BITMAP_H, 32, cdata);
+        MAIN_LOGGER.info(stbtt_BakeFontBitmap(ttf, fontHeight * window.contentScaleY, bitmap, BITMAP_W, BITMAP_H, 32, cdata));
 
         glBindTexture(GL_TEXTURE_2D, texID);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, BITMAP_W, BITMAP_H, 0, GL_ALPHA, GL_UNSIGNED_BYTE, bitmap);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-        //glColor3f(169f / 255f, 183f / 255f, 198f / 255f); // Text color
-
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, BITMAP_W, BITMAP_H, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
         glBindTexture(GL_TEXTURE_2D, 0);
 
         return cdata;
@@ -290,15 +314,14 @@ public class FontRenderer {
 
     private static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {
         ByteBuffer buffer;
-        String paths = FontRenderer.class.getClassLoader().getResource(resource).toString();
-        File file = new File(paths.substring(9));
-        MAIN_LOGGER.info(paths.substring(6));
-        Path path = Paths.get(file.toURI());
-        MAIN_LOGGER.info(Files.isReadable(path));
+
+        Path path = Paths.get(resource);
         if (Files.isReadable(path)) {
             try (SeekableByteChannel fc = Files.newByteChannel(path)) {
                 buffer = BufferUtils.createByteBuffer((int)fc.size() + 1);
-                while (fc.read(buffer) != -1) {}
+                while (fc.read(buffer) != -1) {
+                    ;
+                }
             }
         } else {
             try (
@@ -306,6 +329,7 @@ public class FontRenderer {
                     ReadableByteChannel rbc = Channels.newChannel(source)
             ) {
                 buffer = createByteBuffer(bufferSize);
+
                 while (true) {
                     int bytes = rbc.read(buffer);
                     if (bytes == -1) {
@@ -317,6 +341,7 @@ public class FontRenderer {
                 }
             }
         }
+
         buffer.flip();
         return buffer;
     }

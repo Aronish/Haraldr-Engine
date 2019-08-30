@@ -36,7 +36,7 @@ public class Shader {
      * Both kinds of shaders must have the same name as the extensions are added afterwards for simplicity.
      * @param generalShaderPath the general shader file path, with no extension.
      */
-    Shader(String generalShaderPath){
+    public Shader(String generalShaderPath){
         this(generalShaderPath + ".vert", generalShaderPath + ".frag");
     }
 
@@ -98,7 +98,7 @@ public class Shader {
      * @param matrix the matrix data.
      * @param name the name of the mat4 uniform.
      */
-    void setMatrix(float[] matrix, String name){
+    public void setMatrix(float[] matrix, String name){
         if (!uniformLocations.containsKey(name)){
             uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
         }

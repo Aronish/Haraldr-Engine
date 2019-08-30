@@ -5,7 +5,8 @@ public enum EventCategory {
     CATEGORY_INPUT      (bit(0)),
     CATEGORY_KEYBOARD   (bit(1)),
     CATEGORY_MOUSE      (bit(2)),
-    CATEGORY_WINDOW     (bit(3));
+    CATEGORY_WINDOW     (bit(3)),
+    CATEGORY_APPLICATION(bit(4));
 
     public final int bitFlag;
 

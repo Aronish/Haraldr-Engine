@@ -29,12 +29,12 @@ import static org.lwjgl.opengl.GL11.glTexParameteri;
 /**
  * Represents an OpenGL texture.
  */
-class Texture {
+public class Texture {
 
     private int width, height;
     private int texture;
 
-    Texture(String path){
+    public Texture(String path){
         texture = load(path);
     }
 

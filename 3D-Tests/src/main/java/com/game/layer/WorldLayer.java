@@ -4,11 +4,10 @@ import com.game.Camera;
 import com.game.EventHandler;
 import com.game.Window;
 import com.game.event.Event;
-import com.game.event.EventCategory;
 import com.game.event.EventType;
+import com.game.event.GUIToggledEvent;
 import com.game.event.KeyEvent;
 import com.game.event.MouseScrolledEvent;
-import com.game.graphics.FontRenderer;
 import com.game.graphics.InstancedRenderer;
 import com.game.graphics.Renderer;
 import com.game.world.Grid;
@@ -23,7 +22,9 @@ import com.game.physics.CollisionDetector;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldLayer extends Layer {
+public class WorldLayer extends Layer
+{
+    private boolean guiVisible;
 
     private World world = new World();
     private Player player = new Player(new Vector3f(0.0f, 255.0f));
@@ -38,21 +39,8 @@ public class WorldLayer extends Layer {
     }
 
     @Override
-    public void onEvent(Window window, Event event) {
-        //LOGGER.info(event.toString());
-        if (event.isInCategory(EventCategory.CATEGORY_KEYBOARD)){
-            eventHandler.processKeyEvent((KeyEvent) event, window);
-            event.setHandled(true);
-        }
-        if (event.eventType == EventType.MOUSE_SCROLLED){
-            eventHandler.processScrollEvent((MouseScrolledEvent) event, camera);
-        }
-    }
-
-    /**
-     * Process input, update physics/movement, do collisions, update necessary matrices last.
-     */
-    public void updateLevel(Window window, float deltaTime){
+    public void onUpdate(Window window, float deltaTime)
+    {
         eventHandler.processInput(camera, window.getWindow(), player, world);
         player.update(camera, deltaTime);
         checkVisibleGridCells();
@@ -60,12 +48,30 @@ public class WorldLayer extends Layer {
         player.updateMatrix();
     }
 
-    /**
-     * Renders the game objects in this Level.
-     */
-    public void renderLevel(){
+    @Override
+    public void onRender()
+    {
         InstancedRenderer.renderGridCells(camera, visibleGridCells);
         Renderer.render(camera, player);
+    }
+
+    @Override
+    public void onEvent(Window window, Event event)
+    {
+        LOGGER.info(event.toString());
+        if (event.eventType == EventType.GUI_TOGGLED)
+        {
+            guiVisible = ((GUIToggledEvent) event).visible;
+        }
+        if (event.eventType == EventType.KEY_PRESSED)
+        {
+            eventHandler.processKeyEvent((KeyEvent) event, window);
+            event.setHandled(true);
+        }
+        if (event.eventType == EventType.MOUSE_SCROLLED)
+        {
+            eventHandler.processScrollEvent((MouseScrolledEvent) event, camera);
+        }
     }
 
     /**
@@ -93,17 +99,23 @@ public class WorldLayer extends Layer {
      * Performs orthographic frustum culling on the visible GridCells. For now, used to determine the objects to check collisions against.
      * TODO: Make better system for this.
      */
-    private void frustumCull(){
-        for (Grid.GridCell gridCell : visibleGridCells){
-            for (Tile tile : gridCell.getTiles()){
+    private void frustumCull()
+    {
+        for (Grid.GridCell gridCell : visibleGridCells)
+        {
+            for (Tile tile : gridCell.getTiles())
+            {
                 camera.isInView(frustumCulledObjects, tile);
             }
         }
     }
 
-    private void doCollisions() {
-        for (Tile tile : frustumCulledObjects){
-            if (!(tile instanceof IBackground)){
+    private void doCollisions()
+    {
+        for (Tile tile : frustumCulledObjects)
+        {
+            if (!(tile instanceof IBackground))
+            {
                 CollisionDetector.doCollisions(camera, tile, player);
             }
         }

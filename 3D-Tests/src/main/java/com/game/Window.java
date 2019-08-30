@@ -1,5 +1,6 @@
 package com.game;
 
+import com.game.event.Event;
 import com.game.event.IEventCallback;
 import com.game.event.KeyPressedEvent;
 import com.game.event.KeyReleasedEvent;
@@ -61,7 +62,7 @@ public class Window {
     private boolean isFullscreen;
     private GLFWVidMode vidmode;
 
-    public float contentScaleX, contentScaleY;
+    public static float contentScaleX, contentScaleY;
 
     private IEventCallback eventCallback;
 
@@ -144,6 +145,11 @@ public class Window {
 
     void setEventCallback(IEventCallback eventCallback){
         this.eventCallback = eventCallback;
+    }
+
+    public void dispatchNewEvent(Event event)
+    {
+        eventCallback.onEvent(event);
     }
 
     void changeFullscreen(){

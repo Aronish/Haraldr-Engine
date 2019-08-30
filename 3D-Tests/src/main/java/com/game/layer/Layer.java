@@ -16,6 +16,10 @@ public abstract class Layer {
 
     public abstract void onEvent(Window window, Event event);
 
+    public abstract void onUpdate(Window window, float deltaTime);
+
+    public abstract void onRender();
+
     public String getName(){
         return name;
     }

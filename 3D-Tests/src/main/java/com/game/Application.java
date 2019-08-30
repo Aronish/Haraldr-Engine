@@ -1,6 +1,7 @@
 package com.game;
 
 import com.game.debug.Logger;
+import com.game.event.DebugScreenUpdatedEvent;
 import com.game.event.Event;
 import com.game.event.EventType;
 import com.game.event.IEventCallback;
@@ -21,37 +22,27 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
-public class Application {
-
+public class Application
+{
     public static final Logger MAIN_LOGGER = new Logger("Main");
 
-    private static double frameRate = 60.0d;
-    private double updatePeriod = 1.0d / frameRate;
-    private double currentTime = glfwGetTime();
-    private double timer = 0.0d;
-    private int frames = 0;
-    private int updates = 0;
-
     private LayerStack layerStack;
-    private WorldLayer worldLayer;
-    private GUILayer guiLayer;
-
     private Window window;
 
-    void start(){
+    void start()
+    {
         init();
         loop();
     }
 
-    private void stop(Event e){
+    private void stop(Event event)
+    {
         glfwSetWindowShouldClose(window.getWindow(), true);
-        e.setHandled(true);
+        event.setHandled(true);
     }
 
-    /**
-     * Initialize the game and all it's objects and scenes.
-     */
-    private void init(){
+    private void init()
+    {
         layerStack = new LayerStack();
         window = new Window(1280, 720, false, false);
         window.setEventCallback(new EventCallback());
@@ -59,54 +50,68 @@ public class Application {
         glfwShowWindow(window.getWindow());
         Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
         /*---OpenGL code won't work before this---*/
-        worldLayer = new WorldLayer("World");
-        guiLayer = new GUILayer("GUI");
-        guiLayer.init(window);
+        Layer worldLayer = new WorldLayer("World");
+        Layer guiLayer = new GUILayer("GUI");
         layerStack.pushLayer(worldLayer);
         layerStack.pushLayer(guiLayer);
     }
 
-    public class EventCallback implements IEventCallback {
+    public class EventCallback implements IEventCallback
+    {
         @Override
-        public void onEvent(Event event) {
+        public void onEvent(Event event)
+        {
             if (event.eventType == EventType.WINDOW_CLOSED) stop(event);
-            for (Layer layer : layerStack){
+            for (Layer layer : layerStack)
+            {
                 if (event.isHandled()) break;
                 layer.onEvent(window, event);
             }
         }
     }
 
-    /**
-     * Updates object attributes, checks for user input, calculates game logic and checks for collisions.
-     * @param deltaTime the delta time gotten from the timing circuit of the main loop. Used for physics.
-     */
-    private void update(float deltaTime){
-        worldLayer.updateLevel(window, deltaTime);
+    private void update(float deltaTime)
+    {
+        for (Layer layer : layerStack)
+        {
+            layer.onUpdate(window, deltaTime);
+        }
         glfwPollEvents();
     }
 
-    private void render(){
+    private void render()
+    {
         Renderer.clear();
-        worldLayer.renderLevel();
-        guiLayer.render();
+        layerStack.reverseIterator().forEachRemaining(Layer::onRender);
         glfwSwapBuffers(window.getWindow());
     }
 
-    private void loop(){
+    private void loop()
+    {
+        double frameRate = 60.0d;
+        double updatePeriod = 1.0d / frameRate;
+        double currentTime = glfwGetTime();
+        double timer = 0.0d;
+        int frames = 0;
+        int updates = 0;
+
         update(0.0f);
-        while (!glfwWindowShouldClose(window.getWindow())) {
+        while (!glfwWindowShouldClose(window.getWindow()))
+        {
             double newTime = glfwGetTime();
             double frameTime = newTime - currentTime;
             currentTime = newTime;
             timer += frameTime;
-            if (timer >= 1.0d){
+            if (timer >= 1.0d)
+            {
                 window.setTitle("FPS: " + (int) (frames / timer) + " UPS: " + (int) (updates / timer));
+                window.dispatchNewEvent(new DebugScreenUpdatedEvent((int) (frames / timer)));
                 timer = 0.0d;
                 frames = 0;
                 updates = 0;
             }
-            while (frameTime > 0.0) {
+            while (frameTime > 0.0)
+            {
                 double deltaTime = Math.min(frameTime, updatePeriod);
                 update((float) deltaTime);
                 ++updates;
@@ -117,7 +122,8 @@ public class Application {
         }
     }
 
-    void cleanUp(){
+    void cleanUp()
+    {
         Models.cleanUp();
         Renderer.deleteShaders();
         InstancedRenderer.deleteShaders();

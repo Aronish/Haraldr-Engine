@@ -1,5 +1,6 @@
 package com.game.graphics;
 
+import com.game.ArrayUtils;
 import com.game.Camera;
 import com.game.world.Grid;
 import com.game.gameobject.GameObject;
@@ -31,15 +32,6 @@ public class InstancedRenderer {
     private static int instancedMBO = glGenBuffers();
 
     static { setupInstancedBuffer(); }
-
-    private static float[] matricesAsPrimitiveArray(){
-        float[] primitiveArray = new float[matrices.size()];
-        int i = 0;
-        for (Float element : matrices){
-            primitiveArray[i++] = element;
-        }
-        return primitiveArray;
-    }
 
     /**
      * Sets up all vertex arrays to know about the instanced matrix attribute.
@@ -73,6 +65,10 @@ public class InstancedRenderer {
      * Renders every type of tile in the provided list of GridCells using instancing.
      */
     public static void renderGridCells(Camera camera, List<Grid.GridCell> gridCells){
+        Models.SPRITE_SHEET.bind();
+        INSTANCED_SHADER.use();
+        INSTANCED_SHADER.setMatrix(camera.getViewMatrix().matrix, "view");
+        INSTANCED_SHADER.setMatrix(Matrix4f._orthographic.matrix, "projection");
         for (GameObject tileType : GameObject.values()){
             matrices.clear();
             for (Grid.GridCell gridCell : gridCells){
@@ -90,12 +86,8 @@ public class InstancedRenderer {
      * @param tileType the type of tile currently being rendered.
      */
     private static void renderInstanced(Camera camera, GameObject tileType){
-        Models.SPRITE_SHEET.bind();
-        INSTANCED_SHADER.use();
-        INSTANCED_SHADER.setMatrix(camera.getViewMatrix().matrix, "view");
-        INSTANCED_SHADER.setMatrix(Matrix4f._orthographic.matrix, "projection");
         glBindBuffer(GL_ARRAY_BUFFER, instancedMBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, matricesAsPrimitiveArray());
+        glBufferSubData(GL_ARRAY_BUFFER, 0, ArrayUtils.toPrimitiveArrayF(matrices));
         tileType.model.getVertexArray().bind();
         tileType.model.getVertexArray().drawInstanced(matrices.size() / 16);
     }

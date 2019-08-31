@@ -43,12 +43,11 @@ public class Renderer {
      */
     public static void render(Camera camera, Entity entity){
         SHADER.use();
+        SHADER.setMatrix(entity.getMatrixArray(), "matrix");
         SHADER.setMatrix(camera.getViewMatrix().matrix, "view");
         SHADER.setMatrix(Matrix4f._orthographic.matrix, "projection");
-        SHADER.setMatrix(entity.getMatrixArray(), "matrix");
         entity.getGameObjectType().model.getVertexArray().bind();
         entity.getGameObjectType().model.getVertexArray().draw();
-        Models.SPRITE_SHEET.unbind();
     }
 
     public static void deleteShaders(){

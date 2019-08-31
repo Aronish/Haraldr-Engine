@@ -12,12 +12,17 @@ public class GUILabel extends GUIComponent
     private Font.TextRenderData textRenderData;
     private int fontBitmapID;
 
+    public GUILabel(Vector3f position, Font font)
+    {
+        this(position, font, "");
+    }
+
     public GUILabel(Vector3f position, Font font, String text)
     {
         super(position);
         this.font = font;
-        textRenderData = font.createTextRenderData(text);
         fontBitmapID = font.getFontBitmapID();
+        setText(text);
     }
 
     public void setText(String text)
@@ -30,6 +35,12 @@ public class GUILabel extends GUIComponent
         glBindTexture(GL_TEXTURE_2D, fontBitmapID);
     }
 
+    public Font getFont()
+    {
+        return font;
+    }
+
+    @Override
     public Font.TextRenderData getTextRenderData()
     {
         return textRenderData;

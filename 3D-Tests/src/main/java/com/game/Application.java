@@ -95,7 +95,6 @@ public class Application
         int frames = 0;
         int updates = 0;
 
-        update(0.0f);
         while (!glfwWindowShouldClose(window.getWindow()))
         {
             double newTime = glfwGetTime();
@@ -104,8 +103,9 @@ public class Application
             timer += frameTime;
             if (timer >= 1.0d)
             {
-                window.setTitle("FPS: " + (int) (frames / timer) + " UPS: " + (int) (updates / timer));
-                window.dispatchNewEvent(new DebugScreenUpdatedEvent((int) (frames / timer)));
+                int fps = (int) (frames / timer), ups = (int) (updates / timer);
+                window.setTitle("FPS: " + fps + " UPS: " + ups);
+                window.dispatchNewEvent(new DebugScreenUpdatedEvent(fps, ups));
                 timer = 0.0d;
                 frames = 0;
                 updates = 0;

@@ -45,7 +45,7 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Font
 {
-    private static final boolean IS_KERNING_ENABLED = true;
+    private static final boolean IS_KERNING_ENABLED = false;
 
     private ByteBuffer ttfFont;
     private STBTTFontinfo fontInfo;
@@ -178,26 +178,22 @@ public class Font
                 vertexData.add(fontColor.getZ());
             }
         }
-        return new TextRenderData(vertexData, createIndices(text.length()));
-    }
-
-    private List<Integer> createIndices(int textLength)
-    {
-        List<Integer> indices = new ArrayList<>();
-        for (int i = 0; i < textLength; ++i) {
-            indices.add(4 * i);
-            indices.add(4 * i + 1);
-            indices.add(4 * i + 2);
-            indices.add(4 * i);
-            indices.add(4 * i + 2);
-            indices.add(4 * i + 3);
-        }
-        return indices;
+        return new TextRenderData(vertexData);
     }
 
     public int getFontBitmapID()
     {
         return fontBitmap;
+    }
+
+    public void bind()
+    {
+        glBindTexture(GL_TEXTURE_2D, fontBitmap);
+    }
+
+    public void unbind()
+    {
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     ///// UTILITY FUNCTIONS ///////////////////////////////////////
@@ -287,12 +283,10 @@ public class Font
     public static class TextRenderData
     {
         public final List<Float> vertexData;
-        public final List<Integer> indices;
 
-        private TextRenderData(List<Float> vertexData, List<Integer> indices)
+        private TextRenderData(List<Float> vertexData)
         {
             this.vertexData = vertexData;
-            this.indices = indices;
         }
     }
 }

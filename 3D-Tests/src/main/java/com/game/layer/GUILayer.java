@@ -24,9 +24,7 @@ public class GUILayer extends Layer
     private TextRenderer textRenderer = new TextRenderer();
     private boolean guiVisible = false;
 
-    private GUILabel debugHeader = new GUILabel(new Vector3f(-16.0f, 9.0f), Fonts.ROBOTO_REGULAR, "DEBUG INFO:");
-    private GUILabel fpsCounter = new GUILabel(new Vector3f(-16.0f, 7.0f), Fonts.ROBOTO_REGULAR);
-    private GUILabel upsCounter = new GUILabel(new Vector3f(-16.0f, 5.0f), Fonts.ROBOTO_REGULAR);
+    private GUILabel debugHeader = new GUILabel(new Vector3f(-16.0f, 9.0f), Fonts.ROBOTO_REGULAR);
 
     private Map<Font, List<GUILabel>> guiComponents = new HashMap<>();
 
@@ -35,8 +33,6 @@ public class GUILayer extends Layer
         super(name);
         ArrayList<GUILabel> temp = new ArrayList<>();
         temp.add(debugHeader);
-        temp.add(fpsCounter);
-        temp.add(upsCounter);
         guiComponents.put(Fonts.ROBOTO_REGULAR, temp);
     }
 
@@ -67,8 +63,7 @@ public class GUILayer extends Layer
             if (event.eventType == EventType.DEBUG_SCREEN_UPDATED)
             {
                 DebugScreenUpdatedEvent debugScreenUpdatedEvent = (DebugScreenUpdatedEvent) event;
-                fpsCounter.setText("FPS: " + debugScreenUpdatedEvent.fps);
-                upsCounter.setText("UPS: " + debugScreenUpdatedEvent.ups);
+                debugHeader.setText(String.format("Debug Info:\nFPS: %d\nUPS: %d", debugScreenUpdatedEvent.fps, debugScreenUpdatedEvent.ups));
                 event.setHandled(true);
             }
         }

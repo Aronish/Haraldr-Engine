@@ -42,7 +42,7 @@ import static org.lwjgl.stb.STBTruetype.stbtt_GetFontVMetrics;
 import static org.lwjgl.stb.STBTruetype.stbtt_InitFont;
 import static org.lwjgl.stb.STBTruetype.stbtt_ScaleForPixelHeight;
 import static org.lwjgl.system.MemoryStack.stackPush;
-
+//TODO: Maybe create new font rendering system using font packing.
 public class Font
 {
     private static final boolean IS_KERNING_ENABLED = false;
@@ -58,18 +58,22 @@ public class Font
     {
         this.fontHeight = fontHeight;
         this.fontColor = fontColor;
-        try {
+        try
+        {
             ttfFont = ioResourceToByteBuffer(fontPath, 512 * 1024);
-        }catch (IOException e){
+        }catch (IOException e)
+        {
             throw new RuntimeException(e);
         }
 
         fontInfo = STBTTFontinfo.create();
-        if (!stbtt_InitFont(fontInfo, ttfFont)) {
+        if (!stbtt_InitFont(fontInfo, ttfFont))
+        {
             throw new IllegalStateException("Failed to initialize font information.");
         }
 
-        try (MemoryStack stack = stackPush()) {
+        try (MemoryStack stack = stackPush())
+        {
             IntBuffer pAscent  = stack.mallocInt(1);
             IntBuffer pDescent = stack.mallocInt(1);
             IntBuffer pLineGap = stack.mallocInt(1);
@@ -87,7 +91,8 @@ public class Font
         charData = init();
     }
 
-    private STBTTBakedChar.Buffer init() {
+    private STBTTBakedChar.Buffer init()
+    {
         fontBitmap = glGenTextures();
         STBTTBakedChar.Buffer cdata = STBTTBakedChar.malloc(96);
 
@@ -103,11 +108,13 @@ public class Font
         return cdata;
     }
 
-    public TextRenderData createTextRenderData(String text) {
+    public TextRenderData createTextRenderData(String text)
+    {
         List<Float> vertexData = new ArrayList<>();
 
         float scale = stbtt_ScaleForPixelHeight(fontInfo, fontHeight);
-        try (MemoryStack stack = stackPush()) {
+        try (MemoryStack stack = stackPush())
+        {
             IntBuffer pCodePoint = stack.mallocInt(1);
             FloatBuffer x = stack.floats(0.0f);
             FloatBuffer y = stack.floats(0.0f);
@@ -118,15 +125,18 @@ public class Font
             float factorY = 1.0f / Window.contentScaleY;
             float lineY = 0.0f;
 
-            for (int i = 0, to = text.length(); i < to; ) {
-                i += getCP(text, to, i, pCodePoint);
+            for (int i = 0, to = text.length(); i < to; )
+            {
+                i += getCodePoint(text, to, i, pCodePoint);
 
                 int cp = pCodePoint.get(0);
-                if (cp == '\n') {
+                if (cp == '\n')
+                {
                     y.put(0, lineY = y.get(0) + (ascent - descent + lineGap) * scale);
                     x.put(0, 0.0f);
                     continue;
-                } else if (cp < 32 || 128 <= cp) {
+                }else if (cp < 32 || 128 <= cp)
+                {
                     continue;
                 }
 
@@ -135,18 +145,17 @@ public class Font
                 x.put(0, scale(cpX, x.get(0), factorX));
                 if (IS_KERNING_ENABLED && i < to)
                 {
-                    getCP(text, to, i, pCodePoint);
+                    getCodePoint(text, to, i, pCodePoint);
                     x.put(0, x.get(0) + stbtt_GetCodepointKernAdvance(fontInfo, cp, pCodePoint.get(0)) * scale);
                 }
 
                 float x0 = scale(cpX, q.x0(), factorX);
                 float x1 = scale(cpX, q.x1(), factorX);
-                float y0 = scale(lineY, q.y0(), factorY);
-                float y1 = scale(lineY, q.y1(), factorY);
-
+                float y0 = -scale(lineY, q.y0(), factorY) - fontHeight;
+                float y1 = -scale(lineY, q.y1(), factorY) - fontHeight;
                 //Top Left
                 vertexData.add(x0);
-                vertexData.add(y1);
+                vertexData.add(y0);
                 vertexData.add(q.s0());
                 vertexData.add(q.t0());
                 vertexData.add(fontColor.getX());
@@ -154,7 +163,7 @@ public class Font
                 vertexData.add(fontColor.getZ());
                 //Top Right
                 vertexData.add(x1);
-                vertexData.add(y1);
+                vertexData.add(y0);
                 vertexData.add(q.s1());
                 vertexData.add(q.t0());
                 vertexData.add(fontColor.getX());
@@ -162,7 +171,7 @@ public class Font
                 vertexData.add(fontColor.getZ());
                 //Bottom Right
                 vertexData.add(x1);
-                vertexData.add(y0);
+                vertexData.add(y1);
                 vertexData.add(q.s1());
                 vertexData.add(q.t1());
                 vertexData.add(fontColor.getX());
@@ -170,7 +179,7 @@ public class Font
                 vertexData.add(fontColor.getZ());
                 //Bottom Left
                 vertexData.add(x0);
-                vertexData.add(y0);
+                vertexData.add(y1);
                 vertexData.add(q.s0());
                 vertexData.add(q.t1());
                 vertexData.add(fontColor.getX());
@@ -198,28 +207,36 @@ public class Font
 
     ///// UTILITY FUNCTIONS ///////////////////////////////////////
 
-    private static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {
+    private static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException
+    {
         ByteBuffer buffer;
         Path path = Paths.get(resource);
-        if (Files.isReadable(path)) {
-            try (SeekableByteChannel fc = Files.newByteChannel(path)) {
+        if (Files.isReadable(path))
+        {
+            try (SeekableByteChannel fc = Files.newByteChannel(path))
+            {
                 buffer = BufferUtils.createByteBuffer((int)fc.size() + 1);
                 while (fc.read(buffer) != -1) { MAIN_LOGGER.info(fc.size()); }
             }
-        } else {
-            try (InputStream source = TextRenderer.class.getClassLoader().getResourceAsStream(resource)) {
-                if (source == null){
+        }else{
+            try (InputStream source = TextRenderer.class.getClassLoader().getResourceAsStream(resource))
+            {
+                if (source == null)
+                {
                     throw new RuntimeException("Source was null! (Font not readable/found)");
                 }
                 ReadableByteChannel rbc = Channels.newChannel(source);
                 buffer = createByteBuffer(bufferSize);
-                while (true) {
+                while (true)
+                {
                     int bytes = rbc.read(buffer);
-                    if (bytes == -1) {
+                    if (bytes == -1)
+                    {
                         rbc.close();
                         break;
                     }
-                    if (buffer.remaining() == 0) {
+                    if (buffer.remaining() == 0)
+                    {
                         buffer = resizeBuffer(buffer, buffer.capacity() * 3 / 2); // 50%
                     }
                 }
@@ -229,7 +246,8 @@ public class Font
         return buffer;
     }
 
-    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
+    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity)
+    {
         ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
         buffer.flip();
         newBuffer.put(buffer);
@@ -241,11 +259,14 @@ public class Font
         return (offset - center) * factor + center;
     }
 
-    private static int getCP(String text, int to, int i, IntBuffer cpOut) {
+    private static int getCodePoint(String text, int to, int i, IntBuffer cpOut)
+    {
         char c1 = text.charAt(i);
-        if (Character.isHighSurrogate(c1) && i + 1 < to) {
+        if (Character.isHighSurrogate(c1) && i + 1 < to)
+        {
             char c2 = text.charAt(i + 1);
-            if (Character.isLowSurrogate(c2)) {
+            if (Character.isLowSurrogate(c2))
+            {
                 cpOut.put(0, Character.toCodePoint(c1, c2));
                 return 2;
             }
@@ -254,29 +275,32 @@ public class Font
         return 1;
     }
 
-    private float getStringWidth(String text, int from, int to) {
+    private float getStringWidth(String text, int from, int to)
+    {
         int width = 0;
 
-        try (MemoryStack stack = stackPush()) {
+        try (MemoryStack stack = stackPush())
+        {
             IntBuffer pCodePoint       = stack.mallocInt(1);
             IntBuffer pAdvancedWidth   = stack.mallocInt(1);
             IntBuffer pLeftSideBearing = stack.mallocInt(1);
 
             int i = from;
-            while (i < to) {
-                i += getCP(text, to, i, pCodePoint);
+            while (i < to)
+            {
+                i += getCodePoint(text, to, i, pCodePoint);
                 int cp = pCodePoint.get(0);
 
                 stbtt_GetCodepointHMetrics(fontInfo, cp, pAdvancedWidth, pLeftSideBearing);
                 width += pAdvancedWidth.get(0);
 
-                if (IS_KERNING_ENABLED && i < to) {
-                    getCP(text, to, i, pCodePoint);
+                if (IS_KERNING_ENABLED && i < to)
+                {
+                    getCodePoint(text, to, i, pCodePoint);
                     width += stbtt_GetCodepointKernAdvance(fontInfo, cp, pCodePoint.get(0));
                 }
             }
         }
-
         return width * stbtt_ScaleForPixelHeight(fontInfo, fontHeight);
     }
 

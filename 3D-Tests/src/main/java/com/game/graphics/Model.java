@@ -10,10 +10,11 @@ public class Model {
     private VertexArray vertexArray;
     private AABB aabb = new AABB();
 
-    /**
-     * Constructor for setting only custom texture coordinates.
-     * @param textureCoordinates the texture coordinates.
-     */
+    Model()
+    {
+        vertexArray = new VertexArray();
+    }
+
     Model(float[] textureCoordinates){
         setVertexArray(textureCoordinates);
     }

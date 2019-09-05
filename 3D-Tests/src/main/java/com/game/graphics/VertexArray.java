@@ -37,7 +37,20 @@ class VertexArray {
             0, 2, 3
     };
 
-    VertexArray(float[] textureCoordinates){
+    private static final float[] defTexcoords = {
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f
+    };
+
+    VertexArray()
+    {
+        this(defVertices, defIndices, defTexcoords);
+    }
+
+    VertexArray(float[] textureCoordinates)
+    {
         this(defVertices, defIndices, textureCoordinates);
     }
 
@@ -45,7 +58,8 @@ class VertexArray {
         this(vertices, defIndices, textureCoordinates);
     }
 
-    private VertexArray(float[] vertices, int[] indices, float[] textureCoordinates){
+    private VertexArray(float[] vertices, int[] indices, float[] textureCoordinates)
+    {
         length = indices.length;
 
         glBindVertexArray(vao);

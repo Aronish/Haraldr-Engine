@@ -4,12 +4,13 @@ import com.game.Window;
 import com.game.debug.Logger;
 import com.game.event.Event;
 
-public abstract class Layer {
-
+public abstract class Layer
+{
     private final String name;
     protected final Logger LOGGER;
 
-    public Layer(String name){
+    public Layer(String name)
+    {
         this.name = name;
         LOGGER = new Logger(name);
     }
@@ -20,8 +21,8 @@ public abstract class Layer {
 
     public abstract void onRender();
 
-    public String getName(){
+    public String getName()
+    {
         return name;
     }
-
 }

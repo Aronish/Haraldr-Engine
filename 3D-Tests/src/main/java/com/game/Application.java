@@ -5,7 +5,6 @@ import com.game.event.DebugScreenUpdatedEvent;
 import com.game.event.Event;
 import com.game.event.EventType;
 import com.game.event.IEventCallback;
-import com.game.graphics.InstancedRenderer;
 import com.game.graphics.Models;
 import com.game.graphics.Renderer;
 import com.game.layer.GUILayer;
@@ -126,7 +125,6 @@ public class Application
     {
         Models.cleanUp();
         Renderer.deleteShaders();
-        InstancedRenderer.deleteShaders();
         glfwTerminate();
     }
 }

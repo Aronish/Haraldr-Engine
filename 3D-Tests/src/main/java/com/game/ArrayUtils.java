@@ -27,7 +27,7 @@ public class ArrayUtils
         return primitiveArray;
     }
 
-    public static List<Float> toListF(float[] array)
+    public static List<Float> toList(float[] array)
     {
         List<Float> list = new ArrayList<>();
         for (float f : array)

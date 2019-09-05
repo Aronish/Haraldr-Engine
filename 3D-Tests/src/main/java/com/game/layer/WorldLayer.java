@@ -8,7 +8,6 @@ import com.game.event.EventType;
 import com.game.event.GUIToggledEvent;
 import com.game.event.KeyEvent;
 import com.game.event.MouseScrolledEvent;
-import com.game.graphics.InstancedRenderer;
 import com.game.graphics.Renderer;
 import com.game.world.Grid;
 import com.game.gameobject.IBackground;
@@ -51,14 +50,14 @@ public class WorldLayer extends Layer
     @Override
     public void onRender()
     {
-        InstancedRenderer.renderGridCells(camera, visibleGridCells);
+        Renderer.renderGridCells(camera, visibleGridCells);
         Renderer.render(camera, player);
     }
 
     @Override
     public void onEvent(Window window, Event event)
     {
-        LOGGER.info(event.toString());
+        //LOGGER.info(event.toString());
         if (event.eventType == EventType.GUI_TOGGLED)
         {
             guiVisible = ((GUIToggledEvent) event).visible;

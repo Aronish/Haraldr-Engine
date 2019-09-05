@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.game.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
@@ -26,8 +25,8 @@ import static org.lwjgl.opengl.GL46.glValidateProgram;
 /**
  * Loads a shader program with a vertex and fragment shader.
  */
-public class Shader {
-
+public class Shader
+{
     private int shaderProgram;
     private Map<String, Integer> uniformLocations = new HashMap<>();
 
@@ -36,11 +35,13 @@ public class Shader {
      * Both kinds of shaders must have the same name as the extensions are added afterwards for simplicity.
      * @param generalShaderPath the general shader file path, with no extension.
      */
-    public Shader(String generalShaderPath){
+    public Shader(String generalShaderPath)
+    {
         this(generalShaderPath + ".vert", generalShaderPath + ".frag");
     }
 
-    Shader(String vertexShaderPath, String fragmentShaderPath){
+    Shader(String vertexShaderPath, String fragmentShaderPath)
+    {
         int vertexShader = createShader(GL_VERTEX_SHADER, readShaderFile(vertexShaderPath));
         int fragmentShader = createShader(GL_FRAGMENT_SHADER, readShaderFile(fragmentShaderPath));
 
@@ -65,7 +66,8 @@ public class Shader {
      * @param source the source code in a single string.
      * @return the shader object ID.
      */
-    private int createShader(int shaderType, String source){
+    private int createShader(int shaderType, String source)
+    {
         int shader = glCreateShader(shaderType);
         glShaderSource(shader, source);
         return shader;
@@ -76,18 +78,23 @@ public class Shader {
      * @param path the path of the file to be read.
      * @return the source code string.
      */
-    private String readShaderFile(String path){
+    private String readShaderFile(String path)
+    {
         StringBuilder sb = new StringBuilder();
-        try (InputStream file = Shader.class.getClassLoader().getResourceAsStream(path)){
-            if (file == null){
+        try (InputStream file = Shader.class.getClassLoader().getResourceAsStream(path))
+        {
+            if (file == null)
+            {
                 throw new NullPointerException("Shader file not found!");
             }
             int data = file.read();
-            while (data != -1){
+            while (data != -1)
+            {
                 sb.append((char) data);
                 data = file.read();
             }
-        }catch (IOException e){
+        }catch (IOException e)
+        {
             e.printStackTrace();
         }
         return sb.toString();
@@ -98,22 +105,27 @@ public class Shader {
      * @param matrix the matrix data.
      * @param name the name of the mat4 uniform.
      */
-    public void setMatrix(float[] matrix, String name){
-        if (!uniformLocations.containsKey(name)){
+    public void setMatrix(float[] matrix, String name)
+    {
+        if (!uniformLocations.containsKey(name))
+        {
             uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
         }
         glUniformMatrix4fv(uniformLocations.get(name), false, matrix);
     }
 
-    public void use(){
+    public void use()
+    {
         glUseProgram(shaderProgram);
     }
 
-    private void unuse(){
+    public void unuse()
+    {
         glUseProgram(0);
     }
 
-    void delete(){
+    void delete()
+    {
         unuse();
         glDeleteProgram(shaderProgram);
     }

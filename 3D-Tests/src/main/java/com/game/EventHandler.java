@@ -26,8 +26,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
 import static org.lwjgl.glfw.GLFW.glfwGetKey;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
-public class EventHandler {
-
+public class EventHandler
+{
     /**
      * These key checks are queried every frame. Using glfwGetKey, the state of the key at that time is checked.
      * This is better for movement, etc. because of the way key repeating works. Makes for smooth movement.
@@ -36,52 +36,71 @@ public class EventHandler {
      * @param player the current player.
      * @param world the current world
      */
-    public void processInput(Camera camera, long window, Player player, World world){
+    public void processInput(Camera camera, long window, Player player, World world)
+    {
         player.setMovementType(PlayerMovementType.STAND);
-        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != 0){
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != 0)
+        {
             player.setRunning(true);
-        }else{
+        }
+        else
+        {
             player.setRunning(false);
         }
-        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) != 0){
+        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) != 0)
+        {
             player.setBoosting(true);
-        }else{
+        }
+        else
+        {
             player.setBoosting(false);
         }
-        if (glfwGetKey(window, GLFW_KEY_A) != 0) {
+        if (glfwGetKey(window, GLFW_KEY_A) != 0)
+        {
             player.setMovementType(PlayerMovementType.LEFT);
         }
-        if (glfwGetKey(window, GLFW_KEY_D) != 0) {
+        if (glfwGetKey(window, GLFW_KEY_D) != 0)
+        {
             player.setMovementType(PlayerMovementType.RIGHT);
         }
-        if (glfwGetKey(window, GLFW_KEY_R) != 0){
+        if (glfwGetKey(window, GLFW_KEY_R) != 0)
+        {
             player.resetGravityAcceleration();
             player.resetPosition();
             camera.setScale(1.0f);
             camera.setPosition(player.getPosition().addReturn(player.getGameObjectType().model.getAABB().getMiddle()));
         }
-        if (glfwGetKey(window, GLFW_KEY_C) != 0){
+        if (glfwGetKey(window, GLFW_KEY_C) != 0)
+        {
             player.setHasGravity(false);
         }
-        if (glfwGetKey(window, GLFW_KEY_V) != 0){
+        if (glfwGetKey(window, GLFW_KEY_V) != 0)
+        {
+            player.resetGravityAcceleration();
             player.setHasGravity(true);
         }
-        if (glfwGetKey(window, GLFW_KEY_Z) != 0){
+        if (glfwGetKey(window, GLFW_KEY_Z) != 0)
+        {
             world.resetNoiseScale();
         }
-        if (glfwGetKey(window, GLFW_KEY_LEFT) != 0){
+        if (glfwGetKey(window, GLFW_KEY_LEFT) != 0)
+        {
             world.increaseNoiseScale(0.001d);
         }
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) != 0){
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) != 0)
+        {
             world.increaseNoiseScale(-0.001d);
         }
-        if (glfwGetKey(window, GLFW_KEY_SPACE) != 0) {
-            if (!player.isFalling()) {
+        if (glfwGetKey(window, GLFW_KEY_SPACE) != 0)
+        {
+            if (!player.isFalling())
+            {
                 player.setJumping(true);
                 player.setFalling(true);
             }
         }
-        if (glfwGetKey(window, GLFW_KEY_G) != 0){
+        if (glfwGetKey(window, GLFW_KEY_G) != 0)
+        {
             world.regenerateWorld();
         }
     }
@@ -91,25 +110,34 @@ public class EventHandler {
      * @param window the current window.
      * @param event the key event.
      */
-    public void processKeyEvent(KeyEvent event, Window window){
-        if (event.eventType == EventType.KEY_PRESSED){
-            if (event.keyCode == GLFW_KEY_ESCAPE){
-                glfwSetWindowShouldClose(window.getWindow(), true);
+    public void processKeyEvent(KeyEvent event, Window window)
+    {
+        if (event.eventType == EventType.KEY_PRESSED)
+        {
+            if (event.keyCode == GLFW_KEY_ESCAPE)
+            {
+                glfwSetWindowShouldClose(window.getWindowHandle(), true);
             }
-            if (event.keyCode == GLFW_KEY_F){
+            if (event.keyCode == GLFW_KEY_F)
+            {
                 window.changeFullscreen();
             }
-            if (event.keyCode == GLFW_KEY_B){
+            if (event.keyCode == GLFW_KEY_B)
+            {
                 window.setVSync(!window.VSyncOn());
                 MAIN_LOGGER.info("VSync: " + window.VSyncOn());
             }
         }
     }
 
-    public void processScrollEvent(MouseScrolledEvent event, Camera camera){
-        if (event.yOffset < 0){
+    public void processScrollEvent(MouseScrolledEvent event, Camera camera)
+    {
+        if (event.yOffset < 0)
+        {
             camera.zoomOut();
-        }else{
+        }
+        else
+        {
             camera.zoomIn();
         }
     }

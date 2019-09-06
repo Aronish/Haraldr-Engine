@@ -190,11 +190,6 @@ public class Font
         return new TextRenderData(vertexData);
     }
 
-    public int getFontBitmapID()
-    {
-        return fontBitmap;
-    }
-
     public void bind()
     {
         glBindTexture(GL_TEXTURE_2D, fontBitmap);

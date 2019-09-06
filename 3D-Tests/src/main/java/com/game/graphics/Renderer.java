@@ -50,7 +50,7 @@ public class Renderer
         SHADER.use();
         SHADER.setMatrix(entity.getMatrixArray(), "matrix");
         SHADER.setMatrix(camera.getViewMatrix().matrix, "view");
-        SHADER.setMatrix(Matrix4f._orthographic.matrix, "projection");
+        SHADER.setMatrix(Matrix4f.ORTHOGRAPHIC.matrix, "projection");
         entity.getGameObjectType().model.getVertexArray().bind();
         entity.getGameObjectType().model.getVertexArray().draw();
 
@@ -64,7 +64,7 @@ public class Renderer
         Models.SPRITE_SHEET.bind();
         INSTANCED_SHADER.use();
         INSTANCED_SHADER.setMatrix(camera.getViewMatrix().matrix, "view");
-        INSTANCED_SHADER.setMatrix(Matrix4f._orthographic.matrix, "projection");
+        INSTANCED_SHADER.setMatrix(Matrix4f.ORTHOGRAPHIC.matrix, "projection");
         for (GameObject tileType : GameObject.values()){
             InstancedRenderer.matrices.clear();
             for (Grid.GridCell gridCell : gridCells){

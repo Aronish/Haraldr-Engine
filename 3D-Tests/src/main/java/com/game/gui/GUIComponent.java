@@ -1,23 +1,35 @@
 package com.game.gui;
 
-import com.game.graphics.font.Font;
 import com.game.math.Matrix4f;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
 
-public abstract class GUIComponent {
-
+public abstract class GUIComponent
+{
+    private Vector3f position;
+    private Vector2f scale = new Vector2f();
     private Matrix4f modelMatrix;
 
-    public GUIComponent(Vector3f position)
+    public GUIComponent(Vector3f position, float scale)
     {
-        modelMatrix = Matrix4f.transform(position, 0.0f, new Vector2f(0.01f), false);
+        this.position = position;
+        this.scale.setBoth(scale);
+        calculateMatrix();
+    }
+
+    public void setScale(float scale)
+    {
+        this.scale.setBoth(scale);
+        calculateMatrix();
+    }
+
+    public void calculateMatrix()
+    {
+        modelMatrix = Matrix4f.transformPixelSpace(position, scale);
     }
 
     public float[] getMatrixArray()
     {
         return modelMatrix.matrix;
     }
-
-    public abstract Font.TextRenderData getTextRenderData();
 }

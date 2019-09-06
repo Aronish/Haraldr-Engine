@@ -11,6 +11,7 @@ import com.game.layer.GUILayer;
 import com.game.layer.Layer;
 import com.game.layer.LayerStack;
 import com.game.layer.WorldLayer;
+import com.game.math.Matrix4f;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
@@ -36,7 +37,7 @@ public class Application
 
     private void stop(Event event)
     {
-        glfwSetWindowShouldClose(window.getWindow(), true);
+        glfwSetWindowShouldClose(window.getWindowHandle(), true);
         event.setHandled(true);
     }
 
@@ -46,7 +47,7 @@ public class Application
         window = new Window(1280, 720, false, false);
         window.setEventCallback(new EventCallback());
         GL.createCapabilities();
-        glfwShowWindow(window.getWindow());
+        glfwShowWindow(window.getWindowHandle());
         Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
         /*---OpenGL code won't work before this---*/
         Layer worldLayer = new WorldLayer("World");
@@ -61,6 +62,7 @@ public class Application
         public void onEvent(Event event)
         {
             if (event.eventType == EventType.WINDOW_CLOSED) stop(event);
+            if (event.eventType == EventType.WINDOW_RESIZED) Matrix4f.recalculateOrthographic(window.getAspectRatio());
             for (Layer layer : layerStack)
             {
                 if (event.isHandled()) break;
@@ -82,7 +84,7 @@ public class Application
     {
         Renderer.clear();
         layerStack.reverseIterator().forEachRemaining(Layer::onRender);
-        glfwSwapBuffers(window.getWindow());
+        glfwSwapBuffers(window.getWindowHandle());
     }
 
     private void loop()
@@ -94,7 +96,7 @@ public class Application
         int frames = 0;
         int updates = 0;
 
-        while (!glfwWindowShouldClose(window.getWindow()))
+        while (!glfwWindowShouldClose(window.getWindowHandle()))
         {
             double newTime = glfwGetTime();
             double frameTime = newTime - currentTime;

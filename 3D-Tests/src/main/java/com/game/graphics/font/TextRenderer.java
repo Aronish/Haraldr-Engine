@@ -2,7 +2,7 @@ package com.game.graphics.font;
 
 import com.game.ArrayUtils;
 import com.game.graphics.Shader;
-import com.game.gui.GUILabel;
+import com.game.gui.GUITextComponent;
 import com.game.math.Matrix4f;
 
 import java.util.ArrayList;
@@ -19,7 +19,6 @@ import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glBufferSubData;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
@@ -33,16 +32,16 @@ public class TextRenderer
 {
     private static final Shader FONT_SHADER = new Shader("shaders/font");
 
-    private int textVAO = glCreateVertexArrays(), textVBO = glGenBuffers(), textEBO = glGenBuffers(), textMatrixBuffer = glGenBuffers();
-    private List<Float> vertexData = new ArrayList<>(), matrices = new ArrayList<>();
-    private List<Integer> indices = new ArrayList<>();
+    private static int textVAO = glCreateVertexArrays(), textVBO = glGenBuffers(), textEBO = glGenBuffers(), textMatrixBuffer = glGenBuffers();
+    private static List<Float> vertexData = new ArrayList<>(), matrices = new ArrayList<>();
+    private static List<Integer> indices = new ArrayList<>();
 
-    public TextRenderer()
+    static
     {
         initializeBuffers();
     }
 
-    private void initializeBuffers()
+    private static void initializeBuffers()
     {
         glBindVertexArray(textVAO);
         glBindBuffer(GL_ARRAY_BUFFER, textVBO);
@@ -70,16 +69,16 @@ public class TextRenderer
         glBindVertexArray(0);
     }
 
-    private void setupRenderData(List<GUILabel> guiLabels)
+    private static void setupRenderData(List<GUITextComponent> guiLabels)
     {
         vertexData.clear();
         indices.clear();
         matrices.clear();
-        for (GUILabel guiLabel : guiLabels)
+        for (GUITextComponent guiTextComponent : guiLabels)
         {
-            Font.TextRenderData textRenderData = guiLabel.getTextRenderData();
+            Font.TextRenderData textRenderData = guiTextComponent.getTextRenderData();
             vertexData.addAll(textRenderData.vertexData);
-            List<Float> matrixArray = ArrayUtils.toList(guiLabel.getMatrixArray());
+            List<Float> matrixArray = ArrayUtils.toList(guiTextComponent.getMatrixArray());
             for (int i = 0; i < textRenderData.vertexData.size(); i += 7)
             {//Each vertex has to have it's own copy of the matrix when not instancing, which is impossible here.
                 matrices.addAll(matrixArray);
@@ -96,7 +95,7 @@ public class TextRenderer
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    private List<Integer> createIndices(int quadCount)
+    private static List<Integer> createIndices(int quadCount)
     {
         List<Integer> indices = new ArrayList<>();
         for (int i = 0; i < quadCount; ++i) {
@@ -110,19 +109,19 @@ public class TextRenderer
         return indices;
     }
 
-    public void renderGuiComponents(Map<Font, List<GUILabel>> guiComponents)
+    public static void renderGuiComponents(Map<Font, List<GUITextComponent>> guiComponents)
     {
         FONT_SHADER.use();
-        FONT_SHADER.setMatrix(Matrix4f._orthographic.matrix, "projection");
+        FONT_SHADER.setMatrix(Matrix4f.ORTHOGRAPHIC.matrix, "projection");
         for (Font font : guiComponents.keySet())
         {
-            List<GUILabel> guiLabels = guiComponents.get(font);
+            List<GUITextComponent> guiLabels = guiComponents.get(font);
             setupRenderData(guiLabels);
             render(font);
         }
     }
 
-    private void render(Font font)
+    private static void render(Font font)
     {
         font.bind();
         glBindVertexArray(textVAO);

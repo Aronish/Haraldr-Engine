@@ -3,41 +3,31 @@ package com.game.gui;
 import com.game.graphics.font.Font;
 import com.game.math.Vector3f;
 
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-
-public class GUILabel extends GUIComponent
+public class GUILabel extends GUITextComponent
 {
     private Font font;
     private Font.TextRenderData textRenderData;
-    private int fontBitmapID;
 
     public GUILabel(Vector3f position, Font font)
     {
-        this(position, font, "");
+        this(position, 0.01f, font, "");
     }
 
-    public GUILabel(Vector3f position, Font font, String text)
+    public GUILabel(Vector3f position, float scale, Font font)
     {
-        super(position);
+        this(position, scale, font, "");
+    }
+
+    public GUILabel(Vector3f position, float scale, Font font, String text)
+    {
+        super(position, scale);
         this.font = font;
-        fontBitmapID = font.getFontBitmapID();
         setText(text);
     }
 
     public void setText(String text)
     {
         textRenderData = font.createTextRenderData(text);
-    }
-
-    public void bind()
-    {
-        glBindTexture(GL_TEXTURE_2D, fontBitmapID);
-    }
-
-    public Font getFont()
-    {
-        return font;
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.game.event.MouseReleasedEvent;
 import com.game.event.MouseScrolledEvent;
 import com.game.event.WindowClosedEvent;
 import com.game.event.WindowResizedEvent;
+import com.game.math.Matrix4f;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
 
@@ -52,33 +53,34 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
- * A class for handling GLFW window creation.
+ * Represents a GLFW window.
  */
-public class Window {
-
-    private long window;
-    private int windowWidth, windowHeight;
+public class Window
+{
+    private long windowHandle;
+    private float aspectRatio;
     private boolean VSyncOn;
     private boolean isFullscreen;
     private GLFWVidMode vidmode;
 
+    public static int windowWidth, windowHeight;
     public static float contentScaleX, contentScaleY;
 
     private IEventCallback eventCallback;
 
     /**
-     * Constructor with parameters for window width and height, whether is will be fullscreen and have VSync turned on upon creation.
-     * Creates a GLFW window and sets appropriate settings and attributes.
      * @param width the window width, in pixels.
      * @param height the window height, in pixels.
      * @param fullscreen whether the window will be fullscreen upon creation.
      * @param VSync whether the window will have VSync turned on upon creation.
      */
-    Window(int width, int height, boolean fullscreen, boolean VSync){
+    Window(int width, int height, boolean fullscreen, boolean VSync)
+    {
         isFullscreen = fullscreen;
         VSyncOn = VSync;
 
-        if (!glfwInit()){
+        if (!glfwInit())
+        {
             throw new IllegalStateException("Couldn't init GLFW!");
         }
         glfwDefaultWindowHints();
@@ -89,13 +91,16 @@ public class Window {
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
         vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        if (vidmode == null){
+        if (vidmode == null)
+        {
             throw new IllegalStateException("Vidmode was not found!");
         }
         windowWidth = fullscreen ? vidmode.width() : width;
         windowHeight = fullscreen ? vidmode.height() : height;
+        aspectRatio = (float) windowWidth / windowHeight;
 
-        try (MemoryStack s = stackPush()) {
+        try (MemoryStack s = stackPush())
+        {
             FloatBuffer px = s.mallocFloat(1);
             FloatBuffer py = s.mallocFloat(1);
 
@@ -105,20 +110,22 @@ public class Window {
             contentScaleY = py.get(0);
         }
 
-        window = glfwCreateWindow(windowWidth, windowHeight, "OpenGL Game", (fullscreen ? glfwGetPrimaryMonitor() : NULL), NULL);
-        if (window == NULL) {
+        windowHandle = glfwCreateWindow(windowWidth, windowHeight, "OpenGL Game", (fullscreen ? glfwGetPrimaryMonitor() : NULL), NULL);
+        if (windowHandle == NULL)
+        {
             glfwTerminate();
             throw new RuntimeException("Window failed to be created");
         }
 
-        if (isFullscreen){
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        if (isFullscreen)
+        {
+            glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         }
-        glfwSetWindowPos(window, (vidmode.width() - windowWidth) / 2, (vidmode.height() - windowHeight) / 2);
-        glfwMakeContextCurrent(window);
+        glfwSetWindowPos(windowHandle, (vidmode.width() - windowWidth) / 2, (vidmode.height() - windowHeight) / 2);
+        glfwMakeContextCurrent(windowHandle);
         setVSync(VSync);
         ///// CALLBACKS ///////////////////////////////
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+        glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
             if (action == GLFW_PRESS){
                 eventCallback.onEvent(new KeyPressedEvent(key));
             }else if (action == GLFW_RELEASE){
@@ -126,7 +133,7 @@ public class Window {
             }
         });
 
-        glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
+        glfwSetMouseButtonCallback(windowHandle, (window, button, action, mods) -> {
             if (action == GLFW_PRESS){
                 eventCallback.onEvent(new MousePressedEvent(button));
             }else if (action == GLFW_RELEASE){
@@ -134,16 +141,21 @@ public class Window {
             }
         });
 
-        glfwSetScrollCallback(window, (window, xOffset, yOffset) -> eventCallback.onEvent(new MouseScrolledEvent(xOffset, yOffset)));
+        glfwSetScrollCallback(windowHandle, (window, xOffset, yOffset) -> eventCallback.onEvent(new MouseScrolledEvent(xOffset, yOffset)));
 
-        glfwSetCursorPosCallback(window, (window, xPos, yPos) -> eventCallback.onEvent(new MouseMovedEvent(xPos, yPos)));
+        glfwSetCursorPosCallback(windowHandle, (window, xPos, yPos) -> eventCallback.onEvent(new MouseMovedEvent(xPos, yPos)));
 
-        glfwSetWindowCloseCallback(window, (window) -> eventCallback.onEvent(new WindowClosedEvent()));
+        glfwSetWindowCloseCallback(windowHandle, (window) -> eventCallback.onEvent(new WindowClosedEvent()));
 
-        glfwSetWindowSizeCallback(window, (window, w, h) -> eventCallback.onEvent(new WindowResizedEvent(w, h)));
+        glfwSetWindowSizeCallback(windowHandle, (window, w, h) -> {
+            eventCallback.onEvent(new WindowResizedEvent(w, h));
+            setViewPortSize(w, h);
+            aspectRatio = (float) w / h;
+        });
     }
 
-    void setEventCallback(IEventCallback eventCallback){
+    void setEventCallback(IEventCallback eventCallback)
+    {
         this.eventCallback = eventCallback;
     }
 
@@ -152,34 +164,50 @@ public class Window {
         eventCallback.onEvent(event);
     }
 
-    void changeFullscreen(){
-        if (isFullscreen){
+    void changeFullscreen()
+    {
+        if (isFullscreen)
+        {
             isFullscreen = false;
-            glfwSetWindowMonitor(window, 0, vidmode.width() / 2 - windowWidth / 2, vidmode.height() / 2 - windowHeight / 2, windowWidth, windowHeight, 60);
-            glViewport(0, 0, windowWidth, windowHeight);
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            glfwSetWindowMonitor(windowHandle, 0, vidmode.width() / 2 - windowWidth / 2, vidmode.height() / 2 - windowHeight / 2, windowWidth, windowHeight, 60);
+            setViewPortSize(windowWidth, windowHeight);
+            glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         }else{
             isFullscreen = true;
-            glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, vidmode.width(), vidmode.height(), 60);
-            glViewport(0, 0, vidmode.width(), vidmode.height());
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+            glfwSetWindowMonitor(windowHandle, glfwGetPrimaryMonitor(), 0, 0, vidmode.width(), vidmode.height(), 60);
+            setViewPortSize(vidmode.width(), vidmode.height());
+            glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         }
     }
 
-    void setVSync(boolean enabled){
+    private void setViewPortSize(int width, int height)
+    {
+        glViewport(0, 0, width, height);
+    }
+
+    void setVSync(boolean enabled)
+    {
         VSyncOn = enabled;
         glfwSwapInterval(enabled ? 1 : 0);
     }
 
-    void setTitle(String title){
-        glfwSetWindowTitle(window, title);
+    void setTitle(String title)
+    {
+        glfwSetWindowTitle(windowHandle, title);
     }
 
-    boolean VSyncOn(){
+    boolean VSyncOn()
+    {
         return VSyncOn;
     }
 
-    public long getWindow(){
-        return window;
+    public long getWindowHandle()
+    {
+        return windowHandle;
+    }
+
+    public float getAspectRatio()
+    {
+        return aspectRatio;
     }
 }

@@ -10,6 +10,7 @@ import com.game.graphics.font.Font;
 import com.game.graphics.font.Fonts;
 import com.game.graphics.font.TextRenderer;
 import com.game.gui.GUILabel;
+import com.game.gui.GUITextComponent;
 import com.game.math.Vector3f;
 
 import java.util.ArrayList;
@@ -21,17 +22,15 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_U;
 
 public class GUILayer extends Layer
 {
-    private TextRenderer textRenderer = new TextRenderer();
     private boolean guiVisible = false;
 
-    private GUILabel debugHeader = new GUILabel(new Vector3f(-16.0f, 9.0f), Fonts.ROBOTO_REGULAR);
-
-    private Map<Font, List<GUILabel>> guiComponents = new HashMap<>();
+    private GUILabel debugHeader = new GUILabel(new Vector3f(0.0f, 0.0f), Fonts.ROBOTO_REGULAR);
+    private Map<Font, List<GUITextComponent>> guiComponents = new HashMap<>();
 
     public GUILayer(String name)
     {
         super(name);
-        ArrayList<GUILabel> temp = new ArrayList<>();
+        ArrayList<GUITextComponent> temp = new ArrayList<>();
         temp.add(debugHeader);
         guiComponents.put(Fonts.ROBOTO_REGULAR, temp);
     }
@@ -42,7 +41,7 @@ public class GUILayer extends Layer
     @Override
     public void onRender()
     {
-        if (guiVisible) textRenderer.renderGuiComponents(guiComponents);
+        if (guiVisible) TextRenderer.renderGuiComponents(guiComponents);
     }
 
     @Override
@@ -65,6 +64,10 @@ public class GUILayer extends Layer
                 DebugScreenUpdatedEvent debugScreenUpdatedEvent = (DebugScreenUpdatedEvent) event;
                 debugHeader.setText(String.format("Debug Info:\nFPS: %d\nUPS: %d", debugScreenUpdatedEvent.fps, debugScreenUpdatedEvent.ups));
                 event.setHandled(true);
+            }
+            if (event.eventType == EventType.WINDOW_RESIZED)
+            {
+                debugHeader.calculateMatrix();
             }
         }
     }

@@ -40,7 +40,7 @@ public class WorldLayer extends Layer
     @Override
     public void onUpdate(Window window, float deltaTime)
     {
-        eventHandler.processInput(camera, window.getWindow(), player, world);
+        eventHandler.processInput(camera, window.getWindowHandle(), player, world);
         player.update(camera, deltaTime);
         checkVisibleGridCells();
         doCollisions();
@@ -77,7 +77,6 @@ public class WorldLayer extends Layer
      * Main optimization algorithm. Checks chunks in the grid system in a zoom dependent area around the Player and runs them through orthographic frustum culling.
      * Frustum culling alone does wonders, but does not allow for infinite worlds. With the grid system, the world is already loaded in a data structure.
      * Array lookup is far better than looping through every object, since the time required is basically constant.
-     * O(1) vs. O(n)
      */
     private void checkVisibleGridCells(){
         Vector2f playerGridPosition = player.getGridPosition();

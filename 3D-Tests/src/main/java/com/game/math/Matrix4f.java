@@ -1,14 +1,23 @@
 package com.game.math;
 
-/**
- * Math helper class for calculating 4x4 matrices.
- */
-public class Matrix4f {
+import com.game.Window;
+
+public class Matrix4f
+{
+    private static final float ORTHOGRAPHIC_FOV = 9f, NEAR_FAR = 5f;
+    private static float orthographicWidth;
+    public static Matrix4f ORTHOGRAPHIC;
+
+    //TODO: Initialization phase would get rid of weird static things being passed around.
+    static
+    {
+        recalculateOrthographic((float) Window.windowWidth / Window.windowHeight);
+    }
 
     public float[] matrix = new float[16];
-    public static final Matrix4f _orthographic = orthographic(16f, -16f, 9f, -9f, -5f, 5f);
 
-    private static Matrix4f identity(){
+    private static Matrix4f identity()
+    {
         Matrix4f identity = new Matrix4f();
         identity.matrix[0] = 1.0f;
         identity.matrix[5] = 1.0f;
@@ -21,12 +30,16 @@ public class Matrix4f {
      * Multiplies this matrix with another.
      * Doesn't change this current matrix.
      */
-    private Matrix4f multiply(Matrix4f multiplicand){
+    private Matrix4f multiply(Matrix4f multiplicand)
+    {
         Matrix4f result = identity();
-        for (int y = 0; y < 4; y++){
-            for (int x = 0; x < 4; x++){
+        for (int y = 0; y < 4; y++)
+        {
+            for (int x = 0; x < 4; x++)
+            {
                 float sum = 0.0f;
-                for (int e = 0; e < 4; e++){
+                for (int e = 0; e < 4; e++)
+                {
                     sum += matrix[x + e * 4] * multiplicand.matrix[e + y * 4];
                 }
                 result.matrix[x + y * 4] = sum;
@@ -59,11 +72,26 @@ public class Matrix4f {
      * @param isCamera if the transformation matrix is the view matrix of a camera. If <code>true</code>, the translation and rotation will be inverted.
      * @return the resulting transformation matrix.
      */
-    public static Matrix4f transform(Vector3f position, float angle, Vector2f scale, boolean isCamera){
+    public static Matrix4f transform(Vector3f position, float angle, Vector2f scale, boolean isCamera)
+    {
         return translate(scale.getX() == -1 ? position.addReturn(new Vector3f(1.0f, 0.0f)) : position, isCamera).multiply(scale(scale));
     }
 
-    private static Matrix4f scale(Vector2f scale){
+    public static Matrix4f transformPixelSpace(Vector3f pixelPosition, Vector2f scale)
+    {
+        pixelPosition.set(clampToUnitSpace(pixelPosition));
+        return translate(pixelPosition, false).multiply(scale(scale));
+    }
+
+    private static Vector3f clampToUnitSpace(Vector3f pixelPosition)
+    {
+        Vector3f unitPosition = new Vector3f((pixelPosition.getX() / Window.windowWidth) * (2 * orthographicWidth) - orthographicWidth, (-pixelPosition.getY() / Window.windowHeight) * (2 * ORTHOGRAPHIC_FOV) + ORTHOGRAPHIC_FOV);
+        unitPosition.printVector();
+        return unitPosition;
+    }
+
+    private static Matrix4f scale(Vector2f scale)
+    {
         Matrix4f result = new Matrix4f();
         result.matrix[0] = scale.getX();
         result.matrix[5] = scale.getY();
@@ -72,9 +100,11 @@ public class Matrix4f {
         return result;
     }
 
-    private static Matrix4f translate(Vector3f vector, boolean isCamera){
+    private static Matrix4f translate(Vector3f vector, boolean isCamera)
+    {
         Matrix4f result = identity();
-        if (isCamera){
+        if (isCamera)
+        {
             result.matrix[12] = -vector.getX();
             result.matrix[13] = -vector.getY();
             result.matrix[14] = -vector.getZ();
@@ -86,13 +116,12 @@ public class Matrix4f {
         return result;
     }
 
-    /**
-     * Not even supported ATM, so rarely used.
-     */
-    private static Matrix4f rotate(float angle, boolean isCamera){
+    private static Matrix4f rotate(float angle, boolean isCamera)
+    {
         Matrix4f result = identity();
         float radians;
-        if (isCamera) {
+        if (isCamera)
+        {
             radians = -(float) Math.toRadians(angle);
         }else{
             radians = (float) Math.toRadians(angle);
@@ -118,7 +147,8 @@ public class Matrix4f {
      * @param near the near clipping plane.
      * @return the resulting orthographic projection matrix.
      */
-    private static Matrix4f orthographic(float right, float left, float top, float bottom, float far, float near){
+    private static Matrix4f orthographic(float right, float left, float top, float bottom, float far, float near)
+    {
         Matrix4f result = identity();
         result.matrix[0] = 2.0f / (right - left);
         result.matrix[5] = 2.0f / (top - bottom);
@@ -129,13 +159,21 @@ public class Matrix4f {
         return result;
     }
 
+    //TODO: Kind of works. Gives inaccurate position in "about" the right place.
+    public static void recalculateOrthographic(float aspectRatio)
+    {
+        orthographicWidth = ORTHOGRAPHIC_FOV * aspectRatio;
+        ORTHOGRAPHIC = orthographic(orthographicWidth, -orthographicWidth, ORTHOGRAPHIC_FOV, -ORTHOGRAPHIC_FOV, -NEAR_FAR, NEAR_FAR);
+    }
+
     /**
      * Creates a perspective projection matrix. Objects further away will get smaller to simulate perspective.
      * A lot of things would need to be rewritten if this is to be used. Camera#isInView won't work correctly. It is specifically made for orthographic projection.
      * @param FOV the field-of-view of the camera frustum.
      * @return the resulting perspective projection matrix.
      */
-    public static Matrix4f perspective(float FOV){
+    public static Matrix4f perspective(float FOV)
+    {
         Matrix4f result = new Matrix4f();
         float ar = 1280.0f/720.0f;
         float near = -1.0f;

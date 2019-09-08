@@ -79,15 +79,12 @@ public class Matrix4f
 
     public static Matrix4f transformPixelSpace(Vector3f pixelPosition, Vector2f scale)
     {
-        pixelPosition.set(clampToUnitSpace(pixelPosition));
-        return translate(pixelPosition, false).multiply(scale(scale));
+        return translate(clampToUnitSpace(pixelPosition), false).multiply(scale(scale));
     }
 
     private static Vector3f clampToUnitSpace(Vector3f pixelPosition)
     {
-        Vector3f unitPosition = new Vector3f((pixelPosition.getX() / Window.windowWidth) * (2 * orthographicWidth) - orthographicWidth, (-pixelPosition.getY() / Window.windowHeight) * (2 * ORTHOGRAPHIC_FOV) + ORTHOGRAPHIC_FOV);
-        unitPosition.printVector();
-        return unitPosition;
+        return new Vector3f((pixelPosition.getX() / Window.windowWidth) * (2 * orthographicWidth) - orthographicWidth, (-pixelPosition.getY() / Window.windowHeight) * (2 * ORTHOGRAPHIC_FOV) + ORTHOGRAPHIC_FOV);
     }
 
     private static Matrix4f scale(Vector2f scale)
@@ -159,7 +156,6 @@ public class Matrix4f
         return result;
     }
 
-    //TODO: Kind of works. Gives inaccurate position in "about" the right place.
     public static void recalculateOrthographic(float aspectRatio)
     {
         orthographicWidth = ORTHOGRAPHIC_FOV * aspectRatio;

@@ -3,6 +3,7 @@ package com.game.layer;
 import com.game.Window;
 import com.game.event.DebugScreenUpdatedEvent;
 import com.game.event.Event;
+import com.game.event.EventCategory;
 import com.game.event.EventType;
 import com.game.event.GUIToggledEvent;
 import com.game.event.KeyEvent;
@@ -47,7 +48,10 @@ public class GUILayer extends Layer
     @Override
     public void onEvent(Window window, Event event)
     {
-        //LOGGER.info(event.toString());
+        if (event.isInCategory(EventCategory.CATEGORY_WINDOW))
+        {
+            LOGGER.info(event.toString());
+        }
         if (event.eventType == EventType.KEY_PRESSED)
         {
             if (((KeyEvent) event).keyCode == GLFW_KEY_U)

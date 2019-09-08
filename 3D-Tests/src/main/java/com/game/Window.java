@@ -10,8 +10,8 @@ import com.game.event.MouseReleasedEvent;
 import com.game.event.MouseScrolledEvent;
 import com.game.event.WindowClosedEvent;
 import com.game.event.WindowResizedEvent;
-import com.game.math.Matrix4f;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
@@ -83,6 +83,7 @@ public class Window
         {
             throw new IllegalStateException("Couldn't init GLFW!");
         }
+
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
@@ -123,6 +124,8 @@ public class Window
         }
         glfwSetWindowPos(windowHandle, (vidmode.width() - windowWidth) / 2, (vidmode.height() - windowHeight) / 2);
         glfwMakeContextCurrent(windowHandle);
+        GL.createCapabilities();
+
         setVSync(VSync);
         ///// CALLBACKS ///////////////////////////////
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
@@ -147,10 +150,10 @@ public class Window
 
         glfwSetWindowCloseCallback(windowHandle, (window) -> eventCallback.onEvent(new WindowClosedEvent()));
 
-        glfwSetWindowSizeCallback(windowHandle, (window, w, h) -> {
-            eventCallback.onEvent(new WindowResizedEvent(w, h));
-            setViewPortSize(w, h);
-            aspectRatio = (float) w / h;
+        glfwSetWindowSizeCallback(windowHandle, (window, newWidth, newHeight) -> {
+            aspectRatio = (float) newWidth / newHeight;
+            eventCallback.onEvent(new WindowResizedEvent(newWidth, newHeight));
+            setViewPortSize(newWidth, newHeight);
         });
     }
 

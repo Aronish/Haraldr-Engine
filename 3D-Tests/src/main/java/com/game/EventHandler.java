@@ -42,17 +42,13 @@ public class EventHandler
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != 0)
         {
             player.setRunning(true);
-        }
-        else
-        {
+        }else{
             player.setRunning(false);
         }
         if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) != 0)
         {
             player.setBoosting(true);
-        }
-        else
-        {
+        }else{
             player.setBoosting(false);
         }
         if (glfwGetKey(window, GLFW_KEY_A) != 0)
@@ -135,9 +131,7 @@ public class EventHandler
         if (event.yOffset < 0)
         {
             camera.zoomOut();
-        }
-        else
-        {
+        }else{
             camera.zoomIn();
         }
     }

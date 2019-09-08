@@ -12,7 +12,6 @@ import com.game.layer.Layer;
 import com.game.layer.LayerStack;
 import com.game.layer.WorldLayer;
 import com.game.math.Matrix4f;
-import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
@@ -46,7 +45,6 @@ public class Application
         layerStack = new LayerStack();
         window = new Window(1280, 720, false, false);
         window.setEventCallback(new EventCallback());
-        GL.createCapabilities();
         glfwShowWindow(window.getWindowHandle());
         Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
         /*---OpenGL code won't work before this---*/

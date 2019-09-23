@@ -1,7 +1,5 @@
 package com.game.math;
 
-import com.game.Window;
-//TODO: Make width static instead of height. Useful for text measurement.
 public class Matrix4f
 {
     private static final float ORTHOGRAPHIC_FOV = 9f, NEAR_FAR = 5f;

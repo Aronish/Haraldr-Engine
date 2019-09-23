@@ -2,11 +2,13 @@ package com.game.graphics;
 
 import com.game.physics.AABB;
 
+import static com.game.Application.MAIN_LOGGER;
+
 /**
  * Class for handling models for game objects. Contains a VertexArray and an AABB.
  */
-public class Model {
-
+public class Model implements IModel
+{
     private VertexArray vertexArray;
     private AABB aabb = new AABB();
 
@@ -15,7 +17,8 @@ public class Model {
         vertexArray = new VertexArray();
     }
 
-    Model(float[] textureCoordinates){
+    Model(float[] textureCoordinates)
+    {
         setVertexArray(textureCoordinates);
     }
 
@@ -26,29 +29,42 @@ public class Model {
      * @param width the width of this Model (AABB).
      * @param height the height of this Model (AABB).
      */
-    Model(float[] vertices, float[] texcoords, float width, float height){
+    Model(float[] vertices, float[] texcoords, float width, float height)
+    {
         setVertexArray(vertices, texcoords);
         aabb = new AABB(width, height);
     }
 
-    private void setVertexArray(float[] textureCoordinates){
+    private void setVertexArray(float[] textureCoordinates)
+    {
         vertexArray = new VertexArray(textureCoordinates);
     }
 
-    private void setVertexArray(float[] vertices, float[] textureCoordinates){
+    private void setVertexArray(float[] vertices, float[] textureCoordinates)
+    {
         vertexArray = new VertexArray(vertices, textureCoordinates);
     }
 
-    VertexArray getVertexArray(){
+    @Override
+    public VertexArray getVertexArray()
+    {
         return vertexArray;
     }
 
-    public AABB getAABB(){
+    public AABB getAABB()
+    {
         return aabb;
     }
 
-    void cleanUp(){
+    @Override
+    public void dispose()
+    {
         vertexArray.unbind();
         vertexArray.delete();
+    }
+
+    @Override
+    public void printType() {
+        MAIN_LOGGER.info("Normal Model");
     }
 }

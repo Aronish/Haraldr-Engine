@@ -34,8 +34,8 @@ public class CollisionDetector {
      * @return true if there was a collision on both axes.
      */
     private static boolean checkCollision(Tile tile, Player player){
-        boolean collisionX = player.getPosition().getX() + player.getGameObjectType().model.getAABB().getWidth() > tile.getPosition().getX() && tile.getPosition().getX() + tile.getGameObjectType().model.getAABB().getWidth() > player.getPosition().getX();
-        boolean collisionY = player.getPosition().getY() - player.getGameObjectType().model.getAABB().getHeight() < tile.getPosition().getY() && tile.getPosition().getY() - tile.getGameObjectType().model.getAABB().getHeight() < player.getPosition().getY();
+        boolean collisionX = player.getPosition().getX() + player.getGameObjectType().getModel().getAABB().getWidth() > tile.getPosition().getX() && tile.getPosition().getX() + tile.getGameObjectType().getModel().getAABB().getWidth() > player.getPosition().getX();
+        boolean collisionY = player.getPosition().getY() - player.getGameObjectType().getModel().getAABB().getHeight() < tile.getPosition().getY() && tile.getPosition().getY() - tile.getGameObjectType().getModel().getAABB().getHeight() < player.getPosition().getY();
         return collisionX && collisionY;
     }
 
@@ -46,10 +46,10 @@ public class CollisionDetector {
      * @return a custom data pair with the direction and overlap distance.
      */
     private static CollisionDataMap getCollisionDirection(Tile tile, Player player){
-        float topCollision = tile.getPosition().getY() - (player.getPosition().getY() - player.getGameObjectType().model.getAABB().getHeight());
-        float rightCollision = tile.getPosition().getX() + tile.getGameObjectType().model.getAABB().getWidth() - player.getPosition().getX();
-        float leftCollision = player.getPosition().getX() + player.getGameObjectType().model.getAABB().getWidth() - tile.getPosition().getX();
-        float bottomCollision = player.getPosition().getY() - (tile.getPosition().getY() - tile.getGameObjectType().model.getAABB().getHeight());
+        float topCollision = tile.getPosition().getY() - (player.getPosition().getY() - player.getGameObjectType().getModel().getAABB().getHeight());
+        float rightCollision = tile.getPosition().getX() + tile.getGameObjectType().getModel().getAABB().getWidth() - player.getPosition().getX();
+        float leftCollision = player.getPosition().getX() + player.getGameObjectType().getModel().getAABB().getWidth() - tile.getPosition().getX();
+        float bottomCollision = player.getPosition().getY() - (tile.getPosition().getY() - tile.getGameObjectType().getModel().getAABB().getHeight());
 
         if (topCollision < bottomCollision && topCollision < leftCollision && topCollision < rightCollision ) {
             return new CollisionDataMap(NORTH, topCollision);

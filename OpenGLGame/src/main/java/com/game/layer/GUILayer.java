@@ -7,13 +7,10 @@ import com.game.event.EventCategory;
 import com.game.event.EventType;
 import com.game.event.GUIToggledEvent;
 import com.game.event.KeyEvent;
-import com.game.graphics.font.Font;
-import com.game.graphics.font.Fonts;
 import com.game.graphics.font.PackedFont;
 import com.game.graphics.font.TextRenderer;
 import com.game.gui.GUILabel;
 import com.game.gui.IGUITextComponent;
-import com.game.math.Matrix4f;
 import com.game.math.Vector3f;
 
 import java.util.ArrayList;
@@ -36,7 +33,7 @@ public class GUILayer extends Layer
     {
         super(name);
         packedFont = new PackedFont("fonts/Roboto-Regular.ttf", window);
-        debugHeader = new GUILabel(new Vector3f(0.0f, 0.0f), packedFont, "MMMMMMMMMMMMMMMMMMMMMM==", 50, window);
+        debugHeader = new GUILabel(new Vector3f(0.0f, 0.0f), packedFont, "W", 50, window.getWidth(), window.getHeight());
 
         ArrayList<IGUITextComponent> temp = new ArrayList<>();
         temp.add(debugHeader);

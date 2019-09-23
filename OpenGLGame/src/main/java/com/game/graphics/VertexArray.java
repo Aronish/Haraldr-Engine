@@ -21,8 +21,8 @@ import static org.lwjgl.opengl.GL46.glVertexAttribPointer;
 /**
  * Class for handling buffers containing the vertex data of an object.
  */
-class VertexArray {
-
+class VertexArray implements IVertexArray
+{
     private int vao = glGenVertexArrays(), vbo = glGenBuffers(), tbo = glGenBuffers(), ebo = glGenBuffers(), length;
 
     private static final float[] defVertices = {
@@ -54,7 +54,8 @@ class VertexArray {
         this(defVertices, defIndices, textureCoordinates);
     }
 
-    VertexArray(float[] vertices, float[] textureCoordinates){
+    VertexArray(float[] vertices, float[] textureCoordinates)
+    {
         this(vertices, defIndices, textureCoordinates);
     }
 
@@ -80,23 +81,31 @@ class VertexArray {
         glBindVertexArray(0);
     }
 
-    void draw(){
+    @Override
+    public void draw()
+    {
         glDrawElements(GL_TRIANGLES, length, GL_UNSIGNED_INT, 0);
     }
 
-    void drawInstanced(int count){
+    @Override
+    public void drawInstanced(int count)
+    {
         glDrawElementsInstanced(GL_TRIANGLES, length, GL_UNSIGNED_INT, 0, count);
     }
 
-    void bind(){
+    @Override
+    public void bind()
+    {
         glBindVertexArray(vao);
     }
 
-    void unbind(){
+    void unbind()
+    {
         glBindVertexArray(0);
     }
 
-    void delete(){
+    void delete()
+    {
         unbind();
         glDeleteVertexArrays(vao);
         glDeleteBuffers(vbo);

@@ -42,7 +42,7 @@ import static org.lwjgl.stb.STBTruetype.stbtt_GetFontVMetrics;
 import static org.lwjgl.stb.STBTruetype.stbtt_InitFont;
 import static org.lwjgl.stb.STBTruetype.stbtt_ScaleForPixelHeight;
 import static org.lwjgl.system.MemoryStack.stackPush;
-//TODO: Maybe create new font rendering system using font packing.
+
 public class Font
 {
     private static final boolean IS_KERNING_ENABLED = false;
@@ -55,7 +55,7 @@ public class Font
     private Vector3f fontColor;
     private float contentScaleX, contentScaleY;
 
-    public Font(String fontPath, int fontHeight, Vector3f fontColor)
+    public Font(String fontPath, int fontHeight, Vector3f fontColor, Window window)
     {
         this.fontHeight = fontHeight;
         this.fontColor = fontColor;

@@ -57,9 +57,6 @@ import static org.lwjgl.system.MemoryUtil.NULL;
  */
 public class Window
 {
-    public static final int DEFAULT_WIDTH = 1280, DEFAULT_HEIGHT = 720;
-    public static final float DEFAULT_ASPECT_RATIO = (float) DEFAULT_WIDTH / DEFAULT_HEIGHT;
-
     private long windowHandle;
     private GLFWVidMode vidmode;
     private boolean VSyncOn;

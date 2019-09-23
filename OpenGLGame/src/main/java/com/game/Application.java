@@ -7,6 +7,7 @@ import com.game.event.EventType;
 import com.game.event.IEventCallback;
 import com.game.graphics.Models;
 import com.game.graphics.Renderer;
+import com.game.graphics.font.Fonts;
 import com.game.layer.GUILayer;
 import com.game.layer.Layer;
 import com.game.layer.LayerStack;
@@ -46,6 +47,7 @@ public class Application
         /////OPENGL CODE WON'T WORK BEFORE THIS//////////////////////////////////
         window.setEventCallback(new EventCallback());
         /////INIT///////
+        Fonts.init(window);
         Matrix4f.init(window.getAspectRatio());
         Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
         /////LAYERS/////

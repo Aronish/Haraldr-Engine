@@ -21,6 +21,8 @@ public class Models {
     public static final Model PLAYER =              initModel(19, 19, 14, 40);
     public static final Model TREE =                initModel(1, 19, 16, 48);
 
+    public static final ModelImpr PLAYER_IMPR =     initModelImpr(19, 19, 14, 40);
+
     /**
      * Helper method that creates an array of texture coordinates from the provided information.
      * ((0, 0) is apparently in the upper left corner in my case.
@@ -29,10 +31,10 @@ public class Models {
      */
     private static float[] createTextureCoordinates(int x, int y, int width, int height){
         return new float[]{
-             x          / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE,
-            (x + width) / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE,
-            (x + width) / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE,
-             x          / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE
+             x          / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE, //TOP LEFT
+            (x + width) / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE, //TOP RIGHT
+            (x + width) / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE, //BOTTOM RIGHT
+             x          / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE  //BOTTOM LEFT
         };
     }
 
@@ -47,6 +49,16 @@ public class Models {
                 modelWidth, 0.0f,
                 modelWidth, 0.0f - modelHeight,
                 0.0f,       0.0f - modelHeight
+        };
+    }
+    //                                                                           FOR TEXTURE COORDINATES
+    private static float[] createVertexData(float modelWidth, float modelHeight, int x, int y, int width, int height)
+    {
+        return new float[] {
+                0.0f,       0.0f,                x          / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE, //TOP LEFT
+                modelWidth, 0.0f,               (x + width) / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE, //TOP RIGHT
+                modelWidth, 0.0f - modelHeight, (x + width) / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE, //BOTTOM RIGHT
+                0.0f,       0.0f - modelHeight,  x          / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE  //BOTTOM LEFT
         };
     }
 
@@ -64,10 +76,21 @@ public class Models {
         return new Model(createVertices(modelWidth, modelHeight), createTextureCoordinates(x, y, spriteWidth, spriteHeight), modelWidth, modelHeight);
     }
 
+    private static ModelImpr initModelImpr(int x, int y, int spriteWidth, int spriteHeight){
+        float modelWidth = spriteWidth / SPRITE_SIZE;
+        float modelHeight = spriteHeight / SPRITE_SIZE;
+        VertexBufferLayout layout = new VertexBufferLayout
+        (
+                new VertexBufferElement(ShaderDataType.FLOAT2, false),
+                new VertexBufferElement(ShaderDataType.FLOAT2, false)
+        );
+        return new ModelImpr(createVertexData(modelWidth, modelHeight, x, y, spriteWidth, spriteHeight), layout, modelWidth, modelHeight);
+    }
+
     public static void cleanUp(){
         SPRITE_SHEET.delete();
         for (GameObject gameObjectType : GameObject.values()){
-            gameObjectType.model.cleanUp();
+            gameObjectType.getModel().dispose();
         }
     }
 }

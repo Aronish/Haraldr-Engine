@@ -51,8 +51,8 @@ public class Renderer
         SHADER.setMatrix(entity.getMatrixArray(), "matrix");
         SHADER.setMatrix(camera.getViewMatrix().matrix, "view");
         SHADER.setMatrix(Matrix4f.orthographic.matrix, "projection");
-        entity.getGameObjectType().model.getVertexArray().bind();
-        entity.getGameObjectType().model.getVertexArray().draw();
+        entity.getGameObjectType().getModel().getVertexArray().bind();
+        entity.getGameObjectType().getModel().getVertexArray().draw();
 
         glBindVertexArray(0); //Without this, the last thing rendered before text is rendered will capture some buffer bindings in TextRenderer.
     }
@@ -85,8 +85,8 @@ public class Renderer
     {
         glBindBuffer(GL_ARRAY_BUFFER, InstancedRenderer.instancedMBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, ArrayUtils.toPrimitiveArrayF(InstancedRenderer.matrices));
-        tileType.model.getVertexArray().bind();
-        tileType.model.getVertexArray().drawInstanced(InstancedRenderer.matrices.size() / 16);
+        tileType.getModel().getVertexArray().bind();
+        tileType.getModel().getVertexArray().drawInstanced(InstancedRenderer.matrices.size() / 16);
     }
 
     public static void deleteShaders()
@@ -114,20 +114,23 @@ public class Renderer
             glBufferData(GL_ARRAY_BUFFER, 10000000, GL_DYNAMIC_DRAW);
 
             for (GameObject tileType : GameObject.values()){
-                tileType.model.getVertexArray().bind();
-                glEnableVertexAttribArray(2);
-                glVertexAttribPointer(2, 4, GL_FLOAT, false, 64, 0);
-                glEnableVertexAttribArray(3);
-                glVertexAttribPointer(3, 4, GL_FLOAT, false, 64, 16);
-                glEnableVertexAttribArray(4);
-                glVertexAttribPointer(4, 4, GL_FLOAT, false, 64, 32);
-                glEnableVertexAttribArray(5);
-                glVertexAttribPointer(5, 4, GL_FLOAT, false, 64, 48);
+                if (tileType.getModel() instanceof Model)
+                {
+                    tileType.getModel().getVertexArray().bind();
+                    glEnableVertexAttribArray(2);
+                    glVertexAttribPointer(2, 4, GL_FLOAT, false, 64, 0);
+                    glEnableVertexAttribArray(3);
+                    glVertexAttribPointer(3, 4, GL_FLOAT, false, 64, 16);
+                    glEnableVertexAttribArray(4);
+                    glVertexAttribPointer(4, 4, GL_FLOAT, false, 64, 32);
+                    glEnableVertexAttribArray(5);
+                    glVertexAttribPointer(5, 4, GL_FLOAT, false, 64, 48);
 
-                glVertexAttribDivisor(2, 1);
-                glVertexAttribDivisor(3, 1);
-                glVertexAttribDivisor(4, 1);
-                glVertexAttribDivisor(5, 1);
+                    glVertexAttribDivisor(2, 1);
+                    glVertexAttribDivisor(3, 1);
+                    glVertexAttribDivisor(4, 1);
+                    glVertexAttribDivisor(5, 1);
+                }
             }
         }
     }

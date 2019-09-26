@@ -12,6 +12,7 @@ public class VertexBufferLayout implements Iterable<VertexBufferElement>
     public VertexBufferLayout(VertexBufferElement... elements)
     {
         this.elements = Arrays.asList(elements);
+        calculateStrideAndOffsets();
     }
 
     private void calculateStrideAndOffsets()

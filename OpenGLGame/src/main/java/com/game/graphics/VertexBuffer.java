@@ -12,12 +12,12 @@ public class VertexBuffer
     private int vertexBufferID;
     private VertexBufferLayout layout;
 
-    public VertexBuffer(float[] data)
+    public VertexBuffer(float[] data, VertexBufferLayout layout)
     {
         vertexBufferID = glCreateBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
         glBufferData(GL_ARRAY_BUFFER, data, GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        this.layout = layout;
     }
 
     public void bind()

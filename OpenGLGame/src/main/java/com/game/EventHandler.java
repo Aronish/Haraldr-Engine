@@ -64,7 +64,7 @@ public class EventHandler
             player.resetGravityAcceleration();
             player.resetPosition();
             camera.setScale(1.0f);
-            camera.setPosition(player.getPosition().addReturn(player.getGameObjectType().model.getAABB().getMiddle()));
+            camera.setPosition(player.getPosition().addReturn(player.getGameObjectType().getModel().getAABB().getMiddle()));
         }
         if (glfwGetKey(window, GLFW_KEY_C) != 0)
         {

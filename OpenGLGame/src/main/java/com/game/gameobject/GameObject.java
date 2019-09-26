@@ -44,6 +44,9 @@ public enum GameObject
         {
             return model;
         }
-        else return modelImpr;
+        else
+        {
+            return modelImpr;
+        }
     }
 }

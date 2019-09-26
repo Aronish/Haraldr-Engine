@@ -19,8 +19,7 @@ public class ModelImpr implements IModel
     {
         vertexArray = new VertexArrayImpr();
         vertexArray.bind();
-        VertexBuffer vertexBuffer = new VertexBuffer(data);
-        vertexBuffer.setLayout(layout);
+        VertexBuffer vertexBuffer = new VertexBuffer(data, layout);
         vertexArray.setVertexBuffer(vertexBuffer);
         vertexArray.unbind();
     }

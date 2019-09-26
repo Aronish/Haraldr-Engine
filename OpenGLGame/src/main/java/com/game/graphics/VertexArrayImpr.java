@@ -50,7 +50,6 @@ public class VertexArrayImpr implements IVertexArray
             attribPointerIndex++;
         }
         glBindVertexArray(0);
-        vertexBuffer.unbind();
     }
 
     @Override

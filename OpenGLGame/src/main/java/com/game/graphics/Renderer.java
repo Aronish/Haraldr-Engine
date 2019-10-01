@@ -10,16 +10,12 @@ import com.game.world.Grid;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.game.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glBufferSubData;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
@@ -83,7 +79,7 @@ public class Renderer
      */
     private static void renderInstanced(GameObject tileType)
     {
-        glBindBuffer(GL_ARRAY_BUFFER, InstancedRenderer.instancedMBO);
+        InstancedRenderer.instancedMatrixBuffer.bind();
         glBufferSubData(GL_ARRAY_BUFFER, 0, ArrayUtils.toPrimitiveArrayF(InstancedRenderer.matrices));
         tileType.getModel().getVertexArray().bind();
         tileType.getModel().getVertexArray().drawInstanced(InstancedRenderer.matrices.size() / 16);
@@ -101,36 +97,40 @@ public class Renderer
     private static class InstancedRenderer
     {
         private static ArrayList<Float> matrices = new ArrayList<>();
-        private static int instancedMBO = glGenBuffers();
+        private static VertexBuffer instancedMatrixBuffer;
 
-        static { setupInstancedBuffer(); }
+        static
+        {
+            VertexBufferLayout layout = new VertexBufferLayout
+            (
+                    new VertexBufferElement(ShaderDataType.MAT4, false),
+                    new VertexBufferElement(ShaderDataType.MAT4, false),
+                    new VertexBufferElement(ShaderDataType.MAT4, false),
+                    new VertexBufferElement(ShaderDataType.MAT4, false)
+            );
+            instancedMatrixBuffer = new VertexBuffer(10000000, layout);
+            setupInstancedBuffer();
+        }
 
         /**
          * Sets up all vertex arrays to know about the instanced matrix attribute.
          * (At current zoom level, a buffer size of ~10 Mb should be enough.)
          */
-        private static void setupInstancedBuffer(){
-            glBindBuffer(GL_ARRAY_BUFFER, instancedMBO);
-            glBufferData(GL_ARRAY_BUFFER, 10000000, GL_DYNAMIC_DRAW);
-
-            for (GameObject tileType : GameObject.values()){
-                if (tileType.getModel() instanceof Model)
+        private static void setupInstancedBuffer()
+        {
+            for (GameObject tileType : GameObject.values())
+            {
+                tileType.getModel().getVertexArray().bind();
+                int nextAttribIndex = tileType.getModel().getVertexArray().getNextAttribIndex();
+                for (VertexBufferElement element : instancedMatrixBuffer.getLayout())
                 {
-                    tileType.getModel().getVertexArray().bind();
-                    glEnableVertexAttribArray(2);
-                    glVertexAttribPointer(2, 4, GL_FLOAT, false, 64, 0);
-                    glEnableVertexAttribArray(3);
-                    glVertexAttribPointer(3, 4, GL_FLOAT, false, 64, 16);
-                    glEnableVertexAttribArray(4);
-                    glVertexAttribPointer(4, 4, GL_FLOAT, false, 64, 32);
-                    glEnableVertexAttribArray(5);
-                    glVertexAttribPointer(5, 4, GL_FLOAT, false, 64, 48);
-
-                    glVertexAttribDivisor(2, 1);
-                    glVertexAttribDivisor(3, 1);
-                    glVertexAttribDivisor(4, 1);
-                    glVertexAttribDivisor(5, 1);
+                    MAIN_LOGGER.info("INDEX" + nextAttribIndex);
+                    glEnableVertexAttribArray(nextAttribIndex);
+                    glVertexAttribPointer(nextAttribIndex, element.getSize(), element.getType(), element.isNormalized(), instancedMatrixBuffer.getLayout().getStride(), element.getOffset());
+                    glVertexAttribDivisor(nextAttribIndex, 1);
+                    nextAttribIndex += 1;
                 }
+                tileType.getModel().getVertexArray().setNextAttribIndex(nextAttribIndex);
             }
         }
     }

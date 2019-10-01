@@ -5,56 +5,29 @@ import com.game.gameobject.GameObject;
 /**
  * Container for the sprite sheets and all the Models in the game.
  */
-public class Models {
-
+public class Models
+{
     static final Texture SPRITE_SHEET = new Texture("textures/sprite_sheet_2.png");
     private static final float SPRITE_SHEET_SIZE = SPRITE_SHEET.getWidth();
     private static final float SPRITE_SIZE = 16;
 
     //IMPORTANT! To avoid texture atlas bleeding, textures need duplicate edges so that filtering won't use colors from neighboring textures.
-    public static final Model DIRT_TILE =           new Model(createTextureCoordinates(1, 1, 16, 16));
-    public static final Model GRASS_TILE =          new Model(createTextureCoordinates(19, 1, 16, 16));
-    public static final Model GRASS_SNOW_TILE =     new Model(createTextureCoordinates(37, 1, 16, 16));
-    public static final Model STONE_TILE =          new Model(createTextureCoordinates(55, 1, 16, 16));
+    public static final Model DIRT_TILE =           initModelImpr(1, 1, 16, 16);
+    public static final Model GRASS_TILE =          initModelImpr(19, 1, 16, 16);
+    public static final Model GRASS_SNOW_TILE =     initModelImpr(37, 1, 16, 16);
+    public static final Model STONE_TILE =          initModelImpr(55, 1, 16, 16);
 
-    public static final Model GRASS_TUFT =          initModel(73, 14, 16, 4);
-    public static final Model PLAYER =              initModel(19, 19, 14, 40);
-    public static final Model TREE =                initModel(1, 19, 16, 48);
+    public static final Model GRASS_TUFT =          initModelImpr(73, 14, 16, 4);
+    public static final Model PLAYER =              initModelImpr(19, 19, 14, 40);
+    public static final Model TREE =                initModelImpr(1, 19, 16, 48);
 
-    public static final ModelImpr PLAYER_IMPR =     initModelImpr(19, 19, 14, 40);
+    public static final Model PLAYER_IMPR =         initModelImpr(19, 19, 14, 40);
 
-    /**
-     * Helper method that creates an array of texture coordinates from the provided information.
-     * ((0, 0) is apparently in the upper left corner in my case.
-     * @param width the width of the sprite in pixels.
-     * @param height the height of the sprite in pixels.
-     */
-    private static float[] createTextureCoordinates(int x, int y, int width, int height){
-        return new float[]{
-             x          / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE, //TOP LEFT
-            (x + width) / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE, //TOP RIGHT
-            (x + width) / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE, //BOTTOM RIGHT
-             x          / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE  //BOTTOM LEFT
-        };
-    }
-
-    /**
-     * Helper method that creates an array of vertex coordinates from the provided information.
-     * @param modelWidth the width of the model in units.
-     * @param modelHeight the height of the model in units.
-     */
-    private static float[] createVertices(float modelWidth, float modelHeight){
-        return new float[] {
-                0.0f,       0.0f,
-                modelWidth, 0.0f,
-                modelWidth, 0.0f - modelHeight,
-                0.0f,       0.0f - modelHeight
-        };
-    }
     //                                                                           FOR TEXTURE COORDINATES
     private static float[] createVertexData(float modelWidth, float modelHeight, int x, int y, int width, int height)
     {
-        return new float[] {
+        return new float[]
+        {
                 0.0f,       0.0f,                x          / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE, //TOP LEFT
                 modelWidth, 0.0f,               (x + width) / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE, //TOP RIGHT
                 modelWidth, 0.0f - modelHeight, (x + width) / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE, //BOTTOM RIGHT
@@ -62,21 +35,8 @@ public class Models {
         };
     }
 
-    /**
-     * Initializes a Model with vertex and texture coordinate data. This is for models that aren't 1x1 tiles.
-     * @param x the top left x coordinate in the sprite sheet.
-     * @param y the top left y coordinate in the sprite sheet.
-     * @param spriteWidth the width of the sprite in pixels.
-     * @param spriteHeight the height of the sprite in pixels.
-     * @return the newly constructed Model.
-     */
-    private static Model initModel(int x, int y, int spriteWidth, int spriteHeight){
-        float modelWidth = spriteWidth / SPRITE_SIZE;
-        float modelHeight = spriteHeight / SPRITE_SIZE;
-        return new Model(createVertices(modelWidth, modelHeight), createTextureCoordinates(x, y, spriteWidth, spriteHeight), modelWidth, modelHeight);
-    }
-
-    private static ModelImpr initModelImpr(int x, int y, int spriteWidth, int spriteHeight){
+    private static Model initModelImpr(int x, int y, int spriteWidth, int spriteHeight)
+    {
         float modelWidth = spriteWidth / SPRITE_SIZE;
         float modelHeight = spriteHeight / SPRITE_SIZE;
         VertexBufferLayout layout = new VertexBufferLayout
@@ -84,12 +44,14 @@ public class Models {
                 new VertexBufferElement(ShaderDataType.FLOAT2, false),
                 new VertexBufferElement(ShaderDataType.FLOAT2, false)
         );
-        return new ModelImpr(createVertexData(modelWidth, modelHeight, x, y, spriteWidth, spriteHeight), layout, modelWidth, modelHeight);
+        return new Model(createVertexData(modelWidth, modelHeight, x, y, spriteWidth, spriteHeight), layout, modelWidth, modelHeight);
     }
 
-    public static void cleanUp(){
+    public static void cleanUp()
+    {
         SPRITE_SHEET.delete();
-        for (GameObject gameObjectType : GameObject.values()){
+        for (GameObject gameObjectType : GameObject.values())
+        {
             gameObjectType.getModel().dispose();
         }
     }

@@ -34,6 +34,15 @@ public class Logger {
         log(message);
     }
 
+    @SafeVarargs//TODO: Possibly risky
+    public final <T> void info(T... messages){
+        setInfoLevel();
+        for (T message : messages)
+        {
+            log(message + ", ");
+        }
+    }
+
     /**
      * Logs a message as a warning.
      * @param message the message to log. Accepts any type.

@@ -4,16 +4,18 @@ import static org.lwjgl.opengl.GL11.GL_FLOAT;
 
 public enum ShaderDataType
 {
-    FLOAT2(8, GL_FLOAT),
-    FLOAT3(12, GL_FLOAT);
-    //Matrix type will be implemented later.
+    FLOAT2(2, GL_FLOAT, 4),
+    FLOAT3(3, GL_FLOAT, 4),
+    MAT4(4, GL_FLOAT, 4);
 
     public final int size;
     public final int GLType;
+    public final int typeSize;
 
-    ShaderDataType(int size, int GLType)
+    ShaderDataType(int size, int GLType, int typeSize)
     {
         this.size = size;
         this.GLType = GLType;
+        this.typeSize = typeSize;
     }
 }

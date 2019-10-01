@@ -21,8 +21,8 @@ public class VertexBufferLayout implements Iterable<VertexBufferElement>
         for (VertexBufferElement element : elements)
         {
             element.setOffset(offset);
-            offset += element.getSize();
-            stride += element.getSize();
+            offset += element.getSize() * element.getTypeSize();
+            stride += element.getSize() * element.getTypeSize();
         }
     }
 

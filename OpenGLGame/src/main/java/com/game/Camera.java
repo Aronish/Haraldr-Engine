@@ -100,8 +100,8 @@ public class Camera
         float scaleAdjustedY = position.getY() / scale;
         float xBoundary = 16.0f / scale;
         float yBoundary = 9.0f / scale;
-        boolean collisionX = tile.getPosition().getX() + tile.getGameObjectType().model.getAABB().getWidth() > scaleAdjustedX - xBoundary && tile.getPosition().getX() < scaleAdjustedX + xBoundary;
-        boolean collisionY = tile.getPosition().getY() - tile.getGameObjectType().model.getAABB().getHeight() < scaleAdjustedY + yBoundary && tile.getPosition().getY() > scaleAdjustedY - yBoundary;
+        boolean collisionX = tile.getPosition().getX() + tile.getGameObjectType().getModel().getAABB().getWidth() > scaleAdjustedX - xBoundary && tile.getPosition().getX() < scaleAdjustedX + xBoundary;
+        boolean collisionY = tile.getPosition().getY() - tile.getGameObjectType().getModel().getAABB().getHeight() < scaleAdjustedY + yBoundary && tile.getPosition().getY() > scaleAdjustedY - yBoundary;
         if (collisionX && collisionY)
         {
             visibleObjects.add(tile);

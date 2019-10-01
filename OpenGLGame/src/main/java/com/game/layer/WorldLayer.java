@@ -95,7 +95,6 @@ public class WorldLayer extends Layer
 
     /**
      * Performs orthographic frustum culling on the visible GridCells. For now, used to determine the objects to check collisions against.
-     * TODO: Make better system for this.
      */
     private void frustumCull()
     {

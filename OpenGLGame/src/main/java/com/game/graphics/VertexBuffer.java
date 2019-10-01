@@ -14,10 +14,18 @@ public class VertexBuffer
 
     public VertexBuffer(float[] data, VertexBufferLayout layout)
     {
+        this.layout = layout;
         vertexBufferID = glCreateBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
         glBufferData(GL_ARRAY_BUFFER, data, GL_STATIC_DRAW);
+    }
+
+    public VertexBuffer(int size, VertexBufferLayout layout)
+    {
         this.layout = layout;
+        vertexBufferID = glCreateBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
+        glBufferData(GL_ARRAY_BUFFER, size, GL_STATIC_DRAW);
     }
 
     public void bind()
@@ -28,11 +36,6 @@ public class VertexBuffer
     public void unbind()
     {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-    }
-
-    public void setLayout(VertexBufferLayout layout)
-    {
-        this.layout = layout;
     }
 
     public VertexBufferLayout getLayout()

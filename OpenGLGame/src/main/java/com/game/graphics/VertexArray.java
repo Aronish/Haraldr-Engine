@@ -1,115 +1,90 @@
 package com.game.graphics;
 
-import static org.lwjgl.opengl.GL15.glDeleteBuffers;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
-import static org.lwjgl.opengl.GL46.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL46.GL_ELEMENT_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL46.GL_FLOAT;
-import static org.lwjgl.opengl.GL46.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL46.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL46.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL46.glBindBuffer;
-import static org.lwjgl.opengl.GL46.glBindVertexArray;
-import static org.lwjgl.opengl.GL46.glBufferData;
-import static org.lwjgl.opengl.GL46.glDrawElements;
-import static org.lwjgl.opengl.GL46.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL46.glGenBuffers;
-import static org.lwjgl.opengl.GL46.glGenVertexArrays;
-import static org.lwjgl.opengl.GL46.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL45.glCreateBuffers;
+import static org.lwjgl.opengl.GL45.glCreateVertexArrays;
 
-/**
- * Class for handling buffers containing the vertex data of an object.
- */
-class VertexArray implements IVertexArray
+public class VertexArray
 {
-    private int vao = glGenVertexArrays(), vbo = glGenBuffers(), tbo = glGenBuffers(), ebo = glGenBuffers(), length;
-
-    private static final float[] defVertices = {
-            0.0f, 0.0f,     //Top-left
-            1.0f, 0.0f,     //Top-right
-            1.0f, -1.0f,    //Bottom-right
-            0.0f, -1.0f     //Bottom-left
-    };
-
-    private static final int[] defIndices = {
+    private static final int[] defaultIndices = {
             0, 1, 2,
             0, 2, 3
     };
 
-    private static final float[] defTexcoords = {
-            0.0f, 0.0f,
-            1.0f, 0.0f,
-            1.0f, 1.0f,
-            0.0f, 1.0f
-    };
+    private int vertexArrayID;
+    private int nextAttribIndex = 0;
+    private VertexBuffer vertexBuffer; //TODO Add support for multiple.
 
-    VertexArray()
+    public VertexArray()
     {
-        this(defVertices, defIndices, defTexcoords);
-    }
-
-    VertexArray(float[] textureCoordinates)
-    {
-        this(defVertices, defIndices, textureCoordinates);
-    }
-
-    VertexArray(float[] vertices, float[] textureCoordinates)
-    {
-        this(vertices, defIndices, textureCoordinates);
-    }
-
-    private VertexArray(float[] vertices, int[] indices, float[] textureCoordinates)
-    {
-        length = indices.length;
-
-        glBindVertexArray(vao);
-
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 8, 0);
-        glEnableVertexAttribArray(0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, tbo);
-        glBufferData(GL_ARRAY_BUFFER, textureCoordinates, GL_STATIC_DRAW);
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, 8, 0);
-        glEnableVertexAttribArray(1);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
-
+        vertexArrayID = glCreateVertexArrays();
+        int indexBufferID = glCreateBuffers();
+        glBindVertexArray(vertexArrayID);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, defaultIndices, GL_STATIC_DRAW);
         glBindVertexArray(0);
     }
 
-    @Override
-    public void draw()
+    public void setVertexBuffer(VertexBuffer vertexBuffer)
     {
-        glDrawElements(GL_TRIANGLES, length, GL_UNSIGNED_INT, 0);
+        this.vertexBuffer = vertexBuffer;
+        glBindVertexArray(vertexArrayID);
+        vertexBuffer.bind();
+        for (VertexBufferElement element : vertexBuffer.getLayout())
+        {
+            glEnableVertexAttribArray(nextAttribIndex);
+            glVertexAttribPointer(nextAttribIndex, element.getSize(), element.getType(), element.isNormalized(), vertexBuffer.getLayout().getStride(), element.getOffset());
+            ++nextAttribIndex;
+        }
+        glBindVertexArray(0);
     }
 
-    @Override
-    public void drawInstanced(int count)
-    {
-        glDrawElementsInstanced(GL_TRIANGLES, length, GL_UNSIGNED_INT, 0, count);
-    }
-
-    @Override
     public void bind()
     {
-        glBindVertexArray(vao);
+        glBindVertexArray(vertexArrayID);
     }
 
-    void unbind()
+    public void unbind()
     {
         glBindVertexArray(0);
     }
 
-    void delete()
+    public void draw()
+    {
+        glDrawElements(GL_TRIANGLES, defaultIndices.length, GL_UNSIGNED_INT, 0);
+    }
+
+    public void drawInstanced(int count)
+    {
+        glDrawElementsInstanced(GL_TRIANGLES, defaultIndices.length, GL_UNSIGNED_INT, 0, count);
+    }
+
+    public void setNextAttribIndex(int index)
+    {
+        nextAttribIndex = index;
+    }
+
+    public int getNextAttribIndex()
+    {
+        return nextAttribIndex;
+    }
+
+    public void delete()
     {
         unbind();
-        glDeleteVertexArrays(vao);
-        glDeleteBuffers(vbo);
-        glDeleteBuffers(tbo);
-        glDeleteBuffers(ebo);
+        glDeleteVertexArrays(vertexArrayID);
+        vertexBuffer.unbind();
+        vertexBuffer.delete();
     }
 }

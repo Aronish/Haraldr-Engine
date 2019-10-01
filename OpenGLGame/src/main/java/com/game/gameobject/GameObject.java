@@ -1,11 +1,7 @@
 package com.game.gameobject;
 
-import com.game.graphics.IModel;
-import com.game.graphics.ModelImpr;
-import com.game.graphics.Models;
 import com.game.graphics.Model;
-
-import static com.game.Application.MAIN_LOGGER;
+import com.game.graphics.Models;
 
 /**
  * All possible types of game objects. Holds a reference to the Model to be associated with the object.
@@ -23,30 +19,15 @@ public enum GameObject
     ///// MOVABLES ////////////////////////////////////
     PLAYER(Models.PLAYER_IMPR);
 
-    public final Model model;
-    public final ModelImpr modelImpr;
+    private final Model model;
 
     GameObject(Model model)
     {
         this.model = model;
-        this.modelImpr = null;
     }
 
-    GameObject(ModelImpr modelImpr)
+    public Model getModel()
     {
-        this.modelImpr = modelImpr;
-        this.model = null;
-    }
-
-    public IModel getModel()
-    {
-        if (model != null)
-        {
-            return model;
-        }
-        else
-        {
-            return modelImpr;
-        }
+        return model;
     }
 }

@@ -3,21 +3,24 @@ package com.game.physics;
 /**
  * Simple data pair with direction and overlap distance used for collision detection.
  */
-class CollisionDataMap {
-
+class CollisionDataMap
+{
     private final Direction collisionDirection;
     private final float inside;
 
-    CollisionDataMap(Direction collisionDirection, float inside){
+    CollisionDataMap(Direction collisionDirection, float inside)
+    {
         this.collisionDirection = collisionDirection;
         this.inside = inside;
     }
 
-    Direction getCollisionDirection(){
+    Direction getCollisionDirection()
+    {
         return collisionDirection;
     }
 
-    float getInside(){
+    float getInside()
+    {
         return inside;
     }
 }

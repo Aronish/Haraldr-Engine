@@ -10,7 +10,6 @@ import com.game.world.Grid;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.game.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
@@ -23,9 +22,6 @@ import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
 public class Renderer
 {
-    private static final Shader SHADER = new Shader("shaders/shader");
-    private static final Shader INSTANCED_SHADER = new Shader("shaders/instanced_shader.vert", "shaders/shader.frag");
-
     public static void clear()
     {
         glClear(GL_COLOR_BUFFER_BIT);
@@ -38,15 +34,15 @@ public class Renderer
 
     /**
      * Binds all the normal stuff like, sprite sheets, shaders and sets the view and projection uniforms.
-     * Issues a normal draw call.
+     * Issues a normal draw call. GUIComponents have their own render method.
      * @param entity the entity to render.
      */
-    public static void render(Camera camera, Entity entity)
+    public static void render(Camera camera, Shader shader, Entity entity)
     {
-        SHADER.use();
-        SHADER.setMatrix(entity.getMatrixArray(), "matrix");
-        SHADER.setMatrix(camera.getViewMatrix().matrix, "view");
-        SHADER.setMatrix(Matrix4f.orthographic.matrix, "projection");
+        shader.use();
+        shader.setMatrix(entity.getMatrixArray(), "matrix");
+        shader.setMatrix(camera.getViewMatrix().matrix, "view");
+        shader.setMatrix(Matrix4f.orthographic.matrix, "projection");
         entity.getGameObjectType().getModel().getVertexArray().bind();
         entity.getGameObjectType().getModel().getVertexArray().draw();
 
@@ -56,17 +52,21 @@ public class Renderer
     /**
      * Renders every type of tile in the provided list of GridCells using instancing.
      */
-    public static void renderGridCells(Camera camera, List<Grid.GridCell> gridCells){
+    public static void renderGridCells(Camera camera, Shader shader, List<Grid.GridCell> gridCells)
+    {
         Models.SPRITE_SHEET.bind();
-        INSTANCED_SHADER.use();
-        INSTANCED_SHADER.setMatrix(camera.getViewMatrix().matrix, "view");
-        INSTANCED_SHADER.setMatrix(Matrix4f.orthographic.matrix, "projection");
-        for (GameObject tileType : GameObject.values()){
+        shader.use();
+        shader.setMatrix(camera.getViewMatrix().matrix, "view");
+        shader.setMatrix(Matrix4f.orthographic.matrix, "projection");
+        for (GameObject tileType : GameObject.values())
+        {
             InstancedRenderer.matrices.clear();
-            for (Grid.GridCell gridCell : gridCells){
+            for (Grid.GridCell gridCell : gridCells)
+            {
                 InstancedRenderer.matrices.addAll(gridCell.getMatrices(tileType));
             }
-            if (InstancedRenderer.matrices.size() != 0){
+            if (InstancedRenderer.matrices.size() != 0)
+            {
                 renderInstanced(tileType);
             }
         }
@@ -85,15 +85,6 @@ public class Renderer
         tileType.getModel().getVertexArray().drawInstanced(InstancedRenderer.matrices.size() / 16);
     }
 
-    public static void deleteShaders()
-    {
-        SHADER.delete();
-        INSTANCED_SHADER.delete();
-    }
-
-    /**
-     * Apparently necessary for some weird "bug" with static initialization.
-     */
     private static class InstancedRenderer
     {
         private static ArrayList<Float> matrices = new ArrayList<>();
@@ -109,22 +100,13 @@ public class Renderer
                     new VertexBufferElement(ShaderDataType.MAT4, false)
             );
             instancedMatrixBuffer = new VertexBuffer(10000000, layout);
-            setupInstancedBuffer();
-        }
-
-        /**
-         * Sets up all vertex arrays to know about the instanced matrix attribute.
-         * (At current zoom level, a buffer size of ~10 Mb should be enough.)
-         */
-        private static void setupInstancedBuffer()
-        {
+            /////SETUP ATTRIBUTES//////////////////////////
             for (GameObject tileType : GameObject.values())
             {
                 tileType.getModel().getVertexArray().bind();
                 int nextAttribIndex = tileType.getModel().getVertexArray().getNextAttribIndex();
                 for (VertexBufferElement element : instancedMatrixBuffer.getLayout())
                 {
-                    MAIN_LOGGER.info("INDEX" + nextAttribIndex);
                     glEnableVertexAttribArray(nextAttribIndex);
                     glVertexAttribPointer(nextAttribIndex, element.getSize(), element.getType(), element.isNormalized(), instancedMatrixBuffer.getLayout().getStride(), element.getOffset());
                     glVertexAttribDivisor(nextAttribIndex, 1);

@@ -3,7 +3,7 @@ package com.game.graphics;
 import com.game.gameobject.GameObject;
 
 /**
- * Container for the sprite sheets and all the Models in the game.
+ * Container for the sprite sheets and all the Models in the game. Handles most disposing.
  */
 public class Models
 {
@@ -18,10 +18,9 @@ public class Models
     public static final Model STONE_TILE =          initModelImpr(55, 1, 16, 16);
 
     public static final Model GRASS_TUFT =          initModelImpr(73, 14, 16, 4);
-    public static final Model PLAYER =              initModelImpr(19, 19, 14, 40);
     public static final Model TREE =                initModelImpr(1, 19, 16, 48);
 
-    public static final Model PLAYER_IMPR =         initModelImpr(19, 19, 14, 40);
+    public static final Model PLAYER =              initModelImpr(19, 19, 14, 40);
 
     //                                                                           FOR TEXTURE COORDINATES
     private static float[] createVertexData(float modelWidth, float modelHeight, int x, int y, int width, int height)
@@ -35,6 +34,17 @@ public class Models
         };
     }
 
+    private static float[] createTextureCoordinates(int x, int y, int width, int height)
+    {
+        return new float[]
+        {
+                 x          / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE, //TOP LEFT
+                (x + width) / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE, //TOP RIGHT
+                (x + width) / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE, //BOTTOM RIGHT
+                 x          / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE  //BOTTOM LEFT
+        };
+    }
+
     private static Model initModelImpr(int x, int y, int spriteWidth, int spriteHeight)
     {
         float modelWidth = spriteWidth / SPRITE_SIZE;
@@ -44,7 +54,12 @@ public class Models
                 new VertexBufferElement(ShaderDataType.FLOAT2, false),
                 new VertexBufferElement(ShaderDataType.FLOAT2, false)
         );
-        return new Model(createVertexData(modelWidth, modelHeight, x, y, spriteWidth, spriteHeight), layout, modelWidth, modelHeight);
+        return new Model
+        (
+                createVertexData(modelWidth, modelHeight, x, y, spriteWidth, spriteHeight),
+                createTextureCoordinates(x, y, spriteWidth, spriteHeight), layout,
+                modelWidth, modelHeight
+        );
     }
 
     public static void cleanUp()

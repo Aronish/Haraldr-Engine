@@ -16,6 +16,14 @@ public class LayerStack implements Iterable<Layer>
         layerStack.push(layer);
     }
 
+    public void pushLayers(Layer... layers)
+    {
+        for (Layer layer : layers)
+        {
+            layerStack.push(layer);
+        }
+    }
+
     public Iterator<Layer> reverseIterator()
     {
         return layerStack.descendingIterator();

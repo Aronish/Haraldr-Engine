@@ -165,11 +165,6 @@ public class Window
         this.eventCallback = eventCallback;
     }
 
-    public void dispatchNewEvent(Event event)
-    {
-        eventCallback.onEvent(event);
-    }
-
     void changeFullscreen()
     {
         if (isFullscreen)

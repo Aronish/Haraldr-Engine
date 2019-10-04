@@ -1,17 +1,40 @@
 package com.game.math;
 
+import com.game.event.WindowResizedEvent;
+
+import static com.game.Application.MAIN_LOGGER;
+
 public class Matrix4f
 {
-    private static final float ORTHOGRAPHIC_FOV = 9f, NEAR_FAR = 5f;
+    private static final float FIXED_ORTHOGRAPHIC_AXIS = 9f, NEAR_FAR = 5f;
+    private static float dynamicOrthographicAxis;
+    private static boolean fixedWidth = true; //Probably going for fixed width only.
+    private static int lastWidth, lastHeight;
 
-    private static float orthographicWidth;
     public static Matrix4f orthographic;
+    public static Matrix4f pixelOrthographic;
 
     public float[] matrix = new float[16];
 
-    public static void init(float aspectRatio)
+    public static void toggleFixedAxis()
     {
-        recalculateOrthographic(aspectRatio);
+        fixedWidth = !fixedWidth;
+        MAIN_LOGGER.info("Fixed " + (fixedWidth ? "width" : "height"));
+        recalculateOrthographic((float) lastWidth / lastHeight);
+    }
+
+    public static void onResize(WindowResizedEvent event)
+    {
+        lastWidth = event.width;
+        lastHeight = event.height;
+        recalculateOrthographic((float) event.width / event.height);
+        recalculatePixelOrthographic(event.width, event.height);
+    }
+
+    public static void init(int width, int height)
+    {
+        recalcOrthoFixedWidth((float) width / height);
+        recalculatePixelOrthographic(width, height);
     }
 
     private static Matrix4f identity()
@@ -82,7 +105,12 @@ public class Matrix4f
 
     private static Vector3f clampToUnitSpace(Vector3f pixelPosition, int width, int height)
     {
-        return new Vector3f((pixelPosition.getX() / width) * (2 * orthographicWidth) - orthographicWidth, (-pixelPosition.getY() / height) * (2 * ORTHOGRAPHIC_FOV) + ORTHOGRAPHIC_FOV);
+        Vector3f temp = new Vector3f(
+                (pixelPosition.getX() / width) * (2 * (fixedWidth ? FIXED_ORTHOGRAPHIC_AXIS : dynamicOrthographicAxis)) - (fixedWidth ? FIXED_ORTHOGRAPHIC_AXIS : dynamicOrthographicAxis),
+                (-pixelPosition.getY() / height) * (2 * (fixedWidth ? dynamicOrthographicAxis : FIXED_ORTHOGRAPHIC_AXIS)) + (fixedWidth ? dynamicOrthographicAxis : FIXED_ORTHOGRAPHIC_AXIS)
+        );
+        temp.printVector();
+        return temp;
     }
 
     private static Matrix4f scale(Vector2f scale)
@@ -156,8 +184,30 @@ public class Matrix4f
 
     public static void recalculateOrthographic(float aspectRatio)
     {
-        orthographicWidth = ORTHOGRAPHIC_FOV * aspectRatio;
-        orthographic = orthographic(orthographicWidth, -orthographicWidth, ORTHOGRAPHIC_FOV, -ORTHOGRAPHIC_FOV, -NEAR_FAR, NEAR_FAR);
+        if (fixedWidth)
+        {
+            recalcOrthoFixedWidth(aspectRatio);
+        }else{
+            recalcOrthoFixedHeight(aspectRatio);
+        }
+    }
+
+    private static void recalcOrthoFixedWidth(float aspectRatio)
+    {
+        dynamicOrthographicAxis = FIXED_ORTHOGRAPHIC_AXIS / aspectRatio;
+        orthographic = orthographic(FIXED_ORTHOGRAPHIC_AXIS, -FIXED_ORTHOGRAPHIC_AXIS, dynamicOrthographicAxis, -dynamicOrthographicAxis, -NEAR_FAR, NEAR_FAR);
+    }
+
+    private static void recalcOrthoFixedHeight(float aspectRatio)
+    {
+        dynamicOrthographicAxis = FIXED_ORTHOGRAPHIC_AXIS * aspectRatio;
+        orthographic = orthographic(dynamicOrthographicAxis, -dynamicOrthographicAxis, FIXED_ORTHOGRAPHIC_AXIS, -FIXED_ORTHOGRAPHIC_AXIS, -NEAR_FAR, NEAR_FAR);
+    }
+
+    private static void recalculatePixelOrthographic(int width, int height)
+    {
+        pixelOrthographic = orthographic(width, 0, 0, height, -NEAR_FAR, NEAR_FAR);
+        MAIN_LOGGER.info(height);
     }
 
     /**

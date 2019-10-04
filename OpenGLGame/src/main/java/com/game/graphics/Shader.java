@@ -1,5 +1,7 @@
 package com.game.graphics;
 
+import com.game.math.Vector4f;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -9,6 +11,7 @@ import static org.lwjgl.opengl.GL20.glDeleteProgram;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glUniform4f;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL46.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL46.GL_VERTEX_SHADER;
@@ -27,6 +30,10 @@ import static org.lwjgl.opengl.GL46.glValidateProgram;
  */
 public class Shader
 {
+    public static final Shader SHADER = new Shader("shaders/shader");
+    public static final Shader INSTANCED_SHADER = new Shader("shaders/instanced_shader.vert", "shaders/shader.frag");
+    public static final Shader FLAT_COLOR_SHADER = new Shader("shaders/flat_shader");
+
     private int shaderProgram;
     private Map<String, Integer> uniformLocations = new HashMap<>();
 
@@ -114,19 +121,35 @@ public class Shader
         glUniformMatrix4fv(uniformLocations.get(name), false, matrix);
     }
 
+    public void setVector4f(Vector4f vector4f, String name)
+    {
+        if (!uniformLocations.containsKey(name))
+        {
+            uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
+        }
+        glUniform4f(uniformLocations.get(name), vector4f.getX(), vector4f.getY(), vector4f.getZ(), vector4f.getW());
+    }
+
     public void use()
     {
         glUseProgram(shaderProgram);
     }
 
-    public void unuse()
+    private void unuse()
     {
         glUseProgram(0);
     }
 
-    void delete()
+    private void delete()
     {
         unuse();
         glDeleteProgram(shaderProgram);
+    }
+
+    public static void deleteShaders()
+    {
+        SHADER.delete();
+        INSTANCED_SHADER.delete();
+        FLAT_COLOR_SHADER.delete();
     }
 }

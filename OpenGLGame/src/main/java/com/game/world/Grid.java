@@ -2,6 +2,7 @@ package com.game.world;
 
 import com.game.gameobject.GameObject;
 import com.game.gameobject.tile.Tile;
+import com.game.math.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -153,7 +154,7 @@ public class Grid
         {
             return tiles;
         }
-
+        //TODO: Try batching texture coordinates for just a single draw call.
         public List<Float> getMatrices(GameObject tileType)
         {
             return matrices.get(tileType);

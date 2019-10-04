@@ -1,6 +1,6 @@
 package com.game.gui;
 
-import com.game.graphics.font.Font;
+import com.game.gui.font.Font;
 
 public interface IGUITextComponent
 {

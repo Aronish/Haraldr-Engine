@@ -17,7 +17,7 @@ public enum GameObject
     GRASS_TUFT(Models.GRASS_TUFT),
 
     ///// MOVABLES ////////////////////////////////////
-    PLAYER(Models.PLAYER_IMPR);
+    PLAYER(Models.PLAYER);
 
     private final Model model;
 

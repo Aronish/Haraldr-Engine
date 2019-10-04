@@ -1,6 +1,7 @@
 package com.game.event;
 
 @FunctionalInterface
-public interface IEventCallback {
+public interface IEventCallback
+{
     void onEvent(Event event);
 }

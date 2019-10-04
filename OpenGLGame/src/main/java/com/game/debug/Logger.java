@@ -1,26 +1,32 @@
 package com.game.debug;
 
+import java.time.LocalTime;
+
 /**
  * Logger with different log levels. Much nicer than println.
  */
-public class Logger {
-
+public class Logger
+{
     private LogLevel logLevel = LogLevel.INFO;
     private String prefix;
 
-    public Logger(String prefix){
+    public Logger(String prefix)
+    {
         this.prefix = prefix;
     }
 
-    private void setInfoLevel(){
+    private void setInfoLevel()
+    {
         logLevel = LogLevel.INFO;
     }
 
-    private void setWarningLevel(){
+    private void setWarningLevel()
+    {
         logLevel = LogLevel.WARNING;
     }
 
-    private void setErrorLevel(){
+    private void setErrorLevel()
+    {
         logLevel = LogLevel.ERROR;
     }
 
@@ -29,13 +35,15 @@ public class Logger {
      * @param message the message to log. Accepts any type.
      * @param <T> the type of the message.
      */
-    public <T> void info(T message){
+    public <T> void info(T message)
+    {
         setInfoLevel();
         log(message);
     }
 
     @SafeVarargs//TODO: Possibly risky
-    public final <T> void info(T... messages){
+    public final <T> void info(T... messages)
+    {
         setInfoLevel();
         for (T message : messages)
         {
@@ -48,7 +56,8 @@ public class Logger {
      * @param message the message to log. Accepts any type.
      * @param <T> the type of the message.
      */
-    public <T> void warn(T message){
+    public <T> void warn(T message)
+    {
         setWarningLevel();
         log(message);
     }
@@ -58,25 +67,21 @@ public class Logger {
      * @param message the message to log. Accepts any type.
      * @param <T> the type of the message.
      */
-    public <T> void error(T message){
+    public <T> void error(T message)
+    {
         setErrorLevel();
         log(message);
     }
 
-    private <T> void log(T message){
-        System.out.println(String.format("[%s] [%s]: %s", prefix, logLevel, message));
+    private <T> void log(T message)
+    {
+        System.out.println(String.format("%s [%s] [%s]: %s", LocalTime.now(), prefix, logLevel, message));
     }
 
-    private enum LogLevel {
-
-        ERROR("[ERROR]"),
-        WARNING("[WARNING]"),
-        INFO("[INFO]");
-
-        public final String label;
-
-        LogLevel(String label){
-            this.label = label;
-        }
+    private enum LogLevel
+    {
+        ERROR,
+        WARNING,
+        INFO
     }
 }

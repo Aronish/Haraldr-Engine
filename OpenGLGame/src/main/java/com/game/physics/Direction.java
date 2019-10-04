@@ -1,6 +1,7 @@
 package com.game.physics;
 
-public enum Direction {
+public enum Direction
+{
     NORTH,
     EAST,
     WEST,

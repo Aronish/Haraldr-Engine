@@ -1,7 +1,7 @@
 package com.game.event;
 
-public enum EventCategory {
-
+public enum EventCategory
+{
     CATEGORY_INPUT      (bit(0)),
     CATEGORY_KEYBOARD   (bit(1)),
     CATEGORY_MOUSE      (bit(2)),
@@ -10,12 +10,13 @@ public enum EventCategory {
 
     public final int bitFlag;
 
-    EventCategory(int bitFlag){
+    EventCategory(int bitFlag)
+    {
         this.bitFlag = bitFlag;
     }
 
-    public static int bit(int x){
+    public static int bit(int x)
+    {
         return 1 << x;
     }
-
 }

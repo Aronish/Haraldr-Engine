@@ -1,4 +1,4 @@
-package com.game.graphics.font;
+package com.game.gui.font;
 
 import com.game.ArrayUtils;
 import com.game.graphics.Shader;

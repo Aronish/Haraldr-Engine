@@ -6,9 +6,11 @@ public class Model
 {
     private VertexArray vertexArray;
     private AABB aabb;
+    private float[] textureCoordinates;
 
-    Model(float[] data, VertexBufferLayout layout, float width, float height)
+    Model(float[] data, float[] textureCoordinates, VertexBufferLayout layout, float width, float height)
     {
+        this.textureCoordinates = textureCoordinates;
         setVertexArray(data, layout);
         aabb = new AABB(width, height);
     }
@@ -28,6 +30,11 @@ public class Model
     public AABB getAABB()
     {
         return aabb;
+    }
+
+    public float[] getTextureCoordinates()
+    {
+        return textureCoordinates;
     }
 
     public void dispose(){

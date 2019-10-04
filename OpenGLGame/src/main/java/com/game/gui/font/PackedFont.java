@@ -1,4 +1,4 @@
-package com.game.graphics.font;
+package com.game.gui.font;
 
 import com.game.Window;
 import com.game.math.Vector3f;

@@ -14,15 +14,17 @@ import static com.game.physics.Direction.WEST;
 /**
  * Class that handles collision detection.
  */
-public class CollisionDetector {
-
+public class CollisionDetector
+{
     /**
      * Does all the collision related operations.
      * @param tile the Entity, whose TexturedModel is currently checked.
      * @param player the Player to check collisions with.
      */
-    public static void doCollisions(Camera camera, Tile tile, Player player){
-        if (checkCollision(tile, player)){
+    public static void doCollisions(Camera camera, Tile tile, Player player)
+    {
+        if (checkCollision(tile, player))
+        {
             resolveCollision(camera, getCollisionDirection(tile, player), player);
         }
     }
@@ -33,7 +35,8 @@ public class CollisionDetector {
      * @param tile the Entity, whose TexturedModel is currently checked.
      * @return true if there was a collision on both axes.
      */
-    private static boolean checkCollision(Tile tile, Player player){
+    private static boolean checkCollision(Tile tile, Player player)
+    {
         boolean collisionX = player.getPosition().getX() + player.getGameObjectType().getModel().getAABB().getWidth() > tile.getPosition().getX() && tile.getPosition().getX() + tile.getGameObjectType().getModel().getAABB().getWidth() > player.getPosition().getX();
         boolean collisionY = player.getPosition().getY() - player.getGameObjectType().getModel().getAABB().getHeight() < tile.getPosition().getY() && tile.getPosition().getY() - tile.getGameObjectType().getModel().getAABB().getHeight() < player.getPosition().getY();
         return collisionX && collisionY;
@@ -45,23 +48,18 @@ public class CollisionDetector {
      * @param tile the Entity, whose TexturedModel is currently checked.
      * @return a custom data pair with the direction and overlap distance.
      */
-    private static CollisionDataMap getCollisionDirection(Tile tile, Player player){
-        float topCollision = tile.getPosition().getY() - (player.getPosition().getY() - player.getGameObjectType().getModel().getAABB().getHeight());
-        float rightCollision = tile.getPosition().getX() + tile.getGameObjectType().getModel().getAABB().getWidth() - player.getPosition().getX();
-        float leftCollision = player.getPosition().getX() + player.getGameObjectType().getModel().getAABB().getWidth() - tile.getPosition().getX();
+    private static CollisionDataMap getCollisionDirection(Tile tile, Player player)
+    {
+        float topCollision =    tile.getPosition().getY() - (player.getPosition().getY() - player.getGameObjectType().getModel().getAABB().getHeight());
+        float rightCollision =  tile.getPosition().getX() + tile.getGameObjectType().getModel().getAABB().getWidth() - player.getPosition().getX();
+        float leftCollision =   player.getPosition().getX() + player.getGameObjectType().getModel().getAABB().getWidth() - tile.getPosition().getX();
         float bottomCollision = player.getPosition().getY() - (tile.getPosition().getY() - tile.getGameObjectType().getModel().getAABB().getHeight());
 
-        if (topCollision < bottomCollision && topCollision < leftCollision && topCollision < rightCollision ) {
-            return new CollisionDataMap(NORTH, topCollision);
-        }else if (rightCollision < leftCollision && rightCollision < topCollision && rightCollision < bottomCollision ) {
-            return new CollisionDataMap(EAST, rightCollision);
-        }else if (leftCollision < rightCollision && leftCollision < topCollision && leftCollision < bottomCollision) {
-            return new CollisionDataMap(WEST, leftCollision);
-        }else if (bottomCollision < topCollision && bottomCollision < leftCollision && bottomCollision < rightCollision) {
-            return new CollisionDataMap(SOUTH, bottomCollision);
-        }else{
-            return new CollisionDataMap(INVALIDDIR, 0.0f);
-        }
+        if (topCollision < bottomCollision && topCollision < leftCollision && topCollision < rightCollision)            return new CollisionDataMap(NORTH, topCollision);
+        else if (rightCollision < leftCollision && rightCollision < topCollision && rightCollision < bottomCollision)   return new CollisionDataMap(EAST, rightCollision);
+        else if (leftCollision < rightCollision && leftCollision < topCollision && leftCollision < bottomCollision)     return new CollisionDataMap(WEST, leftCollision);
+        else if (bottomCollision < topCollision && bottomCollision < leftCollision && bottomCollision < rightCollision) return new CollisionDataMap(SOUTH, bottomCollision);
+        else                                                                                                            return new CollisionDataMap(INVALIDDIR, 0.0f);
     }
 
     /**
@@ -69,11 +67,14 @@ public class CollisionDetector {
      * @param collisionDataMap the data pair with direction and overlap distance.
      * @param player the player that collided.
      */
-    private static void resolveCollision(Camera camera, CollisionDataMap collisionDataMap, Player player) {
+    private static void resolveCollision(Camera camera, CollisionDataMap collisionDataMap, Player player)
+    {
         float inside = collisionDataMap.getInside();
-        switch (collisionDataMap.getCollisionDirection()) {
+        switch (collisionDataMap.getCollisionDirection())
+        {
             case NORTH:
-                if (!player.isJumping()){
+                if (!player.isJumping())
+                {
                     player.resetGravityAcceleration();
                     player.setFalling(false);
                 }

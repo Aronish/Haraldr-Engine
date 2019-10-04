@@ -9,7 +9,8 @@ uniform mat4 projection;
 
 out vec2 v_Texcoords;
 
-void main(){
+void main()
+{
     v_Texcoords = a_Texcoords;
     gl_Position = projection * view * matrix * vec4(a_Vertices, 1.0f, 1.0f);
 }

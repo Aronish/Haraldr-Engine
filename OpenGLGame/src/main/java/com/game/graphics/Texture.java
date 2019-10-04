@@ -30,12 +30,13 @@ import static org.lwjgl.opengl.GL11.glTexParameteri;
 /**
  * Represents an OpenGL texture.
  */
-public class Texture {
-
+public class Texture
+{
     private int width, height;
     private int texture;
 
-    public Texture(String path){
+    public Texture(String path)
+    {
         texture = load(path);
     }
 
@@ -44,11 +45,14 @@ public class Texture {
      * @param path the path of the texture.
      * @return the OpenGL texture ID.
      */
-    private int load(String path){
+    private int load(String path)
+    {
         int[] pixels = null;
-        try{
+        try
+        {
             InputStream imageStream = Texture.class.getClassLoader().getResourceAsStream(path);
-            if (imageStream == null){
+            if (imageStream == null)
+            {
                 throw new NullPointerException("Texture not found!");
             }
             BufferedImage image = ImageIO.read(imageStream);
@@ -56,20 +60,24 @@ public class Texture {
             height = image.getHeight();
             pixels = new int[width * height];
             image.getRGB(0, 0, width, height, pixels, 0, width);
-        }catch (IOException e){
+        }catch (IOException e)
+        {
             e.printStackTrace();
         }
 
         int[] data = new int[width * height];
-        if (pixels != null) {
-            for (int i = 0; i < width * height; i++) {
+        if (pixels != null)
+        {
+            for (int i = 0; i < width * height; i++)
+            {
                 int a = (pixels[i] & 0xff000000) >> 24;
                 int r = (pixels[i] & 0xff0000) >> 16;
                 int g = (pixels[i] & 0xff00) >> 8;
                 int b = (pixels[i] & 0xff);
                 data[i] = a << 24 | b << 16 | g << 8 | r;
             }
-        }else{
+        }else
+        {
             throw new IllegalStateException("Texture was not read and stored properly!");
         }
 
@@ -87,19 +95,23 @@ public class Texture {
         return result;
     }
 
-    int getWidth(){
+    int getWidth()
+    {
         return width;
     }
 
-    void bind(){
+    void bind()
+    {
         glBindTexture(GL_TEXTURE_2D, texture);
     }
 
-    void unbind(){
+    void unbind()
+    {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    void delete(){
+    void delete()
+    {
         unbind();
         glDeleteTextures(texture);
     }

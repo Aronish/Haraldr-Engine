@@ -9,6 +9,7 @@ import com.game.event.GUIToggledEvent;
 import com.game.event.KeyEvent;
 import com.game.event.MouseScrolledEvent;
 import com.game.graphics.Renderer;
+import com.game.graphics.Shader;
 import com.game.world.Grid;
 import com.game.gameobject.IBackground;
 import com.game.gameobject.Player;
@@ -33,7 +34,8 @@ public class WorldLayer extends Layer
     private List<Grid.GridCell> visibleGridCells = new ArrayList<>();
     private List<Tile> frustumCulledObjects = new ArrayList<>();
 
-    public WorldLayer(String name) {
+    public WorldLayer(String name)
+    {
         super(name);
     }
 
@@ -50,8 +52,8 @@ public class WorldLayer extends Layer
     @Override
     public void onRender()
     {
-        Renderer.renderGridCells(camera, visibleGridCells);
-        Renderer.render(camera, player);
+        Renderer.renderGridCells(camera, Shader.INSTANCED_SHADER, visibleGridCells);
+        Renderer.render(camera, Shader.SHADER, player);
     }
 
     @Override

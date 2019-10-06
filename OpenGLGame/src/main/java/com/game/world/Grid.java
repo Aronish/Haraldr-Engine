@@ -5,10 +5,12 @@ import com.game.gameobject.tile.Tile;
 import com.game.math.Matrix4f;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.game.Application.MAIN_LOGGER;
 import static com.game.Main.fastFloor;
 
 /**
@@ -117,9 +119,11 @@ public class Grid
     public static class GridCell
     {
         private List<Tile> tiles = new ArrayList<>();
-        private Map<GameObject, List<Float>> matrices = new HashMap<>();
 
+        private Map<GameObject, List<Float>> matrices = new HashMap<>();
         private List<Float> intermeditateArray = new ArrayList<>();
+
+        private Map<GameObject, Integer> tileCounts = new HashMap<>();
 
         private GridCell(){}
 
@@ -135,11 +139,13 @@ public class Grid
         {
             for (GameObject tileType : GameObject.values())
             {
+                int tileCount = 0;
                 intermeditateArray.clear();
                 for (Tile tile : tiles)
                 {
                     if (tile.getGameObjectType() == tileType)
                     {
+                        ++tileCount;
                         for (float element : tile.getMatrixArray())
                         {
                             intermeditateArray.add(element);
@@ -147,6 +153,7 @@ public class Grid
                     }
                 }
                 matrices.put(tileType, new ArrayList<>(intermeditateArray));
+                tileCounts.put(tileType, tileCount);
             }
         }
 
@@ -158,6 +165,21 @@ public class Grid
         public List<Float> getMatrices(GameObject tileType)
         {
             return matrices.get(tileType);
+        }
+
+        public List<Float> getAllMatrices()
+        {
+            List<Float> allMatrices = new ArrayList<>();
+            for (Collection<Float> collection : matrices.values())
+            {
+                allMatrices.addAll(collection);
+            }
+            return allMatrices;
+        }
+
+        public Integer getTileCount(GameObject gameObject)
+        {
+            return tileCounts.get(gameObject);
         }
     }
 }

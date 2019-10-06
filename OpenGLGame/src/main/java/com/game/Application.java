@@ -26,6 +26,11 @@ import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
+import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
+import static org.lwjgl.system.MemoryUtil.memByteBuffer;
+import static org.lwjgl.system.MemoryUtil.memUTF8;
 
 public class Application
 {
@@ -64,6 +69,11 @@ public class Application
                 new WorldLayer("World"),
                 new GUILayer("GUI", window)
         );
+        //glEnable(GL_DEBUG_OUTPUT);
+        glDebugMessageCallback((source, type, id, severity, length, message, userparam) -> {
+            MAIN_LOGGER.info("Source: " + source + "\nType: " + type + "\nSeverity: " + severity + "\nLength: " + length);
+            MAIN_LOGGER.info(memUTF8(message));
+        }, 0);
 
         glfwShowWindow(window.getWindowHandle());
     }

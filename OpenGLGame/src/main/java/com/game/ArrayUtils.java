@@ -36,4 +36,14 @@ public class ArrayUtils
         }
         return list;
     }
+
+    public static List<Integer> toList(int[] array)
+    {
+        List<Integer> list = new ArrayList<>();
+        for (int i : array)
+        {
+            list.add(i);
+        }
+        return list;
+    }
 }

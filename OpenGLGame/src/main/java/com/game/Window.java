@@ -16,6 +16,7 @@ import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
 
+import static com.game.Application.MAIN_LOGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
@@ -35,6 +36,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
@@ -157,6 +159,10 @@ public class Window
             windowHeight = newHeight;
             eventCallback.onEvent(new WindowResizedEvent(newWidth, newHeight));
             setViewPortSize(newWidth, newHeight);
+        });
+
+        glfwSetErrorCallback((error, description) -> {
+            MAIN_LOGGER.info(error, description);
         });
     }
 

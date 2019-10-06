@@ -9,21 +9,23 @@ import com.game.graphics.Models;
 public enum GameObject
 {
     ///// WORLD TILES /////////////////////////////////
-    GRASS(Models.GRASS_TILE),
-    DIRT(Models.DIRT_TILE),
-    STONE(Models.STONE_TILE),
-    GRASS_SNOW(Models.GRASS_SNOW_TILE),
-    TREE(Models.TREE),
-    GRASS_TUFT(Models.GRASS_TUFT),
+    GRASS(Models.GRASS_TILE, true),
+    DIRT(Models.DIRT_TILE, true),
+    STONE(Models.STONE_TILE, true),
+    GRASS_SNOW(Models.GRASS_SNOW_TILE, true),
+    TREE(Models.TREE, true),
+    GRASS_TUFT(Models.GRASS_TUFT, true),
 
     ///// MOVABLES ////////////////////////////////////
-    PLAYER(Models.PLAYER);
+    PLAYER(Models.PLAYER, false);
 
     private final Model model;
+    public final boolean instanced;
 
-    GameObject(Model model)
+    GameObject(Model model, boolean instanced)
     {
         this.model = model;
+        this.instanced = instanced;
     }
 
     public Model getModel()

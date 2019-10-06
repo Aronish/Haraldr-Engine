@@ -8,7 +8,6 @@ import com.game.math.Matrix4f;
 import com.game.world.Grid;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,24 +16,18 @@ import static com.game.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glBufferSubData;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 import static org.lwjgl.opengl.GL40.GL_DRAW_INDIRECT_BUFFER;
-import static org.lwjgl.opengl.GL43.glMultiDrawElementsIndirect;
-import static org.lwjgl.opengl.GL45.glCreateBuffers;
-import static org.lwjgl.opengl.GL45.glCreateVertexArrays;
 
 public class Renderer
 {
+    private static MultiDrawIndirectRenderer multiDrawIndirectRenderer = new MultiDrawIndirectRenderer();
+
     public static void clear()
     {
         glClear(GL_COLOR_BUFFER_BIT);
@@ -105,12 +98,12 @@ public class Renderer
         shader.setMatrix(camera.getViewMatrix().matrix, "view");
         shader.setMatrix(Matrix4f.orthographic.matrix, "projection");
         /////COLLECT MATRICES//////////////////////////////////////////////
-        MultiDrawIndirectRenderer.matrices.clear();
+        multiDrawIndirectRenderer.matrices.clear();
         Map<GameObject, Integer> tileCounts = new HashMap<>();
         Map<GameObject, Integer> matrixOffsets = new HashMap<>();
         for (Grid.GridCell gridCell : gridCells)
         {
-            MultiDrawIndirectRenderer.matrices.addAll(gridCell.getAllMatrices());
+            multiDrawIndirectRenderer.matrices.addAll(gridCell.getAllMatrices());
             for (GameObject gameObject : GameObject.values())
             {
                 if (gameObject.instanced)
@@ -127,8 +120,8 @@ public class Renderer
             matrixStride += tileCounts.get(gameObject);
         }
 
-        MultiDrawIndirectRenderer.instancedMatrixBuffer.bind();
-        glBufferSubData(GL_ARRAY_BUFFER, 0, ArrayUtils.toPrimitiveArrayF(MultiDrawIndirectRenderer.matrices));
+        multiDrawIndirectRenderer.instancedMatrixBuffer.bind();
+        glBufferSubData(GL_ARRAY_BUFFER, 0, ArrayUtils.toPrimitiveArrayF(multiDrawIndirectRenderer.matrices));
         /////Get counts for indirect buffer/////////////////////////////////////////////////////////////////////////
         List<Integer> indirectBuffer = new ArrayList<>();
         int objectCount = 0;
@@ -147,11 +140,12 @@ public class Renderer
 
     private static void multiRenderIndirect(List<Integer> indirectBuffer)
     {
-        MultiDrawIndirectRenderer.instancedMatrixBuffer.bind();
-        //glBindBuffer(GL_DRAW_INDIRECT_BUFFER, MultiDrawIndirectRenderer.indirectBuffer);
-        //glBufferData(GL_DRAW_INDIRECT_BUFFER, ArrayUtils.toPrimitiveArrayI(indirectBuffer), GL_STATIC_DRAW);
-        MultiDrawIndirectRenderer.vao.bind();
-        MultiDrawIndirectRenderer.vao.multiDrawIndirect(ArrayUtils.toPrimitiveArrayI(indirectBuffer));
+        multiDrawIndirectRenderer.instancedMatrixBuffer.bind();
+        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, MultiDrawIndirectRenderer.indirectBuffer);
+        glBufferData(GL_DRAW_INDIRECT_BUFFER, ArrayUtils.toPrimitiveArrayI(indirectBuffer), GL_STATIC_DRAW);
+        multiDrawIndirectRenderer.vao.bind();
+        multiDrawIndirectRenderer.vao.multiDrawIndirect(ArrayUtils.toPrimitiveArrayI(indirectBuffer));
+        multiDrawIndirectRenderer.vao.unbind();
     }
 
     private static class InstancedRenderer
@@ -188,62 +182,5 @@ public class Renderer
                 }
             }
         }*/
-    }
-
-    private static class MultiDrawIndirectRenderer
-    {
-        private static VertexArray vao = new VertexArray();
-
-        private static List<Float> matrices = new ArrayList<>();
-        private static VertexBuffer instancedMatrixBuffer;
-
-        private static List<Float> modelVertexData = new ArrayList<>();
-        private static VertexBuffer modelVertexBuffer;
-
-        private static int indirectBuffer = glCreateBuffers();
-
-        static
-        {
-            /////MATRICES/////////////////////////////////////
-            VertexBufferLayout layout = new VertexBufferLayout
-                    (
-                            new VertexBufferElement(ShaderDataType.MAT4, false),
-                            new VertexBufferElement(ShaderDataType.MAT4, false),
-                            new VertexBufferElement(ShaderDataType.MAT4, false),
-                            new VertexBufferElement(ShaderDataType.MAT4, false)
-                    );
-            instancedMatrixBuffer = new VertexBuffer(10000000, layout);
-            MAIN_LOGGER.info(instancedMatrixBuffer.vertexBufferID);
-            //TODO Get all matrices from a gridcell.
-            vao.bind();
-            int nextAttribIndex = vao.getNextAttribIndex();
-            for (VertexBufferElement element : instancedMatrixBuffer.getLayout())
-            {
-                glEnableVertexAttribArray(nextAttribIndex);
-                glVertexAttribPointer(nextAttribIndex, element.getSize(), element.getType(), element.isNormalized(), instancedMatrixBuffer.getLayout().getStride(), element.getOffset());
-                glVertexAttribDivisor(nextAttribIndex, 1);
-                nextAttribIndex += 1;
-            }
-            vao.setNextAttribIndex(nextAttribIndex);
-            vao.unbind();
-            /////MODEL DATA STORE///////////////////////////////////
-            for (GameObject gameObject : GameObject.values())
-            {
-                if (gameObject.instanced)
-                {
-                    float[] vertexData = gameObject.getModel().getVertexArray().getVertexBuffer().getData();
-                    modelVertexData.addAll(ArrayUtils.toList(vertexData));
-                }
-            } //Stored correctly
-
-            VertexBufferLayout modelLayout = new VertexBufferLayout
-            (
-                    new VertexBufferElement(ShaderDataType.FLOAT2, false),
-                    new VertexBufferElement(ShaderDataType.FLOAT2, false)
-            );
-            modelVertexBuffer = new VertexBuffer(ArrayUtils.toPrimitiveArrayF(modelVertexData), modelLayout);
-            vao.setVertexBuffer(modelVertexBuffer);
-            vao.unbind();
-        }
     }
 }

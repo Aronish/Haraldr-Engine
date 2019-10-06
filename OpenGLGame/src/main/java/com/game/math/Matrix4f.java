@@ -207,7 +207,6 @@ public class Matrix4f
     private static void recalculatePixelOrthographic(int width, int height)
     {
         pixelOrthographic = orthographic(width, 0, 0, height, -NEAR_FAR, NEAR_FAR);
-        MAIN_LOGGER.info(height);
     }
 
     /**

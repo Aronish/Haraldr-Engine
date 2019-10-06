@@ -33,6 +33,7 @@ public class VertexArray
     public VertexArray()
     {
         vertexArrayID = glCreateVertexArrays();
+        MAIN_LOGGER.info(vertexArrayID);
         int indexBufferID = glCreateBuffers();
         glBindVertexArray(vertexArrayID);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
@@ -77,7 +78,6 @@ public class VertexArray
     public void multiDrawIndirect(int[] indirectBuffer)
     {
         glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, indirectBuffer, indirectBuffer.length / 4, 16);
-        MAIN_LOGGER.info(glGetError());
     }
 
     public void setNextAttribIndex(int index)

@@ -8,9 +8,13 @@ import java.util.List;
 
 import static com.game.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.glGetError;
+import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
+import static org.lwjgl.opengl.GL40.GL_DRAW_INDIRECT_BUFFER;
 import static org.lwjgl.opengl.GL45.glCreateBuffers;
 
 public class MultiDrawIndirectRenderer
@@ -67,5 +71,9 @@ public class MultiDrawIndirectRenderer
         }
         vao.setNextAttribIndex(nextAttribIndex);
         vao.unbind();
+
+        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirectBuffer);
+        glBufferData(GL_DRAW_INDIRECT_BUFFER, 100, GL_DYNAMIC_DRAW); //EXTRA ERROR IF <100
+        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
     }
 }

@@ -21,7 +21,10 @@ import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glBufferSubData;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 import static org.lwjgl.opengl.GL40.GL_DRAW_INDIRECT_BUFFER;
 
 public class Renderer
@@ -128,9 +131,9 @@ public class Renderer
         for (GameObject gameObject : tileCounts.keySet())
         {
             List<Integer> entry = new ArrayList<>();
-            entry.add(16);
+            entry.add(8);
             entry.add(tileCounts.get(gameObject));
-            entry.add(16 * objectCount);
+            entry.add(8 * objectCount);
             entry.add(matrixOffsets.get(gameObject));
             indirectBuffer.addAll(entry);
             ++objectCount;
@@ -140,9 +143,8 @@ public class Renderer
 
     private static void multiRenderIndirect(List<Integer> indirectBuffer)
     {
-        multiDrawIndirectRenderer.instancedMatrixBuffer.bind();
         glBindBuffer(GL_DRAW_INDIRECT_BUFFER, MultiDrawIndirectRenderer.indirectBuffer);
-        glBufferData(GL_DRAW_INDIRECT_BUFFER, ArrayUtils.toPrimitiveArrayI(indirectBuffer), GL_STATIC_DRAW);
+        glBufferSubData(GL_DRAW_INDIRECT_BUFFER, 0, ArrayUtils.toPrimitiveArrayI(indirectBuffer));
         multiDrawIndirectRenderer.vao.bind();
         multiDrawIndirectRenderer.vao.multiDrawIndirect(ArrayUtils.toPrimitiveArrayI(indirectBuffer));
         multiDrawIndirectRenderer.vao.unbind();
@@ -181,6 +183,8 @@ public class Renderer
                     tileType.getModel().getVertexArray().setNextAttribIndex(nextAttribIndex);
                 }
             }
-        }*/
+        }
+
+         */
     }
 }

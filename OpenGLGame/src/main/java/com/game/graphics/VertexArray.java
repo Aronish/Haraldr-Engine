@@ -76,7 +76,7 @@ public class VertexArray
 
     public void multiDrawIndirect(int[] indirectBuffer)
     {
-        glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, 0, indirectBuffer.length / 4, 16);
+        glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, 0, indirectBuffer.length / 4, 0);
     }
 
     public void setNextAttribIndex(int index)

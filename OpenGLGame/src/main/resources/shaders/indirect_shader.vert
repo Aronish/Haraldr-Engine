@@ -1,8 +1,8 @@
 #version 460 core
 
-layout(location = 0) in mat4 a_Matrix;
-layout(location = 4) in vec2 a_Vertex;
-layout(location = 5) in vec2 a_TextureCoordinate;
+layout(location = 0) in vec2 a_Vertex;
+layout(location = 1) in vec2 a_TextureCoordinate;
+layout(location = 2) in mat4 a_Matrix;
 
 uniform mat4 view;
 uniform mat4 projection;

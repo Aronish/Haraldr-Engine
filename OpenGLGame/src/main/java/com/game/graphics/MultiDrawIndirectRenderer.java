@@ -57,7 +57,7 @@ public class MultiDrawIndirectRenderer
                         new VertexBufferElement(ShaderDataType.MAT4, false),
                         new VertexBufferElement(ShaderDataType.MAT4, false)
                 );
-        instancedMatrixBuffer = new VertexBuffer(10000000, layout);
+        instancedMatrixBuffer = new VertexBuffer(5000000, layout);
 
         vao.bind();
         instancedMatrixBuffer.bind();
@@ -73,7 +73,7 @@ public class MultiDrawIndirectRenderer
         vao.unbind();
 
         glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirectBuffer);
-        glBufferData(GL_DRAW_INDIRECT_BUFFER, 100, GL_DYNAMIC_DRAW); //EXTRA ERROR IF <100
+        glBufferData(GL_DRAW_INDIRECT_BUFFER, 1000, GL_DYNAMIC_DRAW); //EXTRA ERROR IF <100
         glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
     }
 }

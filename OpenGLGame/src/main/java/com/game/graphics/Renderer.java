@@ -16,6 +16,7 @@ import static com.game.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
@@ -30,6 +31,7 @@ import static org.lwjgl.opengl.GL40.GL_DRAW_INDIRECT_BUFFER;
 public class Renderer
 {
     private static MultiDrawIndirectRenderer multiDrawIndirectRenderer = new MultiDrawIndirectRenderer();
+    private static HashMap<GameObject, Integer> tileCounts = new HashMap<>(), matrixOffsets = new HashMap<>();
 
     public static void clear()
     {
@@ -102,22 +104,25 @@ public class Renderer
         shader.setMatrix(Matrix4f.orthographic.matrix, "projection");
         /////COLLECT MATRICES//////////////////////////////////////////////
         multiDrawIndirectRenderer.matrices.clear();
-        Map<GameObject, Integer> tileCounts = new HashMap<>();
-        Map<GameObject, Integer> matrixOffsets = new HashMap<>();
-        for (Grid.GridCell gridCell : gridCells)
+        tileCounts.replaceAll((key, value) -> 0);
+        matrixOffsets.replaceAll((key, value) -> 0);
+        for (GameObject gameObject : GameObject.instancedObjects)
         {
-            multiDrawIndirectRenderer.matrices.addAll(gridCell.getAllMatrices());
-            for (GameObject gameObject : GameObject.values())
+            for (Grid.GridCell gridCell : gridCells)
             {
-                if (gameObject.instanced)
-                {
-                    int prevCount = tileCounts.getOrDefault(gameObject, 0);
-                    tileCounts.put(gameObject, prevCount + gridCell.getTileCount(gameObject));
-                }
+                multiDrawIndirectRenderer.matrices.addAll(gridCell.getMatrices(gameObject));
+            }
+        }
+        for (GameObject gameObject : GameObject.instancedObjects)
+        {
+            for (Grid.GridCell gridCell : gridCells)
+            {
+                int prevCount = tileCounts.getOrDefault(gameObject, 0);
+                tileCounts.put(gameObject, prevCount + gridCell.getTileCount(gameObject));
             }
         }
         int matrixStride = 0;
-        for (GameObject gameObject : tileCounts.keySet())
+        for (GameObject gameObject : GameObject.instancedObjects)
         {
             matrixOffsets.put(gameObject, matrixStride);
             matrixStride += tileCounts.get(gameObject);
@@ -125,10 +130,11 @@ public class Renderer
 
         multiDrawIndirectRenderer.instancedMatrixBuffer.bind();
         glBufferSubData(GL_ARRAY_BUFFER, 0, ArrayUtils.toPrimitiveArrayF(multiDrawIndirectRenderer.matrices));
+        MAIN_LOGGER.info(glGetError());
         /////Get counts for indirect buffer/////////////////////////////////////////////////////////////////////////
         List<Integer> indirectBuffer = new ArrayList<>();
         int objectCount = 0;
-        for (GameObject gameObject : tileCounts.keySet())
+        for (GameObject gameObject : GameObject.instancedObjects)
         {
             List<Integer> entry = new ArrayList<>();
             entry.add(8);

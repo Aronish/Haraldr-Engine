@@ -8,6 +8,7 @@ import com.game.event.EventType;
 import com.game.event.IEventCallback;
 import com.game.event.KeyPressedEvent;
 import com.game.event.WindowResizedEvent;
+import com.game.gameobject.GameObject;
 import com.game.graphics.Models;
 import com.game.graphics.Renderer;
 import com.game.graphics.Shader;
@@ -71,8 +72,8 @@ public class Application
         );
         //glEnable(GL_DEBUG_OUTPUT);
         glDebugMessageCallback((source, type, id, severity, length, message, userparam) -> {
-            MAIN_LOGGER.info("Source: " + source + "\nType: " + type + "\nSeverity: " + severity + "\nLength: " + length);
-            MAIN_LOGGER.info(memUTF8(message));
+            System.out.println("Source: " + Integer.toHexString(source) + "\nType: " + Integer.toHexString(type) + "\nSeverity: " + Integer.toHexString(severity) + "\nLength: " + length);
+            System.out.println(memUTF8(message) + "\n");
         }, 0);
 
         glfwShowWindow(window.getWindowHandle());

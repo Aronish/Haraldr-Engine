@@ -52,8 +52,8 @@ public class WorldLayer extends Layer
     @Override
     public void onRender()
     {
-        Renderer.multiRenderIndirectGridCells(camera, Shader.MULTI_DRAW_SHADER, visibleGridCells);
-        //Renderer.renderGridCells(camera, Shader.INSTANCED_SHADER, visibleGridCells);
+        //Renderer.multiRenderIndirectGridCells(camera, Shader.MULTI_DRAW_SHADER, visibleGridCells);
+        Renderer.renderGridCells(camera, Shader.INSTANCED_SHADER, visibleGridCells);
         Renderer.render(camera, Shader.SHADER, player);
     }
 

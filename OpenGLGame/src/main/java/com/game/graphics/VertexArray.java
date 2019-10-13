@@ -32,11 +32,16 @@ public class VertexArray
 
     public VertexArray()
     {
+        this(defaultIndices);
+    }
+
+    public VertexArray(int[] indices)
+    {
         vertexArrayID = glCreateVertexArrays();
         int indexBufferID = glCreateBuffers();
         glBindVertexArray(vertexArrayID);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, defaultIndices, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
         glBindVertexArray(0);
     }
 
@@ -74,9 +79,9 @@ public class VertexArray
         glDrawElementsInstanced(GL_TRIANGLES, defaultIndices.length, GL_UNSIGNED_INT, 0, count);
     }
 
-    public void multiDrawIndirect(int[] indirectBuffer)
+    public void multiDrawIndirect(int count)
     {
-        glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, 0, indirectBuffer.length / 4, 0);
+        glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, 0, count, 0);
     }
 
     public void setNextAttribIndex(int index)

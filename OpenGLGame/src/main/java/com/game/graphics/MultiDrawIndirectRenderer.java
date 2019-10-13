@@ -19,7 +19,23 @@ import static org.lwjgl.opengl.GL45.glCreateBuffers;
 
 public class MultiDrawIndirectRenderer
 {
-    public VertexArray vao = new VertexArray();
+    private static final List<Integer> indirectIndices = new ArrayList<>();
+
+    static
+    {
+        for (int i = 0; i < 6; ++i)
+        {
+            indirectIndices.add(4 * i);
+            indirectIndices.add(4 * i + 1);
+            indirectIndices.add(4 * i + 2);
+            indirectIndices.add(4 * i);
+            indirectIndices.add(4 * i + 2);
+            indirectIndices.add(4 * i + 3);
+        }
+        MAIN_LOGGER.info(indirectIndices);
+    }
+
+    public VertexArray vao = new VertexArray(ArrayUtils.toPrimitiveArrayI(indirectIndices));
 
     public List<Float> matrices = new ArrayList<>();
     public VertexBuffer instancedMatrixBuffer;
@@ -32,13 +48,10 @@ public class MultiDrawIndirectRenderer
     public MultiDrawIndirectRenderer()
     {
         /////MODEL DATA STORE///////////////////////////////////
-        for (GameObject gameObject : GameObject.values())
+        for (GameObject gameObject : GameObject.instancedObjects)
         {
-            if (gameObject.instanced)
-            {
-                float[] vertexData = gameObject.getModel().getVertexArray().getVertexBuffer().getData();
-                modelVertexData.addAll(ArrayUtils.toList(vertexData));
-            }
+            float[] vertexData = gameObject.getModel().getVertexArray().getVertexBuffer().getData();
+            modelVertexData.addAll(ArrayUtils.toList(vertexData));
         }//Stored correctly
 
         VertexBufferLayout modelLayout = new VertexBufferLayout

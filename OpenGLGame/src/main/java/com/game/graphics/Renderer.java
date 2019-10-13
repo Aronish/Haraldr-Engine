@@ -32,6 +32,7 @@ public class Renderer
 {
     private static MultiDrawIndirectRenderer multiDrawIndirectRenderer = new MultiDrawIndirectRenderer();
     private static HashMap<GameObject, Integer> tileCounts = new HashMap<>(), matrixOffsets = new HashMap<>();
+    private static List<Integer> indirectBuffer = new ArrayList<>();
 
     public static void clear()
     {
@@ -106,53 +107,43 @@ public class Renderer
         multiDrawIndirectRenderer.matrices.clear();
         tileCounts.replaceAll((key, value) -> 0);
         matrixOffsets.replaceAll((key, value) -> 0);
+        indirectBuffer.clear();
+        int matrixStride = 0;
+        int objectCount = 0;
         for (GameObject gameObject : GameObject.instancedObjects)
         {
             for (Grid.GridCell gridCell : gridCells)
             {
                 multiDrawIndirectRenderer.matrices.addAll(gridCell.getMatrices(gameObject));
-            }
-        }
-        for (GameObject gameObject : GameObject.instancedObjects)
-        {
-            for (Grid.GridCell gridCell : gridCells)
-            {
                 int prevCount = tileCounts.getOrDefault(gameObject, 0);
                 tileCounts.put(gameObject, prevCount + gridCell.getTileCount(gameObject));
             }
-        }
-        int matrixStride = 0;
-        for (GameObject gameObject : GameObject.instancedObjects)
-        {
             matrixOffsets.put(gameObject, matrixStride);
             matrixStride += tileCounts.get(gameObject);
-        }
 
-        multiDrawIndirectRenderer.instancedMatrixBuffer.bind();
-        glBufferSubData(GL_ARRAY_BUFFER, 0, ArrayUtils.toPrimitiveArrayF(multiDrawIndirectRenderer.matrices));
-        MAIN_LOGGER.info(glGetError());
-        /////Get counts for indirect buffer/////////////////////////////////////////////////////////////////////////
-        List<Integer> indirectBuffer = new ArrayList<>();
-        int objectCount = 0;
-        for (GameObject gameObject : GameObject.instancedObjects)
-        {
             List<Integer> entry = new ArrayList<>();
-            entry.add(8);
+            entry.add(6);
             entry.add(tileCounts.get(gameObject));
+            entry.add(6);
             entry.add(8 * objectCount);
             entry.add(matrixOffsets.get(gameObject));
             indirectBuffer.addAll(entry);
             ++objectCount;
         }
-        multiRenderIndirect(indirectBuffer);
-    }
 
-    private static void multiRenderIndirect(List<Integer> indirectBuffer)
-    {
+        multiDrawIndirectRenderer.instancedMatrixBuffer.bind();
+        glBufferSubData(GL_ARRAY_BUFFER, 0, ArrayUtils.toPrimitiveArrayF(multiDrawIndirectRenderer.matrices));
+
         glBindBuffer(GL_DRAW_INDIRECT_BUFFER, MultiDrawIndirectRenderer.indirectBuffer);
         glBufferSubData(GL_DRAW_INDIRECT_BUFFER, 0, ArrayUtils.toPrimitiveArrayI(indirectBuffer));
+
+        multiRenderIndirect(indirectBuffer.size() / 5);
+    }
+
+    private static void multiRenderIndirect(int count)
+    {
         multiDrawIndirectRenderer.vao.bind();
-        multiDrawIndirectRenderer.vao.multiDrawIndirect(ArrayUtils.toPrimitiveArrayI(indirectBuffer));
+        multiDrawIndirectRenderer.vao.multiDrawIndirect(count);
         multiDrawIndirectRenderer.vao.unbind();
     }
 
@@ -160,7 +151,7 @@ public class Renderer
     {
         private static ArrayList<Float> matrices = new ArrayList<>();
         private static VertexBuffer instancedMatrixBuffer;
-        /*
+
         static
         {
             VertexBufferLayout layout = new VertexBufferLayout
@@ -190,7 +181,5 @@ public class Renderer
                 }
             }
         }
-
-         */
     }
 }

@@ -8,6 +8,7 @@ import com.game.event.EventType;
 import com.game.event.GUIToggledEvent;
 import com.game.event.KeyEvent;
 import com.game.event.MouseScrolledEvent;
+//import com.game.graphics.MultiDrawIndirectRenderer;
 import com.game.graphics.Renderer;
 import com.game.graphics.Shader;
 import com.game.world.Grid;
@@ -21,6 +22,8 @@ import com.game.physics.CollisionDetector;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.game.Application.MAIN_LOGGER;
 
 public class WorldLayer extends Layer
 {
@@ -52,8 +55,7 @@ public class WorldLayer extends Layer
     @Override
     public void onRender()
     {
-        //Renderer.multiRenderIndirectGridCells(camera, Shader.MULTI_DRAW_SHADER, visibleGridCells);
-        Renderer.renderGridCells(camera, Shader.INSTANCED_SHADER, visibleGridCells);
+        Renderer.renderGridCells(camera, visibleGridCells);
         Renderer.render(camera, Shader.SHADER, player);
     }
 

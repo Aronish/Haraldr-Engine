@@ -70,7 +70,7 @@ public class Application
                 new WorldLayer("World"),
                 new GUILayer("GUI", window)
         );
-        glEnable(GL_DEBUG_OUTPUT);
+        //glEnable(GL_DEBUG_OUTPUT);
         glDebugMessageCallback((source, type, id, severity, length, message, userparam) -> {
             System.out.println("Source: " + Integer.toHexString(source) + "\nType: " + Integer.toHexString(type) + "\nSeverity: " + Integer.toHexString(severity) + "\nLength: " + length);
             System.out.println(memUTF8(message) + "\n");

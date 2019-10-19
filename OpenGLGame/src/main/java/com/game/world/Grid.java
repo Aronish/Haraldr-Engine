@@ -2,15 +2,12 @@ package com.game.world;
 
 import com.game.gameobject.GameObject;
 import com.game.gameobject.tile.Tile;
-import com.game.math.Matrix4f;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.game.Application.MAIN_LOGGER;
 import static com.game.Main.fastFloor;
 
 /**
@@ -18,7 +15,7 @@ import static com.game.Main.fastFloor;
  */
 public class Grid
 {
-    public static final int GRID_SIZE = 16;
+    public static final int GRID_SIZE = 8; //Seems like the sweetspot.
 
     private int width, height;
 
@@ -161,20 +158,10 @@ public class Grid
         {
             return tiles;
         }
-        //TODO: Try batching texture coordinates for just a single draw call.
+
         public List<Float> getMatrices(GameObject tileType)
         {
             return matrices.get(tileType);
-        }
-
-        public List<Float> getAllMatrices()
-        {
-            List<Float> allMatrices = new ArrayList<>();
-            for (Collection<Float> collection : matrices.values())
-            {
-                allMatrices.addAll(collection);
-            }
-            return allMatrices;
         }
 
         public Integer getTileCount(GameObject gameObject)

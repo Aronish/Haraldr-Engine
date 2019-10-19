@@ -3,6 +3,8 @@ package com.game;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.game.Application.MAIN_LOGGER;
+
 public class ArrayUtils
 {
     public static float[] toPrimitiveArrayF(List<Float> list)

@@ -4,9 +4,11 @@ import com.game.gameobject.tile.Tile;
 import com.game.math.Matrix4f;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
+import com.game.world.Grid;
 
 import java.util.List;
 
+import static com.game.Application.MAIN_LOGGER;
 import static com.game.Main.fastFloor;
 
 /**
@@ -64,7 +66,8 @@ public class Camera
      */
     private void calculateChunkRanges()
     {
-        chunkXRange = fastFloor(1.0f / scale);
+        MAIN_LOGGER.info(zooms[currentZoom]);
+        chunkXRange = fastFloor(1.0f / scale) + 1;
         chunkYRange = fastFloor(1.0f / scale);
         if (chunkXRange < 1) chunkXRange = 1;
         if (chunkYRange < 1) chunkYRange = 1;

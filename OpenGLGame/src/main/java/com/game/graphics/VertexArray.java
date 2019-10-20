@@ -18,6 +18,7 @@ import static org.lwjgl.opengl.GL45.glCreateVertexArrays;
 
 public class VertexArray
 {
+    //Winding order: Clockwise starting at top-left.
     private static final int[] defaultIndices = {
             0, 1, 2,
             0, 2, 3

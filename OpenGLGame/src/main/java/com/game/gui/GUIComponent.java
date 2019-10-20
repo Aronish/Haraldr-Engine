@@ -24,6 +24,12 @@ public abstract class GUIComponent
         modelMatrix = Matrix4f.transform(position, 0.0f, new Vector2f(1.0f), false);
     }
 
+    protected void setPosition(float x, float y)
+    {
+        position.set(x, y);
+        calculateMatrix();
+    }
+
     protected void setVertexBuffer(VertexBuffer vertexBuffer)
     {
         vertexArray.setVertexBuffer(vertexBuffer);

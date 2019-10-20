@@ -1,6 +1,5 @@
 package com.game;
 
-import com.game.event.Event;
 import com.game.event.IEventCallback;
 import com.game.event.KeyPressedEvent;
 import com.game.event.KeyReleasedEvent;
@@ -23,7 +22,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_HIDDEN;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
-import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_DEBUG_CONTEXT;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
@@ -64,6 +62,7 @@ public class Window
     private GLFWVidMode vidmode;
     private boolean VSyncOn;
     private boolean isFullscreen;
+    private boolean cursorVisible = false;
     private float aspectRatio;
     private float contentScaleX, contentScaleY;
     private int windowWidth, windowHeight, initWidth, initHeight;
@@ -122,14 +121,11 @@ public class Window
             throw new RuntimeException("Window failed to be created");
         }
 
-        if (isFullscreen)
-        {
-            glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-        }
         glfwSetWindowPos(windowHandle, (vidmode.width() - windowWidth) / 2, (vidmode.height() - windowHeight) / 2);
         glfwMakeContextCurrent(windowHandle);
         GL.createCapabilities();
 
+        setCursorVisible(cursorVisible);
         setVSync(VSync);
         ///// CALLBACKS ///////////////////////////////
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
@@ -179,18 +175,22 @@ public class Window
             isFullscreen = false;
             glfwSetWindowMonitor(windowHandle, 0, vidmode.width() / 2 - initWidth / 2, vidmode.height() / 2 - initHeight / 2, initWidth, initHeight, 60);
             setViewPortSize(initWidth, initHeight);
-            glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         }else{
             isFullscreen = true;
             glfwSetWindowMonitor(windowHandle, glfwGetPrimaryMonitor(), 0, 0, vidmode.width(), vidmode.height(), 60);
             setViewPortSize(vidmode.width(), vidmode.height());
-            glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         }
     }
 
     private void setViewPortSize(int width, int height)
     {
         glViewport(0, 0, width, height);
+    }
+
+    public void setCursorVisible(boolean visible)
+    {
+        cursorVisible = visible;
+        glfwSetInputMode(windowHandle, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN);
     }
 
     void setVSync(boolean enabled)

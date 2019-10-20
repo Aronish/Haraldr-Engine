@@ -184,7 +184,7 @@ public class Renderer
                             new VertexBufferElement(ShaderDataType.MAT4),
                             new VertexBufferElement(ShaderDataType.MAT4)
                     );
-            instancedMatrixBuffer = new VertexBuffer(5000000, layout);
+            instancedMatrixBuffer = new VertexBuffer(2500000, layout);
 
             vao.bind();
             instancedMatrixBuffer.bind();
@@ -229,10 +229,10 @@ public class Renderer
                 matrixStride += instanceCounts.getOrDefault(gameObject, 0);
 
                 List<Integer> entry = new ArrayList<>();
-                entry.add(6);                                                               //Indices per instance.
+                entry.add(6);                                                      //Indices per instance.
                 entry.add(instanceCounts.getOrDefault(gameObject, 0)); //Amount of instances of current object type.
-                entry.add(0);                                                               //First index offset, should be 0.
-                entry.add(4 * objectCount);                                                 //Offset into model data.
+                entry.add(0);                                                      //First index offset, should be 0.
+                entry.add(4 * objectCount);                                        //Offset into model data.
                 entry.add(matrixOffsets.get(gameObject));                          //Offset into instanced matrix attribute data.
                 indirectData.addAll(entry);
                 ++objectCount;

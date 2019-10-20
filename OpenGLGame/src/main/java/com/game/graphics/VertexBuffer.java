@@ -9,7 +9,7 @@ import static org.lwjgl.opengl.GL45.glCreateBuffers;
 
 public class VertexBuffer
 {
-    public int vertexBufferID;
+    private int vertexBufferID;
     private VertexBufferLayout layout;
     private float[] data;
 
@@ -39,6 +39,14 @@ public class VertexBuffer
 
     public void unbind()
     {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
+    public void setData(float[] data, VertexBufferLayout layout)
+    {
+        this.data = data;
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
+        glBufferData(GL_ARRAY_BUFFER, data, GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 

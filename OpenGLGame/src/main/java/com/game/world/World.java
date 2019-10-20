@@ -73,8 +73,8 @@ public class World
 
     public void regenerateWorld()
     {
-        tiles.clear();
-        grid.clear();
+        tiles = new ArrayList<>();
+        grid = new Grid();
         generateWorld();
     }
 

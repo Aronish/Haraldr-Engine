@@ -22,8 +22,6 @@ import com.game.physics.CollisionDetector;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.game.Application.MAIN_LOGGER;
-
 public class WorldLayer extends Layer
 {
     private boolean guiVisible;
@@ -44,7 +42,7 @@ public class WorldLayer extends Layer
     @Override
     public void onUpdate(Window window, float deltaTime)
     {
-        eventHandler.processInput(camera, window.getWindowHandle(), player, world);
+        if (!guiVisible) eventHandler.processInput(camera, window.getWindowHandle(), player, world);
         player.update(camera, deltaTime);
         checkVisibleGridCells();
         doCollisions();
@@ -69,7 +67,6 @@ public class WorldLayer extends Layer
         if (event.eventType == EventType.KEY_PRESSED)
         {
             eventHandler.processKeyEvent((KeyEvent) event, window);
-            event.setHandled(true);
         }
         if (event.eventType == EventType.MOUSE_SCROLLED)
         {

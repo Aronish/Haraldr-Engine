@@ -24,6 +24,7 @@ public class Main
         }else{
             MAIN_LOGGER.fatal(new IllegalArgumentException("Missing Render System Type!"));
         }
+
         Application application = new Application();
         application.start();
         application.dispose();

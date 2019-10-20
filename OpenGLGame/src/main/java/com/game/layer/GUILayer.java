@@ -2,7 +2,6 @@ package com.game.layer;
 
 import com.game.Window;
 import com.game.event.Event;
-import com.game.event.EventCategory;
 import com.game.event.EventDispatcher;
 import com.game.event.EventType;
 import com.game.event.GUIToggledEvent;
@@ -15,8 +14,7 @@ import com.game.gui.GUIPanel;
 import com.game.math.Vector3f;
 import com.game.math.Vector4f;
 
-import static com.game.Application.MAIN_LOGGER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_U;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
 
 public class GUILayer extends Layer
 {
@@ -47,19 +45,18 @@ public class GUILayer extends Layer
     @Override
     public void onEvent(Window window, Event event)
     {
-        if (false) MAIN_LOGGER.info(event.toString());
+        if (false) LOGGER.info(event.toString());
 
         if (event.eventType == EventType.KEY_PRESSED)
         {
-            if (((KeyEvent) event).keyCode == GLFW_KEY_U)
+            if (((KeyEvent) event).keyCode == GLFW_KEY_E)
             {
                 guiVisible = !guiVisible;
-                event.setHandled(true);
                 window.setCursorVisible(guiVisible);
                 EventDispatcher.dispatch(new GUIToggledEvent(guiVisible));
             }
         }
-        if (guiVisible)
+        if (guiVisible && event.eventType != EventType.GUI_TOGGLED)
         {
             if (event.eventType == EventType.WINDOW_RESIZED)
             {
@@ -77,6 +74,7 @@ public class GUILayer extends Layer
             {
                 panel.onMouseReleased((MouseReleasedEvent) event);
             }
+            event.setHandled(true);
         }
     }
 }

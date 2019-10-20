@@ -4,7 +4,7 @@ public abstract class Event
 {
     public final EventType eventType;
     private int eventCategoryFlags;
-    private boolean isHandled;
+    private boolean isHandled = false;
 
     public Event(EventType eventType, EventCategory... eventCategories)
     {

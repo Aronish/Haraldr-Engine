@@ -110,10 +110,6 @@ public class EventHandler
     {
         if (event.eventType == EventType.KEY_PRESSED)
         {
-            if (event.keyCode == GLFW_KEY_ESCAPE)
-            {
-                glfwSetWindowShouldClose(window.getWindowHandle(), true);
-            }
             if (event.keyCode == GLFW_KEY_F)
             {
                 window.changeFullscreen();

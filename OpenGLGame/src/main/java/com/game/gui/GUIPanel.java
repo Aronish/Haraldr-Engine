@@ -22,7 +22,7 @@ public class GUIPanel extends GUIComponent
     private int width, height, paddingX, paddingY;
     private Vector4f color;
 
-    private boolean editingPadding = false, moving = false;
+    private boolean editingSize = false, moving = false;
 
     public GUIPanel(Vector3f position, int width, int height, int paddingX, int paddingY, Vector4f color)
     {
@@ -54,18 +54,15 @@ public class GUIPanel extends GUIComponent
 
     public void onResize(WindowResizedEvent windowResizedEvent)
     {
-        width = windowResizedEvent.width;
-        height = windowResizedEvent.height;
-        vertexArray.getVertexBuffer().setData(createVertexData(width, height, paddingX, paddingY), vertexArray.getVertexBuffer().getLayout());
-        MAIN_LOGGER.info("W: "  + width + " H: " + height);
+        //vertexArray.getVertexBuffer().setData(createVertexData(width, height, paddingX, paddingY), vertexArray.getVertexBuffer().getLayout());
     }
 
     public void onMouseMoved(MouseMovedEvent mouseMovedEvent)
     {
-        if (editingPadding)
+        if (editingSize)
         {
-            paddingX = (int) (mouseMovedEvent.xPos) < width / 2 ? (int) (mouseMovedEvent.xPos) : (int) (width - mouseMovedEvent.xPos);
-            paddingY = (int) (mouseMovedEvent.yPos) < height / 2 ? (int) (mouseMovedEvent.yPos) : (int) (height - mouseMovedEvent.yPos);
+            width = (int) ((mouseMovedEvent.xPos) - position.getX());
+            height = (int) ((mouseMovedEvent.yPos) - position.getY());
             vertexArray.getVertexBuffer().setData(createVertexData(width, height, paddingX, paddingY), vertexArray.getVertexBuffer().getLayout());
         }
         if (moving)
@@ -82,7 +79,7 @@ public class GUIPanel extends GUIComponent
         }
         else if (mousePressedEvent.button == GLFW_MOUSE_BUTTON_2)
         {
-            editingPadding = !editingPadding;
+            editingSize = !editingSize;
         }
     }
 

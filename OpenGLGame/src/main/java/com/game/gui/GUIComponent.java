@@ -8,7 +8,7 @@ import com.game.math.Vector3f;
 
 public abstract class GUIComponent
 {
-    private Vector3f position;
+    protected Vector3f position;
     private Matrix4f modelMatrix;
     protected VertexArray vertexArray;
 

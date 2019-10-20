@@ -6,29 +6,27 @@ public class Main
 {
     public static boolean MULTI_RENDER;
 
-    private static Application application;
-
-    public static void main(String[] args)
+    public static void main(String[] args) throws Exception
     {
-        MAIN_LOGGER.info("Arguments: ");
-        for (String s: args)
+        System.out.print("Arguments: ");
+        for (String s: args) { System.out.print(s + " "); }
+        System.out.println();
+        if (args.length > 0)
         {
-            MAIN_LOGGER.info(s);
-        }
-        if (args.length == 0)
-        {
-            MULTI_RENDER = false;
+            if (args[0].equals("MULTI_RENDER"))
+            {
+                MULTI_RENDER = true;
+            }else if (args[0].equals("INSTANCED")){
+                MULTI_RENDER = false;
+            }else{
+                MAIN_LOGGER.fatal(new IllegalArgumentException("Unknown Render System Type!"));
+            }
         }else{
-            MULTI_RENDER = args[0].equals("MULTI_RENDER");
+            MAIN_LOGGER.fatal(new IllegalArgumentException("Missing Render System Type!"));
         }
-        application = new Application();
+        Application application = new Application();
         application.start();
-        application.cleanUp();
-    }
-
-    static Application getApplication()
-    {
-        return application;
+        application.dispose();
     }
 
     public static int fastFloor(double x)

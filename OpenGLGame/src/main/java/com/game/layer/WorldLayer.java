@@ -8,7 +8,6 @@ import com.game.event.EventType;
 import com.game.event.GUIToggledEvent;
 import com.game.event.KeyEvent;
 import com.game.event.MouseScrolledEvent;
-//import com.game.graphics.MultiDrawIndirectRenderer;
 import com.game.graphics.Renderer;
 import com.game.graphics.Shader;
 import com.game.world.Grid;
@@ -88,9 +87,11 @@ public class WorldLayer extends Layer
         Grid grid = world.getGrid();
         visibleGridCells.clear();
         frustumCulledObjects.clear();
-        for (int x = -camera.getChunkXRange(); x <= camera.getChunkXRange(); ++x){
+        for (int x = -camera.getChunkXRange(); x <= camera.getChunkXRange(); ++x)
+        {
             if (playerGridPosition.getX() + x < 0 || playerGridPosition.getX() + x > grid.getWidthI()) continue;
-            for (int y = -camera.getChunkYRange(); y <= camera.getChunkYRange(); ++y){
+            for (int y = -camera.getChunkYRange(); y <= camera.getChunkYRange(); ++y)
+            {
                 if (playerGridPosition.getY() + y < 0 || playerGridPosition.getY() + y > grid.getHeightI()) continue;
                 visibleGridCells.add(grid.getGridCell((int) playerGridPosition.getX() + x, (int) playerGridPosition.getY() + y)); //TODO: Int cast not good for negative values.
             }

@@ -8,7 +8,6 @@ import com.game.event.EventType;
 import com.game.event.IEventCallback;
 import com.game.event.KeyPressedEvent;
 import com.game.event.WindowResizedEvent;
-import com.game.gameobject.GameObject;
 import com.game.graphics.Models;
 import com.game.graphics.Renderer;
 import com.game.graphics.Shader;
@@ -27,10 +26,7 @@ import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
 import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
-import static org.lwjgl.system.MemoryUtil.memByteBuffer;
 import static org.lwjgl.system.MemoryUtil.memUTF8;
 
 public class Application
@@ -153,10 +149,10 @@ public class Application
         }
     }
 
-    void cleanUp()
+    void dispose()
     {
-        Models.cleanUp();
-        Shader.deleteShaders();
+        Models.dispose();
+        Shader.dispose();
         glfwTerminate();
     }
 }

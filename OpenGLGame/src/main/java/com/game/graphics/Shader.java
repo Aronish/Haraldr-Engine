@@ -54,16 +54,16 @@ public class Shader
         int fragmentShader = createShader(GL_FRAGMENT_SHADER, readShaderFile(fragmentShaderPath));
 
         glCompileShader(vertexShader);
-        System.out.println(glGetShaderInfoLog(vertexShader));
+        //System.out.println(glGetShaderInfoLog(vertexShader));
         glCompileShader(fragmentShader);
-        System.out.println(glGetShaderInfoLog(fragmentShader));
+        //System.out.println(glGetShaderInfoLog(fragmentShader));
 
         shaderProgram = glCreateProgram();
         glAttachShader(shaderProgram, vertexShader);
         glAttachShader(shaderProgram, fragmentShader);
         glLinkProgram(shaderProgram);
         glValidateProgram(shaderProgram);
-        System.out.println(glGetProgramInfoLog(shaderProgram));
+        //System.out.println(glGetProgramInfoLog(shaderProgram));
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
     }
@@ -147,7 +147,7 @@ public class Shader
         glDeleteProgram(shaderProgram);
     }
 
-    public static void deleteShaders()
+    public static void dispose()
     {
         SHADER.delete();
         INSTANCED_SHADER.delete();

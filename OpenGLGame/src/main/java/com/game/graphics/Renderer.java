@@ -30,17 +30,17 @@ import static org.lwjgl.opengl.GL45.glCreateBuffers;
 
 public class Renderer
 {
-    private static RenderSystem renderSystem;
+    private static final RenderSystem renderSystem;
 
     static
     {
         if (Main.MULTI_RENDER)
         {
             renderSystem = new MultiDrawIndirectRenderer();
-            MAIN_LOGGER.info("Multirendering");
+            MAIN_LOGGER.info("Render System: MultiDrawIndirect");
         }else{
             renderSystem = new InstancedRenderer();
-            MAIN_LOGGER.info("Instancing");
+            MAIN_LOGGER.info("Render System: Instancing");
         }
     }
 
@@ -85,17 +85,17 @@ public class Renderer
         {
             VertexBufferLayout layout = new VertexBufferLayout
             (
-                    new VertexBufferElement(ShaderDataType.MAT4, false),
-                    new VertexBufferElement(ShaderDataType.MAT4, false),
-                    new VertexBufferElement(ShaderDataType.MAT4, false),
-                    new VertexBufferElement(ShaderDataType.MAT4, false)
+                    new VertexBufferElement(ShaderDataType.MAT4),
+                    new VertexBufferElement(ShaderDataType.MAT4),
+                    new VertexBufferElement(ShaderDataType.MAT4),
+                    new VertexBufferElement(ShaderDataType.MAT4)
             );
             instancedMatrixBuffer = new VertexBuffer(2500000, layout);
-            instancedMatrixBuffer.bind();
             /////SETUP ATTRIBUTES//////////////////////////
             for (GameObject gameObject : GameObject.instancedObjects)
             {
                 gameObject.getModel().getVertexArray().bind();
+                instancedMatrixBuffer.bind();//Must be bound after model due to the vertex buffer being bound with the array.
                 int nextAttribIndex = gameObject.getModel().getVertexArray().getNextAttribIndex();
                 for (VertexBufferElement element : instancedMatrixBuffer.getLayout())
                 {
@@ -170,8 +170,8 @@ public class Renderer
 
             VertexBufferLayout modelLayout = new VertexBufferLayout
                     (
-                            new VertexBufferElement(ShaderDataType.FLOAT2, false),
-                            new VertexBufferElement(ShaderDataType.FLOAT2, false)
+                            new VertexBufferElement(ShaderDataType.FLOAT2),
+                            new VertexBufferElement(ShaderDataType.FLOAT2)
                     );
             VertexBuffer modelVertexBuffer = new VertexBuffer(ArrayUtils.toPrimitiveArrayF(modelVertexData), modelLayout);
             vao.setVertexBuffer(modelVertexBuffer);
@@ -179,10 +179,10 @@ public class Renderer
             /////MATRICES/////////////////////////////////////
             VertexBufferLayout layout = new VertexBufferLayout
                     (
-                            new VertexBufferElement(ShaderDataType.MAT4, false),
-                            new VertexBufferElement(ShaderDataType.MAT4, false),
-                            new VertexBufferElement(ShaderDataType.MAT4, false),
-                            new VertexBufferElement(ShaderDataType.MAT4, false)
+                            new VertexBufferElement(ShaderDataType.MAT4),
+                            new VertexBufferElement(ShaderDataType.MAT4),
+                            new VertexBufferElement(ShaderDataType.MAT4),
+                            new VertexBufferElement(ShaderDataType.MAT4)
                     );
             instancedMatrixBuffer = new VertexBuffer(5000000, layout);
 

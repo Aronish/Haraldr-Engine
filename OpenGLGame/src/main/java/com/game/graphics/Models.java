@@ -51,8 +51,8 @@ public class Models
         float modelHeight = spriteHeight / SPRITE_SIZE;
         VertexBufferLayout layout = new VertexBufferLayout
         (
-                new VertexBufferElement(ShaderDataType.FLOAT2, false),
-                new VertexBufferElement(ShaderDataType.FLOAT2, false)
+                new VertexBufferElement(ShaderDataType.FLOAT2),
+                new VertexBufferElement(ShaderDataType.FLOAT2)
         );
         return new Model
         (
@@ -62,7 +62,7 @@ public class Models
         );
     }
 
-    public static void cleanUp()
+    public static void dispose()
     {
         SPRITE_SHEET.delete();
         for (GameObject gameObjectType : GameObject.values())

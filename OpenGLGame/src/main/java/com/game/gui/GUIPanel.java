@@ -1,5 +1,6 @@
 package com.game.gui;
 
+import com.game.event.MouseMovedEvent;
 import com.game.event.WindowResizedEvent;
 import com.game.graphics.Shader;
 import com.game.graphics.ShaderDataType;
@@ -20,7 +21,7 @@ public class GUIPanel extends GUIComponent
         this.color = color;
         VertexBufferLayout layout = new VertexBufferLayout
         (
-                new VertexBufferElement(ShaderDataType.FLOAT2, false)
+                new VertexBufferElement(ShaderDataType.FLOAT2)
         );
         VertexBuffer vertexBuffer = new VertexBuffer(createVertexData(width, height), layout);
         setVertexBuffer(vertexBuffer);
@@ -41,6 +42,11 @@ public class GUIPanel extends GUIComponent
     public void onResize(WindowResizedEvent windowResizedEvent)
     {
 
+    }
+
+    public void onMouseMoved(MouseMovedEvent mouseMovedEvent)
+    {
+        color.set((float) mouseMovedEvent.xPos / 1280f, (float) mouseMovedEvent.yPos / 720f, (float) mouseMovedEvent.xPos / 1280f, (float) mouseMovedEvent.yPos / 720f);
     }
 
     @Override

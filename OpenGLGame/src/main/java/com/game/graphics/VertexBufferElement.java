@@ -6,6 +6,11 @@ public class VertexBufferElement
     private boolean normalized;
     private int offset = 0;
 
+    public VertexBufferElement(ShaderDataType type)
+    {
+        this(type, false);
+    }
+
     public VertexBufferElement(ShaderDataType type, boolean normalized)
     {
         this.type = type;

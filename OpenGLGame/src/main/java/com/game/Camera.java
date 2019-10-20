@@ -63,10 +63,10 @@ public class Camera
 
     /**
      * Calculates how many GridCells/chunks should be visible.
+     * TODO: Make dependant on gridcell size.
      */
     private void calculateChunkRanges()
     {
-        MAIN_LOGGER.info(zooms[currentZoom]);
         chunkXRange = fastFloor(1.0f / scale) + 1;
         chunkYRange = fastFloor(1.0f / scale);
         if (chunkXRange < 1) chunkXRange = 1;

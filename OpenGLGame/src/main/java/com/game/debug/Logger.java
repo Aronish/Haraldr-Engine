@@ -30,6 +30,11 @@ public class Logger
         logLevel = LogLevel.ERROR;
     }
 
+    private void setFatalLevel()
+    {
+        logLevel = LogLevel.FATAL;
+    }
+
     /**
      * Logs a message as info.
      * @param message the message to log. Accepts any type.
@@ -41,7 +46,7 @@ public class Logger
         log(message);
     }
 
-    @SafeVarargs//TODO: Possibly risky
+    @SafeVarargs //TODO: Possibly risky
     public final <T> void info(T... messages)
     {
         setInfoLevel();
@@ -73,6 +78,13 @@ public class Logger
         log(message);
     }
 
+    public void fatal(Exception exception) throws Exception
+    {
+        setFatalLevel();
+        log(exception.getMessage());
+        throw exception;
+    }
+
     private <T> void log(T message)
     {
         System.out.println(String.format("%s [%s] [%s]: %s", LocalTime.now(), prefix, logLevel, message));
@@ -80,6 +92,7 @@ public class Logger
 
     private enum LogLevel
     {
+        FATAL,
         ERROR,
         WARNING,
         INFO

@@ -13,9 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- * The main tile world.
- */
 public class World
 {
     private static final TileFactory TILE_FACTORY = new TileFactory();

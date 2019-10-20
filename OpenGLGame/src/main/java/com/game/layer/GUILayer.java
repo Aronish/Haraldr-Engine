@@ -7,9 +7,8 @@ import com.game.event.EventDispatcher;
 import com.game.event.EventType;
 import com.game.event.GUIToggledEvent;
 import com.game.event.KeyEvent;
+import com.game.event.MouseMovedEvent;
 import com.game.event.WindowResizedEvent;
-import com.game.graphics.Renderer;
-import com.game.graphics.Shader;
 import com.game.gui.GUIPanel;
 import com.game.math.Vector3f;
 import com.game.math.Vector4f;
@@ -58,9 +57,16 @@ public class GUILayer extends Layer
                 EventDispatcher.dispatch(new GUIToggledEvent(guiVisible));
             }
         }
-        if (event.eventType == EventType.WINDOW_RESIZED)
+        if (guiVisible)
         {
-            panel.onResize((WindowResizedEvent) event);
+            if (event.eventType == EventType.WINDOW_RESIZED)
+            {
+                panel.onResize((WindowResizedEvent) event);
+            }
+            if (event.eventType == EventType.MOUSE_MOVED)
+            {
+                panel.onMouseMoved((MouseMovedEvent) event);
+            }
         }
     }
 }

@@ -122,7 +122,7 @@ public class Grid
 
         private Map<GameObject, Integer> tileCounts = new HashMap<>();
 
-        private GridCell(){}
+        private GridCell() {}
 
         private void addEntity(Tile tile)
         {
@@ -134,7 +134,7 @@ public class Grid
          */
         private void cacheMatrices()
         {
-            for (GameObject tileType : GameObject.values())
+            for (GameObject tileType : GameObject.instancedObjects)
             {
                 int tileCount = 0;
                 intermeditateArray.clear();

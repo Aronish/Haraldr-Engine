@@ -18,7 +18,7 @@ public class Model
     private void setVertexArray(float[] data, VertexBufferLayout layout)
     {
         vertexArray = new VertexArray();
-        VertexBuffer vertexBuffer = new VertexBuffer(data, layout);
+        VertexBuffer vertexBuffer = new VertexBuffer(data, layout, false);
         vertexArray.setVertexBuffer(vertexBuffer);
     }
 

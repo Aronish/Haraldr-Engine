@@ -19,6 +19,7 @@ import com.game.layer.WorldLayer;
 import com.game.math.Matrix4f;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_O;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
@@ -85,8 +86,8 @@ public class Application
             if (event.eventType == EventType.WINDOW_RESIZED) Matrix4f.onResize((WindowResizedEvent) event);
             if (event.eventType == EventType.KEY_PRESSED)
             {
-                if (((KeyPressedEvent) event).keyCode == GLFW_KEY_O) Matrix4f.toggleFixedAxis();
                 if (((KeyPressedEvent) event).keyCode == GLFW_KEY_ESCAPE) stop(event);
+                if (((KeyPressedEvent) event).keyCode == GLFW_KEY_F) window.changeFullscreen();
             }
             for (Layer layer : layerStack)
             {

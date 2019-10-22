@@ -1,9 +1,11 @@
 package com.game.graphics;
 
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glBufferSubData;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL45.glCreateBuffers;
 
@@ -13,22 +15,22 @@ public class VertexBuffer
     private VertexBufferLayout layout;
     private float[] data;
 
-    public VertexBuffer(float[] data, VertexBufferLayout layout)
+    public VertexBuffer(float[] data, VertexBufferLayout layout, boolean dynamic)
     {
         this.data = data;
         this.layout = layout;
         vertexBufferID = glCreateBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-        glBufferData(GL_ARRAY_BUFFER, data, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, data, dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    public VertexBuffer(int size, VertexBufferLayout layout)
+    public VertexBuffer(int size, VertexBufferLayout layout, boolean dynamic)
     {
         this.layout = layout;
         vertexBufferID = glCreateBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-        glBufferData(GL_ARRAY_BUFFER, size, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, size, dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
@@ -42,11 +44,11 @@ public class VertexBuffer
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    public void setData(float[] data, VertexBufferLayout layout)
+    public void setData(float[] data)
     {
         this.data = data;
         glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-        glBufferData(GL_ARRAY_BUFFER, data, GL_STATIC_DRAW);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, data);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 

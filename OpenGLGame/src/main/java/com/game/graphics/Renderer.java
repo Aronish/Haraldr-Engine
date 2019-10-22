@@ -90,7 +90,7 @@ public class Renderer
                     new VertexBufferElement(ShaderDataType.MAT4),
                     new VertexBufferElement(ShaderDataType.MAT4)
             );
-            instancedMatrixBuffer = new VertexBuffer(2500000, layout);
+            instancedMatrixBuffer = new VertexBuffer(2500000, layout, true);
             /////SETUP ATTRIBUTES//////////////////////////
             for (GameObject gameObject : GameObject.instancedObjects)
             {
@@ -173,7 +173,7 @@ public class Renderer
                             new VertexBufferElement(ShaderDataType.FLOAT2),
                             new VertexBufferElement(ShaderDataType.FLOAT2)
                     );
-            VertexBuffer modelVertexBuffer = new VertexBuffer(ArrayUtils.toPrimitiveArrayF(modelVertexData), modelLayout);
+            VertexBuffer modelVertexBuffer = new VertexBuffer(ArrayUtils.toPrimitiveArrayF(modelVertexData), modelLayout, false);
             vao.setVertexBuffer(modelVertexBuffer);
 
             /////MATRICES/////////////////////////////////////
@@ -184,7 +184,7 @@ public class Renderer
                             new VertexBufferElement(ShaderDataType.MAT4),
                             new VertexBufferElement(ShaderDataType.MAT4)
                     );
-            instancedMatrixBuffer = new VertexBuffer(2500000, layout);
+            instancedMatrixBuffer = new VertexBuffer(2500000, layout, true);
 
             vao.bind();
             instancedMatrixBuffer.bind();
@@ -230,7 +230,7 @@ public class Renderer
 
                 List<Integer> entry = new ArrayList<>();
                 entry.add(6);                                                      //Indices per instance.
-                entry.add(instanceCounts.getOrDefault(gameObject, 0)); //Amount of instances of current object type.
+                entry.add(instanceCounts.getOrDefault(gameObject, 0));  //Amount of instances of current object type.
                 entry.add(0);                                                      //First index offset, should be 0.
                 entry.add(4 * objectCount);                                        //Offset into model data.
                 entry.add(matrixOffsets.get(gameObject));                          //Offset into instanced matrix attribute data.

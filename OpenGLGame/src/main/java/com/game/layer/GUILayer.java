@@ -11,6 +11,8 @@ import com.game.event.MousePressedEvent;
 import com.game.event.MouseReleasedEvent;
 import com.game.event.WindowResizedEvent;
 import com.game.gui.GUIPanel;
+import com.game.gui.constraint.AlignedConstraint;
+import com.game.gui.constraint.AlignmentSide;
 import com.game.math.Vector3f;
 import com.game.math.Vector4f;
 
@@ -20,12 +22,15 @@ public class GUILayer extends Layer
 {
     private boolean guiVisible = false;
 
-    private GUIPanel panel;
+    private GUIPanel panel1;
 
     public GUILayer(String name, Window window)
     {
         super(name);
-        panel = new GUIPanel(new Vector3f(0.0f, 0.0f), 1280, 720, 0, 0, new Vector4f(0.8f, 0.2f, 0.3f, 1.0f));
+        panel1 = new GUIPanel(
+                new Vector3f(0.0f, 0.0f), 100, 300, new Vector4f(0.8f, 0.2f, 0.3f, 1.0f),
+                new AlignedConstraint(AlignmentSide.LEFT, 10), window
+        );
     }
 
     @Override
@@ -38,7 +43,7 @@ public class GUILayer extends Layer
     {
         if (guiVisible)
         {
-            panel.draw();
+            panel1.draw();
         }
     }
 
@@ -60,19 +65,19 @@ public class GUILayer extends Layer
         {
             if (event.eventType == EventType.WINDOW_RESIZED)
             {
-                panel.onResize((WindowResizedEvent) event);
+                panel1.onResize((WindowResizedEvent) event);
             }
             if (event.eventType == EventType.MOUSE_MOVED)
             {
-                panel.onMouseMoved((MouseMovedEvent) event);
+                panel1.onMouseMoved((MouseMovedEvent) event, window);
             }
             if (event.eventType == EventType.MOUSE_PRESSED)
             {
-                panel.onMousePressed((MousePressedEvent) event);
+                panel1.onMousePressed((MousePressedEvent) event);
             }
             if (event.eventType == EventType.MOUSE_RELEASED)
             {
-                panel.onMouseReleased((MouseReleasedEvent) event);
+                panel1.onMouseReleased((MouseReleasedEvent) event);
             }
             event.setHandled(true);
         }

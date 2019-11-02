@@ -1,9 +1,20 @@
 package com.game.gui.constraint;
 
-import com.game.math.Vector3f;
+import static com.game.Application.MAIN_LOGGER;
 
 //Defines how width, height, position, etc. is represented as vertex data.
-public abstract class Constraint
+//UUGGH
+public interface Constraint
 {
-    public abstract float[] createVertexData(int width, int height, int windowWidth, int windowHeight);
+    default float[] createVertexData(int height, int windowWidth, int windowHeight)
+    {
+        MAIN_LOGGER.error("Called unimplemented method!");
+        return null;
+    }
+
+    default float[] createVertexData(int width, int height, int windowWidth, int windowHeight, int padding)
+    {
+        MAIN_LOGGER.error("Called unimplented method!");
+        return null;
+    }
 }

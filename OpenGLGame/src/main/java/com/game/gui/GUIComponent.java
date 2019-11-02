@@ -16,7 +16,7 @@ public abstract class GUIComponent
     protected VertexArray vertexArray;
     private int windowWidth, windowHeight;
 
-    private Constraint constraint;
+    protected Constraint constraint;
 
     public GUIComponent(Vector3f position, Constraint constraint, Window window)
     {
@@ -33,9 +33,9 @@ public abstract class GUIComponent
         modelMatrix = Matrix4f.transform(position, 0.0f, new Vector2f(1.0f), false);
     }
 
-    protected float[] createVertexData(int width, int height)
+    protected float[] createVertexData(int width, int height, int padding)
     {
-        return constraint.createVertexData(width, height, windowWidth, windowHeight);
+        return constraint.createVertexData(width, height, windowWidth, windowHeight, padding);
     }
 
     public void onResize(WindowResizedEvent windowResizedEvent)

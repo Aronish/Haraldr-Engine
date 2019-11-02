@@ -13,6 +13,7 @@ import com.game.event.WindowResizedEvent;
 import com.game.gui.GUIPanel;
 import com.game.gui.constraint.AlignedConstraint;
 import com.game.gui.constraint.AlignmentSide;
+import com.game.gui.constraint.RelativeWidthConstraint;
 import com.game.math.Vector3f;
 import com.game.math.Vector4f;
 
@@ -27,10 +28,10 @@ public class GUILayer extends Layer
     public GUILayer(String name, Window window)
     {
         super(name);
-        panel1 = new GUIPanel(
-                new Vector3f(0.0f, 0.0f), 100, 300, new Vector4f(0.8f, 0.2f, 0.3f, 1.0f),
-                new AlignedConstraint(AlignmentSide.LEFT, 10), window
-        );
+        /*panel1 = new GUIPanel(window,
+                new Vector3f(0.0f, 0.0f), 100, 300, 10, new Vector4f(0.8f, 0.2f, 0.3f, 1.0f),
+                new RelativeWidthConstraint(10, AlignmentSide.LEFT, 10, 10)
+        );*/
     }
 
     @Override
@@ -43,7 +44,7 @@ public class GUILayer extends Layer
     {
         if (guiVisible)
         {
-            panel1.draw();
+            //panel1.draw();
         }
     }
 
@@ -61,6 +62,7 @@ public class GUILayer extends Layer
                 EventDispatcher.dispatch(new GUIToggledEvent(guiVisible));
             }
         }
+        /*
         if (guiVisible && event.eventType != EventType.GUI_TOGGLED)
         {
             if (event.eventType == EventType.WINDOW_RESIZED)
@@ -71,15 +73,7 @@ public class GUILayer extends Layer
             {
                 panel1.onMouseMoved((MouseMovedEvent) event, window);
             }
-            if (event.eventType == EventType.MOUSE_PRESSED)
-            {
-                panel1.onMousePressed((MousePressedEvent) event);
-            }
-            if (event.eventType == EventType.MOUSE_RELEASED)
-            {
-                panel1.onMouseReleased((MouseReleasedEvent) event);
-            }
             event.setHandled(true);
-        }
+        }*/
     }
 }

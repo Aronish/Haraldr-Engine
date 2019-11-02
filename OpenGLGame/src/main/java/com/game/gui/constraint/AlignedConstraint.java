@@ -2,29 +2,27 @@ package com.game.gui.constraint;
 
 import static com.game.Application.MAIN_LOGGER;
 
-public class AlignedConstraint extends Constraint
+public class AlignedConstraint implements Constraint
 {
     private AlignmentSide alignmentSide;
-    private int padding;
 
-    public AlignedConstraint(AlignmentSide alignmentSide, int padding)
+    public AlignedConstraint(AlignmentSide alignmentSide)
     {
         this.alignmentSide = alignmentSide;
-        this.padding = padding;
     }
 
     @Override
-    public float[] createVertexData(int width, int height, int windowWidth, int windowHeight)
+    public float[] createVertexData(int width, int height, int windowWidth, int windowHeight, int padding)
     {
         switch (alignmentSide)
         {
             case LEFT:
                 return new float[]
                 {
-                        padding,    padding,
-                        width,      padding,
-                        width,      windowHeight - padding,
-                        padding,    windowHeight - padding
+                        padding,            padding,
+                        width + padding,    padding,
+                        width + padding,    windowHeight - padding,
+                        padding,            windowHeight - padding
                 };
             case RIGHT:
                 return new float[]

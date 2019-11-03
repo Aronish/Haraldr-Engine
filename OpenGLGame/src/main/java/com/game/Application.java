@@ -65,8 +65,7 @@ public class Application
         layerStack = new LayerStack();
         layerStack.pushLayers
         (
-                new WorldLayer("World"),
-                new GUILayer("GUI", window)
+                new WorldLayer("World")
         );
         //glEnable(GL_DEBUG_OUTPUT);
         glDebugMessageCallback((source, type, id, severity, length, message, userparam) -> {

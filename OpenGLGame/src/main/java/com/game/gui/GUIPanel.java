@@ -31,7 +31,7 @@ public class GUIPanel extends GUIComponent
         (
                 new VertexBufferElement(ShaderDataType.FLOAT2)
         );
-        VertexBuffer vertexBuffer = new VertexBuffer(createVertexData(width, height, padding), layout, true);
+        VertexBuffer vertexBuffer = new VertexBuffer(createVertexData(), layout, true);
         setVertexBuffer(vertexBuffer);
     }
 
@@ -39,14 +39,13 @@ public class GUIPanel extends GUIComponent
     {
         //padding = (int) (mouseMovedEvent.xPos);
         //width = (int) (mouseMovedEvent.yPos / window.getHeight() * window.getWidth());
-        vertexArray.getVertexBuffer().setData(constraint.createVertexData(width, height, window.getWidth(), window.getHeight(), padding));
     }
 
     @Override
     public void onResize(WindowResizedEvent windowResizedEvent)
     {
         super.onResize(windowResizedEvent);
-        vertexArray.getVertexBuffer().setData(createVertexData(width, height, padding));
+        vertexArray.getVertexBuffer().setData(createVertexData());
     }
 
     @Override

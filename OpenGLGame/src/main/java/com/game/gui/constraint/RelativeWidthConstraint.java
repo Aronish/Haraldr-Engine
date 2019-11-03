@@ -2,7 +2,7 @@ package com.game.gui.constraint;
 
 import static com.game.Application.MAIN_LOGGER;
 
-public class RelativeWidthConstraint implements Constraint
+public class RelativeWidthConstraint extends Constraint
 {
     private float relativeWidth;
     private AlignmentSide alignmentSide; //Top/Bottom ATM.
@@ -25,7 +25,6 @@ public class RelativeWidthConstraint implements Constraint
         this.oppositeOffsetY = 100 - this.offsetY;
     }
 
-    @Override
     public float[] createVertexData(int height, int windowWidth, int windowHeight)
     {
         switch (alignmentSide)

@@ -33,9 +33,9 @@ public abstract class GUIComponent
         modelMatrix = Matrix4f.transform(position, 0.0f, new Vector2f(1.0f), false);
     }
 
-    protected float[] createVertexData(int width, int height, int padding)
+    protected float[] createVertexData()
     {
-        return constraint.createVertexData(width, height, windowWidth, windowHeight, padding);
+        return null;
     }
 
     public void onResize(WindowResizedEvent windowResizedEvent)

@@ -6,13 +6,6 @@ import com.game.event.EventDispatcher;
 import com.game.event.EventType;
 import com.game.event.GUIToggledEvent;
 import com.game.event.KeyEvent;
-import com.game.event.MouseMovedEvent;
-import com.game.event.MousePressedEvent;
-import com.game.event.MouseReleasedEvent;
-import com.game.event.WindowResizedEvent;
-import com.game.gui.GUIPanel;
-import com.game.math.Vector3f;
-import com.game.math.Vector4f;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
 
@@ -20,12 +13,9 @@ public class GUILayer extends Layer
 {
     private boolean guiVisible = false;
 
-    private GUIPanel panel;
-
     public GUILayer(String name, Window window)
     {
         super(name);
-        panel = new GUIPanel(new Vector3f(0.0f, 0.0f), 1280, 720, 0, 0, new Vector4f(0.8f, 0.2f, 0.3f, 1.0f));
     }
 
     @Override
@@ -36,10 +26,6 @@ public class GUILayer extends Layer
     @Override
     public void onRender()
     {
-        if (guiVisible)
-        {
-            panel.draw();
-        }
     }
 
     @Override
@@ -55,26 +41,6 @@ public class GUILayer extends Layer
                 window.setCursorVisible(guiVisible);
                 EventDispatcher.dispatch(new GUIToggledEvent(guiVisible));
             }
-        }
-        if (guiVisible && event.eventType != EventType.GUI_TOGGLED)
-        {
-            if (event.eventType == EventType.WINDOW_RESIZED)
-            {
-                panel.onResize((WindowResizedEvent) event);
-            }
-            if (event.eventType == EventType.MOUSE_MOVED)
-            {
-                panel.onMouseMoved((MouseMovedEvent) event);
-            }
-            if (event.eventType == EventType.MOUSE_PRESSED)
-            {
-                panel.onMousePressed((MousePressedEvent) event);
-            }
-            if (event.eventType == EventType.MOUSE_RELEASED)
-            {
-                panel.onMouseReleased((MouseReleasedEvent) event);
-            }
-            event.setHandled(true);
         }
     }
 }

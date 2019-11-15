@@ -62,7 +62,6 @@ public class Window
     private GLFWVidMode vidmode;
     private boolean VSyncOn;
     private boolean isFullscreen;
-    private boolean cursorVisible = false;
     private float aspectRatio;
     private float contentScaleX, contentScaleY;
     private int windowWidth, windowHeight, initWidth, initHeight;
@@ -87,7 +86,7 @@ public class Window
 
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
@@ -125,7 +124,7 @@ public class Window
         glfwMakeContextCurrent(windowHandle);
         GL.createCapabilities();
 
-        setCursorVisible(cursorVisible);
+        setCursorVisible(false);
         setVSync(VSync);
         ///// CALLBACKS ///////////////////////////////
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
@@ -189,7 +188,6 @@ public class Window
 
     public void setCursorVisible(boolean visible)
     {
-        cursorVisible = visible;
         glfwSetInputMode(windowHandle, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN);
     }
 

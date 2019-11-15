@@ -6,27 +6,18 @@ import static com.game.Application.MAIN_LOGGER;
 
 public class Matrix4f
 {
-    private static final float FIXED_ORTHOGRAPHIC_AXIS = 9f, NEAR_FAR = 5f;
-    private static float dynamicOrthographicAxis;
-    private static boolean fixedWidth = true; //Probably going for fixed width only.
-    private static int lastWidth, lastHeight;
+    public static final float FIXED_ORTHOGRAPHIC_AXIS = 9f;
+    public static float dynamicOrthographicAxis;
+    private static final float NEAR_FAR = 5f;
+    private static final boolean fixedWidth = true; //Fixed width is better
 
     public static Matrix4f orthographic;
     public static Matrix4f pixelOrthographic;
 
     public float[] matrix = new float[16];
 
-    public static void toggleFixedAxis()
-    {
-        fixedWidth = !fixedWidth;
-        MAIN_LOGGER.info("Fixed " + (fixedWidth ? "width" : "height"));
-        recalculateOrthographic((float) lastWidth / lastHeight);
-    }
-
     public static void onResize(WindowResizedEvent event)
     {
-        lastWidth = event.width;
-        lastHeight = event.height;
         recalculateOrthographic((float) event.width / event.height);
         recalculatePixelOrthographic(event.width, event.height);
     }
@@ -98,6 +89,8 @@ public class Matrix4f
         return translate(scale.getX() == -1 ? position.addReturn(new Vector3f(1.0f, 0.0f)) : position, isCamera).multiply(scale(scale));
     }
 
+    /////UNUSED WITH PIXELORTHOGRAPHIC//////////////////////////////////////////////////////////////////////
+    /*
     public static Matrix4f transformPixelSpace(Vector3f pixelPosition, Vector2f scale, int width, int height)
     {
         return translate(clampToUnitSpace(pixelPosition, width, height), false).multiply(scale(scale));
@@ -112,6 +105,8 @@ public class Matrix4f
         temp.printVector();
         return temp;
     }
+    */
+    /////UNUSED WITH PIXELORTHOGRAPHIC///////////////////////////////////////////////////////////////////////
 
     private static Matrix4f scale(Vector2f scale)
     {
@@ -182,7 +177,7 @@ public class Matrix4f
         return result;
     }
 
-    public static void recalculateOrthographic(float aspectRatio)
+    private static void recalculateOrthographic(float aspectRatio)
     {
         if (fixedWidth)
         {
@@ -209,12 +204,8 @@ public class Matrix4f
         pixelOrthographic = orthographic(width, 0, 0, height, -NEAR_FAR, NEAR_FAR);
     }
 
-    /**
-     * Creates a perspective projection matrix. Objects further away will get smaller to simulate perspective.
-     * A lot of things would need to be rewritten if this is to be used. Camera#isInView won't work correctly. It is specifically made for orthographic projection.
-     * @param FOV the field-of-view of the camera frustum.
-     * @return the resulting perspective projection matrix.
-     */
+    /////UNUSED//////////////////////////////////
+    /*
     public static Matrix4f perspective(float FOV)
     {
         Matrix4f result = new Matrix4f();
@@ -230,5 +221,6 @@ public class Matrix4f
         result.matrix[11] = -((2.0f * far * near) / range);
         result.matrix[14] = -1;
         return result;
-    }
+    }*/
+    /////UNUSED//////////////////////////////////
 }

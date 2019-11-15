@@ -15,6 +15,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_G;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_H;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_CONTROL;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
@@ -97,7 +98,11 @@ public class EventHandler
         }
         if (glfwGetKey(window, GLFW_KEY_G) != 0)
         {
-            world.regenerateWorld();
+            world.generateWorld();
+        }
+        if (glfwGetKey(window, GLFW_KEY_H) != 0)
+        {
+            world.getGrid().clear();
         }
     }
 
@@ -110,10 +115,6 @@ public class EventHandler
     {
         if (event.eventType == EventType.KEY_PRESSED)
         {
-            if (event.keyCode == GLFW_KEY_F)
-            {
-                window.changeFullscreen();
-            }
             if (event.keyCode == GLFW_KEY_B)
             {
                 window.setVSync(!window.VSyncOn());

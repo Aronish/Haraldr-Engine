@@ -9,6 +9,7 @@ import com.game.world.Grid;
 import java.util.List;
 
 import static com.game.Application.MAIN_LOGGER;
+import static com.game.Main.fastCeil;
 import static com.game.Main.fastFloor;
 
 /**
@@ -62,15 +63,12 @@ public class Camera
     }
 
     /**
-     * Calculates how many GridCells/chunks should be visible.
-     * TODO: Make dependant on gridcell size.
+     * Calculates how many GridCells/chunks should be rendered.
      */
     private void calculateChunkRanges()
     {
-        chunkXRange = fastFloor(1.0f / scale) + 1;
-        chunkYRange = fastFloor(1.0f / scale);
-        if (chunkXRange < 1) chunkXRange = 1;
-        if (chunkYRange < 1) chunkYRange = 1;
+        chunkXRange = (int) fastCeil((Matrix4f.FIXED_ORTHOGRAPHIC_AXIS / scale) / Grid.GRID_SIZE);
+        chunkYRange = (int) fastCeil((Matrix4f.dynamicOrthographicAxis / scale) / Grid.GRID_SIZE);
     }
 
     public void setPosition(Vector3f position)

@@ -47,6 +47,11 @@ public class Vector3f
         this.x = x;
     }
 
+    public void setY(float y)
+    {
+        this.y = y;
+    }
+
     public float getX()
     {
         return x;

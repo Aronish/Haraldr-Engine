@@ -1,94 +1,51 @@
 package com.game.gui;
 
+import com.game.Window;
 import com.game.event.MouseMovedEvent;
-import com.game.event.MousePressedEvent;
-import com.game.event.MouseReleasedEvent;
 import com.game.event.WindowResizedEvent;
 import com.game.graphics.Shader;
 import com.game.graphics.ShaderDataType;
 import com.game.graphics.VertexBuffer;
 import com.game.graphics.VertexBufferElement;
 import com.game.graphics.VertexBufferLayout;
+import com.game.gui.constraint.Constraint;
 import com.game.math.Matrix4f;
 import com.game.math.Vector3f;
 import com.game.math.Vector4f;
 
 import static com.game.Application.MAIN_LOGGER;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_2;
 
 public class GUIPanel extends GUIComponent
 {
-    private int width, height, paddingX, paddingY;
+    private int width, height, padding;
     private Vector4f color;
 
-    private boolean editingSize = false, moving = false;
-
-    public GUIPanel(Vector3f position, int width, int height, int paddingX, int paddingY, Vector4f color)
+    public GUIPanel(Window window, Vector3f position, int width, int height, int padding, Vector4f color, Constraint constraint)
     {
-        super(position);
+        super(position, constraint, window);
         this.width = width;
         this.height = height;
-        this.paddingX = paddingX;
-        this.paddingY = paddingY;
+        this.padding = padding;
         this.color = color;
         VertexBufferLayout layout = new VertexBufferLayout
         (
                 new VertexBufferElement(ShaderDataType.FLOAT2)
         );
-        VertexBuffer vertexBuffer = new VertexBuffer(createVertexData(width, height, paddingX, paddingY), layout);
+        VertexBuffer vertexBuffer = new VertexBuffer(createVertexData(), layout, true);
         setVertexBuffer(vertexBuffer);
     }
 
-    //Padding in here or as uniform?
-    private static float[] createVertexData(int width, int height, int paddingX, int paddingY)
+    public void onMouseMoved(MouseMovedEvent mouseMovedEvent, Window window)
     {
-        return new float[]
-        {
-                0.0f + paddingX,    0.0f + paddingY,
-                width - paddingX,   0.0f + paddingY,
-                width - paddingX,   height - paddingY,
-                0.0f + paddingX,    height - paddingY
-        };
+        //padding = (int) (mouseMovedEvent.xPos);
+        //width = (int) (mouseMovedEvent.yPos / window.getHeight() * window.getWidth());
     }
 
+    @Override
     public void onResize(WindowResizedEvent windowResizedEvent)
     {
-        //vertexArray.getVertexBuffer().setData(createVertexData(width, height, paddingX, paddingY), vertexArray.getVertexBuffer().getLayout());
-    }
-
-    public void onMouseMoved(MouseMovedEvent mouseMovedEvent)
-    {
-        if (editingSize)
-        {
-            width = (int) ((mouseMovedEvent.xPos) - position.getX());
-            height = (int) ((mouseMovedEvent.yPos) - position.getY());
-            vertexArray.getVertexBuffer().setData(createVertexData(width, height, paddingX, paddingY), vertexArray.getVertexBuffer().getLayout());
-        }
-        if (moving)
-        {
-            setPosition((float) mouseMovedEvent.xPos - paddingX, (float) mouseMovedEvent.yPos - paddingY);
-        }
-    }
-
-    public void onMousePressed(MousePressedEvent mousePressedEvent)
-    {
-        if (mousePressedEvent.button == GLFW_MOUSE_BUTTON_1)
-        {
-            moving = true;
-        }
-        else if (mousePressedEvent.button == GLFW_MOUSE_BUTTON_2)
-        {
-            editingSize = !editingSize;
-        }
-    }
-
-    public void onMouseReleased(MouseReleasedEvent mouseReleasedEvent)
-    {
-        if (mouseReleasedEvent.button == GLFW_MOUSE_BUTTON_1)
-        {
-            moving = false;
-        }
+        super.onResize(windowResizedEvent);
+        vertexArray.getVertexBuffer().setData(createVertexData());
     }
 
     @Override

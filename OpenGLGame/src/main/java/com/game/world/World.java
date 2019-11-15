@@ -30,10 +30,12 @@ public class World
     }
 
     /**
-     * Generates a list of WorldTiles with varying heights based on SimplexNoise with a RANDOM seed.
+     * Generates a list of WorldTiles with varying heights based on SimplexNoise with a random seed.
      */
-    private void generateWorld()
+    public void generateWorld()
     {
+        tiles = new ArrayList<>();
+        grid = new Grid();
         double seed = RANDOM.nextDouble() * 100000.0d;
         for (int i = 0; i < WORLD_WIDTH; ++i)
         {
@@ -41,6 +43,7 @@ public class World
             fillColumn(new Vector3f(i, y + WORLD_HEIGHT));
         }
         grid.populateGrid(tiles);
+        tiles = null;
     }
 
     /**
@@ -69,13 +72,6 @@ public class World
                 tiles.add(TILE_FACTORY.createTile(new Vector3f(position.getX(), i), i < 40.0f + WORLD_HEIGHT ? (counter > 16 ? GameObject.STONE : GameObject.DIRT) : (counter > 24 ? GameObject.STONE : GameObject.DIRT)));
             }
         }
-    }
-
-    public void regenerateWorld()
-    {
-        tiles = new ArrayList<>();
-        grid = new Grid();
-        generateWorld();
     }
 
     public void increaseNoiseScale(double dScale)

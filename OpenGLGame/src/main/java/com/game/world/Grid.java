@@ -15,7 +15,7 @@ import static com.game.Main.fastFloor;
  */
 public class Grid
 {
-    public static final int GRID_SIZE = 8; //Seems like the sweetspot.
+    public static final int GRID_SIZE = 8; // 8 seems like the sweetspot.
 
     private int width, height;
 
@@ -77,11 +77,11 @@ public class Grid
         }
     }
 
-    void clear()
+    public void clear()
     {
         width = 0;
         height = 0;
-        grid.clear();
+        grid = null;
     }
 
     public int getWidth()

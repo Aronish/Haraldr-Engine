@@ -6,6 +6,8 @@ import com.game.Main;
 import com.game.gameobject.Entity;
 import com.game.gameobject.GameObject;
 import com.game.math.Matrix4f;
+import com.game.math.Vector2f;
+import com.game.math.Vector4f;
 import com.game.world.Grid;
 
 import java.util.ArrayList;
@@ -34,13 +36,20 @@ public class Renderer
 
     static
     {
-        if (Main.MULTI_RENDER)
+        switch (Main.renderSystemType)
         {
-            renderSystem = new MultiDrawIndirectRenderer();
-            MAIN_LOGGER.info("Render System: MultiDrawIndirect");
-        }else{
-            renderSystem = new InstancedRenderer();
-            MAIN_LOGGER.info("Render System: Instancing");
+            case INSTANCING:
+                renderSystem = new InstancedRenderer();
+                MAIN_LOGGER.info("Render System: Instancing");
+                break;
+            case MULTI_DRAW:
+                renderSystem = new MultiDrawIndirectRenderer();
+                MAIN_LOGGER.info("Render System: MultiDrawIndirect");
+                break;
+            default:
+                MAIN_LOGGER.error("Renderer not initialized with render system!");
+                renderSystem = null;
+                break;
         }
     }
 
@@ -52,6 +61,16 @@ public class Renderer
     public static void setClearColor(float r, float g, float b, float a)
     {
         glClearColor(r, g, b, a);
+    }
+
+    public static void beginScene()
+    {
+
+    }
+
+    public static void drawQuad(Shader shader, Vector2f size, Vector4f color)
+    {
+
     }
 
     public static void render(Camera camera, Shader shader, Entity entity)

@@ -4,10 +4,11 @@ import com.game.gameobject.GameObject;
 
 /**
  * Container for the sprite sheets and all the Models in the game. Handles most disposing.
+ * TODO: Read model files and construct automatically.
  */
 public class Models
 {
-    static final Texture SPRITE_SHEET = new Texture("textures/sprite_sheet_2.png");
+    static final Texture SPRITE_SHEET = new Texture("textures/sprite_sheet_2.png", false);
     private static final float SPRITE_SHEET_SIZE = SPRITE_SHEET.getWidth();
     private static final float SPRITE_SIZE = 16;
 
@@ -34,17 +35,6 @@ public class Models
         };
     }
 
-    private static float[] createTextureCoordinates(int x, int y, int width, int height)
-    {
-        return new float[]
-        {
-                 x          / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE, //TOP LEFT
-                (x + width) / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE, //TOP RIGHT
-                (x + width) / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE, //BOTTOM RIGHT
-                 x          / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE  //BOTTOM LEFT
-        };
-    }
-
     private static Model initModelImpr(int x, int y, int spriteWidth, int spriteHeight)
     {
         float modelWidth = spriteWidth / SPRITE_SIZE;
@@ -57,13 +47,13 @@ public class Models
         return new Model
         (
                 createVertexData(modelWidth, modelHeight, x, y, spriteWidth, spriteHeight),
-                createTextureCoordinates(x, y, spriteWidth, spriteHeight), layout,
-                modelWidth, modelHeight
+                layout, modelWidth, modelHeight
         );
     }
 
     public static void dispose()
     {
+        SPRITE_SHEET.unbind();
         SPRITE_SHEET.delete();
         for (GameObject gameObjectType : GameObject.values())
         {

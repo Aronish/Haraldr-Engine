@@ -6,8 +6,9 @@ import static com.game.Application.MAIN_LOGGER;
 
 public class Matrix4f
 {
-    private static final float FIXED_ORTHOGRAPHIC_AXIS = 9f, NEAR_FAR = 5f;
-    private static float dynamicOrthographicAxis;
+    public static final float FIXED_ORTHOGRAPHIC_AXIS = 9f;
+    public static float dynamicOrthographicAxis;
+    private static final float NEAR_FAR = 5f;
     private static final boolean fixedWidth = true; //Fixed width is better
 
     public static Matrix4f orthographic;
@@ -176,7 +177,7 @@ public class Matrix4f
         return result;
     }
 
-    public static void recalculateOrthographic(float aspectRatio)
+    private static void recalculateOrthographic(float aspectRatio)
     {
         if (fixedWidth)
         {

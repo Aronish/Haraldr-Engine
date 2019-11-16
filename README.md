@@ -1,4 +1,10 @@
 # OpenGLGame
-This is my first experience with OpenGL. I have no idea what this will unfold into, but I like just playing around with the API.
-I don't recommend taking inspiration or getting help with your code here, as it isn't yet documented and I'm no expert Java programmer.
-Though, this is how I chose to make use of OpenGL and it works. xD
+A simple game/engine made in OpenGL with the sole purpose of teaching me how graphics and game programming works.
+<br/>
+Some files used by IntelliJ IDEA are gitignored but it should be fairly straight forward to clone and build the project if you know what you're doing. I can't give any advice if you're using some other IDE than IntelliJ IDEA, that's up to you.
+<br/>
+Either INSTANCED or MULTI_DRAW is required as an argument in order to run the renderer.
+<h3>Branches:</h3>
+<b>Master: </b> Only working code should be put here.
+<br/>
+<b>main-\<name\>:</b> Branch for specified developer.

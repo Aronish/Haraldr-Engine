@@ -7,4 +7,4 @@ Either INSTANCED or MULTI_DRAW is required as an argument in order to run the re
 <h3>Branches:</h3>
 <b>Master: </b> Only working code should be put here.
 <br/>
-<b>main-\<name\>:</b> Branch for specified developer.
+<b>main-&lt;name&gt;:</b> Branch for specified developer.

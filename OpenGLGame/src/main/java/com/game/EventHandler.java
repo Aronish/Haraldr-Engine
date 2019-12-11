@@ -6,6 +6,7 @@ import com.game.event.MouseScrolledEvent;
 import com.game.gameobject.Player;
 import com.game.world.World;
 import com.game.physics.PlayerMovementType;
+import org.jetbrains.annotations.NotNull;
 
 import static com.game.Application.MAIN_LOGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
@@ -37,7 +38,7 @@ public class EventHandler
      * @param player the current player.
      * @param world the current world
      */
-    public void processInput(Camera camera, long window, Player player, World world)
+    public void processInput(Camera camera, long window, @NotNull Player player, World world)
     {
         player.setMovementType(PlayerMovementType.STAND);
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != 0)
@@ -111,7 +112,7 @@ public class EventHandler
      * @param window the current window.
      * @param event the key event.
      */
-    public void processKeyEvent(KeyEvent event, Window window)
+    public void processKeyEvent(@NotNull KeyEvent event, Window window)
     {
         if (event.eventType == EventType.KEY_PRESSED)
         {
@@ -123,7 +124,7 @@ public class EventHandler
         }
     }
 
-    public void processScrollEvent(MouseScrolledEvent event, Camera camera)
+    public void processScrollEvent(@NotNull MouseScrolledEvent event, Camera camera)
     {
         if (event.yOffset < 0)
         {

@@ -1,5 +1,7 @@
 package com.game.math;
 
+import org.jetbrains.annotations.NotNull;
+
 import static com.game.Application.MAIN_LOGGER;
 
 public class Vector4f
@@ -24,7 +26,7 @@ public class Vector4f
         this.w = w;
     }
 
-    public void set(Vector4f other)
+    public void set(@NotNull Vector4f other)
     {
         x = other.x;
         y = other.y;

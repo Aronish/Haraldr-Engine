@@ -1,5 +1,7 @@
 package com.game.math;
 
+import org.jetbrains.annotations.NotNull;
+
 import static com.game.Application.MAIN_LOGGER;
 
 /**
@@ -36,7 +38,7 @@ public class Vector3f
         this.y = y;
     }
 
-    public void set(Vector3f other)
+    public void set(@NotNull Vector3f other)
     {
         x = other.x;
         y = other.y;
@@ -72,7 +74,7 @@ public class Vector3f
      * @param other the other vector to add.
      * @return the sum Vector.
      */
-    public Vector3f addReturn(Vector3f other)
+    public Vector3f addReturn(@NotNull Vector3f other)
     {
         return new Vector3f(x + other.getX(), y + other.getY(), z + other.getZ());
     }
@@ -81,7 +83,7 @@ public class Vector3f
      * Adds another vector to this vector.
      * @param other the other vector to add.
      */
-    public void add(Vector3f other)
+    public void add(@NotNull Vector3f other)
     {
         x += other.x;
         y += other.y;

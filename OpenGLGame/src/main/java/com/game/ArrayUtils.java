@@ -1,5 +1,8 @@
 package com.game;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +10,9 @@ import static com.game.Application.MAIN_LOGGER;
 
 public class ArrayUtils
 {
-    public static float[] toPrimitiveArrayF(List<Float> list)
+    @NotNull
+    @Contract(pure = true)
+    public static float[] toPrimitiveArrayF(@NotNull List<Float> list)
     {
         float[] primitiveArray = new float[list.size()];
         int insertIndex = 0;
@@ -18,7 +23,9 @@ public class ArrayUtils
         return primitiveArray;
     }
 
-    public static int[] toPrimitiveArrayI(List<Integer> list)
+    @NotNull
+    @Contract(pure = true)
+    public static int[] toPrimitiveArrayI(@NotNull List<Integer> list)
     {
         int[] primitiveArray = new int[list.size()];
         int insertIndex = 0;
@@ -29,7 +36,8 @@ public class ArrayUtils
         return primitiveArray;
     }
 
-    public static List<Float> toList(float[] array)
+    @NotNull
+    public static List<Float> toList(@NotNull float[] array)
     {
         List<Float> list = new ArrayList<>();
         for (float f : array)
@@ -39,7 +47,8 @@ public class ArrayUtils
         return list;
     }
 
-    public static List<Integer> toList(int[] array)
+    @NotNull
+    public static List<Integer> toList(@NotNull int[] array)
     {
         List<Integer> list = new ArrayList<>();
         for (int i : array)

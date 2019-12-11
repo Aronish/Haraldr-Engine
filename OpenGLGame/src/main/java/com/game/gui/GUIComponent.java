@@ -8,6 +8,7 @@ import com.game.gui.constraint.Constraint;
 import com.game.math.Matrix4f;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class GUIComponent
 {
@@ -18,7 +19,7 @@ public abstract class GUIComponent
 
     protected Constraint constraint;
 
-    public GUIComponent(Vector3f position, Constraint constraint, Window window)
+    public GUIComponent(Vector3f position, Constraint constraint, @NotNull Window window)
     {
         this.position = position;
         vertexArray = new VertexArray();
@@ -38,7 +39,7 @@ public abstract class GUIComponent
         return null;
     }
 
-    public void onResize(WindowResizedEvent windowResizedEvent)
+    public void onResize(@NotNull WindowResizedEvent windowResizedEvent)
     {
         windowWidth = windowResizedEvent.width;
         windowHeight = windowResizedEvent.height;

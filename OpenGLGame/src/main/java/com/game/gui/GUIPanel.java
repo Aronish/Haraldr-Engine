@@ -12,6 +12,7 @@ import com.game.gui.constraint.Constraint;
 import com.game.math.Matrix4f;
 import com.game.math.Vector3f;
 import com.game.math.Vector4f;
+import org.jetbrains.annotations.NotNull;
 
 import static com.game.Application.MAIN_LOGGER;
 
@@ -42,7 +43,7 @@ public class GUIPanel extends GUIComponent
     }
 
     @Override
-    public void onResize(WindowResizedEvent windowResizedEvent)
+    public void onResize(@NotNull WindowResizedEvent windowResizedEvent)
     {
         super.onResize(windowResizedEvent);
         vertexArray.getVertexBuffer().setData(createVertexData());

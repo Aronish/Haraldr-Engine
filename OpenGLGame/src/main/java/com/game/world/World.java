@@ -8,6 +8,7 @@ import com.game.gameobject.tile.TileTree;
 import com.game.math.SimplexNoise;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,7 @@ public class World
      * Fills a one block wide column with different blocks according to the generation algorithm.
      * @param position the position of the initial block.
      */
-    private void fillColumn(Vector3f position)
+    private void fillColumn(@NotNull Vector3f position)
     {
         if (position.getY() < 58.0f + WORLD_HEIGHT && RANDOM.nextInt() % 3 == 0)
         {

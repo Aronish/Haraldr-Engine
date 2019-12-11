@@ -12,16 +12,14 @@ import com.game.graphics.Models;
 import com.game.graphics.Renderer;
 import com.game.graphics.Shader;
 import com.game.gui.font.Fonts;
-import com.game.layer.GUILayer;
 import com.game.layer.Layer;
 import com.game.layer.LayerStack;
-import com.game.layer.TestLayer;
 import com.game.layer.WorldLayer;
 import com.game.math.Matrix4f;
+import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_O;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
@@ -29,6 +27,11 @@ import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
 import static org.lwjgl.system.MemoryUtil.memUTF8;
 
@@ -45,7 +48,7 @@ public class Application
         loop();
     }
 
-    private void stop(Event event)
+    private void stop(@NotNull Event event)
     {
         glfwSetWindowShouldClose(window.getWindowHandle(), true);
         event.setHandled(true);
@@ -68,6 +71,8 @@ public class Application
         (
                 new WorldLayer("World")
         );
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         //glEnable(GL_DEBUG_OUTPUT);
         glDebugMessageCallback((source, type, id, severity, length, message, userparam) -> {
             System.out.println("Source: " + Integer.toHexString(source) + "\nType: " + Integer.toHexString(type) + "\nSeverity: " + Integer.toHexString(severity) + "\nLength: " + length);
@@ -80,7 +85,7 @@ public class Application
     public class EventCallback implements IEventCallback
     {
         @Override
-        public void onEvent(Event event)
+        public void onEvent(@NotNull Event event)
         {
             if (event.eventType == EventType.WINDOW_CLOSED) stop(event);
             if (event.eventType == EventType.WINDOW_RESIZED) Matrix4f.onResize((WindowResizedEvent) event);

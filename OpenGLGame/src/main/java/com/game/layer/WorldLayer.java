@@ -18,6 +18,7 @@ import com.game.gameobject.tile.Tile;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
 import com.game.physics.CollisionDetector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +58,7 @@ public class WorldLayer extends Layer
     }
 
     @Override
-    public void onEvent(Window window, Event event)
+    public void onEvent(Window window, @NotNull Event event)
     {
         //LOGGER.info(event.toString());
         if (event.eventType == EventType.GUI_TOGGLED)

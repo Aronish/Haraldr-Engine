@@ -1,5 +1,7 @@
 package com.game.math;
 
+import org.jetbrains.annotations.NotNull;
+
 import static com.game.Application.MAIN_LOGGER;
 
 /**
@@ -42,7 +44,7 @@ public class Vector2f
         y = 0.0f;
     }
 
-    public void add(Vector2f other)
+    public void add(@NotNull Vector2f other)
     {
         x += other.getX();
         y += other.getY();

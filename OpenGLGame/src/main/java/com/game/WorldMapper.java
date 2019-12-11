@@ -3,6 +3,7 @@ package com.game;
 import com.game.world.Grid;
 import com.game.gameobject.tile.Tile;
 import com.game.gameobject.tile.TileTree;
+import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -23,7 +24,7 @@ class WorldMapper
      * @param grid the grid to map.
      * @param filePath the output file path.
      */
-    static void generateWorldMap(int width, int height, Grid grid, String filePath)
+    static void generateWorldMap(int width, int height, @NotNull Grid grid, String filePath)
     {
         BufferedImage worldMap = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         File file = new File(filePath);

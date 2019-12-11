@@ -1,5 +1,7 @@
 package com.game.layer;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
@@ -16,7 +18,7 @@ public class LayerStack implements Iterable<Layer>
         layerStack.push(layer);
     }
 
-    public void pushLayers(Layer... layers)
+    public void pushLayers(@NotNull Layer... layers)
     {
         for (Layer layer : layers)
         {
@@ -29,6 +31,7 @@ public class LayerStack implements Iterable<Layer>
         return layerStack.descendingIterator();
     }
 
+    @NotNull
     @Override
     public Iterator<Layer> iterator()
     {

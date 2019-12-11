@@ -1,12 +1,13 @@
 package com.game;
 
 import com.game.graphics.RenderSystemType;
+import org.jetbrains.annotations.NotNull;
 
 public class Main
 {
     public static RenderSystemType renderSystemType;
 
-    public static void main(String[] args) throws Exception
+    public static void main(@NotNull String[] args) throws Exception
     {
         System.out.print("Arguments: ");
         for (String s : args) { System.out.print(s + " "); }

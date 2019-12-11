@@ -1,6 +1,7 @@
 package com.game.math;
 
 import com.game.event.WindowResizedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import static com.game.Application.MAIN_LOGGER;
 
@@ -16,7 +17,7 @@ public class Matrix4f
 
     public float[] matrix = new float[16];
 
-    public static void onResize(WindowResizedEvent event)
+    public static void onResize(@NotNull WindowResizedEvent event)
     {
         recalculateOrthographic((float) event.width / event.height);
         recalculatePixelOrthographic(event.width, event.height);
@@ -28,6 +29,7 @@ public class Matrix4f
         recalculatePixelOrthographic(width, height);
     }
 
+    @NotNull
     private static Matrix4f identity()
     {
         Matrix4f identity = new Matrix4f();
@@ -42,6 +44,7 @@ public class Matrix4f
      * Multiplies this matrix with another.
      * Doesn't change this current matrix.
      */
+    @NotNull
     private Matrix4f multiply(Matrix4f multiplicand)
     {
         Matrix4f result = identity();
@@ -84,7 +87,8 @@ public class Matrix4f
      * @param isCamera if the transformation matrix is the view matrix of a camera. If <code>true</code>, the translation and rotation will be inverted.
      * @return the resulting transformation matrix.
      */
-    public static Matrix4f transform(Vector3f position, float angle, Vector2f scale, boolean isCamera)
+    @NotNull
+    public static Matrix4f transform(Vector3f position, float angle, @NotNull Vector2f scale, boolean isCamera)
     {
         return translate(scale.getX() == -1 ? position.addReturn(new Vector3f(1.0f, 0.0f)) : position, isCamera).multiply(scale(scale));
     }
@@ -108,7 +112,8 @@ public class Matrix4f
     */
     /////UNUSED WITH PIXELORTHOGRAPHIC///////////////////////////////////////////////////////////////////////
 
-    private static Matrix4f scale(Vector2f scale)
+    @NotNull
+    private static Matrix4f scale(@NotNull Vector2f scale)
     {
         Matrix4f result = new Matrix4f();
         result.matrix[0] = scale.getX();
@@ -118,6 +123,7 @@ public class Matrix4f
         return result;
     }
 
+    @NotNull
     private static Matrix4f translate(Vector3f vector, boolean isCamera)
     {
         Matrix4f result = identity();
@@ -134,6 +140,7 @@ public class Matrix4f
         return result;
     }
 
+    @NotNull
     private static Matrix4f rotate(float angle, boolean isCamera)
     {
         Matrix4f result = identity();
@@ -165,6 +172,7 @@ public class Matrix4f
      * @param near the near clipping plane.
      * @return the resulting orthographic projection matrix.
      */
+    @NotNull
     private static Matrix4f orthographic(float right, float left, float top, float bottom, float far, float near)
     {
         Matrix4f result = identity();

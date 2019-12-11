@@ -1,24 +1,22 @@
 package com.game.graphics;
 
+import com.game.gui.font.Font;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static com.game.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
@@ -26,15 +24,10 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glDeleteTextures;
-import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
-import static org.lwjgl.opengl.GL45.glCreateTextures;
-import static org.lwjgl.opengl.GL45.glTextureStorage2D;
-import static org.lwjgl.opengl.GL45.glTextureSubImage2D;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 /**
@@ -98,14 +91,17 @@ public class Texture
             throw new IllegalStateException("Texture was not read and stored properly!");
         }
 
+        for (int i : data)
+        {
+            System.out.println(i);
+        }
+
         int result = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, result);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         //glGenerateMipmap(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -114,20 +110,29 @@ public class Texture
 
     private int loadSTB(String path)
     {
-        ByteBuffer data;
+        ByteBuffer data = null;
         STBImage.stbi_set_flip_vertically_on_load(true);
         try(MemoryStack stack = stackPush())
         {
             IntBuffer pWidth = stack.mallocInt(1);
             IntBuffer pHeight = stack.mallocInt(1);
             IntBuffer pChannels = stack.mallocInt(1);
-            ByteBuffer t_data = STBImage.stbi_load(new File(Texture.class.getClassLoader().getResource(path).getFile()).getAbsolutePath(), pWidth, pHeight, pChannels, 0);
+            try
+            {
+                data = STBImage.stbi_load_from_memory(Font.ioResourceToByteBuffer(path, 256*256*4), pWidth, pHeight, pChannels, 4);
+                MAIN_LOGGER.info(pWidth.get(0) + " " + pHeight.get(0) + " " + pChannels.get(0));
+            }catch (IOException e)
+            {
+                MAIN_LOGGER.info("stbi_load_from_memory failed!");
+                e.printStackTrace();
+            }
             //TODO: Try getting stb_image working.
             width = pWidth.get(0);
             height = pHeight.get(0);
-            data = t_data;
         }
+        if (data == null) throw new RuntimeException("Data was null!");
 
+        /*
         int texture = glCreateTextures(GL_TEXTURE_2D);
         glTextureStorage2D(texture, 0, GL_RGBA8, width, height);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -136,6 +141,17 @@ public class Texture
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
         glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        */
+
+        int result = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, result);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        //glGenerateMipmap(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
         STBImage.stbi_image_free(data);
 

@@ -1,6 +1,8 @@
 package com.game.graphics;
 
 import com.game.gameobject.GameObject;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Container for the sprite sheets and all the Models in the game. Handles most disposing.
@@ -24,17 +26,20 @@ public class Models
     public static final Model PLAYER =              initModelImpr(19, 19, 14, 40);
 
     //                                                                           FOR TEXTURE COORDINATES
+    @NotNull
+    @Contract(value = "_, _, _, _, _, _ -> new", pure = true)
     private static float[] createVertexData(float modelWidth, float modelHeight, int x, int y, int width, int height)
     {
         return new float[]
-        {
-                0.0f,       0.0f,                x          / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE, //TOP LEFT
-                modelWidth, 0.0f,               (x + width) / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE, //TOP RIGHT
-                modelWidth, 0.0f - modelHeight, (x + width) / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE, //BOTTOM RIGHT
-                0.0f,       0.0f - modelHeight,  x          / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE  //BOTTOM LEFT
-        };
+                {
+                        0.0f,       0.0f,                x          / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE, //TOP LEFT
+                        modelWidth, 0.0f,               (x + width) / SPRITE_SHEET_SIZE,    y           / SPRITE_SHEET_SIZE, //TOP RIGHT
+                        modelWidth, 0.0f - modelHeight, (x + width) / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE, //BOTTOM RIGHT
+                        0.0f,       0.0f - modelHeight,  x          / SPRITE_SHEET_SIZE,   (y + height) / SPRITE_SHEET_SIZE  //BOTTOM LEFT
+                };
     }
 
+    @NotNull
     private static Model initModelImpr(int x, int y, int spriteWidth, int spriteHeight)
     {
         float modelWidth = spriteWidth / SPRITE_SIZE;

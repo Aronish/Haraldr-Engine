@@ -1,6 +1,7 @@
 package com.game.graphics;
 
 import com.game.math.Vector4f;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,8 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
-import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
-import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniform4f;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
@@ -87,6 +86,7 @@ public class Shader
      * @param path the path of the file to be read.
      * @return the source code string.
      */
+    @NotNull
     private String readShaderFile(String path)
     {
         StringBuilder sb = new StringBuilder();

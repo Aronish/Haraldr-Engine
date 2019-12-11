@@ -5,12 +5,11 @@ import com.game.math.Matrix4f;
 import com.game.math.Vector2f;
 import com.game.math.Vector3f;
 import com.game.world.Grid;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.game.Application.MAIN_LOGGER;
 import static com.game.Main.fastCeil;
-import static com.game.Main.fastFloor;
 
 /**
  * A virtual camera for the game. Is essentially a normal object except that the transformation matrix is inverted.
@@ -67,11 +66,11 @@ public class Camera
      */
     private void calculateChunkRanges()
     {
-        chunkXRange = (int) fastCeil((Matrix4f.FIXED_ORTHOGRAPHIC_AXIS / scale) / Grid.GRID_SIZE);
-        chunkYRange = (int) fastCeil((Matrix4f.dynamicOrthographicAxis / scale) / Grid.GRID_SIZE);
+        chunkXRange = fastCeil((Matrix4f.FIXED_ORTHOGRAPHIC_AXIS / scale) / Grid.GRID_SIZE);
+        chunkYRange = fastCeil((Matrix4f.dynamicOrthographicAxis / scale) / Grid.GRID_SIZE);
     }
 
-    public void setPosition(Vector3f position)
+    public void setPosition(@NotNull Vector3f position)
     {
         this.position = position.multiply(scale);
         calculateViewMatrix();
@@ -95,7 +94,7 @@ public class Camera
      * @param visibleObjects a list, which keeps track of all the visible entities.
      * @param tile the tile to check visibility against.
      */
-    public void isInView(List<Tile> visibleObjects, Tile tile)
+    public void isInView(List<Tile> visibleObjects, @NotNull Tile tile)
     {
         float scaleAdjustedX = position.getX() / scale;
         float scaleAdjustedY = position.getY() / scale;

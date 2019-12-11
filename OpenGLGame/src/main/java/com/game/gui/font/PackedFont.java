@@ -2,6 +2,7 @@ package com.game.gui.font;
 
 import com.game.Window;
 import com.game.math.Vector3f;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTFontinfo;
@@ -66,7 +67,7 @@ public class PackedFont
 
     private int textureAtlas;
 
-    public PackedFont(String fontPath, Window window)
+    public PackedFont(String fontPath, @NotNull Window window)
     {
         contentScaleX = window.getContentScaleX();
         contentScaleY = window.getContentScaleY();
@@ -125,7 +126,7 @@ public class PackedFont
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    public Font.TextRenderData createTextRenderData(String text)
+    public Font.TextRenderData createTextRenderData(@NotNull String text)
     {
         List<Float> vertexData = new ArrayList<>();
         try (MemoryStack stack = stackPush())
@@ -217,6 +218,7 @@ public class PackedFont
 
     ///// UTILITY /////////////////////////////////
 
+    @NotNull
     private static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException
     {
         ByteBuffer buffer;
@@ -256,7 +258,8 @@ public class PackedFont
         return buffer;
     }
 
-    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity)
+    @NotNull
+    private static ByteBuffer resizeBuffer(@NotNull ByteBuffer buffer, int newCapacity)
     {
         ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
         buffer.flip();
@@ -264,7 +267,7 @@ public class PackedFont
         return newBuffer;
     }
 
-    private static int getCodePoint(String text, int to, int i, IntBuffer cpOut)
+    private static int getCodePoint(@NotNull String text, int to, int i, IntBuffer cpOut)
     {
         char c1 = text.charAt(i);
         if (Character.isHighSurrogate(c1) && i + 1 < to)

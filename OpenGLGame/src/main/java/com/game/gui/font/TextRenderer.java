@@ -4,6 +4,7 @@ import com.game.ArrayUtils;
 import com.game.graphics.Shader;
 import com.game.gui.IGUITextComponent;
 import com.game.math.Matrix4f;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +70,7 @@ public class TextRenderer
         glBindVertexArray(0);
     }
 
-    private static void setupRenderData(List<IGUITextComponent> guiLabels)
+    private static void setupRenderData(@NotNull List<IGUITextComponent> guiLabels)
     {
         vertexData.clear();
         indices.clear();
@@ -95,6 +96,7 @@ public class TextRenderer
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
+    @NotNull
     private static List<Integer> createIndices(int quadCount)
     {
         List<Integer> indices = new ArrayList<>();
@@ -109,7 +111,7 @@ public class TextRenderer
         return indices;
     }
 
-    public static void renderGuiComponents(Map<PackedFont, List<IGUITextComponent>> guiComponents)
+    public static void renderGuiComponents(@NotNull Map<PackedFont, List<IGUITextComponent>> guiComponents)
     {
         FONT_SHADER.use();
         FONT_SHADER.setMatrix(Matrix4f.orthographic.matrix, "projection");
@@ -121,7 +123,7 @@ public class TextRenderer
         }
     }
 
-    private static void render(PackedFont font)
+    private static void render(@NotNull PackedFont font)
     {
         font.bind();
         glBindVertexArray(textVAO);

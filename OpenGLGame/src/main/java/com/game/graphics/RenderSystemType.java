@@ -1,5 +1,7 @@
 package com.game.graphics;
 
+import org.jetbrains.annotations.Nullable;
+
 import static com.game.Application.MAIN_LOGGER;
 
 public enum RenderSystemType
@@ -7,6 +9,7 @@ public enum RenderSystemType
     MULTI_DRAW,
     INSTANCING;
 
+    @Nullable
     public static RenderSystemType validateArgument(String argument) throws Exception
     {
         for (RenderSystemType renderSystemType : RenderSystemType.values())

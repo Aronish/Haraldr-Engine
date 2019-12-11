@@ -1,5 +1,7 @@
 package com.game.debug;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.time.LocalTime;
 
 /**
@@ -47,7 +49,7 @@ public class Logger
     }
 
     @SafeVarargs //TODO: Possibly risky
-    public final <T> void info(T... messages)
+    public final <T> void info(@NotNull T... messages)
     {
         setInfoLevel();
         for (T message : messages)
@@ -78,7 +80,7 @@ public class Logger
         log(message);
     }
 
-    public void fatal(Exception exception) throws Exception
+    public void fatal(@NotNull Exception exception) throws Exception
     {
         setFatalLevel();
         log(exception.getMessage());

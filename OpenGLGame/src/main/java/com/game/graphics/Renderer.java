@@ -9,6 +9,7 @@ import com.game.math.Matrix4f;
 import com.game.math.Vector2f;
 import com.game.math.Vector4f;
 import com.game.world.Grid;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,7 +74,7 @@ public class Renderer
 
     }
 
-    public static void render(Camera camera, Shader shader, Entity entity)
+    public static void render(@NotNull Camera camera, @NotNull Shader shader, @NotNull Entity entity)
     {
         shader.use();
         shader.setMatrix(entity.getMatrixArray(), "matrix");
@@ -128,7 +129,7 @@ public class Renderer
         }
 
         @Override
-        public void renderGridCells(Camera camera, List<Grid.GridCell> gridCells)
+        public void renderGridCells(@NotNull Camera camera, List<Grid.GridCell> gridCells)
         {
             Shader.INSTANCED_SHADER.use();
             Shader.INSTANCED_SHADER.setMatrix(camera.getViewMatrix().matrix, "view");
@@ -224,7 +225,7 @@ public class Renderer
         }
 
         @Override
-        public void renderGridCells(Camera camera, List<Grid.GridCell> gridCells)
+        public void renderGridCells(@NotNull Camera camera, List<Grid.GridCell> gridCells)
         {
             Shader.MULTI_DRAW_SHADER.use();
             Shader.MULTI_DRAW_SHADER.setMatrix(camera.getViewMatrix().matrix, "view");

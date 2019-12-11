@@ -4,6 +4,8 @@ import com.game.Camera;
 import com.game.gameobject.Player;
 import com.game.gameobject.tile.Tile;
 import com.game.math.Vector3f;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import static com.game.physics.Direction.EAST;
 import static com.game.physics.Direction.INVALIDDIR;
@@ -35,7 +37,7 @@ public class CollisionDetector
      * @param tile the Entity, whose TexturedModel is currently checked.
      * @return true if there was a collision on both axes.
      */
-    private static boolean checkCollision(Tile tile, Player player)
+    private static boolean checkCollision(@NotNull Tile tile, @NotNull Player player)
     {
         boolean collisionX = player.getPosition().getX() + player.getGameObjectType().getModel().getAABB().getWidth() > tile.getPosition().getX() && tile.getPosition().getX() + tile.getGameObjectType().getModel().getAABB().getWidth() > player.getPosition().getX();
         boolean collisionY = player.getPosition().getY() - player.getGameObjectType().getModel().getAABB().getHeight() < tile.getPosition().getY() && tile.getPosition().getY() - tile.getGameObjectType().getModel().getAABB().getHeight() < player.getPosition().getY();
@@ -48,7 +50,9 @@ public class CollisionDetector
      * @param tile the Entity, whose TexturedModel is currently checked.
      * @return a custom data pair with the direction and overlap distance.
      */
-    private static CollisionDataMap getCollisionDirection(Tile tile, Player player)
+    @NotNull
+    @Contract("_, _ -> new")
+    private static CollisionDataMap getCollisionDirection(@NotNull Tile tile, @NotNull Player player)
     {
         float topCollision =    tile.getPosition().getY() - (player.getPosition().getY() - player.getGameObjectType().getModel().getAABB().getHeight());
         float rightCollision =  tile.getPosition().getX() + tile.getGameObjectType().getModel().getAABB().getWidth() - player.getPosition().getX();
@@ -67,7 +71,7 @@ public class CollisionDetector
      * @param collisionDataMap the data pair with direction and overlap distance.
      * @param player the player that collided.
      */
-    private static void resolveCollision(Camera camera, CollisionDataMap collisionDataMap, Player player)
+    private static void resolveCollision(Camera camera, @NotNull CollisionDataMap collisionDataMap, Player player)
     {
         float inside = collisionDataMap.getInside();
         switch (collisionDataMap.getCollisionDirection())

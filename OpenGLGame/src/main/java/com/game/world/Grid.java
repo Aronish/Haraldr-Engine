@@ -2,6 +2,7 @@ package com.game.world;
 
 import com.game.gameobject.GameObject;
 import com.game.gameobject.tile.Tile;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ public class Grid
      * Populates the grid with the supplied tiles. Caches the matrices in the grid cells.
      * @param tiles the tiles to be put in the grid.
      */
-    void populateGrid(List<Tile> tiles)
+    void populateGrid(@NotNull List<Tile> tiles)
     {
         tiles.forEach(entity -> addEntity(fastFloor(entity.getPosition().getX() / GRID_SIZE), fastFloor(entity.getPosition().getY() / GRID_SIZE), entity));
         cacheMatrices();

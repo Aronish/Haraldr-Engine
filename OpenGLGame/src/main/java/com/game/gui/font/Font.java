@@ -2,6 +2,7 @@ package com.game.gui.font;
 
 import com.game.Window;
 import com.game.math.Vector3f;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTBakedChar;
@@ -93,6 +94,7 @@ public class Font
         charData = init();
     }
 
+    @NotNull
     private STBTTBakedChar.Buffer init()
     {
         fontBitmap = glGenTextures();
@@ -110,7 +112,7 @@ public class Font
         return cdata;
     }
 
-    public TextRenderData createTextRenderData(String text)
+    public TextRenderData createTextRenderData(@NotNull String text)
     {
         List<Float> vertexData = new ArrayList<>();
 
@@ -204,7 +206,8 @@ public class Font
 
     ///// UTILITY FUNCTIONS ///////////////////////////////////////
 
-    private static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException
+    @NotNull
+    public static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException
     {
         ByteBuffer buffer;
         Path path = Paths.get(resource);
@@ -243,7 +246,8 @@ public class Font
         return buffer;
     }
 
-    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity)
+    @NotNull
+    private static ByteBuffer resizeBuffer(@NotNull ByteBuffer buffer, int newCapacity)
     {
         ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
         buffer.flip();
@@ -256,7 +260,7 @@ public class Font
         return (offset - center) * factor + center;
     }
 
-    private static int getCodePoint(String text, int to, int i, IntBuffer cpOut)
+    private static int getCodePoint(@NotNull String text, int to, int i, IntBuffer cpOut)
     {
         char c1 = text.charAt(i);
         if (Character.isHighSurrogate(c1) && i + 1 < to)

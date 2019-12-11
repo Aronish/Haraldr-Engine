@@ -1,5 +1,7 @@
 package com.game.graphics;
 
+import org.jetbrains.annotations.NotNull;
+
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glDrawElements;
@@ -43,7 +45,7 @@ public class VertexArray
         glBindVertexArray(0);
     }
 
-    public void setVertexBuffer(VertexBuffer vertexBuffer)
+    public void setVertexBuffer(@NotNull VertexBuffer vertexBuffer)
     {
         this.vertexBuffer = vertexBuffer;
         glBindVertexArray(vertexArrayID);

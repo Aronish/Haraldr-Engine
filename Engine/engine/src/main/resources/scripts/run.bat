@@ -1,0 +1,1 @@
+start cmd.exe /c java -jar %1 %2

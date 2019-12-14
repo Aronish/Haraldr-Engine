@@ -60,7 +60,7 @@ public class Texture
         int[] pixels = null;
         try
         {
-            InputStream imageStream = Texture.class.getClassLoader().getResourceAsStream(path);
+            InputStream imageStream = Texture.class.getModule().getResourceAsStream(path);
             if (imageStream == null)
             {
                 throw new NullPointerException("Texture not found!");

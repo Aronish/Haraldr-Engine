@@ -1,5 +1,6 @@
 package gui.font;
 
+import main.Application;
 import main.Window;
 import math.Vector3f;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +24,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static main.Application.MAIN_LOGGER;
 import static org.lwjgl.BufferUtils.createByteBuffer;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_RED;
@@ -216,10 +216,10 @@ public class Font
             try (SeekableByteChannel fc = Files.newByteChannel(path))
             {
                 buffer = BufferUtils.createByteBuffer((int)fc.size() + 1);
-                while (fc.read(buffer) != -1) { MAIN_LOGGER.info(fc.size()); }
+                while (fc.read(buffer) != -1) { Application.MAIN_LOGGER.info(fc.size()); }
             }
         }else{
-            try (InputStream source = gui.font.TextRenderer.class.getClassLoader().getResourceAsStream(resource))
+            try (InputStream source = Font.class.getModule().getResourceAsStream(resource))
             {
                 if (source == null)
                 {
@@ -269,7 +269,7 @@ public class Font
             if (Character.isLowSurrogate(c2))
             {
                 cpOut.put(0, Character.toCodePoint(c1, c2));
-                MAIN_LOGGER.info("LOW");
+                Application.MAIN_LOGGER.info("LOW");
                 return 2;
             }
         }

@@ -90,7 +90,7 @@ public class Shader
     private String readShaderFile(String path)
     {
         StringBuilder sb = new StringBuilder();
-        try (InputStream file = Shader.class.getClassLoader().getResourceAsStream(path))
+        try (InputStream file = Shader.class.getModule().getResourceAsStream(path))
         {
             if (file == null)
             {

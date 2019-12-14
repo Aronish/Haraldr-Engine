@@ -14,8 +14,8 @@ import graphics.Shader;
 import layer.Layer;
 import layer.LayerStack;
 import layer.WorldLayer;
-import gui.font.Fonts;
 import math.Matrix4f;
+import gui.font.Fonts;
 import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;

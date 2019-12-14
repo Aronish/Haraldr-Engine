@@ -1,5 +1,6 @@
 package gui.font;
 
+import main.Application;
 import main.Window;
 import math.Vector3f;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +25,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static main.Application.MAIN_LOGGER;
 import static org.lwjgl.BufferUtils.createByteBuffer;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_RED;
@@ -228,7 +228,7 @@ public class PackedFont
             try (SeekableByteChannel fc = Files.newByteChannel(path))
             {
                 buffer = BufferUtils.createByteBuffer((int)fc.size() + 1);
-                while (fc.read(buffer) != -1) { MAIN_LOGGER.info(fc.size()); }
+                while (fc.read(buffer) != -1) { Application.MAIN_LOGGER.info(fc.size()); }
             }
         }else{
             try (InputStream source = TextRenderer.class.getClassLoader().getResourceAsStream(resource))
@@ -309,7 +309,7 @@ public class PackedFont
                 }*/
             }
         }
-        MAIN_LOGGER.info(scaleFactor);
+        Application.MAIN_LOGGER.info(scaleFactor);
         return width * scaleFactor;
     }
 

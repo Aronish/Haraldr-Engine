@@ -12,7 +12,7 @@ public class Fonts
 
     public static void init(Window window)
     {
-        ROBOTO_REGULAR = new Font("fonts/Roboto-Regular.ttf", 90, new Vector3f(0.0f, 0.0f, 1.0f), window);
-        VCR_OSD_MONO_1 = new Font("fonts/VCR_OSD_MONO_1.001.ttf", 75, new Vector3f(0.0f, 0.0f, 1.0f), window);
+        //ROBOTO_REGULAR = new Font("fonts/Roboto-Regular.ttf", 90, new Vector3f(0.0f, 0.0f, 1.0f), window);
+        //VCR_OSD_MONO_1 = new Font("fonts/VCR_OSD_MONO_1.001.ttf", 75, new Vector3f(0.0f, 0.0f, 1.0f), window);
     }
 }

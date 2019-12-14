@@ -2,8 +2,8 @@ package gui.font;
 
 import graphics.Shader;
 import main.ArrayUtils;
-import gui.IGUITextComponent;
 import math.Matrix4f;
+import gui.IGUITextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

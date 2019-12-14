@@ -4,11 +4,10 @@ import event.EventType;
 import event.KeyEvent;
 import event.MouseScrolledEvent;
 import gameobject.Player;
-import org.jetbrains.annotations.NotNull;
 import physics.PlayerMovementType;
 import world.World;
+import org.jetbrains.annotations.NotNull;
 
-import static main.Application.MAIN_LOGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_B;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
@@ -116,7 +115,7 @@ public class EventHandler
             if (event.keyCode == GLFW_KEY_B)
             {
                 window.setVSync(!window.VSyncOn());
-                MAIN_LOGGER.info("VSync: " + window.VSyncOn());
+                Application.MAIN_LOGGER.info("VSync: " + window.VSyncOn());
             }
         }
     }

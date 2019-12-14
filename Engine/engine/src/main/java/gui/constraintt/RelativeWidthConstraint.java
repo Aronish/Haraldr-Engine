@@ -1,6 +1,6 @@
 package gui.constraintt;
 
-import static main.Application.MAIN_LOGGER;
+import main.Application;
 
 public class RelativeWidthConstraint extends Constraint
 {
@@ -38,7 +38,7 @@ public class RelativeWidthConstraint extends Constraint
                         windowWidth * offsetX,                                  windowHeight * offsetY + height
                 };
             default:
-                MAIN_LOGGER.error("Unknown alignment constraint direction!");
+                Application.MAIN_LOGGER.error("Unknown alignment constraint direction!");
                 return null;
         }
     }

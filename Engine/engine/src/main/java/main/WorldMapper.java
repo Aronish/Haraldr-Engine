@@ -1,5 +1,6 @@
 package main;
 
+import gameobject.GameObject;
 import gameobject.tile.Tile;
 import gameobject.tile.TileTree;
 import world.Grid;

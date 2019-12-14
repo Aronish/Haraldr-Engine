@@ -1,24 +1,24 @@
 package layer;
 
-import event.Event;
-import event.EventType;
-import event.GUIToggledEvent;
-import event.KeyEvent;
-import event.MouseScrolledEvent;
 import gameobject.IBackground;
 import gameobject.Player;
 import gameobject.tile.Tile;
 import graphics.Renderer;
 import graphics.Shader;
+import event.Event;
+import event.EventType;
+import event.GUIToggledEvent;
+import event.KeyEvent;
+import event.MouseScrolledEvent;
+import physics.CollisionDetector;
+import world.Grid;
+import world.World;
 import main.Camera;
 import main.EventHandler;
 import main.Window;
 import math.Vector2f;
 import math.Vector3f;
 import org.jetbrains.annotations.NotNull;
-import physics.CollisionDetector;
-import world.Grid;
-import world.World;
 
 import java.util.ArrayList;
 import java.util.List;

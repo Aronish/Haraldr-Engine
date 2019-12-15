@@ -1,6 +1,6 @@
+//Load resources using <class>.class.getModule().getResource*(); required with modules.
 module Engine.engine
 {
-    //Load resources using <class>.class.getModule().getResource*(); required with modules.
     requires org.jetbrains.annotations;
 
     //LWJGL
@@ -16,6 +16,12 @@ module Engine.engine
     requires org.lwjgl.stb.natives;
     //Misc
     requires java.desktop;
-
-    opens graphics;
+    ///// EXPORTS ///////////////////////
+    exports engine.main;
+    exports engine.debug;
+    exports engine.graphics;
+    exports engine.event;
+    exports engine.layer;
+    exports engine.math;
+    exports engine.physics;
 }

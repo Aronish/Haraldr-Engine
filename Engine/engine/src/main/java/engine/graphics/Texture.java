@@ -1,6 +1,7 @@
 package engine.graphics;
 
 import engine.gui.font.Font;
+import engine.main.EntryPoint;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
@@ -60,7 +61,7 @@ public class Texture
         int[] pixels = null;
         try
         {
-            InputStream imageStream = Texture.class.getModule().getResourceAsStream(path);
+            InputStream imageStream = EntryPoint.application.getClass().getModule().getResourceAsStream(path);
             if (imageStream == null)
             {
                 throw new NullPointerException("Texture not found!");

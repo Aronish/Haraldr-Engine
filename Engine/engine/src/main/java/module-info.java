@@ -1,4 +1,14 @@
-//Load resources using <class>.class.getModule().getResource*(); required with modules.
+/**
+ *  Resource Loading In Java 9+:
+ *  If a module using the engine wants to use resource loading functions in the engine module:
+ *      - Make a resource root
+ *      - Open the folders in the resource root in module-info.java using 'opens'
+ *
+ *  Info about engine:
+ *  To properly be able to load resources from client modules, the engine needs to access the classloader
+ *  of a class which has a subclass in the client. This will always be EntryPoint#application.
+ *  EntryPoint.application.getClass().getModule().getResource*();
+ */
 module Engine.engine
 {
     requires org.jetbrains.annotations;

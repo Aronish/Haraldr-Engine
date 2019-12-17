@@ -31,7 +31,7 @@ import static org.lwjgl.opengl.GL45.glCreateVertexArrays;
  */
 public class TextRenderer
 {
-    private static final Shader FONT_SHADER = new Shader("shaders/font");
+    private static final Shader FONT_SHADER = new Shader("engine/graphics/shaders/font");
 
     private static int textVAO = glCreateVertexArrays(), textVBO = glGenBuffers(), textEBO = glGenBuffers(), textMatrixBuffer = glGenBuffers();
     private static List<Float> vertexData = new ArrayList<>(), matrices = new ArrayList<>();

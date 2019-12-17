@@ -1,5 +1,6 @@
 package engine.graphics;
 
+import engine.main.EntryPoint;
 import engine.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,7 +91,7 @@ public class Shader
     private String readShaderFile(String path)
     {
         StringBuilder sb = new StringBuilder();
-        try (InputStream file = Shader.class.getModule().getResourceAsStream(path))
+        try (InputStream file = EntryPoint.application.getClass().getModule().getResourceAsStream(path))
         {
             if (file == null)
             {

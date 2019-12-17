@@ -5,4 +5,7 @@ module oldgame
     requires org.lwjgl.glfw;
     requires java.desktop;
     requires Engine.engine;
+
+    opens textures;
+    opens shaders;
 }

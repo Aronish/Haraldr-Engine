@@ -1,6 +1,5 @@
 package engine.graphics;
 
-import engine.gui.font.Font;
 import engine.main.EntryPoint;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
@@ -99,13 +98,13 @@ public class Texture
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        //glGenerateMipmap(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, 0);
         return result;
     }
 
     private int loadSTB(String path)
     {
+        /*
         ByteBuffer data = null;
         STBImage.stbi_set_flip_vertically_on_load(true);
         try(MemoryStack stack = stackPush())
@@ -128,17 +127,6 @@ public class Texture
         }
         if (data == null) throw new RuntimeException("Data was null!");
 
-        /*
-        int texture = glCreateTextures(GL_TEXTURE_2D);
-        glTextureStorage2D(texture, 0, GL_RGBA8, width, height);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-        glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        */
-
         int result = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, result);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -146,11 +134,10 @@ public class Texture
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        //glGenerateMipmap(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, 0);
 
         STBImage.stbi_image_free(data);
-
+        */
         return texture;
     }
 

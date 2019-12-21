@@ -1,5 +1,7 @@
 package engine.event;
 
+import static engine.main.EntryPoint.bit;
+
 public enum EventCategory
 {
     CATEGORY_INPUT      (bit(0)),
@@ -13,10 +15,5 @@ public enum EventCategory
     EventCategory(int bitFlag)
     {
         this.bitFlag = bitFlag;
-    }
-
-    public static int bit(int x)
-    {
-        return 1 << x;
     }
 }

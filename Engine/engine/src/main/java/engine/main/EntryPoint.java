@@ -41,4 +41,9 @@ public abstract class EntryPoint
         int xi = (int) x;
         return xi < x ? xi + 1 : xi;
     }
+
+    public static int bit(int x)
+    {
+        return 1 << x;
+    }
 }

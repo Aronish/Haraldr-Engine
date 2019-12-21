@@ -1,6 +1,6 @@
 package oldgame.graphics;
 
-import engine.graphics.Renderer;
+import engine.graphics.Renderer2D;
 import engine.graphics.Shader;
 import engine.main.Camera;
 import engine.math.Matrix4f;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
-public class GameRenderer extends Renderer
+public class GameRenderer2D extends Renderer2D
 {
     public static RenderSystem renderSystem;
 
@@ -36,7 +36,7 @@ public class GameRenderer extends Renderer
 
     public static void render(@NotNull Camera camera, @NotNull Shader shader, @NotNull Entity entity)
     {
-        shader.use();
+        shader.bind();
         shader.setMatrix(entity.getMatrixArray(), "matrix");
         shader.setMatrix(camera.getViewMatrix().matrix, "view");
         shader.setMatrix(Matrix4f.orthographic.matrix, "projection");

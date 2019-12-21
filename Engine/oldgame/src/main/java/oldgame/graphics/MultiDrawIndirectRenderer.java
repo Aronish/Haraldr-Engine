@@ -1,7 +1,5 @@
 package oldgame.graphics;
 
-import oldgame.gameobject.GameObject;
-import engine.graphics.Shader;
 import engine.graphics.ShaderDataType;
 import engine.graphics.VertexArray;
 import engine.graphics.VertexBuffer;
@@ -10,6 +8,7 @@ import engine.graphics.VertexBufferLayout;
 import engine.main.ArrayUtils;
 import engine.main.Camera;
 import engine.math.Matrix4f;
+import oldgame.gameobject.GameObject;
 import oldgame.world.Grid;
 import org.jetbrains.annotations.NotNull;
 
@@ -99,10 +98,10 @@ public class MultiDrawIndirectRenderer implements RenderSystem
     @Override
     public void renderGridCells(@NotNull Camera camera, List<Grid.GridCell> gridCells)
     {
-        Shader.MULTI_DRAW_SHADER.use();
-        Shader.MULTI_DRAW_SHADER.setMatrix(camera.getViewMatrix().matrix, "view");
-        Shader.MULTI_DRAW_SHADER.setMatrix(Matrix4f.orthographic.matrix, "projection");
-        /////COLLECT MATRICES//////////////////////////////////////////////
+        Shaders.MULTI_DRAW_SHADER.bind();
+        Shaders.MULTI_DRAW_SHADER.setMatrix(camera.getViewMatrix().matrix, "view");
+        Shaders.MULTI_DRAW_SHADER.setMatrix(Matrix4f.orthographic.matrix, "projection");
+        /////COLLECT MATRICES/////////////////////////////////////////////////////////////////
         matrices.clear();
         instanceCounts.replaceAll((key, value) -> 0);
         matrixOffsets.replaceAll((key, value) -> 0);

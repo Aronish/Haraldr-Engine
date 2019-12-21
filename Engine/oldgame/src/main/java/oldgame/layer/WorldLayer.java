@@ -5,16 +5,16 @@ import engine.event.EventType;
 import engine.event.GUIToggledEvent;
 import engine.event.KeyEvent;
 import engine.event.MouseScrolledEvent;
-import oldgame.gameobject.IBackground;
-import engine.graphics.Shader;
 import engine.layer.Layer;
 import engine.main.Window;
 import engine.math.Vector2f;
 import engine.math.Vector3f;
+import oldgame.gameobject.IBackground;
 import oldgame.gameobject.Player;
 import oldgame.gameobject.tile.Tile;
-import oldgame.graphics.GameRenderer;
+import oldgame.graphics.GameRenderer2D;
 import oldgame.graphics.Models;
+import oldgame.graphics.Shaders;
 import oldgame.main.EventHandler;
 import oldgame.main.GameCamera;
 import oldgame.physics.CollisionDetector;
@@ -56,8 +56,8 @@ public class WorldLayer extends Layer
     public void onRender()
     {
         Models.SPRITE_SHEET.bind();
-        GameRenderer.renderSystem.renderGridCells(camera, visibleGridCells);
-        GameRenderer.render(camera, Shader.SHADER, player);
+        GameRenderer2D.renderSystem.renderGridCells(camera, visibleGridCells);
+        GameRenderer2D.render(camera, Shaders.SHADER, player);
     }
 
     @Override

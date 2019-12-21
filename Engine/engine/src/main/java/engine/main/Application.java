@@ -8,8 +8,7 @@ import engine.event.EventType;
 import engine.event.IEventCallback;
 import engine.event.KeyPressedEvent;
 import engine.event.WindowResizedEvent;
-import engine.graphics.Renderer;
-import engine.graphics.Shader;
+import engine.graphics.Renderer2D;
 import engine.layer.Layer;
 import engine.layer.LayerStack;
 import engine.math.Matrix4f;
@@ -60,7 +59,7 @@ public abstract class Application
         EventDispatcher.addCallback(new EventCallback());
         /////INIT//////////
         Matrix4f.init(window.getWidth(), window.getHeight());
-        Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
+        Renderer2D.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
 
         layerStack = new LayerStack();
 
@@ -106,7 +105,7 @@ public abstract class Application
 
     private void render()
     {
-        Renderer.clear();
+        Renderer2D.clear();
         layerStack.reverseIterator().forEachRemaining(Layer::onRender);
         glfwSwapBuffers(window.getWindowHandle());
     }
@@ -149,7 +148,6 @@ public abstract class Application
 
     public void dispose()
     {
-        Shader.dispose();
         glfwTerminate();
     }
 }

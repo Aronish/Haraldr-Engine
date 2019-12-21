@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Camera
 {
-    private final float[] zooms = { 0.125f, 0.25f, 0.5f, 1.0f, 2.0f, 4.0f };
+    private static final float[] zooms = { 0.125f, 0.25f, 0.5f, 1.0f, 2.0f, 4.0f };
 
     private Matrix4f viewMatrix;
 

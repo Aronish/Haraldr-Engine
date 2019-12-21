@@ -1,6 +1,7 @@
 package engine.graphics;
 
 import engine.main.EntryPoint;
+import engine.math.Matrix4f;
 import engine.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,12 +31,6 @@ import static org.lwjgl.opengl.GL46.glValidateProgram;
  */
 public class Shader
 {
-    public static final Shader SHADER = new Shader("shaders/shader");
-    public static final Shader INSTANCED_SHADER = new Shader("shaders/instanced_shader.vert", "shaders/shader.frag");
-    public static final Shader FLAT_COLOR_SHADER = new Shader("shaders/flat_shader");
-    public static final Shader MULTI_DRAW_SHADER = new Shader("shaders/indirect_shader");
-    public static final Shader COMBINED_SHADER = new Shader("shaders/combined");
-
     private int shaderProgram;
     private Map<String, Integer> uniformLocations = new HashMap<>();
 
@@ -49,7 +44,8 @@ public class Shader
         this(generalShaderPath + ".vert", generalShaderPath + ".frag");
     }
 
-    Shader(String vertexShaderPath, String fragmentShaderPath)
+    //TODO: Add DEBUG argument for showing debug output and logs.
+    public Shader(String vertexShaderPath, String fragmentShaderPath)
     {
         int vertexShader = createShader(GL_VERTEX_SHADER, readShaderFile(vertexShaderPath));
         int fragmentShader = createShader(GL_FRAGMENT_SHADER, readShaderFile(fragmentShaderPath));
@@ -115,13 +111,13 @@ public class Shader
      * @param matrix the matrix data.
      * @param name the name of the mat4 uniform.
      */
-    public void setMatrix(float[] matrix, String name)
+    public void setMatrix(Matrix4f matrix, String name)
     {
         if (!uniformLocations.containsKey(name))
         {
             uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
         }
-        glUniformMatrix4fv(uniformLocations.get(name), false, matrix);
+        glUniformMatrix4fv(uniformLocations.get(name), false, matrix.matrix);
     }
 
     public void setVector4f(Vector4f vector4f, String name)
@@ -133,26 +129,19 @@ public class Shader
         glUniform4f(uniformLocations.get(name), vector4f.getX(), vector4f.getY(), vector4f.getZ(), vector4f.getW());
     }
 
-    public void use()
+    public void bind()
     {
         glUseProgram(shaderProgram);
     }
 
-    private void unuse()
+    public void unbind()
     {
         glUseProgram(0);
     }
 
-    private void delete()
+    public void delete()
     {
-        unuse();
+        unbind();
         glDeleteProgram(shaderProgram);
-    }
-
-    public static void dispose()
-    {
-        SHADER.delete();
-        INSTANCED_SHADER.delete();
-        FLAT_COLOR_SHADER.delete();
     }
 }

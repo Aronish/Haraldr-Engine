@@ -1,7 +1,5 @@
 package oldgame.graphics;
 
-import oldgame.gameobject.GameObject;
-import engine.graphics.Shader;
 import engine.graphics.ShaderDataType;
 import engine.graphics.VertexBuffer;
 import engine.graphics.VertexBufferElement;
@@ -9,6 +7,7 @@ import engine.graphics.VertexBufferLayout;
 import engine.main.ArrayUtils;
 import engine.main.Camera;
 import engine.math.Matrix4f;
+import oldgame.gameobject.GameObject;
 import oldgame.world.Grid;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,9 +55,9 @@ public class InstancedRenderer implements RenderSystem
     @Override
     public void renderGridCells(@NotNull Camera camera, List<Grid.GridCell> gridCells)
     {
-        Shader.INSTANCED_SHADER.use();
-        Shader.INSTANCED_SHADER.setMatrix(camera.getViewMatrix().matrix, "view");
-        Shader.INSTANCED_SHADER.setMatrix(Matrix4f.orthographic.matrix, "projection");
+        Shaders.INSTANCED_SHADER.bind();
+        Shaders.INSTANCED_SHADER.setMatrix(camera.getViewMatrix().matrix, "view");
+        Shaders.INSTANCED_SHADER.setMatrix(Matrix4f.orthographic.matrix, "projection");
         instancedMatrixBuffer.bind();
         for (GameObject gameObject : GameObject.instancedObjects)
         {

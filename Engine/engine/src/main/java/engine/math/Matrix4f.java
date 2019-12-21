@@ -122,7 +122,7 @@ public class Matrix4f
     }
 
     @NotNull
-    private static Matrix4f translate(Vector3f vector, boolean isCamera)
+    public static Matrix4f translate(Vector3f vector, boolean isCamera)
     {
         Matrix4f result = identity();
         if (isCamera)

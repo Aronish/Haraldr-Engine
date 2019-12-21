@@ -4,6 +4,7 @@
     <root id="archive" name="oldgame.jar">
       <element id="module-output" name="oldgame" />
       <element id="module-output" name="Engine.engine" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/annotations/17.0.0/annotations-17.0.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/lwjgl-release-3.2.3-custom/lwjgl.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/lwjgl-release-3.2.3-custom/lwjgl-egl.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/lwjgl-release-3.2.3-custom/lwjgl-lz4.jar" path-in-jar="/" />
@@ -150,8 +151,6 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/lwjgl-release-3.2.3-custom/lwjgl-remotery-natives-windows.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/lwjgl-release-3.2.3-custom/lwjgl-rpmalloc-natives-windows.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/lwjgl-release-3.2.3-custom/lwjgl-libdivide-natives-windows.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/annotations/17.0.0/annotations-17.0.0.jar" path-in-jar="/" />
-      <element id="dir-copy" path="$PROJECT_DIR$/oldgame/src/main/resources" />
     </root>
   </artifact>
 </component>

@@ -72,12 +72,12 @@ public class Window
      * @param width the window width, in pixels.
      * @param height the window height, in pixels.
      * @param fullscreen whether the window will be fullscreen upon creation.
-     * @param VSync whether the window will have VSync turned on upon creation.
+     * @param vSync whether the window will have VSync turned on upon creation.
      */
-    Window(int width, int height, boolean fullscreen, boolean VSync)
+    Window(int width, int height, boolean fullscreen, boolean vSync)
     {
         isFullscreen = fullscreen;
-        VSyncOn = VSync;
+        VSyncOn = vSync;
 
         if (!glfwInit())
         {
@@ -125,7 +125,7 @@ public class Window
         GL.createCapabilities();
 
         setCursorVisible(false);
-        setVSync(VSync);
+        setVSync(vSync);
         ///// CALLBACKS ///////////////////////////////
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
             if (action == GLFW_PRESS){

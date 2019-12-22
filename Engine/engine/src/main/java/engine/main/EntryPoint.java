@@ -13,7 +13,7 @@ public abstract class EntryPoint
 {
     // Cannot have static abstract methods, therefore a static initializer is the only option.
     public static Application application;
-    protected static ArgumentValidator argumentValidator;
+    protected static ArgumentValidator argumentValidator = new ArgumentValidator() {};
 
     public static void main(@NotNull String[] args) throws Exception
     {
@@ -23,7 +23,7 @@ public abstract class EntryPoint
 
         argumentValidator.validateArguments(args);
 
-        if (application == null) MAIN_LOGGER.fatal(new IllegalStateException("Client codebase must supply an Application!"));
+        if (application == null) MAIN_LOGGER.fatal(new IllegalStateException("Client codebase must supply an Application!\n(Through static initializer in EntryPoint subclass.)"));
         application.start();
         application.dispose();
     }

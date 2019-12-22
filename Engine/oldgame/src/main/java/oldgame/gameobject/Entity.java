@@ -55,6 +55,11 @@ public abstract class Entity
         return matrix.matrix;
     }
 
+    public Matrix4f getMatrix()
+    {
+        return matrix;
+    }
+
     public Vector3f getPosition()
     {
         return position;

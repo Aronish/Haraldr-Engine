@@ -1,6 +1,6 @@
 package oldgame.physics;
 
-import engine.main.Camera;
+import engine.main.OrthograhpicCamera;
 import engine.math.Vector3f;
 import oldgame.gameobject.Player;
 import oldgame.gameobject.tile.Tile;
@@ -17,7 +17,7 @@ public class CollisionDetector
      * @param tile the Entity, whose TexturedModel is currently checked.
      * @param player the Player to check collisions with.
      */
-    public static void doCollisions(Camera camera, Tile tile, Player player)
+    public static void doCollisions(OrthograhpicCamera camera, Tile tile, Player player)
     {
         if (checkCollision(tile, player))
         {
@@ -65,7 +65,7 @@ public class CollisionDetector
      * @param collisionDataMap the data pair with direction and overlap distance.
      * @param player the player that collided.
      */
-    private static void resolveCollision(Camera camera, @NotNull CollisionDataMap collisionDataMap, Player player)
+    private static void resolveCollision(OrthograhpicCamera camera, @NotNull CollisionDataMap collisionDataMap, Player player)
     {
         float inside = collisionDataMap.getInside();
         switch (collisionDataMap.getCollisionDirection())

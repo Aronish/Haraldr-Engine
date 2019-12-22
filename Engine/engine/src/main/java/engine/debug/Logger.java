@@ -83,7 +83,6 @@ public class Logger
     public void fatal(@NotNull Exception exception) throws Exception
     {
         setFatalLevel();
-        log(exception.getMessage());
         throw exception;
     }
 

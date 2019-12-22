@@ -4,7 +4,7 @@ import engine.event.EventType;
 import engine.event.KeyEvent;
 import engine.event.MouseScrolledEvent;
 import engine.main.Application;
-import engine.main.Camera;
+import engine.main.OrthograhpicCamera;
 import engine.main.Window;
 import oldgame.gameobject.Player;
 import oldgame.physics.PlayerMovementType;
@@ -37,7 +37,7 @@ public class EventHandler
      * @param player the current player.
      * @param world the current world
      */
-    public void processInput(Camera camera, long window, @NotNull Player player, World world)
+    public void processInput(GameCamera camera, long window, @NotNull Player player, World world)
     {
         player.setMovementType(PlayerMovementType.STAND);
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != 0)
@@ -123,7 +123,7 @@ public class EventHandler
         }
     }
 
-    public void processScrollEvent(@NotNull MouseScrolledEvent event, Camera camera)
+    public void processScrollEvent(@NotNull MouseScrolledEvent event, GameCamera camera)
     {
         if (event.yOffset < 0)
         {

@@ -1,6 +1,6 @@
 package oldgame.gameobject;
 
-import engine.main.Camera;
+import engine.main.OrthograhpicCamera;
 import engine.math.Vector2f;
 import engine.math.Vector3f;
 import oldgame.physics.PlayerMovementType;
@@ -88,14 +88,14 @@ public class Player extends MovableEntity
     }
 
     @Override
-    public void update(Camera camera, float deltaTime)
+    public void update(OrthograhpicCamera camera, float deltaTime)
     {
         super.update(camera, deltaTime);
         gridPosition.set((float) fastFloor(getPosition().getX() / GRID_SIZE), (float) fastFloor(getPosition().getY() / GRID_SIZE));
     }
 
     @Override
-    public void calculateMotion(Camera camera, float deltaTime)
+    public void calculateMotion(OrthograhpicCamera camera, float deltaTime)
     {
         ///// WALKING ///////////////////////////
         if (movementType != PlayerMovementType.STAND)

@@ -35,14 +35,11 @@ public abstract class Application
 {
     public static final Logger MAIN_LOGGER = new Logger("Main");
 
-    protected LayerStack layerStack;
+    private boolean initialized = false;
+    protected LayerStack layerStack = new LayerStack();
     private Window window;
 
-    public void start()
-    {
-        init();
-        loop();
-    }
+    public abstract void start();
 
     private void stop(@NotNull Event event)
     {
@@ -50,18 +47,14 @@ public abstract class Application
         event.setHandled(true);
     }
 
-    protected void init()
+    protected void init(int windowWidth, int windowHeight, boolean fullscreen, boolean vSync)
     {
         /////WINDOW//////////////////////////////////////////////////////////////
-        window = new Window(1280, 720, false, false);
+        window = new Window(windowWidth, windowHeight, fullscreen, vSync);
         /////OPENGL CODE WON'T WORK BEFORE THIS//////////////////////////////////
         window.setEventCallback(new EventCallback());
         EventDispatcher.addCallback(new EventCallback());
-        /////INIT//////////
         Matrix4f.init(window.getWidth(), window.getHeight());
-        Renderer2D.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
-
-        layerStack = new LayerStack();
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -72,6 +65,7 @@ public abstract class Application
         }, 0);
 
         glfwShowWindow(window.getWindowHandle());
+        initialized = true;
     }
 
     public class EventCallback implements IEventCallback
@@ -110,8 +104,9 @@ public abstract class Application
         glfwSwapBuffers(window.getWindowHandle());
     }
 
-    private void loop()
+    protected void loop()
     {
+        if (!initialized) throw new IllegalStateException("Application was not initialized before main loop start!");
         double frameRate = 60.0d;
         double updatePeriod = 1.0d / frameRate;
         double currentTime = glfwGetTime();

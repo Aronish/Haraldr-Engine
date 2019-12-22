@@ -5,7 +5,7 @@ import engine.graphics.VertexBuffer;
 import engine.graphics.VertexBufferElement;
 import engine.graphics.VertexBufferLayout;
 import engine.main.ArrayUtils;
-import engine.main.Camera;
+import engine.main.OrthograhpicCamera;
 import engine.math.Matrix4f;
 import oldgame.gameobject.GameObject;
 import oldgame.world.Grid;
@@ -53,11 +53,11 @@ public class InstancedRenderer implements RenderSystem
     }
 
     @Override
-    public void renderGridCells(@NotNull Camera camera, List<Grid.GridCell> gridCells)
+    public void renderGridCells(@NotNull OrthograhpicCamera camera, List<Grid.GridCell> gridCells)
     {
         Shaders.INSTANCED_SHADER.bind();
-        Shaders.INSTANCED_SHADER.setMatrix(camera.getViewMatrix().matrix, "view");
-        Shaders.INSTANCED_SHADER.setMatrix(Matrix4f.orthographic.matrix, "projection");
+        Shaders.INSTANCED_SHADER.setMatrix(camera.getViewMatrix(), "view");
+        Shaders.INSTANCED_SHADER.setMatrix(Matrix4f.orthographic, "projection");
         instancedMatrixBuffer.bind();
         for (GameObject gameObject : GameObject.instancedObjects)
         {

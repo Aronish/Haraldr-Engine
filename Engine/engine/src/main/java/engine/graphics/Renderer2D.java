@@ -1,9 +1,10 @@
 package engine.graphics;
 
-import engine.main.Camera;
+import engine.main.OrthograhpicCamera;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import engine.math.Vector4f;
+import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
@@ -23,13 +24,13 @@ public class Renderer2D
         glClearColor(r, g, b, a);
     }
 
-    public static void beginScene(Camera camera)
+    public static void beginScene(@NotNull OrthograhpicCamera camera)
     {
         //Setup scene, lights and so on...
         sceneData.setViewMatrix(camera.getViewMatrix());
     }
 
-    public static void drawQuad(VertexArray quad, Vector3f position, Shader shader) //Color option?
+    public static void drawQuad(@NotNull VertexArray quad, Vector3f position, @NotNull Shader shader) //Color option?
     {
         shader.bind();
         shader.setMatrix(Matrix4f.translate(position, false), "model");
@@ -40,7 +41,7 @@ public class Renderer2D
         quad.draw();
     }
 
-    public static void drawQuad(VertexArray quad, Vector3f position, Shader shader, Vector4f color)
+    public static void drawQuad(VertexArray quad, Vector3f position, @NotNull Shader shader, Vector4f color)
     {
         shader.bind();
         shader.setMatrix(sceneData.getViewMatrix(), "view");

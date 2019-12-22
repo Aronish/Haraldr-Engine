@@ -61,22 +61,6 @@ public class Matrix4f
         return result;
     }
 
-    /*
-    /**
-     * Creates a Model-View-Projection matrix including the transformation matrix, the view matrix of the camera
-     * and and orthographic projection matrix.
-     * @param position the position in world space.
-     * @param angle the rotation around the z-axis, in degrees.
-     * @param scale the scale multiplier.
-     * @return the resulting MVP matrix.
-     */
-    /*
-    public static Matrix4f MVP(Vector3f position, float angle, Vector2f scale){
-        // Resolution must have the aspect ratio 16:9 as of now.
-        return _orthographic.multiply(Camera.viewMatrix).multiply(transform(scale.getX() == -1 ? position.add(new Vector3f(1.0f, 0.0f)) : position, angle, scale, false));
-    }
-    */
-
     /**
      * Creates a transformation/model matrix.
      * @param position the position in world space.
@@ -91,24 +75,22 @@ public class Matrix4f
         return translate(scale.getX() == -1 ? position.addReturn(new Vector3f(1.0f, 0.0f)) : position, isCamera).multiply(scale(scale));
     }
 
-    /////UNUSED WITH PIXELORTHOGRAPHIC//////////////////////////////////////////////////////////////////////
-    /*
-    public static Matrix4f transformPixelSpace(Vector3f pixelPosition, Vector2f scale, int width, int height)
-    {
-        return translate(clampToUnitSpace(pixelPosition, width, height), false).multiply(scale(scale));
-    }
+    /////UNUSED WITH PIXELORTHOGRAPHIC////////////////////////////////////////////////////////////////////////
+        private static Matrix4f transformPixelSpace(Vector3f pixelPosition, Vector2f scale, int width, int height)
+        {
+            return translate(clampToUnitSpace(pixelPosition, width, height), false).multiply(scale(scale));
+        }
 
-    private static Vector3f clampToUnitSpace(Vector3f pixelPosition, int width, int height)
-    {
-        Vector3f temp = new Vector3f(
-                (pixelPosition.getX() / width) * (2 * (fixedWidth ? FIXED_ORTHOGRAPHIC_AXIS : dynamicOrthographicAxis)) - (fixedWidth ? FIXED_ORTHOGRAPHIC_AXIS : dynamicOrthographicAxis),
-                (-pixelPosition.getY() / height) * (2 * (fixedWidth ? dynamicOrthographicAxis : FIXED_ORTHOGRAPHIC_AXIS)) + (fixedWidth ? dynamicOrthographicAxis : FIXED_ORTHOGRAPHIC_AXIS)
-        );
-        temp.printVector();
-        return temp;
-    }
-    */
-    /////UNUSED WITH PIXELORTHOGRAPHIC///////////////////////////////////////////////////////////////////////
+        private static Vector3f clampToUnitSpace(Vector3f pixelPosition, int width, int height)
+        {
+            Vector3f temp = new Vector3f(
+                    (pixelPosition.getX() / width) * (2 * (fixedWidth ? FIXED_ORTHOGRAPHIC_AXIS : dynamicOrthographicAxis)) - (fixedWidth ? FIXED_ORTHOGRAPHIC_AXIS : dynamicOrthographicAxis),
+                    (-pixelPosition.getY() / height) * (2 * (fixedWidth ? dynamicOrthographicAxis : FIXED_ORTHOGRAPHIC_AXIS)) + (fixedWidth ? dynamicOrthographicAxis : FIXED_ORTHOGRAPHIC_AXIS)
+            );
+            temp.printVector();
+            return temp;
+        }
+    /////UNUSED WITH PIXELORTHOGRAPHIC/////////////////////////////////////////////////////////////////////////
 
     @NotNull
     private static Matrix4f scale(@NotNull Vector2f scale)
@@ -210,8 +192,6 @@ public class Matrix4f
         pixelOrthographic = orthographic(width, 0, 0, height, -NEAR_FAR, NEAR_FAR);
     }
 
-    /////UNUSED//////////////////////////////////
-    /*
     public static Matrix4f perspective(float FOV)
     {
         Matrix4f result = new Matrix4f();
@@ -227,6 +207,5 @@ public class Matrix4f
         result.matrix[11] = -((2.0f * far * near) / range);
         result.matrix[14] = -1;
         return result;
-    }*/
-    /////UNUSED//////////////////////////////////
+    }
 }

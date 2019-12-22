@@ -1,6 +1,6 @@
 package oldgame.main;
 
-import engine.main.Camera;
+import engine.main.OrthograhpicCamera;
 import engine.main.EntryPoint;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
@@ -10,11 +10,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * TEMPORARY
- */
-public class GameCamera extends Camera
+public class GameCamera extends OrthograhpicCamera
 {
+    private static final float[] zooms = { 0.125f, 0.25f, 0.5f, 1.0f, 2.0f, 4.0f };
+
+    private int currentZoom = 2;
     private int chunkXRange, chunkYRange;
 
     public GameCamera()
@@ -25,6 +25,7 @@ public class GameCamera extends Camera
     public GameCamera(Vector3f position)
     {
         super(position);
+        scale = zooms[currentZoom];
         calculateChunkRanges();
     }
 
@@ -56,6 +57,31 @@ public class GameCamera extends Camera
         }
     }
 
+    public void zoomIn()
+    {
+        ++currentZoom;
+        if (currentZoom >= zooms.length) currentZoom = zooms.length - 1;
+        scale = zooms[currentZoom];
+        calculateViewMatrix();
+    }
+
+    public void zoomOut()
+    {
+        --currentZoom;
+        if (currentZoom < 0) currentZoom = 0;
+        scale = zooms[currentZoom];
+        calculateViewMatrix();
+        calculateChunkRanges();
+    }
+
+    public void setScale(float scale)
+    {
+        this.scale = scale;
+        scaleVector.setBoth(scale);
+        calculateViewMatrix();
+        calculateChunkRanges();
+    }
+
     public int getChunkXRange()
     {
         return chunkXRange;
@@ -64,19 +90,5 @@ public class GameCamera extends Camera
     public int getChunkYRange()
     {
         return chunkYRange;
-    }
-
-    @Override
-    public void zoomIn()
-    {
-        super.zoomIn();
-        calculateChunkRanges();
-    }
-
-    @Override
-    public void zoomOut()
-    {
-        super.zoomOut();
-        calculateChunkRanges();
     }
 }

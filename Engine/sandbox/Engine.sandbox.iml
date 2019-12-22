@@ -23,5 +23,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="lwjgl-release-3.2" level="project" />
   </component>
 </module>

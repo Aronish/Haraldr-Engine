@@ -4,12 +4,14 @@ import engine.main.EntryPoint;
 import engine.math.Matrix4f;
 import engine.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniform4f;
@@ -31,6 +33,8 @@ import static org.lwjgl.opengl.GL46.glValidateProgram;
  */
 public class Shader
 {
+    public static final Shader DEFAULT = new Shader("default_shaders/default");
+
     private int shaderProgram;
     private Map<String, Integer> uniformLocations = new HashMap<>();
 
@@ -79,31 +83,58 @@ public class Shader
     }
 
     /**
-     * Reads a shader file and creates a string with the source code.
-     * @param path the path of the file to be read.
-     * @return the source code string.
+     * Finds appropriate module to read from and reads the shader file.
+     * @param path the file path of the shader file.
+     * @return the source code of the shader in one string. Might be null.
      */
-    @NotNull
+    @Nullable
     private String readShaderFile(String path)
     {
-        StringBuilder sb = new StringBuilder();
-        try (InputStream file = EntryPoint.application.getClass().getModule().getResourceAsStream(path))
+        try (InputStream inputStream = Shader.class.getModule().getResourceAsStream(path))
         {
-            if (file == null)
+            if (inputStream == null)
             {
-                throw new NullPointerException("Shader file not found!");
+                try (InputStream inputStreamClient = EntryPoint.application.getClass().getModule().getResourceAsStream(path))
+                {
+                    if (inputStreamClient == null)
+                    {
+                        throw new NullPointerException("Shader file not found!");
+                    }
+                    else
+                    {
+                        return readToStringBuilder(inputStreamClient);
+                    }
+                }
             }
+            else
+            {
+                return readToStringBuilder(inputStream);
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @NotNull
+    private String readToStringBuilder(@NotNull InputStream file)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        try
+        {
             int data = file.read();
             while (data != -1)
             {
-                sb.append((char) data);
+                stringBuilder.append((char) data);
                 data = file.read();
             }
         }catch (IOException e)
         {
             e.printStackTrace();
         }
-        return sb.toString();
+        return stringBuilder.toString();
     }
 
     /**

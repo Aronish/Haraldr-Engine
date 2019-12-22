@@ -1,6 +1,6 @@
 package oldgame.gameobject;
 
-import engine.main.Camera;
+import engine.main.OrthograhpicCamera;
 import engine.math.Vector2f;
 import engine.math.Vector3f;
 
@@ -27,14 +27,14 @@ public abstract class MovableEntity extends Entity
      * @param camera the current camera.
      * @param deltaTime the delta time gotten from the timing circuit in Application.
      */
-    public abstract void calculateMotion(Camera camera, float deltaTime);
+    public abstract void calculateMotion(OrthograhpicCamera camera, float deltaTime);
 
     /**
      * Resets velocities and calculates the motion from factors like speed, isJumping, isRunning and isBoosting.
      * @param camera the current camera.
      * @param deltaTime the delta time gotten from the timing circuit in Main.
      */
-    public void update(Camera camera, float deltaTime)
+    public void update(OrthograhpicCamera camera, float deltaTime)
     {
         resetVelocity();
         calculateMotion(camera, deltaTime);

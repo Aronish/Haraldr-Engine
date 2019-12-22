@@ -49,6 +49,7 @@ public class Texture
         }
     }
 
+    //TODO: Needs updating to module system.
     /**
      * Reads the pixel data of the texture file and creates an OpenGL texture.
      * Could probably use stb_image.h for cleaner code, but would require weird path recognization.

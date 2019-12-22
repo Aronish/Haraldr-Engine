@@ -16,7 +16,7 @@ module Engine.engine
     //LWJGL
     requires org.lwjgl.natives;
     //GLFW
-    requires org.lwjgl.glfw;
+    requires transitive org.lwjgl.glfw;
     requires org.lwjgl.glfw.natives;
     //OpenGL
     requires org.lwjgl.opengl;
@@ -34,4 +34,6 @@ module Engine.engine
     exports engine.layer;
     exports engine.math;
     exports engine.physics;
+
+    opens default_shaders;
 }

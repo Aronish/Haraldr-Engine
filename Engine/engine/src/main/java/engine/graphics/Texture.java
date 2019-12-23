@@ -1,15 +1,12 @@
 package engine.graphics;
 
 import engine.main.EntryPoint;
-import org.lwjgl.stb.STBImage;
-import org.lwjgl.system.MemoryStack;
+import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
@@ -28,7 +25,6 @@ import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
-import static org.lwjgl.system.MemoryStack.stackPush;
 
 /**
  * Represents an OpenGL texture.
@@ -38,18 +34,16 @@ public class Texture
     private int width, height;
     private int texture;
 
-    public Texture(String path, boolean stb)
+    public Texture(int[] pixelData)
     {
-        if (stb)
-        {
-            texture = loadSTB(path);
-        }else
-        {
-            texture = load(path);
-        }
+        texture = createTexture(pixelData);
     }
 
-    //TODO: Needs updating to module system.
+    public Texture(String path)
+    {
+        texture = load(path);
+    }
+
     /**
      * Reads the pixel data of the texture file and creates an OpenGL texture.
      * Could probably use stb_image.h for cleaner code, but would require weird path recognization.
@@ -58,36 +52,53 @@ public class Texture
      */
     private int load(String path)
     {
-        int[] pixels = null;
-        try
+        /////READ TEXTURE///
+        int[] pixelData = null;
+        try (InputStream inputStreamEngine = EntryPoint.application.getClass().getModule().getResourceAsStream(path))
         {
-            InputStream imageStream = EntryPoint.application.getClass().getModule().getResourceAsStream(path);
-            if (imageStream == null)
+            if (inputStreamEngine == null)
             {
-                throw new NullPointerException("Texture not found!");
+                try (InputStream inputStreamClient = EntryPoint.application.getClass().getModule().getResourceAsStream(path))
+                {
+                    if (inputStreamClient == null)
+                    {
+                        throw new NullPointerException("Texture not found!");
+                    }
+                    else
+                    {
+                        pixelData = readToIntArray(inputStreamClient);
+                    }
+                }
             }
-            BufferedImage image = ImageIO.read(imageStream);
-            width = image.getWidth();
-            height = image.getHeight();
-            pixels = new int[width * height];
-            image.getRGB(0, 0, width, height, pixels, 0, width);
-        }catch (IOException e)
+            else
+            {
+                pixelData = readToIntArray(inputStreamEngine);
+            }
+        }
+        catch (IOException e)
         {
             e.printStackTrace();
         }
+        return createTexture(pixelData);
+    }
 
+    private int createTexture(int[] pixelData)
+    {
+        //RAW FORMAT: (ARGB)
         int[] data = new int[width * height];
-        if (pixels != null)
+        if (pixelData != null)
         {
             for (int i = 0; i < width * height; i++)
             {
-                int a = (pixels[i] & 0xff000000) >> 24;
-                int r = (pixels[i] & 0xff0000) >> 16;
-                int g = (pixels[i] & 0xff00) >> 8;
-                int b = (pixels[i] & 0xff);
+                if (pixelData[i] != 0) MAIN_LOGGER.info(pixelData[i]);
+                int a = (pixelData[i] & 0xff000000) >> 24;
+                int r = (pixelData[i] & 0xff0000) >> 16;
+                int g = (pixelData[i] & 0xff00) >> 8;
+                int b = (pixelData[i] & 0xff);
                 data[i] = a << 24 | b << 16 | g << 8 | r;
             }
-        }else
+        }
+        else
         {
             throw new IllegalStateException("Texture was not read and stored properly!");
         }
@@ -103,9 +114,10 @@ public class Texture
         return result;
     }
 
+    //STB
+    /*
     private int loadSTB(String path)
     {
-        /*
         ByteBuffer data = null;
         STBImage.stbi_set_flip_vertically_on_load(true);
         try(MemoryStack stack = stackPush())
@@ -138,8 +150,27 @@ public class Texture
         glBindTexture(GL_TEXTURE_2D, 0);
 
         STBImage.stbi_image_free(data);
-        */
         return texture;
+    }
+    */
+
+    @Nullable
+    private int[] readToIntArray(InputStream inputStream)
+    {
+        int[] pixels;
+        try
+        {
+            BufferedImage image = ImageIO.read(inputStream);
+            width = image.getWidth();
+            height = image.getHeight();
+            pixels = new int[width * height];
+            image.getRGB(0, 0, width, height, pixels, 0, width);
+            return pixels;
+        }catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public int getWidth()

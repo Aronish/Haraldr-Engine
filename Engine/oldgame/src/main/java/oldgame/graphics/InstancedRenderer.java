@@ -56,8 +56,8 @@ public class InstancedRenderer implements RenderSystem
     public void renderGridCells(@NotNull OrthograhpicCamera camera, List<Grid.GridCell> gridCells)
     {
         Shaders.INSTANCED_SHADER.bind();
-        Shaders.INSTANCED_SHADER.setMatrix(camera.getViewMatrix(), "view");
-        Shaders.INSTANCED_SHADER.setMatrix(Matrix4f.orthographic, "projection");
+        Shaders.INSTANCED_SHADER.setMatrix4f(camera.getViewMatrix(), "view");
+        Shaders.INSTANCED_SHADER.setMatrix4f(Matrix4f.orthographic, "projection");
         instancedMatrixBuffer.bind();
         for (GameObject gameObject : GameObject.instancedObjects)
         {

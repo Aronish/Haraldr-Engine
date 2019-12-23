@@ -5,7 +5,7 @@ in vec2 v_TextureCoordinates;
 uniform sampler2D sampler;
 uniform vec4 color;
 
-out o_FragmentColor;
+out vec4 o_FragmentColor;
 
 void main()
 {

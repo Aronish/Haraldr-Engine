@@ -1,5 +1,7 @@
 package oldgame.graphics;
 
+import java.util.Arrays;
+
 import static engine.main.Application.MAIN_LOGGER;
 
 public enum RenderSystemType
@@ -16,7 +18,7 @@ public enum RenderSystemType
                 return renderSystemType;
             }
         }
-        MAIN_LOGGER.fatal(new IllegalArgumentException("Unknown render system argument!"));
+        MAIN_LOGGER.fatal(new IllegalArgumentException(String.format("Unknown render system argument %s! Expected %s", argument, Arrays.toString(values()))));
         return null;
     }
 }

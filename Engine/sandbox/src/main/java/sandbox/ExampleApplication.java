@@ -16,7 +16,7 @@ class ExampleApplication extends Application
     protected void init(int windowWidth, int windowHeight, boolean fullscreen, boolean vSync)
     {
         super.init(windowWidth, windowHeight, fullscreen, vSync);
-        Renderer2D.setClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        Renderer2D.setClearColor(0.3f, 0.3f, 0.3f, 1.0f);
         layerStack.pushLayers(new ExampleLayer("Ex"));
     }
 }

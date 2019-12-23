@@ -2,6 +2,8 @@ package engine.main;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+
 import static engine.main.Application.MAIN_LOGGER;
 
 /**
@@ -14,6 +16,7 @@ public abstract class EntryPoint
     // Cannot have static abstract methods, therefore a static initializer is the only option.
     public static Application application;
     protected static ArgumentValidator argumentValidator = new ArgumentValidator() {};
+    public static boolean DEBUG = false;
 
     public static void main(@NotNull String[] args) throws Exception
     {
@@ -21,7 +24,19 @@ public abstract class EntryPoint
         for (String s : args) { System.out.print(s + " "); }
         System.out.println();
 
-        argumentValidator.validateArguments(args);
+        if (args.length != 0)
+        {
+            if (args[0].equals("DEBUG"))
+            {
+                MAIN_LOGGER.info("Debug Mode Enabled!");
+                DEBUG = true;
+                argumentValidator.validateArguments(Arrays.copyOfRange(args, 1, args.length));
+            }
+            else
+            {
+                argumentValidator.validateArguments(args);
+            }
+        }
 
         if (application == null) MAIN_LOGGER.fatal(new IllegalStateException("Client codebase must supply an Application!\n(Through static initializer in EntryPoint subclass.)"));
         application.start();

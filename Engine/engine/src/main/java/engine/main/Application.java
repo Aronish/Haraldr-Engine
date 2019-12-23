@@ -28,6 +28,7 @@ import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
 import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
 import static org.lwjgl.system.MemoryUtil.memUTF8;
 
@@ -58,11 +59,15 @@ public abstract class Application
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        //glEnable(GL_DEBUG_OUTPUT);
-        glDebugMessageCallback((source, type, id, severity, length, message, userparam) -> {
-            System.out.println("Source: " + Integer.toHexString(source) + "\nType: " + Integer.toHexString(type) + "\nSeverity: " + Integer.toHexString(severity) + "\nLength: " + length);
-            System.out.println(memUTF8(message) + "\n");
-        }, 0);
+
+        if (EntryPoint.DEBUG)
+        {
+            glEnable(GL_DEBUG_OUTPUT);
+            glDebugMessageCallback((source, type, id, severity, length, message, userparam) -> {
+                System.out.println("Source: " + Integer.toHexString(source) + "\nType: " + Integer.toHexString(type) + "\nSeverity: " + Integer.toHexString(severity) + "\nLength: " + length);
+                System.out.println(memUTF8(message) + "\n");
+            }, 0);
+        }
 
         glfwShowWindow(window.getWindowHandle());
         initialized = true;

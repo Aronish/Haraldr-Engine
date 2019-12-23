@@ -37,9 +37,9 @@ public class GameRenderer2D extends Renderer2D
     public static void render(@NotNull OrthograhpicCamera camera, @NotNull Shader shader, @NotNull Entity entity)
     {
         shader.bind();
-        shader.setMatrix(entity.getMatrix(), "matrix");
-        shader.setMatrix(camera.getViewMatrix(), "view");
-        shader.setMatrix(Matrix4f.orthographic, "projection");
+        shader.setMatrix4f(entity.getMatrix(), "matrix");
+        shader.setMatrix4f(camera.getViewMatrix(), "view");
+        shader.setMatrix4f(Matrix4f.orthographic, "projection");
         entity.getGameObjectType().getModel().getVertexArray().bind();
         entity.getGameObjectType().getModel().getVertexArray().draw();
 

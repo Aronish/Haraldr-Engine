@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Models
 {
-    public static final Texture SPRITE_SHEET = new Texture("textures/sprite_sheet_2.png", false);
+    public static final Texture SPRITE_SHEET = new Texture("textures/sprite_sheet_2.png");
     private static final float SPRITE_SHEET_SIZE = SPRITE_SHEET.getWidth();
     private static final float SPRITE_SIZE = 16;
 

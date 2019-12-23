@@ -4,6 +4,12 @@ import engine.physics.AABB;
 
 public class Model
 {
+    //Winding order: Clockwise starting at top-left.
+    private static final int[] quadIndices = {
+            0, 1, 2,
+            0, 2, 3
+    };
+
     private VertexArray vertexArray;
     private AABB aabb;
 
@@ -15,7 +21,7 @@ public class Model
 
     private void setVertexArray(float[] data, VertexBufferLayout layout)
     {
-        vertexArray = new VertexArray();
+        vertexArray = new VertexArray(quadIndices);
         VertexBuffer vertexBuffer = new VertexBuffer(data, layout, false);
         vertexArray.setVertexBuffer(vertexBuffer);
     }

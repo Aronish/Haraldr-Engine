@@ -26,33 +26,35 @@ public class Renderer2D
 
     public static void beginScene(@NotNull OrthograhpicCamera camera)
     {
-        //Setup scene, lights and so on...
         sceneData.setViewMatrix(camera.getViewMatrix());
     }
 
-    public static void drawQuad(@NotNull VertexArray quad, Vector3f position, @NotNull Shader shader) //Color option?
+    public static void drawQuad(Vector3f position, @NotNull Shader shader)
     {
-        shader.bind();
-        shader.setMatrix(Matrix4f.translate(position, false), "model");
-        shader.setMatrix(sceneData.getViewMatrix(), "view");
-        shader.setMatrix(Matrix4f.orthographic, "projection");
-
-        quad.bind();
-        quad.draw();
+        drawQuad(position, shader, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
     }
 
-    public static void drawQuad(VertexArray quad, Vector3f position, @NotNull Shader shader, Vector4f color)
+    public static void drawQuad(Vector3f position, @NotNull Shader shader, Vector4f color)
     {
         shader.bind();
-        shader.setMatrix(sceneData.getViewMatrix(), "view");
-        shader.setMatrix(Matrix4f.orthographic, "projection");
+        shader.setMatrix4f(Matrix4f.translate(position, false), "model");
+        shader.setMatrix4f(sceneData.getViewMatrix(), "view");
+        shader.setMatrix4f(Matrix4f.orthographic, "projection");
         shader.setVector4f(color, "color");
 
-
+        SceneData.QUAD.bind();
+        SceneData.QUAD.draw();
     }
 
-    public static void drawQuad(VertexArray quad, Vector3f position, Shader shader, Texture texture)
+    public static void drawQuad(Vector3f position, Shader shader, Texture texture)
     {
+        shader.bind();
+        texture.bind();
+        shader.setMatrix4f(Matrix4f.translate(position, false), "model");
+        shader.setMatrix4f(sceneData.getViewMatrix(), "view");
+        shader.setMatrix4f(Matrix4f.orthographic, "projection");
 
+        SceneData.QUAD.bind();
+        SceneData.QUAD.draw();
     }
 }

@@ -99,8 +99,8 @@ public class MultiDrawIndirectRenderer implements RenderSystem
     public void renderGridCells(@NotNull OrthograhpicCamera camera, List<Grid.GridCell> gridCells)
     {
         Shaders.MULTI_DRAW_SHADER.bind();
-        Shaders.MULTI_DRAW_SHADER.setMatrix(camera.getViewMatrix(), "view");
-        Shaders.MULTI_DRAW_SHADER.setMatrix(Matrix4f.orthographic, "projection");
+        Shaders.MULTI_DRAW_SHADER.setMatrix4f(camera.getViewMatrix(), "view");
+        Shaders.MULTI_DRAW_SHADER.setMatrix4f(Matrix4f.orthographic, "projection");
         /////COLLECT MATRICES/////////////////////////////////////////////////////////////////
         matrices.clear();
         instanceCounts.replaceAll((key, value) -> 0);

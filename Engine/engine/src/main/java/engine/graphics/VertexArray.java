@@ -20,23 +20,14 @@ import static org.lwjgl.opengl.GL45.glCreateVertexArrays;
 
 public class VertexArray
 {
-    //Winding order: Clockwise starting at top-left.
-    private static final int[] defaultIndices = {
-            0, 1, 2,
-            0, 2, 3
-    };
-
     private int vertexArrayID;
     private int nextAttribIndex = 0;
     private VertexBuffer vertexBuffer; //TODO Add support for multiple.
-
-    public VertexArray()
-    {
-        this(defaultIndices);
-    }
+    private int numIndices;
 
     public VertexArray(int[] indices)
     {
+        numIndices = indices.length;
         vertexArrayID = glCreateVertexArrays();
         int indexBufferID = glCreateBuffers();
         glBindVertexArray(vertexArrayID);
@@ -71,12 +62,12 @@ public class VertexArray
 
     public void draw()
     {
-        glDrawElements(GL_TRIANGLES, defaultIndices.length, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
     }
 
     public void drawInstanced(int count)
     {
-        glDrawElementsInstanced(GL_TRIANGLES, defaultIndices.length, GL_UNSIGNED_INT, 0, count);
+        glDrawElementsInstanced(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0, count);
     }
 
     public void multiDrawIndirect(int count)

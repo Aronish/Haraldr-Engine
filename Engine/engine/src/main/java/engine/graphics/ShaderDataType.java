@@ -2,6 +2,7 @@ package engine.graphics;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 
+@SuppressWarnings("unused")
 public enum ShaderDataType
 {
     FLOAT2  (2, GL_FLOAT, 4),

@@ -10,6 +10,7 @@ import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
+@SuppressWarnings("unused")
 public class Renderer2D
 {
     private static SceneData sceneData = new SceneData();
@@ -37,6 +38,7 @@ public class Renderer2D
     public static void drawQuad(Vector3f position, @NotNull Shader shader, Vector4f color)
     {
         shader.bind();
+        SceneData.defaultTexture.bind();
         shader.setMatrix4f(Matrix4f.translate(position, false), "model");
         shader.setMatrix4f(sceneData.getViewMatrix(), "view");
         shader.setMatrix4f(Matrix4f.orthographic, "projection");
@@ -46,13 +48,19 @@ public class Renderer2D
         SceneData.QUAD.draw();
     }
 
-    public static void drawQuad(Vector3f position, Shader shader, Texture texture)
+    public static void drawQuad(Vector3f position, @NotNull Shader shader, @NotNull Texture texture)
+    {
+        drawQuad(position, shader, texture, new Vector4f(1.0f));
+    }
+
+    public static void drawQuad(Vector3f position, @NotNull Shader shader, @NotNull Texture texture, Vector4f tintColor)
     {
         shader.bind();
         texture.bind();
         shader.setMatrix4f(Matrix4f.translate(position, false), "model");
         shader.setMatrix4f(sceneData.getViewMatrix(), "view");
         shader.setMatrix4f(Matrix4f.orthographic, "projection");
+        shader.setVector4f(tintColor, "color");
 
         SceneData.QUAD.bind();
         SceneData.QUAD.draw();

@@ -1,5 +1,6 @@
 package engine.graphics;
 
+@SuppressWarnings("WeakerAccess")
 public class VertexBufferElement
 {
     private ShaderDataType type;

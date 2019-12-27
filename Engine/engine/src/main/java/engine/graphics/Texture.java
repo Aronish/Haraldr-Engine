@@ -8,7 +8,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;
@@ -34,14 +33,16 @@ public class Texture
     private int width, height;
     private int texture;
 
-    public Texture(int[] pixelData)
+    public Texture(int width, int height, int[] pixelData)
     {
+        this.width = width;
+        this.height = height;
         texture = createTexture(pixelData);
     }
 
     public Texture(String path)
     {
-        texture = load(path);
+        texture = load(path); // Width and height are set through BufferedImage
     }
 
     /**
@@ -54,7 +55,7 @@ public class Texture
     {
         /////READ TEXTURE///
         int[] pixelData = null;
-        try (InputStream inputStreamEngine = EntryPoint.application.getClass().getModule().getResourceAsStream(path))
+        try (InputStream inputStreamEngine = Texture.class.getModule().getResourceAsStream(path))
         {
             if (inputStreamEngine == null)
             {
@@ -90,7 +91,6 @@ public class Texture
         {
             for (int i = 0; i < width * height; i++)
             {
-                if (pixelData[i] != 0) MAIN_LOGGER.info(pixelData[i]);
                 int a = (pixelData[i] & 0xff000000) >> 24;
                 int r = (pixelData[i] & 0xff0000) >> 16;
                 int g = (pixelData[i] & 0xff00) >> 8;

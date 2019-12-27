@@ -16,7 +16,7 @@ module Engine.engine
     //LWJGL
     requires org.lwjgl.natives;
     //GLFW
-    requires transitive org.lwjgl.glfw;
+    requires org.lwjgl.glfw;
     requires org.lwjgl.glfw.natives;
     //OpenGL
     requires org.lwjgl.opengl;
@@ -27,11 +27,12 @@ module Engine.engine
     //Misc
     requires java.desktop;
     ///// EXPORTS ///////////////////////
-    exports engine.main;
     exports engine.debug;
-    exports engine.graphics;
     exports engine.event;
+    exports engine.graphics;
+    exports engine.input;
     exports engine.layer;
+    exports engine.main;
     exports engine.math;
     exports engine.physics;
 

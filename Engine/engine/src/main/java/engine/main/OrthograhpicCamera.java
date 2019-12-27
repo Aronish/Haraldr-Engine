@@ -6,10 +6,6 @@ import engine.math.Vector3f;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * A virtual camera for the game. Is essentially a normal object except that the transformation matrix is inverted.
- * That matrix is then applied to all objects in the scene to make it appear as if the camera was moving.
- */
 public class OrthograhpicCamera
 {
     private Matrix4f viewMatrix;

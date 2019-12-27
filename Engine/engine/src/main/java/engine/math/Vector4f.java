@@ -10,6 +10,14 @@ public class Vector4f
 
     public Vector4f() {}
 
+    public Vector4f(float all)
+    {
+        this.x = all;
+        this.y = all;
+        this.z = all;
+        this.w = all;
+    }
+
     public Vector4f(float x, float y, float z, float w)
     {
         this.x = x;

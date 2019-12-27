@@ -32,6 +32,7 @@ import static org.lwjgl.opengl.GL46.glValidateProgram;
 /**
  * Loads a shader program with a vertex and fragment shader.
  */
+@SuppressWarnings("WeakerAccess")
 public class Shader
 {
     public static final Shader DEFAULT = new Shader("default_shaders/default");
@@ -49,7 +50,6 @@ public class Shader
         this(generalShaderPath + ".vert", generalShaderPath + ".frag");
     }
 
-    //TODO: Add DEBUG argument for showing debug output and logs.
     public Shader(String vertexShaderPath, String fragmentShaderPath)
     {
         int vertexShader = createShader(GL_VERTEX_SHADER, readShaderFile(vertexShaderPath));

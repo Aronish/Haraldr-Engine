@@ -9,7 +9,6 @@ import oldgame.main.EntryPoint;
 import org.jetbrains.annotations.NotNull;
 
 import static engine.main.Application.MAIN_LOGGER;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class GameRenderer2D extends Renderer2D
 {
@@ -42,7 +41,5 @@ public class GameRenderer2D extends Renderer2D
         shader.setMatrix4f(Matrix4f.orthographic, "projection");
         entity.getGameObjectType().getModel().getVertexArray().bind();
         entity.getGameObjectType().getModel().getVertexArray().draw();
-
-        glBindVertexArray(0); //Without this, the last thing rendered before text is rendered will capture some buffer bindings in TextRenderer.
     }
 }

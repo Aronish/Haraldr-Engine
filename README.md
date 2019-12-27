@@ -1,4 +1,4 @@
-# Engine
+# Engine (I don't have a name yet)
 A simple engine made in OpenGL with the sole purpose of teaching me how graphics and game programming works.
 <br/>
 Some files used by IntelliJ IDEA are gitignored but it should be fairly straight forward to clone and build the project if you know what you're doing. I can't give any advice if you're using some other IDE than IntelliJ IDEA, that's up to you.

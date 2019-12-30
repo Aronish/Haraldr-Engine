@@ -2,7 +2,6 @@ package oldgame.layer;
 
 import engine.event.Event;
 import engine.event.EventType;
-import engine.event.GUIToggledEvent;
 import engine.event.KeyEvent;
 import engine.event.MouseScrolledEvent;
 import engine.layer.Layer;
@@ -27,8 +26,6 @@ import java.util.List;
 
 public class WorldLayer extends Layer
 {
-    private boolean guiVisible;
-
     private World world = new World();
     private Player player = new Player(new Vector3f(0.0f, 255.0f));
     private GameCamera camera = new GameCamera();
@@ -45,7 +42,7 @@ public class WorldLayer extends Layer
     @Override
     public void onUpdate(Window window, float deltaTime)
     {
-        if (!guiVisible) eventHandler.processInput(camera, window.getWindowHandle(), player, world);
+        eventHandler.processInput(camera, window.getWindowHandle(), player, world);
         player.update(camera, deltaTime);
         checkVisibleGridCells();
         doCollisions();
@@ -64,10 +61,6 @@ public class WorldLayer extends Layer
     public void onEvent(Window window, @NotNull Event event)
     {
         //LOGGER.info(event.toString());
-        if (event.eventType == EventType.GUI_TOGGLED)
-        {
-            guiVisible = ((GUIToggledEvent) event).visible;
-        }
         if (event.eventType == EventType.KEY_PRESSED)
         {
             eventHandler.processKeyEvent((KeyEvent) event, window);

@@ -1,6 +1,6 @@
 package engine.main;
 
-import engine.event.IEventCallback;
+import engine.event.EventDispatcher;
 import engine.event.KeyPressedEvent;
 import engine.event.KeyReleasedEvent;
 import engine.event.MouseMovedEvent;
@@ -11,9 +11,6 @@ import engine.event.WindowClosedEvent;
 import engine.event.WindowResizedEvent;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.system.MemoryStack;
-
-import java.nio.FloatBuffer;
 
 import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
@@ -29,7 +26,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
-import static org.lwjgl.glfw.GLFW.glfwGetMonitorContentScale;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwInit;
@@ -50,7 +46,6 @@ import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.opengl.GL46.GL_TRUE;
 import static org.lwjgl.opengl.GL46.glViewport;
-import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
@@ -62,11 +57,7 @@ public class Window
     private GLFWVidMode vidmode;
     private boolean VSyncOn;
     private boolean isFullscreen;
-    private float aspectRatio;
-    private float contentScaleX, contentScaleY;
     private int windowWidth, windowHeight, initWidth, initHeight;
-
-    private IEventCallback eventCallback;
 
     /**
      * @param width the window width, in pixels.
@@ -100,18 +91,6 @@ public class Window
         initHeight = height;
         windowWidth = fullscreen ? vidmode.width() : width;
         windowHeight = fullscreen ? vidmode.height() : height;
-        aspectRatio = (float) windowWidth / windowHeight;
-
-        try (MemoryStack s = stackPush())
-        {
-            FloatBuffer px = s.mallocFloat(1);
-            FloatBuffer py = s.mallocFloat(1);
-
-            glfwGetMonitorContentScale(glfwGetPrimaryMonitor(), px, py);
-
-            contentScaleX = px.get(0);
-            contentScaleY = py.get(0);
-        }
 
         windowHandle = glfwCreateWindow(windowWidth, windowHeight, "OpenGL Game", (fullscreen ? glfwGetPrimaryMonitor() : NULL), NULL);
         if (windowHandle == NULL)
@@ -124,45 +103,39 @@ public class Window
         glfwMakeContextCurrent(windowHandle);
         GL.createCapabilities();
 
-        setCursorVisible(false);
+        setCursorVisible(true);
         setVSync(vSync);
         ///// CALLBACKS ///////////////////////////////
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
             if (action == GLFW_PRESS){
-                eventCallback.onEvent(new KeyPressedEvent(key));
+                EventDispatcher.dispatch(new KeyPressedEvent(key));
             }else if (action == GLFW_RELEASE){
-                eventCallback.onEvent(new KeyReleasedEvent(key));
+                EventDispatcher.dispatch(new KeyReleasedEvent(key));
             }
         });
 
         glfwSetMouseButtonCallback(windowHandle, (window, button, action, mods) -> {
             if (action == GLFW_PRESS){
-                eventCallback.onEvent(new MousePressedEvent(button));
+                EventDispatcher.dispatch(new MousePressedEvent(button));
             }else if (action == GLFW_RELEASE){
-                eventCallback.onEvent(new MouseReleasedEvent(button));
+                EventDispatcher.dispatch(new MouseReleasedEvent(button));
             }
         });
 
-        glfwSetScrollCallback(windowHandle, (window, xOffset, yOffset) -> eventCallback.onEvent(new MouseScrolledEvent(xOffset, yOffset)));
+        glfwSetScrollCallback(windowHandle, (window, xOffset, yOffset) -> EventDispatcher.dispatch(new MouseScrolledEvent(xOffset, yOffset)));
 
-        glfwSetCursorPosCallback(windowHandle, (window, xPos, yPos) -> eventCallback.onEvent(new MouseMovedEvent(xPos, yPos)));
+        glfwSetCursorPosCallback(windowHandle, (window, xPos, yPos) -> EventDispatcher.dispatch(new MouseMovedEvent(xPos, yPos)));
 
-        glfwSetWindowCloseCallback(windowHandle, (window) -> eventCallback.onEvent(new WindowClosedEvent()));
+        glfwSetWindowCloseCallback(windowHandle, (window) -> EventDispatcher.dispatch(new WindowClosedEvent()));
 
         glfwSetWindowSizeCallback(windowHandle, (window, newWidth, newHeight) -> {
-            aspectRatio = (float) newWidth / newHeight;
             windowWidth = newWidth;
             windowHeight = newHeight;
-            eventCallback.onEvent(new WindowResizedEvent(newWidth, newHeight));
+            EventDispatcher.dispatch(new WindowResizedEvent(newWidth, newHeight));
             setViewPortSize(newWidth, newHeight);
         });
 
         glfwSetErrorCallback((error, description) -> MAIN_LOGGER.info(error, description));
-    }
-
-    void setEventCallback(IEventCallback eventCallback)
-    {
-        this.eventCallback = eventCallback;
     }
 
     void changeFullscreen()
@@ -210,11 +183,6 @@ public class Window
         return windowHandle;
     }
 
-    public float getAspectRatio()
-    {
-        return aspectRatio;
-    }
-
     public int getWidth()
     {
         return windowWidth;
@@ -223,15 +191,5 @@ public class Window
     public int getHeight()
     {
         return windowHeight;
-    }
-
-    public float getContentScaleX()
-    {
-        return contentScaleX;
-    }
-
-    public float getContentScaleY()
-    {
-        return contentScaleY;
     }
 }

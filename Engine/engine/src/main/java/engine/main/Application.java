@@ -1,11 +1,11 @@
 package engine.main;
 
+import engine.debug.DebugEventHandler;
 import engine.debug.Logger;
 import engine.event.DebugScreenUpdatedEvent;
 import engine.event.Event;
 import engine.event.EventDispatcher;
 import engine.event.EventType;
-import engine.event.IEventCallback;
 import engine.event.KeyPressedEvent;
 import engine.event.WindowResizedEvent;
 import engine.graphics.Renderer2D;
@@ -53,8 +53,8 @@ public abstract class Application
         /////WINDOW//////////////////////////////////////////////////////////////
         window = new Window(windowWidth, windowHeight, fullscreen, vSync);
         /////OPENGL CODE WON'T WORK BEFORE THIS//////////////////////////////////
-        window.setEventCallback(new EventCallback());
         EventDispatcher.addCallback(new EventCallback());
+        EventDispatcher.addCallback(new DebugEventHandler());
         Matrix4f.init(window.getWidth(), window.getHeight());
 
         glEnable(GL_BLEND);
@@ -73,7 +73,8 @@ public abstract class Application
         initialized = true;
     }
 
-    public class EventCallback implements IEventCallback
+    //TODO: Fix event system.
+    public class EventCallback implements engine.event.EventCallback
     {
         @Override
         public void onEvent(@NotNull Event event)

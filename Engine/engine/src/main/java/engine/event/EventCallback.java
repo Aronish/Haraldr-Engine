@@ -1,7 +1,7 @@
 package engine.event;
 
 @FunctionalInterface
-public interface IEventCallback
+public interface EventCallback
 {
     void onEvent(Event event);
 }

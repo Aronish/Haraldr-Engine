@@ -9,5 +9,5 @@ out vec4 o_Color;
 
 void main()
 {
-    o_Color = texture(sampler, v_TextureCoordinates) * color;
+    o_Color = texture(sampler, v_TextureCoordinates);
 }

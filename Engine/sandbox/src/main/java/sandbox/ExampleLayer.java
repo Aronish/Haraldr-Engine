@@ -10,6 +10,8 @@ import engine.main.Window;
 import engine.math.Vector3f;
 import engine.math.Vector4f;
 
+import static engine.main.Application.MAIN_LOGGER;
+
 public class ExampleLayer extends Layer
 {
     private OrthograhpicCamera orthograhpicCamera = new OrthograhpicCamera();
@@ -23,6 +25,7 @@ public class ExampleLayer extends Layer
     @Override
     public void onEvent(Window window, Event event)
     {
+        MAIN_LOGGER.info(event);
     }
 
     @Override
@@ -36,6 +39,6 @@ public class ExampleLayer extends Layer
     {
         Renderer2D.beginScene(orthograhpicCamera);
         Renderer2D.drawQuad(new Vector3f(), Shader.DEFAULT, new Vector4f(0.5f, 1.0f, 0.2f, 1.0f));
-        Renderer2D.drawQuad(new Vector3f(3.0f, 4.0f), Shader.DEFAULT, texture, new Vector4f(1.0f, 0.5f, 0.5f, 1.0f));
+        Renderer2D.drawQuad(new Vector3f(3.0f, 4.0f), Shader.DEFAULT, texture, new Vector4f(1.0f, 0.2f, 0.5f, 1.0f));
     }
 }

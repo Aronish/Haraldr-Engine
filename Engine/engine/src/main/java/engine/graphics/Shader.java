@@ -37,6 +37,7 @@ public class Shader
 {
     public static final Shader DEFAULT = new Shader("default_shaders/default");
 
+    private String vertexShaderPath, fragmentShaderPath;
     private int shaderProgram;
     private Map<String, Integer> uniformLocations = new HashMap<>();
 
@@ -52,22 +53,9 @@ public class Shader
 
     public Shader(String vertexShaderPath, String fragmentShaderPath)
     {
-        int vertexShader = createShader(GL_VERTEX_SHADER, readShaderFile(vertexShaderPath));
-        int fragmentShader = createShader(GL_FRAGMENT_SHADER, readShaderFile(fragmentShaderPath));
-
-        glCompileShader(vertexShader);
-        if (EntryPoint.DEBUG) System.out.println(glGetShaderInfoLog(vertexShader));
-        glCompileShader(fragmentShader);
-        if (EntryPoint.DEBUG) System.out.println(glGetShaderInfoLog(fragmentShader));
-
-        shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
-        glLinkProgram(shaderProgram);
-        glValidateProgram(shaderProgram);
-        if (EntryPoint.DEBUG) System.out.println(glGetProgramInfoLog(shaderProgram));
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
+        this.vertexShaderPath = vertexShaderPath;
+        this.fragmentShaderPath = fragmentShaderPath;
+        compile();
     }
 
     /**
@@ -80,7 +68,22 @@ public class Shader
     {
         int shader = glCreateShader(shaderType);
         glShaderSource(shader, source);
+        glCompileShader(shader);
+        if (EntryPoint.DEBUG) System.out.println(glGetShaderInfoLog(shader));
         return shader;
+    }
+
+    private int createProgram(int vertexShader, int fragmentShader)
+    {
+        int shaderProgram = glCreateProgram();
+        glAttachShader(shaderProgram, vertexShader);
+        glAttachShader(shaderProgram, fragmentShader);
+        glLinkProgram(shaderProgram);
+        glValidateProgram(shaderProgram);
+        if (EntryPoint.DEBUG) System.out.println(glGetProgramInfoLog(shaderProgram));
+        glDeleteShader(vertexShader);
+        glDeleteShader(fragmentShader);
+        return shaderProgram;
     }
 
     /**
@@ -169,6 +172,19 @@ public class Shader
     public void unbind()
     {
         glUseProgram(0);
+    }
+
+    private void compile()
+    {
+        int vertexShader = createShader(GL_VERTEX_SHADER, readShaderFile(vertexShaderPath));
+        int fragmentShader = createShader(GL_FRAGMENT_SHADER, readShaderFile(fragmentShaderPath));
+        shaderProgram = createProgram(vertexShader, fragmentShader);
+    }
+
+    public void recompile()
+    {
+        delete();
+        compile();
     }
 
     public void delete()

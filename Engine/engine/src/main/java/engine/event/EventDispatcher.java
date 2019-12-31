@@ -1,5 +1,7 @@
 package engine.event;
 
+import engine.main.Window;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +21,11 @@ public class EventDispatcher
         callbacks.remove(callback);
     }
 
-    public static void dispatch(Event event)
+    public static void dispatch(Event event, Window window)
     {
         for (EventCallback callback : callbacks)
         {
-            callback.onEvent(event);
+            callback.onEvent(event, window);
         }
     }
 }

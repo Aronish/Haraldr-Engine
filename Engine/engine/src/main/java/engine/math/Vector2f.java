@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static engine.main.Application.MAIN_LOGGER;
 
+@SuppressWarnings("unused")
 public class Vector2f
 {
     private float x, y;

@@ -108,30 +108,30 @@ public class Window
         ///// CALLBACKS ///////////////////////////////
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
             if (action == GLFW_PRESS){
-                EventDispatcher.dispatch(new KeyPressedEvent(key));
+                EventDispatcher.dispatch(new KeyPressedEvent(key), this);
             }else if (action == GLFW_RELEASE){
-                EventDispatcher.dispatch(new KeyReleasedEvent(key));
+                EventDispatcher.dispatch(new KeyReleasedEvent(key), this);
             }
         });
 
         glfwSetMouseButtonCallback(windowHandle, (window, button, action, mods) -> {
             if (action == GLFW_PRESS){
-                EventDispatcher.dispatch(new MousePressedEvent(button));
+                EventDispatcher.dispatch(new MousePressedEvent(button), this);
             }else if (action == GLFW_RELEASE){
-                EventDispatcher.dispatch(new MouseReleasedEvent(button));
+                EventDispatcher.dispatch(new MouseReleasedEvent(button), this);
             }
         });
 
-        glfwSetScrollCallback(windowHandle, (window, xOffset, yOffset) -> EventDispatcher.dispatch(new MouseScrolledEvent(xOffset, yOffset)));
+        glfwSetScrollCallback(windowHandle, (window, xOffset, yOffset) -> EventDispatcher.dispatch(new MouseScrolledEvent(xOffset, yOffset), this));
 
-        glfwSetCursorPosCallback(windowHandle, (window, xPos, yPos) -> EventDispatcher.dispatch(new MouseMovedEvent(xPos, yPos)));
+        glfwSetCursorPosCallback(windowHandle, (window, xPos, yPos) -> EventDispatcher.dispatch(new MouseMovedEvent(xPos, yPos), this));
 
-        glfwSetWindowCloseCallback(windowHandle, (window) -> EventDispatcher.dispatch(new WindowClosedEvent()));
+        glfwSetWindowCloseCallback(windowHandle, (window) -> EventDispatcher.dispatch(new WindowClosedEvent(), this));
 
         glfwSetWindowSizeCallback(windowHandle, (window, newWidth, newHeight) -> {
             windowWidth = newWidth;
             windowHeight = newHeight;
-            EventDispatcher.dispatch(new WindowResizedEvent(newWidth, newHeight));
+            EventDispatcher.dispatch(new WindowResizedEvent(newWidth, newHeight), this);
             setViewPortSize(newWidth, newHeight);
         });
 

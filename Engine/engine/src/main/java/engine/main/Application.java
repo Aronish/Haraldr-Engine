@@ -6,16 +6,15 @@ import engine.event.DebugScreenUpdatedEvent;
 import engine.event.Event;
 import engine.event.EventDispatcher;
 import engine.event.EventType;
-import engine.event.KeyPressedEvent;
 import engine.event.WindowResizedEvent;
 import engine.graphics.Renderer2D;
+import engine.input.Input;
+import engine.input.Key;
 import engine.layer.Layer;
 import engine.layer.LayerStack;
 import engine.math.Matrix4f;
 import org.jetbrains.annotations.NotNull;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
@@ -50,9 +49,9 @@ public abstract class Application
 
     protected void init(int windowWidth, int windowHeight, boolean fullscreen, boolean vSync)
     {
-        /////WINDOW//////////////////////////////////////////////////////////////
+        /////WINDOW///////////////////////////////////////////////////////
         window = new Window(windowWidth, windowHeight, fullscreen, vSync);
-        /////OPENGL CODE WON'T WORK BEFORE THIS//////////////////////////////////
+        /////OPENGL CODE WON'T WORK BEFORE THIS///////////////////////////
         EventDispatcher.addCallback(new EventCallback());
         EventDispatcher.addCallback(new DebugEventHandler());
         Matrix4f.init(window.getWidth(), window.getHeight());
@@ -77,14 +76,14 @@ public abstract class Application
     public class EventCallback implements engine.event.EventCallback
     {
         @Override
-        public void onEvent(@NotNull Event event)
+        public void onEvent(@NotNull Event event, Window window)
         {
             if (event.eventType == EventType.WINDOW_CLOSED) stop(event);
             if (event.eventType == EventType.WINDOW_RESIZED) Matrix4f.onResize((WindowResizedEvent) event);
             if (event.eventType == EventType.KEY_PRESSED)
             {
-                if (((KeyPressedEvent) event).keyCode == GLFW_KEY_ESCAPE) stop(event);
-                if (((KeyPressedEvent) event).keyCode == GLFW_KEY_F) window.changeFullscreen();
+                if (Input.isKeyPressed(window.getWindowHandle(), Key.KEY_ESCAPE)) stop(event);
+                if (Input.isKeyPressed(window.getWindowHandle(), Key.KEY_F)) window.changeFullscreen();
             }
             for (Layer layer : layerStack)
             {
@@ -130,7 +129,7 @@ public abstract class Application
             {
                 int fps = (int) (frames / timer), ups = (int) (updates / timer);
                 window.setTitle("FPS: " + fps + " UPS: " + ups);
-                EventDispatcher.dispatch(new DebugScreenUpdatedEvent(fps, ups));
+                EventDispatcher.dispatch(new DebugScreenUpdatedEvent(fps, ups), window);
                 timer = 0.0d;
                 frames = 0;
                 updates = 0;

@@ -41,12 +41,8 @@ public class Matrix4f
         return identity;
     }
 
-    /**
-     * Multiplies this matrix with another.
-     * Doesn't change this current matrix.
-     */
     @NotNull
-    private Matrix4f multiply(Matrix4f multiplicand)
+    private Matrix4f multiply(Matrix4f multiplicand) // Does not affect current matrix
     {
         Matrix4f result = identity();
         for (int y = 0; y < 4; y++)

@@ -10,6 +10,7 @@ import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
+//TODO: More deferred approach. Many unnecessary shader bindings. Batch things together.
 @SuppressWarnings("unused")
 public class Renderer2D
 {

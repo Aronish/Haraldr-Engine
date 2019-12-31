@@ -2,22 +2,19 @@ package engine.debug;
 
 import engine.event.Event;
 import engine.event.EventCallback;
-import engine.event.EventType;
-import engine.event.KeyPressedEvent;
 import engine.graphics.Shader;
+import engine.input.Input;
 import engine.input.Key;
+import engine.main.Window;
 
 public class DebugEventHandler implements EventCallback
 {
     @Override
-    public void onEvent(Event event)
+    public void onEvent(Event event, Window window)
     {
-        if (event.eventType == EventType.KEY_PRESSED)
+        if (Input.isKeyPressed(window.getWindowHandle(), Key.KEY_Q))
         {
-            if (((KeyPressedEvent) event).keyCode == Key.KEY_Q.keyCode)
-            {
-                Shader.DEFAULT.recompile();
-            }
+            Shader.DEFAULT.recompile();
         }
     }
 }

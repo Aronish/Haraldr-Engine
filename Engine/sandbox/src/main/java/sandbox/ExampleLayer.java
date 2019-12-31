@@ -25,7 +25,6 @@ public class ExampleLayer extends Layer
     @Override
     public void onEvent(Window window, Event event)
     {
-        MAIN_LOGGER.info(event);
     }
 
     @Override

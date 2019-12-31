@@ -86,6 +86,13 @@ public class Shader
         return shaderProgram;
     }
 
+    private void compile()
+    {
+        int vertexShader = createShader(GL_VERTEX_SHADER, readShaderFile(vertexShaderPath));
+        int fragmentShader = createShader(GL_FRAGMENT_SHADER, readShaderFile(fragmentShaderPath));
+        shaderProgram = createProgram(vertexShader, fragmentShader);
+    }
+
     /**
      * Finds appropriate module to read from and reads the shader file.
      * @param path the file path of the shader file.
@@ -174,13 +181,6 @@ public class Shader
         glUseProgram(0);
     }
 
-    private void compile()
-    {
-        int vertexShader = createShader(GL_VERTEX_SHADER, readShaderFile(vertexShaderPath));
-        int fragmentShader = createShader(GL_FRAGMENT_SHADER, readShaderFile(fragmentShaderPath));
-        shaderProgram = createProgram(vertexShader, fragmentShader);
-    }
-
     public void recompile()
     {
         delete();
@@ -191,5 +191,6 @@ public class Shader
     {
         unbind();
         glDeleteProgram(shaderProgram);
+        uniformLocations.clear();
     }
 }

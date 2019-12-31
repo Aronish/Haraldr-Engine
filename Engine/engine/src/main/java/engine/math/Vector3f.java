@@ -1,5 +1,6 @@
 package engine.math;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import static engine.main.Application.MAIN_LOGGER;
@@ -67,9 +68,11 @@ public class Vector3f
         return z;
     }
 
-    public Vector3f addReturn(@NotNull Vector3f other)
+    @NotNull
+    @Contract("_, _ -> new")
+    public static Vector3f add(@NotNull Vector3f first, @NotNull Vector3f second)
     {
-        return new Vector3f(x + other.getX(), y + other.getY(), z + other.getZ());
+        return new Vector3f(first.x + second.getX(), first.y + second.getY(), first.z + second.getZ());
     }
 
     public void add(@NotNull Vector3f other)

@@ -136,6 +136,6 @@ public class Player extends MovableEntity
             calculateGravity(0.0f, deltaTime);
         }
         addPosition(new Vector3f(velocity.getX() * deltaTime, velocity.getY() * deltaTime));
-        camera.setPosition(position.addReturn(gameObjectType.getModel().getAABB().getMiddle()));
+        camera.setPosition(Vector3f.add(position, gameObjectType.getModel().getAABB().getMiddle()));
     }
 }

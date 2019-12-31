@@ -5,6 +5,7 @@ import engine.event.KeyEvent;
 import engine.event.MouseScrolledEvent;
 import engine.main.Application;
 import engine.main.Window;
+import engine.math.Vector3f;
 import oldgame.gameobject.Player;
 import oldgame.physics.PlayerMovementType;
 import oldgame.world.World;
@@ -64,7 +65,7 @@ public class EventHandler
             player.resetGravityAcceleration();
             player.resetPosition();
             camera.setScale(1.0f);
-            camera.setPosition(player.getPosition().addReturn(player.getGameObjectType().getModel().getAABB().getMiddle()));
+            camera.setPosition(Vector3f.add(player.getPosition(), player.getGameObjectType().getModel().getAABB().getMiddle()));
         }
         if (glfwGetKey(window, GLFW_KEY_C) != 0)
         {

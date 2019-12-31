@@ -77,7 +77,7 @@ public class Matrix4f
     @NotNull
     public static Matrix4f transform(Vector3f position, float angle, @NotNull Vector2f scale, boolean isCamera)
     {
-        return translate(scale.getX() == -1 ? position.addReturn(new Vector3f(1.0f, 0.0f)) : position, isCamera).multiply(scale(scale));
+        return translate(scale.getX() == -1 ? Vector3f.add(position, new Vector3f(1.0f, 0.0f)) : position, isCamera).multiply(scale(scale));
     }
 
     /////UNUSED WITH PIXELORTHOGRAPHIC////////////////////////////////////////////////////////////////////////

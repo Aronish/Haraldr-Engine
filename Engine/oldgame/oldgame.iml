@@ -21,6 +21,5 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="Engine.engine" />
-    <orderEntry type="library" name="lwjgl-release-3.2" level="project" />
   </component>
 </module>

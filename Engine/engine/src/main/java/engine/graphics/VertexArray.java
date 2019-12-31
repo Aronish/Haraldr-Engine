@@ -14,6 +14,7 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
+import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 import static org.lwjgl.opengl.GL43.glMultiDrawElementsIndirect;
 import static org.lwjgl.opengl.GL45.glCreateBuffers;
 import static org.lwjgl.opengl.GL45.glCreateVertexArrays;
@@ -48,6 +49,21 @@ public class VertexArray
             ++nextAttribIndex;
         }
         glBindVertexArray(0);
+    }
+
+    public static void enableVertexAttribArrayWrapper(int attribIndex)
+    {
+        glEnableVertexAttribArray(attribIndex);
+    }
+
+    public static void vertexAttribPointer(int attribIndex, @NotNull VertexBufferElement element, int stride)
+    {
+        glVertexAttribPointer(attribIndex, element.getSize(), element.getType(), element.isNormalized(), stride, element.getOffset());
+    }
+
+    public static void vertexAttribDivisor(int attribIndex, int divisor)
+    {
+        glVertexAttribDivisor(attribIndex, divisor);
     }
 
     public void bind()

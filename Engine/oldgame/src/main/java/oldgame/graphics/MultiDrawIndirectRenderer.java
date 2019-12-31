@@ -16,21 +16,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glBufferSubData;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
-import static org.lwjgl.opengl.GL40.GL_DRAW_INDIRECT_BUFFER;
-import static org.lwjgl.opengl.GL45.glCreateBuffers;
-
 public class MultiDrawIndirectRenderer implements RenderSystem
 {
     private VertexArray vao;
-    private int indirectBuffer = glCreateBuffers();
+    private VertexBuffer indirectBuffer;
 
     private List<Float> matrices = new ArrayList<>();
     private VertexBuffer instancedMatrixBuffer;
@@ -82,17 +71,15 @@ public class MultiDrawIndirectRenderer implements RenderSystem
         int nextAttribIndex = vao.getNextAttribIndex();
         for (VertexBufferElement element : instancedMatrixBuffer.getLayout())
         {
-            glEnableVertexAttribArray(nextAttribIndex);
-            glVertexAttribPointer(nextAttribIndex, element.getSize(), element.getType(), element.isNormalized(), instancedMatrixBuffer.getLayout().getStride(), element.getOffset());
-            glVertexAttribDivisor(nextAttribIndex, 1);
+            VertexArray.enableVertexAttribArrayWrapper(nextAttribIndex);
+            VertexArray.vertexAttribPointer(nextAttribIndex, element, instancedMatrixBuffer.getLayout().getStride());
+            VertexArray.vertexAttribDivisor(nextAttribIndex, 1);
             nextAttribIndex += 1;
         }
         vao.setNextAttribIndex(nextAttribIndex);
         vao.unbind();
 
-        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirectBuffer);
-        glBufferData(GL_DRAW_INDIRECT_BUFFER, 1000, GL_DYNAMIC_DRAW); //TODO: Figure out size.
-        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
+        indirectBuffer = new VertexBuffer(VertexBuffer.GL_DRAW_INDIRECT_BUFFER, 1000, true);
     }
 
     @Override
@@ -130,10 +117,10 @@ public class MultiDrawIndirectRenderer implements RenderSystem
         }
 
         instancedMatrixBuffer.bind();
-        glBufferSubData(GL_ARRAY_BUFFER, 0, ArrayUtils.toPrimitiveArrayF(matrices));
+        instancedMatrixBuffer.setData(ArrayUtils.toPrimitiveArrayF(matrices));
 
-        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirectBuffer);
-        glBufferSubData(GL_DRAW_INDIRECT_BUFFER, 0, ArrayUtils.toPrimitiveArrayI(indirectData));
+        indirectBuffer.bind();
+        indirectBuffer.setData(ArrayUtils.toPrimitiveArrayI(indirectData));
 
         vao.bind();
         vao.multiDrawIndirect(indirectData.size() / 5);

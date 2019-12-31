@@ -3,6 +3,8 @@ package oldgame.main;
 import engine.event.EventType;
 import engine.event.KeyEvent;
 import engine.event.MouseScrolledEvent;
+import engine.input.Input;
+import engine.input.Key;
 import engine.main.Application;
 import engine.main.Window;
 import engine.math.Vector3f;
@@ -10,22 +12,6 @@ import oldgame.gameobject.Player;
 import oldgame.physics.PlayerMovementType;
 import oldgame.world.World;
 import org.jetbrains.annotations.NotNull;
-
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_B;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_G;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_H;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_CONTROL;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_V;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
-import static org.lwjgl.glfw.GLFW.glfwGetKey;
 
 public class EventHandler
 {
@@ -40,55 +26,55 @@ public class EventHandler
     public void processInput(GameCamera camera, long window, @NotNull Player player, World world)
     {
         player.setMovementType(PlayerMovementType.STAND);
-        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != 0)
+        if (Input.isKeyPressed(window, Key.KEY_LEFT_SHIFT))
         {
             player.setRunning(true);
         }else{
             player.setRunning(false);
         }
-        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) != 0)
+        if (Input.isKeyPressed(window, Key.KEY_LEFT_CONTROL))
         {
             player.setBoosting(true);
         }else{
             player.setBoosting(false);
         }
-        if (glfwGetKey(window, GLFW_KEY_A) != 0)
+        if (Input.isKeyPressed(window, Key.KEY_A))
         {
             player.setMovementType(PlayerMovementType.LEFT);
         }
-        if (glfwGetKey(window, GLFW_KEY_D) != 0)
+        if (Input.isKeyPressed(window, Key.KEY_D))
         {
             player.setMovementType(PlayerMovementType.RIGHT);
         }
-        if (glfwGetKey(window, GLFW_KEY_R) != 0)
+        if (Input.isKeyPressed(window, Key.KEY_R))
         {
             player.resetGravityAcceleration();
             player.resetPosition();
             camera.setScale(1.0f);
             camera.setPosition(Vector3f.add(player.getPosition(), player.getGameObjectType().getModel().getAABB().getMiddle()));
         }
-        if (glfwGetKey(window, GLFW_KEY_C) != 0)
+        if (Input.isKeyPressed(window, Key.KEY_C))
         {
             player.setHasGravity(false);
         }
-        if (glfwGetKey(window, GLFW_KEY_V) != 0)
+        if (Input.isKeyPressed(window, Key.KEY_V))
         {
             player.resetGravityAcceleration();
             player.setHasGravity(true);
         }
-        if (glfwGetKey(window, GLFW_KEY_Z) != 0)
+        if (Input.isKeyPressed(window, Key.KEY_Z))
         {
             world.resetNoiseScale();
         }
-        if (glfwGetKey(window, GLFW_KEY_LEFT) != 0)
+        if (Input.isKeyPressed(window, Key.KEY_LEFT))
         {
             world.increaseNoiseScale(0.001d);
         }
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) != 0)
+        if (Input.isKeyPressed(window, Key.KEY_RIGHT))
         {
             world.increaseNoiseScale(-0.001d);
         }
-        if (glfwGetKey(window, GLFW_KEY_SPACE) != 0)
+        if (Input.isKeyPressed(window, Key.KEY_SPACE))
         {
             if (!player.isFalling())
             {
@@ -96,26 +82,21 @@ public class EventHandler
                 player.setFalling(true);
             }
         }
-        if (glfwGetKey(window, GLFW_KEY_G) != 0)
+        if (Input.isKeyPressed(window, Key.KEY_G))
         {
             world.generateWorld();
         }
-        if (glfwGetKey(window, GLFW_KEY_H) != 0)
+        if (Input.isKeyPressed(window, Key.KEY_H))
         {
             world.getGrid().clear();
         }
     }
 
-    /**
-     * Processes a key event immediately. Does not repeat.
-     * @param window the current window.
-     * @param event the key event.
-     */
     public void processKeyEvent(@NotNull KeyEvent event, Window window)
     {
         if (event.eventType == EventType.KEY_PRESSED)
         {
-            if (event.keyCode == GLFW_KEY_B)
+            if (event.keyCode == Key.KEY_B.keyCode)
             {
                 window.setVSync(!window.VSyncOn());
                 Application.MAIN_LOGGER.info("VSync: " + window.VSyncOn());

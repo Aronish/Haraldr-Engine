@@ -1,6 +1,7 @@
 package oldgame.graphics;
 
 import engine.graphics.ShaderDataType;
+import engine.graphics.VertexArray;
 import engine.graphics.VertexBuffer;
 import engine.graphics.VertexBufferElement;
 import engine.graphics.VertexBufferLayout;
@@ -13,12 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.glBufferSubData;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
 public class InstancedRenderer implements RenderSystem
 {
@@ -43,9 +38,9 @@ public class InstancedRenderer implements RenderSystem
             int nextAttribIndex = gameObject.getModel().getVertexArray().getNextAttribIndex();
             for (VertexBufferElement element : instancedMatrixBuffer.getLayout())
             {
-                glEnableVertexAttribArray(nextAttribIndex);
-                glVertexAttribPointer(nextAttribIndex, element.getSize(), element.getType(), element.isNormalized(), instancedMatrixBuffer.getLayout().getStride(), element.getOffset());
-                glVertexAttribDivisor(nextAttribIndex, 1);
+                VertexArray.enableVertexAttribArrayWrapper(nextAttribIndex);
+                VertexArray.vertexAttribPointer(nextAttribIndex, element, instancedMatrixBuffer.getLayout().getStride());
+                VertexArray.vertexAttribDivisor(nextAttribIndex, 1);
                 nextAttribIndex += 1;
             }
             gameObject.getModel().getVertexArray().setNextAttribIndex(nextAttribIndex);
@@ -68,7 +63,7 @@ public class InstancedRenderer implements RenderSystem
             }
             if (matrices.size() != 0)
             {
-                glBufferSubData(GL_ARRAY_BUFFER, 0, ArrayUtils.toPrimitiveArrayF(matrices));
+                instancedMatrixBuffer.setData(ArrayUtils.toPrimitiveArrayF(matrices));
                 gameObject.getModel().getVertexArray().bind();
                 gameObject.getModel().getVertexArray().drawInstanced(matrices.size() / 16);
             }

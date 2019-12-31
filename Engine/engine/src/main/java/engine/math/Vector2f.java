@@ -4,9 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static engine.main.Application.MAIN_LOGGER;
 
-/**
- * A simple class to represent a 2D vector of floats.
- */
 public class Vector2f
 {
     private float x, y;

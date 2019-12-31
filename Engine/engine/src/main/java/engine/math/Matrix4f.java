@@ -3,15 +3,18 @@ package engine.math;
 import engine.event.WindowResizedEvent;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public class Matrix4f
 {
     public static final float FIXED_ORTHOGRAPHIC_AXIS = 9f;
-    public static float dynamicOrthographicAxis;
     private static final float NEAR_FAR = 5f;
+
+    public static float dynamicOrthographicAxis;
+    private static float scale = 1.0f;
     private static final boolean fixedWidth = true; //Fixed width is better
 
     public static Matrix4f orthographic;
-    public static Matrix4f pixelOrthographic;
+    @SuppressWarnings("WeakerAccess") public static Matrix4f pixelOrthographic;
 
     public float[] matrix = new float[16];
 
@@ -23,7 +26,7 @@ public class Matrix4f
 
     public static void init(int width, int height)
     {
-        recalcOrthoFixedWidth((float) width / height);
+        recalculateOrthographic((float) width / height);
         recalculatePixelOrthographic(width, height);
     }
 
@@ -61,6 +64,12 @@ public class Matrix4f
         return result;
     }
 
+    public static void addZoom(float p_zoom)
+    {
+        scale += p_zoom;
+        recalculateOrthographic(FIXED_ORTHOGRAPHIC_AXIS / dynamicOrthographicAxis);
+    }
+
     /**
      * Creates a transformation/model matrix.
      * @param position the position in world space.
@@ -76,12 +85,14 @@ public class Matrix4f
     }
 
     /////UNUSED WITH PIXELORTHOGRAPHIC////////////////////////////////////////////////////////////////////////
+        @NotNull
         private static Matrix4f transformPixelSpace(Vector3f pixelPosition, Vector2f scale, int width, int height)
         {
             return translate(clampToUnitSpace(pixelPosition, width, height), false).multiply(scale(scale));
         }
 
-        private static Vector3f clampToUnitSpace(Vector3f pixelPosition, int width, int height)
+        @NotNull
+        private static Vector3f clampToUnitSpace(@NotNull Vector3f pixelPosition, int width, int height)
         {
             Vector3f temp = new Vector3f(
                     (pixelPosition.getX() / width) * (2 * (fixedWidth ? FIXED_ORTHOGRAPHIC_AXIS : dynamicOrthographicAxis)) - (fixedWidth ? FIXED_ORTHOGRAPHIC_AXIS : dynamicOrthographicAxis),
@@ -178,13 +189,13 @@ public class Matrix4f
     private static void recalcOrthoFixedWidth(float aspectRatio)
     {
         dynamicOrthographicAxis = FIXED_ORTHOGRAPHIC_AXIS / aspectRatio;
-        orthographic = orthographic(FIXED_ORTHOGRAPHIC_AXIS, -FIXED_ORTHOGRAPHIC_AXIS, dynamicOrthographicAxis, -dynamicOrthographicAxis, -NEAR_FAR, NEAR_FAR);
+        orthographic = orthographic(FIXED_ORTHOGRAPHIC_AXIS * scale, -FIXED_ORTHOGRAPHIC_AXIS * scale, dynamicOrthographicAxis * scale, -dynamicOrthographicAxis * scale, -NEAR_FAR, NEAR_FAR);
     }
 
     private static void recalcOrthoFixedHeight(float aspectRatio)
     {
         dynamicOrthographicAxis = FIXED_ORTHOGRAPHIC_AXIS * aspectRatio;
-        orthographic = orthographic(dynamicOrthographicAxis, -dynamicOrthographicAxis, FIXED_ORTHOGRAPHIC_AXIS, -FIXED_ORTHOGRAPHIC_AXIS, -NEAR_FAR, NEAR_FAR);
+        orthographic = orthographic(dynamicOrthographicAxis * scale, -dynamicOrthographicAxis * scale, FIXED_ORTHOGRAPHIC_AXIS * scale, -FIXED_ORTHOGRAPHIC_AXIS * scale, -NEAR_FAR, NEAR_FAR);
     }
 
     private static void recalculatePixelOrthographic(int width, int height)
@@ -192,10 +203,11 @@ public class Matrix4f
         pixelOrthographic = orthographic(width, 0, 0, height, -NEAR_FAR, NEAR_FAR);
     }
 
+    @NotNull
     public static Matrix4f perspective(float FOV)
     {
         Matrix4f result = new Matrix4f();
-        float ar = 1280.0f/720.0f;
+        float ar = 1280.0f / 720.0f;
         float near = -1.0f;
         float far = 10.0f;
         float range = far - near;

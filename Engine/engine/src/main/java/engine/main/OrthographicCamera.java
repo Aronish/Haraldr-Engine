@@ -6,7 +6,8 @@ import engine.math.Vector3f;
 
 import org.jetbrains.annotations.NotNull;
 
-public class OrthograhpicCamera
+@SuppressWarnings("unused")
+public class OrthographicCamera
 {
     private Matrix4f viewMatrix;
 
@@ -14,12 +15,12 @@ public class OrthograhpicCamera
     protected float scale = 1f;
     protected Vector2f scaleVector = new Vector2f(scale);
 
-    public OrthograhpicCamera()
+    public OrthographicCamera()
     {
         this(new Vector3f());
     }
 
-    public OrthograhpicCamera(Vector3f position)
+    public OrthographicCamera(Vector3f position)
     {
         this.position = position;
         calculateViewMatrix();
@@ -39,6 +40,24 @@ public class OrthograhpicCamera
     public void addPosition(Vector3f pos)
     {
         position.add(pos);
+        calculateViewMatrix();
+    }
+
+    public void setScale(float scale)
+    {
+        this.scale = scale;
+        calculateViewMatrix();
+    }
+
+    public void setScale(float scaleX, float scaleY)
+    {
+        scaleVector.set(scaleX, scaleY);
+        calculateViewMatrix();
+    }
+
+    public void addScale(float scale)
+    {
+        this.scale += scale;
         calculateViewMatrix();
     }
 

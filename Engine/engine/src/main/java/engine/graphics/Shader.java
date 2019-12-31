@@ -148,11 +148,6 @@ public class Shader
         return stringBuilder.toString();
     }
 
-    /**
-     * Sets data of a uniform mat4 with the specified name. Caches the location.
-     * @param matrix the matrix data.
-     * @param name the name of the mat4 uniform.
-     */
     public void setMatrix4f(Matrix4f matrix, String name)
     {
         if (!uniformLocations.containsKey(name))

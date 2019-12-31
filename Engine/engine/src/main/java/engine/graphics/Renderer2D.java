@@ -1,6 +1,6 @@
 package engine.graphics;
 
-import engine.main.OrthograhpicCamera;
+import engine.main.OrthographicCamera;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import engine.math.Vector4f;
@@ -25,7 +25,7 @@ public class Renderer2D
         glClearColor(r, g, b, a);
     }
 
-    public static void beginScene(@NotNull OrthograhpicCamera camera)
+    public static void beginScene(@NotNull OrthographicCamera camera)
     {
         sceneData.setViewMatrix(camera.getViewMatrix());
     }

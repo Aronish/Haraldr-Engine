@@ -4,7 +4,6 @@ import engine.event.EventType;
 import engine.event.KeyEvent;
 import engine.event.MouseScrolledEvent;
 import engine.main.Application;
-import engine.main.OrthograhpicCamera;
 import engine.main.Window;
 import oldgame.gameobject.Player;
 import oldgame.physics.PlayerMovementType;

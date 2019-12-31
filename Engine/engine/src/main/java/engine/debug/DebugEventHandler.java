@@ -7,8 +7,6 @@ import engine.event.KeyPressedEvent;
 import engine.graphics.Shader;
 import engine.input.Key;
 
-import static engine.main.Application.MAIN_LOGGER;
-
 public class DebugEventHandler implements EventCallback
 {
     @Override

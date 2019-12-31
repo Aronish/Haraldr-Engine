@@ -4,9 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static engine.main.Application.MAIN_LOGGER;
 
-/**
- * A simple class to represent a 3D vector of floats.
- */
+@SuppressWarnings("unused")
 public class Vector3f
 {
     private float x, y, z;
@@ -69,20 +67,11 @@ public class Vector3f
         return z;
     }
 
-    /**
-     * Adds the other vector to this vector. Does not change this vector.
-     * @param other the other vector to add.
-     * @return the sum Vector.
-     */
     public Vector3f addReturn(@NotNull Vector3f other)
     {
         return new Vector3f(x + other.getX(), y + other.getY(), z + other.getZ());
     }
 
-    /**
-     * Adds another vector to this vector.
-     * @param other the other vector to add.
-     */
     public void add(@NotNull Vector3f other)
     {
         x += other.x;

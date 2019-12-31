@@ -1,6 +1,6 @@
 package oldgame.main;
 
-import engine.main.OrthograhpicCamera;
+import engine.main.OrthographicCamera;
 import engine.main.EntryPoint;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class GameCamera extends OrthograhpicCamera
+public class GameCamera extends OrthographicCamera
 {
     private static final float[] zooms = { 0.125f, 0.25f, 0.5f, 1.0f, 2.0f, 4.0f };
 

@@ -2,7 +2,7 @@ package oldgame.graphics;
 
 import engine.graphics.Renderer2D;
 import engine.graphics.Shader;
-import engine.main.OrthograhpicCamera;
+import engine.main.OrthographicCamera;
 import engine.math.Matrix4f;
 import oldgame.gameobject.Entity;
 import oldgame.main.EntryPoint;
@@ -33,7 +33,7 @@ public class GameRenderer2D extends Renderer2D
         }
     }
 
-    public static void render(@NotNull OrthograhpicCamera camera, @NotNull Shader shader, @NotNull Entity entity)
+    public static void render(@NotNull OrthographicCamera camera, @NotNull Shader shader, @NotNull Entity entity)
     {
         shader.bind();
         shader.setMatrix4f(entity.getMatrix(), "matrix");

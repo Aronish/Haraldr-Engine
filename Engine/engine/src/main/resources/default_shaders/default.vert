@@ -12,5 +12,6 @@ out vec2 v_TextureCoordinates;
 void main()
 {
     v_TextureCoordinates = a_TextureCoordinates;
+    //v_TextureCoordinates = a_Position.xy;
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
 }

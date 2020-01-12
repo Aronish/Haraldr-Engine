@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/engine/Engine.engine.iml" filepath="$PROJECT_DIR$/engine/Engine.engine.iml" />
       <module fileurl="file://$PROJECT_DIR$/sandbox/Engine.sandbox.iml" filepath="$PROJECT_DIR$/sandbox/Engine.sandbox.iml" />
+      <module fileurl="file://$PROJECT_DIR$/instrumentor/instrumentor.iml" filepath="$PROJECT_DIR$/instrumentor/instrumentor.iml" />
       <module fileurl="file://$PROJECT_DIR$/oldgame/oldgame.iml" filepath="$PROJECT_DIR$/oldgame/oldgame.iml" />
     </modules>
   </component>

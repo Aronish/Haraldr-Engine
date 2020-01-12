@@ -128,7 +128,7 @@ public class Matrix4f
     }
 
     @NotNull
-    private static Matrix4f rotate(float angle, boolean isCamera)
+    public static Matrix4f rotate(float angle, boolean isCamera)
     {
         Matrix4f result = identity();
         float radians;

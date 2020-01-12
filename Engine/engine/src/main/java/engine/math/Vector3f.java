@@ -72,7 +72,7 @@ public class Vector3f
     @Contract("_, _ -> new")
     public static Vector3f add(@NotNull Vector3f first, @NotNull Vector3f second)
     {
-        return new Vector3f(first.x + second.getX(), first.y + second.getY(), first.z + second.getZ());
+        return new Vector3f(first.x + second.x, first.y + second.y, first.z + second.z);
     }
 
     public void add(@NotNull Vector3f other)
@@ -80,6 +80,13 @@ public class Vector3f
         x += other.x;
         y += other.y;
         z += other.z;
+    }
+
+    @NotNull
+    @Contract("_, _ -> new")
+    public static Vector3f subtract(@NotNull Vector3f first, @NotNull Vector3f second)
+    {
+        return new Vector3f(first.x - second.x, first.y - second.y, first.z - second.z);
     }
 
     /**
@@ -95,6 +102,17 @@ public class Vector3f
     public Vector3f multiply(float scalar)
     {
         return new Vector3f(x * scalar, y * scalar, z * scalar);
+    }
+
+    public float length()
+    {
+        return (float) Math.sqrt(x * x + y * y + z * z);
+    }
+
+    @Contract(pure = true)
+    public static float slope(@NotNull Vector3f first, @NotNull Vector3f second)
+    {
+        return (second.y - first.y) / (second.x - first.x);
     }
 
     public void printVector()

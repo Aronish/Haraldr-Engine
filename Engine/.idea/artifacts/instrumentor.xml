@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="instrumentor">
+    <output-path>$PROJECT_DIR$/out/artifacts/instrumentor</output-path>
+    <root id="archive" name="instrumentor.jar">
+      <element id="module-output" name="instrumentor" />
+      <element id="dir-copy" path="$PROJECT_DIR$/instrumentor/src/main/resources" />
+    </root>
+  </artifact>
+</component>

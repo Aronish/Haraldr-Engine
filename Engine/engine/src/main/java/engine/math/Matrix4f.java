@@ -31,7 +31,7 @@ public class Matrix4f
     }
 
     @NotNull
-    private static Matrix4f identity()
+    public static Matrix4f identity()
     {
         Matrix4f identity = new Matrix4f();
         identity.matrix[0] = 1.0f;
@@ -42,7 +42,7 @@ public class Matrix4f
     }
 
     @NotNull
-    private Matrix4f multiply(Matrix4f multiplicand) // Does not affect current matrix
+    public Matrix4f multiply(Matrix4f multiplicand) // Does not affect current matrix
     {
         Matrix4f result = identity();
         for (int y = 0; y < 4; y++)
@@ -58,6 +58,23 @@ public class Matrix4f
             }
         }
         return result;
+    }
+
+    @NotNull
+    public Vector3f multiply(@NotNull Vector3f multiplicand)
+    {
+        float[] start = { multiplicand.getX(), multiplicand.getY(), multiplicand.getZ(), 1.0f };
+        float[] result = new float[4];
+        for (int x = 0; x < 4; x++)
+        {
+            float sum = 0.0f;
+            for (int e = 0; e < 4; e++)
+            {
+                sum += matrix[x + e * 4] * start[e];
+            }
+            result[x] = sum;
+        }
+        return new Vector3f(result[0], result[1], result[2]);
     }
 
     public static void addZoom(float p_zoom)
@@ -100,12 +117,23 @@ public class Matrix4f
     /////UNUSED WITH PIXELORTHOGRAPHIC/////////////////////////////////////////////////////////////////////////
 
     @NotNull
-    private static Matrix4f scale(@NotNull Vector2f scale)
+    public static Matrix4f scale(@NotNull Vector2f scale)
     {
         Matrix4f result = new Matrix4f();
         result.matrix[0] = scale.getX();
         result.matrix[5] = scale.getY();
         result.matrix[10] = 1.0f;
+        result.matrix[15] = 1.0f;
+        return result;
+    }
+
+    @NotNull
+    public static Matrix4f scale(@NotNull Vector3f scale)
+    {
+        Matrix4f result = new Matrix4f();
+        result.matrix[0] = scale.getX();
+        result.matrix[5] = scale.getY();
+        result.matrix[10] = scale.getZ();
         result.matrix[15] = 1.0f;
         return result;
     }

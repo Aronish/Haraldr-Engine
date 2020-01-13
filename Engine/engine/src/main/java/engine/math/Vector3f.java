@@ -12,6 +12,13 @@ public class Vector3f
 
     public Vector3f() {}
 
+    public Vector3f(float all)
+    {
+        x = all;
+        y = all;
+        z = all;
+    }
+
     public Vector3f(float x, float y)
     {
         this(x, y, 0.0f);

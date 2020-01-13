@@ -1,5 +1,6 @@
 package engine.debug;
 
+import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalTime;
@@ -46,6 +47,12 @@ public class Logger
     {
         setInfoLevel();
         log(message);
+    }
+
+    public void info(@NotNull Vector3f message)
+    {
+        setInfoLevel();
+        message.printVector();
     }
 
     @SafeVarargs //TODO: Possibly risky

@@ -41,11 +41,11 @@ public class EventHandler
         }
         if (Input.isKeyPressed(window, KEY_UP))
         {
-            Matrix4f.addZoom(1.0f * deltaTime);
+            Matrix4f.addZoom(-1.0f * deltaTime);
         }
         if (Input.isKeyPressed(window, KEY_DOWN))
         {
-            Matrix4f.addZoom(-1.0f * deltaTime);
+            Matrix4f.addZoom(1.0f * deltaTime);
         }
     }
 }

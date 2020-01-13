@@ -5,8 +5,6 @@ import engine.math.Vector3f;
 import engine.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-
 public class Line
 {
     private VertexArray vertexArray;
@@ -58,12 +56,12 @@ public class Line
 
     public void setRotation(float rotation)
     {
-        slopeAngle = rotation;
-        this.rotation = Matrix4f.rotate(rotation, false);
     }
 
     public void update(float deltaTime)
     {
+        slopeAngle += 20.0f * deltaTime;
+        this.rotation = Matrix4f.rotate(slopeAngle, false);
     }
 
     public void draw()

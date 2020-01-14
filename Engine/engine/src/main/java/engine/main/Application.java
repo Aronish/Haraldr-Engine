@@ -72,6 +72,7 @@ public abstract class Application
 
         glfwShowWindow(window.getWindowHandle());
         initialized = true;
+        System.out.println(Math.cos(90f));
     }
 
     //TODO: Fix event system.

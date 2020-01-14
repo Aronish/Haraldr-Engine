@@ -16,7 +16,7 @@ public class ExampleLayer extends Layer
     private OrthographicCamera orthographicCamera = new OrthographicCamera();
     private Texture texture = new Texture("textures/pixel_test.png");
     private Line line = new Line(new Vector3f(), 45f, 4f, 0.005f);
-    private LineSegment lineSegment = new LineSegment(new Vector3f(5.0f, 0.0f), 5f, 45f, 0.5f);
+    private LineSegment lineSegment = new LineSegment(new Vector3f(5.0f, 0.0f), 5f, 0f, 0.5f);
 
     public ExampleLayer(String name)
     {
@@ -33,7 +33,7 @@ public class ExampleLayer extends Layer
     {
         EventHandler.processInput(orthographicCamera, window.getWindowHandle(), deltaTime);
         line.update(deltaTime);
-        //lineSegment.update(deltaTime);
+        lineSegment.update(deltaTime);
     }
 
     @Override

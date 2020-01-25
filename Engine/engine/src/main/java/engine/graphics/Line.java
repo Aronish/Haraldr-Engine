@@ -16,7 +16,7 @@ public class Line
     {
         length = Vector3f.subtract(start, end).length();
         slopeAngle = (float) Math.tan(Vector3f.slope(start, end));
-        rotation = Matrix4f.rotate(slopeAngle, false);
+        rotation = Matrix4f.rotateZ(slopeAngle);
         float[] vertices = {
                 start.getX(),           start.getY() + thickness,
                 start.getX() + length,  start.getY() + thickness,
@@ -37,7 +37,7 @@ public class Line
     {
         this.length = length;
         this.slopeAngle = slopeAngle;
-        rotation = Matrix4f.rotate(slopeAngle, false);
+        rotation = Matrix4f.rotateZ(slopeAngle);
         float[] vertices = {
                 position.getX(),           position.getY() + thickness,
                 position.getX() + length,  position.getY() + thickness,
@@ -61,16 +61,16 @@ public class Line
     public void update(float deltaTime)
     {
         slopeAngle += 20.0f * deltaTime;
-        this.rotation = Matrix4f.rotate(slopeAngle, false);
+        this.rotation = Matrix4f.rotateZ(slopeAngle);
     }
 
     public void draw()
     {
-        SceneData.defaultTexture.bind();
-        Shader.DEFAULT.setMatrix4f(rotation, "model");
-        Shader.DEFAULT.setMatrix4f(Renderer2D.sceneData.getViewMatrix(), "view");
-        Shader.DEFAULT.setMatrix4f(Matrix4f.orthographic, "projection");
-        Shader.DEFAULT.setVector4f(color, "color");
+        SceneData2D.defaultTexture.bind();
+        Shader.DEFAULT2D.setMatrix4f(rotation, "model");
+        Shader.DEFAULT2D.setMatrix4f(Renderer2D.sceneData.getViewMatrix(), "view");
+        Shader.DEFAULT2D.setMatrix4f(Matrix4f.orthographic, "projection");
+        Shader.DEFAULT2D.setVector4f(color, "color");
 
         vertexArray.bind();
         vertexArray.draw();

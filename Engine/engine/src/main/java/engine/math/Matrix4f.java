@@ -3,18 +3,21 @@ package engine.math;
 import engine.event.WindowResizedEvent;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class Matrix4f
 {
     public static final float FIXED_ORTHOGRAPHIC_AXIS = 9f;
     private static final float NEAR_FAR = 5f;
 
     public static float dynamicOrthographicAxis;
-    private static float scale = 1.0f;
+    public static float scale = 1.0f;
     private static final boolean fixedWidth = true; //Fixed width is better
 
+    private static final float FOV = 80;
+
     public static Matrix4f orthographic;
-    @SuppressWarnings("WeakerAccess") public static Matrix4f pixelOrthographic;
+    public static Matrix4f pixelOrthographic;
+    public static Matrix4f perspective;
 
     public float[] matrix = new float[16];
 
@@ -22,12 +25,14 @@ public class Matrix4f
     {
         recalculateOrthographic((float) event.width / event.height);
         recalculatePixelOrthographic(event.width, event.height);
+        recalculatePerspective((float) event.width / event.height);
     }
 
     public static void init(int width, int height)
     {
         recalculateOrthographic((float) width / height);
         recalculatePixelOrthographic(width, height);
+        recalculatePerspective((float) width / height);
     }
 
     @NotNull
@@ -77,20 +82,36 @@ public class Matrix4f
         return new Vector3f(result[0], result[1], result[2]);
     }
 
-    public static void addZoom(float p_zoom)
+    @NotNull
+    public Vector4f multiply(@NotNull Vector4f multiplicand)
     {
-        scale += p_zoom;
+        float[] start = { multiplicand.getX(), multiplicand.getY(), multiplicand.getZ(), multiplicand.getW() };
+        float[] result = new float[4];
+        for (int x = 0; x < 4; x++)
+        {
+            float sum = 0.0f;
+            for (int e = 0; e < 4; e++)
+            {
+                sum += matrix[x + e * 4] * start[e];
+            }
+            result[x] = sum;
+        }
+        return new Vector4f(result[0], result[1], result[2], result[3]);
+    }
+
+    public static void setZoom(float zoom)
+    {
+        scale = zoom;
         recalculateOrthographic(FIXED_ORTHOGRAPHIC_AXIS / dynamicOrthographicAxis);
     }
 
-    /**
-     * Creates a transformation/model matrix.
-     * @param position the position in world space.
-     * @param angle the rotation around the z-axis, in degrees.
-     * @param scale the scale multiplier.
-     * @param isCamera if the transformation matrix is the view matrix of a camera. If <code>true</code>, the translation and rotation will be inverted.
-     * @return the resulting transformation matrix.
-     */
+    public static void addZoom(float p_zoom)
+    {
+        scale += p_zoom;
+        if (scale <= 0) scale = 0; // Avoids flipping everything
+        recalculateOrthographic(FIXED_ORTHOGRAPHIC_AXIS / dynamicOrthographicAxis);
+    }
+
     @NotNull
     public static Matrix4f transform(Vector3f position, float angle, @NotNull Vector2f scale, boolean isCamera)
     {
@@ -111,7 +132,7 @@ public class Matrix4f
                     (pixelPosition.getX() / width) * (2 * (fixedWidth ? FIXED_ORTHOGRAPHIC_AXIS : dynamicOrthographicAxis)) - (fixedWidth ? FIXED_ORTHOGRAPHIC_AXIS : dynamicOrthographicAxis),
                     (-pixelPosition.getY() / height) * (2 * (fixedWidth ? dynamicOrthographicAxis : FIXED_ORTHOGRAPHIC_AXIS)) + (fixedWidth ? dynamicOrthographicAxis : FIXED_ORTHOGRAPHIC_AXIS)
             );
-            temp.printVector();
+            temp.print();
             return temp;
         }
     /////UNUSED WITH PIXELORTHOGRAPHIC/////////////////////////////////////////////////////////////////////////
@@ -156,37 +177,47 @@ public class Matrix4f
     }
 
     @NotNull
-    public static Matrix4f rotate(float angle, boolean isCamera)
+    public static Matrix4f rotateX(float angle)
     {
         Matrix4f result = identity();
-        float radians;
-        if (isCamera)
-        {
-            radians = -(float) Math.toRadians(angle);
-        }else{
-            radians = (float) Math.toRadians(angle);
-        }
+        float radians = (float) Math.toRadians(angle);
         float cosAngle = (float) Math.cos(radians);
         float sinAngle = (float) Math.sin(radians);
-        result.matrix[0] = cosAngle;
-        result.matrix[1] = sinAngle;
-        result.matrix[4] = -sinAngle;
         result.matrix[5] = cosAngle;
+        result.matrix[6] = sinAngle;
+        result.matrix[9] = -sinAngle;
+        result.matrix[10] = cosAngle;
         return result;
     }
 
-    /**
-     * Creates an orthographic projection matrix. Objects further away will not become smaller.
-     * Takes in parameters for the clipping planes that create the clip space. Objects outside the planes will not be visible.
-     * The aspect ratio has to be 16:9 at the moment.
-     * @param right the right clipping plane.
-     * @param left the left clipping plane.
-     * @param top the top clipping plane.
-     * @param bottom the bottom clipping plane.
-     * @param far the far clipping plane.
-     * @param near the near clipping plane.
-     * @return the resulting orthographic projection matrix.
-     */
+    @NotNull
+    public static Matrix4f rotateY(float angle)
+    {
+        Matrix4f result = identity();
+        float radians = (float) Math.toRadians(angle);
+        float cosAngle = (float) Math.cos(radians);
+        float sinAngle = (float) Math.sin(radians);
+        result.matrix[0] = cosAngle;
+        result.matrix[2] = -sinAngle;
+        result.matrix[8] = sinAngle;
+        result.matrix[10] = cosAngle;
+        return result;
+    }
+
+    @NotNull
+    public static Matrix4f rotateZ(float angle)
+    {
+        Matrix4f result = identity();
+        float radians = (float) Math.toRadians(angle);
+        float cosAngle = (float) Math.cos(radians);
+        float sinAngle = (float) Math.sin(radians);
+        result.matrix[0] = cosAngle;
+        result.matrix[2] = -sinAngle;
+        result.matrix[8] = sinAngle;
+        result.matrix[10] = cosAngle;
+        return result;
+    }
+
     @NotNull
     private static Matrix4f orthographic(float right, float left, float top, float bottom, float far, float near)
     {
@@ -227,21 +258,58 @@ public class Matrix4f
         pixelOrthographic = orthographic(width, 0, 0, height, -NEAR_FAR, NEAR_FAR);
     }
 
-    @NotNull
-    public static Matrix4f perspective(float FOV)
+    private static void recalculatePerspective(float aspectRatio)
     {
-        Matrix4f result = new Matrix4f();
-        float ar = 1280.0f / 720.0f;
-        float near = -1.0f;
-        float far = 10.0f;
-        float range = far - near;
-        float tanHalfFOV = (float) Math.tan(Math.toRadians(FOV / 2));
+        perspective = perspective(FOV, aspectRatio);
+    }
 
-        result.matrix[0] = 1.0f / (tanHalfFOV * ar);
-        result.matrix[5] = 1.0f / tanHalfFOV;
-        result.matrix[10] = -((far + near) / range);
-        result.matrix[11] = -((2.0f * far * near) / range);
-        result.matrix[14] = -1;
+    @NotNull
+    public static Matrix4f perspective(float fov, float aspectRatio)
+    {
+        //Camera looks towards positive z to begin with.
+        Matrix4f result = new Matrix4f();
+        float near = -1f;
+        float far = 1f;
+        float range = far - near;
+        float tanHalfFov = (float) Math.tan(Math.toRadians(fov / 2));
+
+        result.matrix[0] = 1.0f / (tanHalfFov * aspectRatio);
+        result.matrix[5] = 1.0f / tanHalfFov;
+        result.matrix[10] = -((far + near) / (far - near));
+        result.matrix[11] = (2.0f * far * near) / (far - near);
+        result.matrix[14] = -1; // It is apparently this way around.
         return result;
+    }
+
+    @NotNull
+    public static Matrix4f lookAt(@NotNull Vector3f position, @NotNull Vector3f target, @NotNull Vector3f up)
+    {
+        Matrix4f result = identity();
+        Vector3f direction = Vector3f.normalize(Vector3f.subtract(position, target));
+        Vector3f right = Vector3f.normalize(Vector3f.cross(up, direction));
+        Vector3f realUp = Vector3f.cross(direction, right);
+        result.matrix[0] = right.getX();
+        result.matrix[4] = right.getY();
+        result.matrix[8] = right.getZ();
+        result.matrix[1] = realUp.getX();
+        result.matrix[5] = realUp.getY();
+        result.matrix[9] = realUp.getZ();
+        result.matrix[2] = direction.getX();
+        result.matrix[6] = direction.getY();
+        result.matrix[10] = direction.getZ();
+        return result.multiply(translate(position, true));
+    }
+
+    public void print()
+    {
+        System.out.println("-------------------------------------");
+        for (int x = 0; x < 4; ++x)
+        {
+            for (int e = 0; e < 4; ++e)
+            {
+                System.out.printf("%-10f", matrix[e * 4 + x]);
+            }
+            System.out.println();
+        }
     }
 }

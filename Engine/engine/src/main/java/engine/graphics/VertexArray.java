@@ -19,6 +19,7 @@ import static org.lwjgl.opengl.GL43.glMultiDrawElementsIndirect;
 import static org.lwjgl.opengl.GL45.glCreateBuffers;
 import static org.lwjgl.opengl.GL45.glCreateVertexArrays;
 
+@SuppressWarnings("WeakerAccess")
 public class VertexArray
 {
     private int vertexArrayID;
@@ -26,15 +27,26 @@ public class VertexArray
     private VertexBuffer vertexBuffer; //TODO Add support for multiple.
     private int numIndices;
 
-    public VertexArray(int[] indices)
+    public VertexArray()
+    {
+        vertexArrayID = glCreateVertexArrays();
+    }
+
+    public VertexArray(@NotNull int[] indices)
+    {
+        this();
+        numIndices = indices.length;
+        glBindVertexArray(vertexArrayID);
+        setIndexBuffer(indices);
+        glBindVertexArray(0);
+    }
+
+    public void setIndexBuffer(@NotNull int[] indices)
     {
         numIndices = indices.length;
-        vertexArrayID = glCreateVertexArrays();
         int indexBufferID = glCreateBuffers();
-        glBindVertexArray(vertexArrayID);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
-        glBindVertexArray(0);
     }
 
     public void setVertexBuffer(@NotNull VertexBuffer vertexBuffer)

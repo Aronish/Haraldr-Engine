@@ -16,6 +16,7 @@ import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_DISABLED;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_HIDDEN;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
@@ -104,6 +105,7 @@ public class Window
         GL.createCapabilities();
 
         setCursorVisible(true);
+        glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         setVSync(vSync);
         ///// CALLBACKS ///////////////////////////////
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {

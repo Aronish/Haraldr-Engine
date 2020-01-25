@@ -7,6 +7,7 @@ import engine.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
@@ -14,11 +15,11 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Renderer2D
 {
-    public static SceneData sceneData = new SceneData();
+    public static SceneData2D sceneData = new SceneData2D();
 
     public static void clear()
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     public static void setClearColor(float r, float g, float b, float a)
@@ -29,7 +30,7 @@ public class Renderer2D
     public static void beginScene(@NotNull OrthographicCamera camera)
     {
         sceneData.setViewMatrix(camera.getViewMatrix());
-        Shader.DEFAULT.bind(); // Versions of draw* without shader parameter will use default shader.
+        Shader.DEFAULT2D.bind(); // Versions of draw* without shader parameter will use default shader.
     }
 
     public static void drawQuad(Vector3f position)
@@ -39,14 +40,14 @@ public class Renderer2D
 
     public static void drawQuad(Vector3f position, Vector4f color)
     {
-        SceneData.defaultTexture.bind();
-        Shader.DEFAULT.setMatrix4f(Matrix4f.translate(position, false), "model");
-        Shader.DEFAULT.setMatrix4f(sceneData.getViewMatrix(), "view");
-        Shader.DEFAULT.setMatrix4f(Matrix4f.orthographic, "projection");
-        Shader.DEFAULT.setVector4f(color, "color");
+        SceneData2D.defaultTexture.bind();
+        Shader.DEFAULT2D.setMatrix4f(Matrix4f.translate(position, false), "model");
+        Shader.DEFAULT2D.setMatrix4f(sceneData.getViewMatrix(), "view");
+        Shader.DEFAULT2D.setMatrix4f(Matrix4f.orthographic, "projection");
+        Shader.DEFAULT2D.setVector4f(color, "color");
 
-        SceneData.QUAD.bind();
-        SceneData.QUAD.draw();
+        SceneData2D.QUAD.bind();
+        SceneData2D.QUAD.draw();
     }
 
     public static void drawQuad(Vector3f position, @NotNull Shader shader)
@@ -57,14 +58,14 @@ public class Renderer2D
     public static void drawQuad(Vector3f position, @NotNull Shader shader, Vector4f color)
     {
         shader.bind();
-        SceneData.defaultTexture.bind();
+        SceneData2D.defaultTexture.bind();
         shader.setMatrix4f(Matrix4f.translate(position, false), "model");
         shader.setMatrix4f(sceneData.getViewMatrix(), "view");
         shader.setMatrix4f(Matrix4f.orthographic, "projection");
         shader.setVector4f(color, "color");
 
-        SceneData.QUAD.bind();
-        SceneData.QUAD.draw();
+        SceneData2D.QUAD.bind();
+        SceneData2D.QUAD.draw();
     }
 
     public static void drawQuad(Vector3f position, @NotNull Texture texture)
@@ -74,15 +75,15 @@ public class Renderer2D
 
     public static void drawQuad(Vector3f position, @NotNull Texture texture, Vector4f tintColor)
     {
-        SceneData.defaultTexture.bind();
+        SceneData2D.defaultTexture.bind();
         texture.bind();
-        Shader.DEFAULT.setMatrix4f(Matrix4f.translate(position, false), "model");
-        Shader.DEFAULT.setMatrix4f(sceneData.getViewMatrix(), "view");
-        Shader.DEFAULT.setMatrix4f(Matrix4f.orthographic, "projection");
-        Shader.DEFAULT.setVector4f(tintColor, "color");
+        Shader.DEFAULT2D.setMatrix4f(Matrix4f.translate(position, false), "model");
+        Shader.DEFAULT2D.setMatrix4f(sceneData.getViewMatrix(), "view");
+        Shader.DEFAULT2D.setMatrix4f(Matrix4f.orthographic, "projection");
+        Shader.DEFAULT2D.setVector4f(tintColor, "color");
 
-        SceneData.QUAD.bind();
-        SceneData.QUAD.draw();
+        SceneData2D.QUAD.bind();
+        SceneData2D.QUAD.draw();
     }
 
     public static void drawQuad(Vector3f position, @NotNull Shader shader, @NotNull Texture texture)
@@ -99,7 +100,7 @@ public class Renderer2D
         shader.setMatrix4f(Matrix4f.orthographic, "projection");
         shader.setVector4f(tintColor, "color");
 
-        SceneData.QUAD.bind();
-        SceneData.QUAD.draw();
+        SceneData2D.QUAD.bind();
+        SceneData2D.QUAD.draw();
     }
 }

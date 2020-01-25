@@ -122,7 +122,28 @@ public class Vector3f
         return (second.y - first.y) / (second.x - first.x);
     }
 
-    public void printVector()
+    public void normalize()
+    {
+        this.x /= length();
+        this.y /= length();
+        this.z /= length();
+    }
+
+    @NotNull
+    @Contract("_ -> new")
+    public static Vector3f normalize(@NotNull Vector3f vector)
+    {
+        return new Vector3f(vector.x / vector.length(), vector.y / vector.length(), vector.z / vector.length());
+    }
+
+    @NotNull
+    @Contract(value = "_, _ -> new", pure = true)
+    public static Vector3f cross(@NotNull Vector3f a, @NotNull Vector3f b)
+    {
+        return new Vector3f(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
+    }
+
+    public void print()
     {
         MAIN_LOGGER.info("X: " + x + " Y: " + y + " Z: " + z);
     }

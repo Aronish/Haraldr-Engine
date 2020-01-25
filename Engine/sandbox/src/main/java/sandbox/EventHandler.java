@@ -2,6 +2,7 @@ package sandbox;
 
 import engine.input.Input;
 import engine.main.OrthographicCamera;
+import engine.main.PerspectiveCamera;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
 
@@ -21,31 +22,32 @@ public class EventHandler
     {
         if (Input.isKeyPressed(window, KEY_A))
         {
-            camera.addPosition(new Vector3f(-CAMERA_SPEED * deltaTime, 0.0f));
+            camera.addPosition(new Vector3f(-CAMERA_SPEED * deltaTime * Matrix4f.scale, 0.0f));
         }
         if (Input.isKeyPressed(window, KEY_D))
         {
-            camera.addPosition(new Vector3f(CAMERA_SPEED * deltaTime, 0.0f));
+            camera.addPosition(new Vector3f(CAMERA_SPEED * deltaTime * Matrix4f.scale, 0.0f));
         }
         if (Input.isKeyPressed(window, KEY_W))
         {
-            camera.addPosition(new Vector3f(0.0f, CAMERA_SPEED * deltaTime));
+            camera.addPosition(new Vector3f(0.0f, CAMERA_SPEED * deltaTime * Matrix4f.scale));
         }
         if (Input.isKeyPressed(window, KEY_S))
         {
-            camera.addPosition(new Vector3f(0.0f, -CAMERA_SPEED * deltaTime));
+            camera.addPosition(new Vector3f(0.0f, -CAMERA_SPEED * deltaTime * Matrix4f.scale));
         }
         if (Input.isKeyPressed(window, KEY_R))
         {
             camera.setPosition(new Vector3f());
+            Matrix4f.setZoom(1f);
         }
         if (Input.isKeyPressed(window, KEY_UP))
         {
-            Matrix4f.addZoom(-1.0f * deltaTime);
+            Matrix4f.addZoom((-1.0f * deltaTime) * Matrix4f.scale);
         }
         if (Input.isKeyPressed(window, KEY_DOWN))
         {
-            Matrix4f.addZoom(1.0f * deltaTime);
+            Matrix4f.addZoom((1.0f * deltaTime) * Matrix4f.scale);
         }
     }
 }

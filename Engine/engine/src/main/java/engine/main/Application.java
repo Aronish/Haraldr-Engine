@@ -25,6 +25,7 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
@@ -40,6 +41,8 @@ public abstract class Application
     private boolean initialized = false;
     protected LayerStack layerStack = new LayerStack();
     private Window window;
+
+    public static double time;
 
     public abstract void start();
 
@@ -58,6 +61,8 @@ public abstract class Application
         EventDispatcher.addCallback(new DebugEventHandler());
         Matrix4f.init(window.getWidth(), window.getHeight());
 
+        glEnable(GL_DEPTH_TEST);
+
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -72,10 +77,8 @@ public abstract class Application
 
         glfwShowWindow(window.getWindowHandle());
         initialized = true;
-        System.out.println(Math.cos(90f));
     }
 
-    //TODO: Fix event system.
     public class EventCallback implements engine.event.EventCallback
     {
         @Override
@@ -98,6 +101,7 @@ public abstract class Application
 
     private void update(float deltaTime)
     {
+        time = glfwGetTime();
         for (Layer layer : layerStack)
         {
             layer.onUpdate(window, deltaTime);

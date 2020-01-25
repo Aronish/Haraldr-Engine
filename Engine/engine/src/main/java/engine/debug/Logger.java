@@ -52,7 +52,7 @@ public class Logger
     public void info(@NotNull Vector3f message)
     {
         setInfoLevel();
-        message.printVector();
+        message.print();
     }
 
     @SafeVarargs //TODO: Possibly risky

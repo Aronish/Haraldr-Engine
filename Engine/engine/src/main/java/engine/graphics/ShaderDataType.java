@@ -7,6 +7,7 @@ public enum ShaderDataType
 {
     FLOAT2  (2, GL_FLOAT, 4),
     FLOAT3  (3, GL_FLOAT, 4),
+    FLOAT4  (4, GL_FLOAT, 4),
     MAT4    (4, GL_FLOAT, 4); //Need 4 of these, one per column.
 
     public final int size;

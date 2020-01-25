@@ -35,7 +35,8 @@ import static org.lwjgl.opengl.GL46.glValidateProgram;
 @SuppressWarnings("WeakerAccess")
 public class Shader
 {
-    public static final Shader DEFAULT = new Shader("default_shaders/default");
+    public static final Shader DEFAULT2D = new Shader("default_shaders/default2D");
+    public static final Shader DEFAULT3D = new Shader("default_shaders/default3D");
 
     private String vertexShaderPath, fragmentShaderPath;
     private int shaderProgram;

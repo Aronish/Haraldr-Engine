@@ -61,6 +61,11 @@ public class OrthographicCamera
         calculateViewMatrix();
     }
 
+    public Vector3f getPosition()
+    {
+        return position;
+    }
+
     public Matrix4f getViewMatrix()
     {
         return viewMatrix;

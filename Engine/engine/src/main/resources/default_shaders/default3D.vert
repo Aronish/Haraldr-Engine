@@ -1,18 +1,18 @@
 #version 460 core
 
 layout(location = 0) in vec3 a_Position;
-layout(location = 1) in vec4 a_Color;
+layout(location = 1) in vec3 a_Normal;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-out vec2 v_Test;
-out vec4 v_Color;
+out vec3 v_Normal;
+out vec3 v_FragmentPosition;
 
 void main()
 {
-    v_Test = a_Position.xy;
-    v_Color = a_Color;
+    v_Normal = a_Normal;
+    v_FragmentPosition = (model * vec4(a_Position, 1.0f)).xyz;
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
 }

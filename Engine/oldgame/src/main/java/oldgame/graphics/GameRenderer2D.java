@@ -40,6 +40,6 @@ public class GameRenderer2D extends Renderer2D
         shader.setMatrix4f(camera.getViewMatrix(), "view");
         shader.setMatrix4f(Matrix4f.orthographic, "projection");
         entity.getGameObjectType().getModel().getVertexArray().bind();
-        entity.getGameObjectType().getModel().getVertexArray().draw();
+        entity.getGameObjectType().getModel().getVertexArray().drawElements();
     }
 }

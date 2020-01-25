@@ -15,6 +15,7 @@ public class DebugEventHandler implements EventCallback
         if (Input.isKeyPressed(window.getWindowHandle(), Key.KEY_Q))
         {
             Shader.DEFAULT2D.recompile();
+            Shader.DEFAULT3D.recompile();
         }
     }
 }

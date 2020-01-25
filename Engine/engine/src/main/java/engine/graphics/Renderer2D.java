@@ -47,7 +47,7 @@ public class Renderer2D
         Shader.DEFAULT2D.setVector4f(color, "color");
 
         SceneData2D.QUAD.bind();
-        SceneData2D.QUAD.draw();
+        SceneData2D.QUAD.drawElements();
     }
 
     public static void drawQuad(Vector3f position, @NotNull Shader shader)
@@ -65,7 +65,7 @@ public class Renderer2D
         shader.setVector4f(color, "color");
 
         SceneData2D.QUAD.bind();
-        SceneData2D.QUAD.draw();
+        SceneData2D.QUAD.drawElements();
     }
 
     public static void drawQuad(Vector3f position, @NotNull Texture texture)
@@ -83,7 +83,7 @@ public class Renderer2D
         Shader.DEFAULT2D.setVector4f(tintColor, "color");
 
         SceneData2D.QUAD.bind();
-        SceneData2D.QUAD.draw();
+        SceneData2D.QUAD.drawElements();
     }
 
     public static void drawQuad(Vector3f position, @NotNull Shader shader, @NotNull Texture texture)
@@ -101,6 +101,6 @@ public class Renderer2D
         shader.setVector4f(tintColor, "color");
 
         SceneData2D.QUAD.bind();
-        SceneData2D.QUAD.draw();
+        SceneData2D.QUAD.drawElements();
     }
 }

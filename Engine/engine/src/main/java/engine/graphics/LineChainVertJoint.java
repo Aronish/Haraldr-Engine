@@ -84,6 +84,6 @@ public class LineChainVertJoint
         Shader.DEFAULT2D.setVector4f(color, "color");
 
         vertexArray.bind();
-        vertexArray.draw();
+        vertexArray.drawElements();
     }
 }

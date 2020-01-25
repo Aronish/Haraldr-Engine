@@ -10,10 +10,12 @@ public class Matrix4f
     private static final float NEAR_FAR = 5f;
 
     public static float dynamicOrthographicAxis;
-    public static float scale = 1.0f;
+    public static float scale = 1f;
     private static final boolean fixedWidth = true; //Fixed width is better
 
-    private static final float FOV = 80;
+    private static final float DEFAULT_FOV = 60f;
+    private static float fov = DEFAULT_FOV;
+    private static float aspectRatio;
 
     public static Matrix4f orthographic;
     public static Matrix4f pixelOrthographic;
@@ -23,16 +25,18 @@ public class Matrix4f
 
     public static void onResize(@NotNull WindowResizedEvent event)
     {
-        recalculateOrthographic((float) event.width / event.height);
+        aspectRatio = (float) event.width / event.height;
+        recalculateOrthographic(aspectRatio);
         recalculatePixelOrthographic(event.width, event.height);
-        recalculatePerspective((float) event.width / event.height);
+        recalculatePerspective(aspectRatio);
     }
 
     public static void init(int width, int height)
     {
-        recalculateOrthographic((float) width / height);
+        aspectRatio = (float) width / height;
+        recalculateOrthographic(aspectRatio);
         recalculatePixelOrthographic(width, height);
-        recalculatePerspective((float) width / height);
+        recalculatePerspective(aspectRatio);
     }
 
     @NotNull
@@ -102,14 +106,27 @@ public class Matrix4f
     public static void setZoom(float zoom)
     {
         scale = zoom;
+        fov = zoom;
         recalculateOrthographic(FIXED_ORTHOGRAPHIC_AXIS / dynamicOrthographicAxis);
+        recalculatePerspective(aspectRatio);
     }
 
-    public static void addZoom(float p_zoom)
+    public static void addZoom(float zoom)
     {
-        scale += p_zoom;
-        if (scale <= 0) scale = 0; // Avoids flipping everything
+        scale += zoom;
+        fov += zoom;
+        if (scale < 0f) scale = 0f; // Avoids flipping everything
+        if (fov < 10f) fov = 10f;
         recalculateOrthographic(FIXED_ORTHOGRAPHIC_AXIS / dynamicOrthographicAxis);
+        recalculatePerspective(aspectRatio);
+    }
+
+    public static void resetZoom()
+    {
+        scale = 1f;
+        fov = DEFAULT_FOV;
+        recalculateOrthographic(FIXED_ORTHOGRAPHIC_AXIS / dynamicOrthographicAxis);
+        recalculatePerspective(aspectRatio);
     }
 
     @NotNull
@@ -128,12 +145,10 @@ public class Matrix4f
         @NotNull
         private static Vector3f clampToUnitSpace(@NotNull Vector3f pixelPosition, int width, int height)
         {
-            Vector3f temp = new Vector3f(
+            return new Vector3f(
                     (pixelPosition.getX() / width) * (2 * (fixedWidth ? FIXED_ORTHOGRAPHIC_AXIS : dynamicOrthographicAxis)) - (fixedWidth ? FIXED_ORTHOGRAPHIC_AXIS : dynamicOrthographicAxis),
                     (-pixelPosition.getY() / height) * (2 * (fixedWidth ? dynamicOrthographicAxis : FIXED_ORTHOGRAPHIC_AXIS)) + (fixedWidth ? dynamicOrthographicAxis : FIXED_ORTHOGRAPHIC_AXIS)
             );
-            temp.print();
-            return temp;
         }
     /////UNUSED WITH PIXELORTHOGRAPHIC/////////////////////////////////////////////////////////////////////////
 
@@ -174,6 +189,12 @@ public class Matrix4f
             result.matrix[14] = vector.getZ();
         }
         return result;
+    }
+
+    @NotNull
+    public static Matrix4f rotate(@NotNull Vector3f rotation)
+    {
+        return rotateX(rotation.getX()).multiply(rotateY(rotation.getY()).multiply(rotateZ(rotation.getZ())));
     }
 
     @NotNull
@@ -258,9 +279,9 @@ public class Matrix4f
         pixelOrthographic = orthographic(width, 0, 0, height, -NEAR_FAR, NEAR_FAR);
     }
 
-    private static void recalculatePerspective(float aspectRatio)
+    public static void recalculatePerspective(float aspectRatio)
     {
-        perspective = perspective(FOV, aspectRatio);
+        perspective = perspective(fov, aspectRatio);
     }
 
     @NotNull
@@ -268,15 +289,15 @@ public class Matrix4f
     {
         //Camera looks towards positive z to begin with.
         Matrix4f result = new Matrix4f();
-        float near = -1f;
-        float far = 1f;
+        float near = 0.5f;
+        float far = 100f;
         float range = far - near;
         float tanHalfFov = (float) Math.tan(Math.toRadians(fov / 2));
 
         result.matrix[0] = 1.0f / (tanHalfFov * aspectRatio);
         result.matrix[5] = 1.0f / tanHalfFov;
-        result.matrix[10] = -((far + near) / (far - near));
-        result.matrix[11] = (2.0f * far * near) / (far - near);
+        result.matrix[10] = -(far + near) / range;
+        result.matrix[11] = -2f * far * near / range;
         result.matrix[14] = -1; // It is apparently this way around.
         return result;
     }

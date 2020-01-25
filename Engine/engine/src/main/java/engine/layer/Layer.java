@@ -4,6 +4,7 @@ import engine.debug.Logger;
 import engine.event.Event;
 import engine.main.Window;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class Layer
 {
     private final String name;

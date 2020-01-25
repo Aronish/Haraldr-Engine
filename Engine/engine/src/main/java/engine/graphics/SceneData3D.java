@@ -1,6 +1,7 @@
 package engine.graphics;
 
 import engine.math.Matrix4f;
+import engine.math.Vector3f;
 
 public class SceneData3D
 {
@@ -10,14 +11,57 @@ public class SceneData3D
     static
     {
         float[] cubeVertices = {
-                -1, -1, -1,     1f, 0f, 0f, 1f,
-                 1, -1, -1,     0f, 1f, 0f, 1f,
-                 1,  1, -1,     0f, 0f, 1f, 1f,
-                -1,  1, -1,     0f, 1f, 0f, 1f,
-                -1, -1,  1,     1f, 0f, 0f, 1f,
-                 1, -1,  1,     0f, 1f, 0f, 1f,
-                 1,  1,  1,     0f, 0f, 1f, 1f,
-                -1,  1,  1,     0f, 1f, 0f, 1f
+                -1, -1, -1,
+                 1, -1, -1,
+                 1,  1, -1,
+                -1,  1, -1,
+                -1, -1,  1,
+                 1, -1,  1,
+                 1,  1,  1,
+                -1,  1,  1
+        };
+        float[] cubeVerticesNoIndex = {
+                -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+                0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+                0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+                0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+                -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+                -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+                -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+                0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+                0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+                0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+                -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+                -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+
+                -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+                -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+                -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+                -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+                -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+                -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+                0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+                0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+                0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+                0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+                0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+                0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+                -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+                0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+                0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+                0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+                -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+                -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+                -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+                0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+                0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+                0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+                -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+                -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
         };
         int[] cubeIndices = {
                 0, 1, 3, 3, 1, 2,
@@ -30,9 +74,9 @@ public class SceneData3D
         CUBE = new VertexArray(cubeIndices);
         VertexBufferLayout cubeLayout = new VertexBufferLayout(
                 new VertexBufferElement(ShaderDataType.FLOAT3),
-                new VertexBufferElement(ShaderDataType.FLOAT4)
+                new VertexBufferElement(ShaderDataType.FLOAT3)
         );
-        VertexBuffer cubeBuffer = new VertexBuffer(cubeVertices, cubeLayout, false);
+        VertexBuffer cubeBuffer = new VertexBuffer(cubeVerticesNoIndex, cubeLayout, false);
         CUBE.setVertexBuffer(cubeBuffer);
 
         float[] triVertices = {
@@ -52,6 +96,13 @@ public class SceneData3D
     ///// SCENE //////////
     private Matrix4f viewMatrix = new Matrix4f();
 
+    public Vector3f getViewPosition()
+    {
+        return viewPosition;
+    }
+
+    private Vector3f viewPosition = new Vector3f();
+
     public void setViewMatrix(Matrix4f viewMatrix)
     {
         this.viewMatrix = viewMatrix;
@@ -60,5 +111,10 @@ public class SceneData3D
     public Matrix4f getViewMatrix()
     {
         return viewMatrix;
+    }
+
+    public void setViewPosition(Vector3f viewPosition)
+    {
+        this.viewPosition = viewPosition;
     }
 }

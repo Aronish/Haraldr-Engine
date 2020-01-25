@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -19,13 +20,12 @@ import static org.lwjgl.opengl.GL43.glMultiDrawElementsIndirect;
 import static org.lwjgl.opengl.GL45.glCreateBuffers;
 import static org.lwjgl.opengl.GL45.glCreateVertexArrays;
 
-@SuppressWarnings("WeakerAccess")
 public class VertexArray
 {
     private int vertexArrayID;
     private int nextAttribIndex = 0;
     private VertexBuffer vertexBuffer; //TODO Add support for multiple.
-    private int numIndices;
+    private int numIndices, numVertices;
 
     public VertexArray()
     {
@@ -54,12 +54,15 @@ public class VertexArray
         this.vertexBuffer = vertexBuffer;
         glBindVertexArray(vertexArrayID);
         vertexBuffer.bind();
+        int vertexSize = 0;
         for (VertexBufferElement element : vertexBuffer.getLayout())
         {
             glEnableVertexAttribArray(nextAttribIndex);
             glVertexAttribPointer(nextAttribIndex, element.getSize(), element.getType(), element.isNormalized(), vertexBuffer.getLayout().getStride(), element.getOffset());
+            vertexSize += element.getSize();
             ++nextAttribIndex;
         }
+        numVertices = vertexBuffer.getData().length / vertexSize;
         glBindVertexArray(0);
     }
 
@@ -88,9 +91,14 @@ public class VertexArray
         glBindVertexArray(0);
     }
 
-    public void draw()
+    public void drawElements()
     {
         glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
+    }
+
+    public void drawArrays()
+    {
+        glDrawArrays(GL_TRIANGLES, 0, numVertices);
     }
 
     public void drawInstanced(int count)

@@ -1,35 +1,42 @@
 package engine.main;
 
 import engine.event.MouseMovedEvent;
+import engine.event.MouseScrolledEvent;
 import engine.input.Input;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
 import static engine.input.Key.KEY_A;
+import static engine.input.Key.KEY_C;
 import static engine.input.Key.KEY_D;
+import static engine.input.Key.KEY_M;
+import static engine.input.Key.KEY_N;
 import static engine.input.Key.KEY_R;
 import static engine.input.Key.KEY_S;
+import static engine.input.Key.KEY_SPACE;
 import static engine.input.Key.KEY_W;
 import static engine.main.Application.MAIN_LOGGER;
 
 public class PerspectiveCameraController
 {
-    private static final float CAMERA_SPEED = 5f;
+    private static final float CAMERA_SPEED = 2f;
+    private static final float MOVEMENT_SENSITIVITY = 0.1f;
+    private static final float ZOOM_SENSITIVITY = 2f;
 
     private float lastX = 640, lastY = 360;
 
-    public void handleRotation(@NotNull PerspectiveCamera camera, @NotNull MouseMovedEvent event, @NotNull Window window)
+    public void handleRotation(@NotNull PerspectiveCamera camera, @NotNull MouseMovedEvent event)
     {
-        float sensitivity = 0.25f;
-        float offsetX = (float) event.xPos - lastX;
-        float offsetY = lastY - (float) event.yPos;
+        camera.addYaw(((float) event.xPos - lastX) * MOVEMENT_SENSITIVITY);
+        camera.addPitch((lastY - (float) event.yPos) * MOVEMENT_SENSITIVITY);
         lastX = (float) event.xPos;
         lastY = (float) event.yPos;
-        offsetX *= sensitivity;
-        offsetY *= sensitivity;
-        camera.addYaw(offsetX);
-        camera.addPitch(offsetY);
+    }
+
+    public void handleScroll(@NotNull MouseScrolledEvent event)
+    {
+        Matrix4f.addZoom((float) -event.yOffset * ZOOM_SENSITIVITY);
     }
 
     public void handleMovement(PerspectiveCamera camera, long window, float deltaTime)
@@ -50,10 +57,18 @@ public class PerspectiveCameraController
         {
             camera.addPosition(Vector3f.normalize(Vector3f.cross(camera.getDirection(), PerspectiveCamera.up)).multiply(-CAMERA_SPEED * deltaTime));
         }
+        if (Input.isKeyPressed(window, KEY_SPACE))
+        {
+            camera.addPosition(new Vector3f(0f, CAMERA_SPEED * deltaTime, 0f));
+        }
+        if (Input.isKeyPressed(window, KEY_C))
+        {
+            camera.addPosition(new Vector3f(0f, -CAMERA_SPEED * deltaTime, 0f));
+        }
         if (Input.isKeyPressed(window, KEY_R))
         {
             camera.setPosition(new Vector3f(0f, 0f, -5f));
-            Matrix4f.setZoom(1f);
+            Matrix4f.resetZoom();
         }
     }
 }

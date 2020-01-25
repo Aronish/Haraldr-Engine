@@ -4,8 +4,6 @@ import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
-import static engine.main.Application.MAIN_LOGGER;
-
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class PerspectiveCamera
 {
@@ -15,7 +13,7 @@ public class PerspectiveCamera
     private Matrix4f lookAt;
     private Vector3f position;
 
-    private float pitch = 0f, yaw = 90f;
+    private float pitch = -20f, yaw = 135f;
     private Vector3f direction = new Vector3f(
             (float) Math.cos(Math.toRadians(yaw) * Math.cos(Math.toRadians(pitch))),
             (float) Math.sin(Math.toRadians(pitch)),
@@ -64,11 +62,10 @@ public class PerspectiveCamera
     public Matrix4f lookAt(Vector3f position, Vector3f target)
     {
         direction = new Vector3f(
-                (float) Math.cos(Math.toRadians(yaw) * Math.cos(Math.toRadians(pitch))),
+                (float) Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)),
                 (float) Math.sin(Math.toRadians(pitch)),
-                (float) Math.sin(Math.toRadians(yaw) * Math.cos(Math.toRadians(pitch)))
+                (float) Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch))
         );
-        System.out.println(yaw + " " + pitch);
         direction.normalize();
         return Matrix4f.lookAt(position, Vector3f.add(position, direction), up);
     }
@@ -93,8 +90,6 @@ public class PerspectiveCamera
     public void addYaw(float yaw)
     {
         this.yaw += yaw;
-        if (this.yaw > 360f) this.yaw = 0f;
-        if (this.yaw < 0f) this.yaw = 360f;
         calculateViewMatrix();
     }
 

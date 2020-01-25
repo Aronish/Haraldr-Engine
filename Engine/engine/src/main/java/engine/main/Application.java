@@ -13,8 +13,6 @@ import engine.input.Key;
 import engine.layer.Layer;
 import engine.layer.LayerStack;
 import engine.math.Matrix4f;
-import engine.math.Vector2f;
-import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
@@ -30,6 +28,7 @@ import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
 import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
 import static org.lwjgl.system.MemoryUtil.memUTF8;
@@ -52,17 +51,17 @@ public abstract class Application
         event.setHandled(true);
     }
 
-    protected void init(int windowWidth, int windowHeight, boolean fullscreen, boolean vSync)
+    protected void init(int windowWidth, int windowHeight, boolean maximized, boolean fullscreen, boolean vSync)
     {
         /////WINDOW///////////////////////////////////////////////////////
-        window = new Window(windowWidth, windowHeight, fullscreen, vSync);
+        window = new Window(windowWidth, windowHeight, maximized, fullscreen, vSync);
         /////OPENGL CODE WON'T WORK BEFORE THIS///////////////////////////
         EventDispatcher.addCallback(new EventCallback());
-        EventDispatcher.addCallback(new DebugEventHandler());
+        //EventDispatcher.addCallback(new DebugEventHandler());
         Matrix4f.init(window.getWidth(), window.getHeight());
 
+        glEnable(GL_MULTISAMPLE);
         glEnable(GL_DEPTH_TEST);
-
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -118,7 +117,7 @@ public abstract class Application
 
     protected void loop()
     {
-        if (!initialized) throw new IllegalStateException("Application was not initialized before main loop start!");
+        if (!initialized) throw new IllegalStateException("Application was not initialized correctly before main loop start!");
         double frameRate = 60.0d;
         double updatePeriod = 1.0d / frameRate;
         double currentTime = glfwGetTime();

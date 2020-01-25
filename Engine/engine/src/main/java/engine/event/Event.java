@@ -3,6 +3,7 @@ package engine.event;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public abstract class Event
 {
     public final EventType eventType;

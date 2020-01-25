@@ -11,14 +11,14 @@ public class GameApplication extends Application
     @Override
     public void start()
     {
-        init(1280, 720, false, false);
+        init(1280, 720, false, false, false);
         loop();
     }
 
     @Override
-    protected void init(int windowWidth, int windowHeight, boolean fullscreen, boolean vSync)
+    protected void init(int windowWidth, int windowHeight, boolean maximized, boolean fullscreen, boolean vSync)
     {
-        super.init(windowWidth, windowHeight, fullscreen, vSync);
+        super.init(windowWidth, windowHeight, maximized, fullscreen, vSync);
         layerStack.pushLayers(new WorldLayer("World"));
         Renderer2D.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
     }

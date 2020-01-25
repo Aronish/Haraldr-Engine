@@ -2,6 +2,7 @@ package engine.graphics;
 
 import engine.main.EntryPoint;
 import engine.math.Matrix4f;
+import engine.math.Vector3f;
 import engine.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,6 +16,7 @@ import static org.lwjgl.opengl.GL20.glDeleteProgram;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glUniform3f;
 import static org.lwjgl.opengl.GL20.glUniform4f;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL46.GL_FRAGMENT_SHADER;
@@ -32,7 +34,7 @@ import static org.lwjgl.opengl.GL46.glValidateProgram;
 /**
  * Loads a shader program with a vertex and fragment shader.
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Shader
 {
     public static final Shader DEFAULT2D = new Shader("default_shaders/default2D");
@@ -156,6 +158,15 @@ public class Shader
             uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
         }
         glUniformMatrix4fv(uniformLocations.get(name), false, matrix.matrix);
+    }
+
+    public void setVector3f(Vector3f vector3f, String name)
+    {
+        if (!uniformLocations.containsKey(name))
+        {
+            uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
+        }
+        glUniform3f(uniformLocations.get(name), vector3f.getX(), vector3f.getY(), vector3f.getZ());
     }
 
     public void setVector4f(Vector4f vector4f, String name)

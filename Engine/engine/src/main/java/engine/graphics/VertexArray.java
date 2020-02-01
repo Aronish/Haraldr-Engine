@@ -9,21 +9,25 @@ import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
 import static org.lwjgl.opengl.GL43.glMultiDrawElementsIndirect;
+import static org.lwjgl.opengl.GL45.glCreateBuffers;
 import static org.lwjgl.opengl.GL45.glCreateVertexArrays;
 
-@SuppressWarnings("WeakerAccess")
 public class VertexArray
 {
     private int vertexArrayID;
     private int nextAttribIndex;
     private List<VertexBuffer> vertexBuffers = new ArrayList<>();
-    private IndexBuffer indexBuffer;
+    private int indexBufferID;
     private int vertexAmount, indexAmount;
 
     public VertexArray()
@@ -34,8 +38,10 @@ public class VertexArray
     public void setIndexBuffer(@NotNull int[] indices)
     {
         indexAmount = indices.length;
+        indexBufferID = glCreateBuffers();
         glBindVertexArray(vertexArrayID);
-        indexBuffer = new IndexBuffer(indices);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
         glBindVertexArray(0);
     }
 

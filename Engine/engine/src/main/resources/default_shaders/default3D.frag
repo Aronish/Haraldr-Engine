@@ -1,5 +1,6 @@
 #version 460 core
 
+in vec3 v_TextureCoordinate;
 in vec3 v_Normal;
 in vec3 v_FragmentPosition;
 

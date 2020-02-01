@@ -5,7 +5,7 @@ import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL45.glCreateBuffers;
-
+//TODO: Maybe useless.
 public class IndexBuffer
 {
     private final int indexBufferID;

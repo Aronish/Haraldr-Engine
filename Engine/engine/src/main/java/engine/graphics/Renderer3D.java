@@ -63,6 +63,22 @@ public class Renderer3D
         SceneData3D.CUBE.drawArrays();
     }
 
+    public static void drawMesh(@NotNull Mesh mesh)
+    {
+        Shader.DEFAULT3D.bind();
+        Shader.DEFAULT3D.setMatrix4f(Matrix4f.translate(new Vector3f(), false), "model");
+        Shader.DEFAULT3D.setMatrix4f(sceneData.getViewMatrix(), "view");
+        Shader.DEFAULT3D.setMatrix4f(Matrix4f.perspective, "projection");
+        //Lighting
+        Shader.DEFAULT3D.setVector3f(new Vector3f(1f), "objColor");
+        Shader.DEFAULT3D.setVector3f(light.getColor(), "lightColor");
+        Shader.DEFAULT3D.setVector3f(light.getPosition(), "lightPosition");
+        Shader.DEFAULT3D.setVector3f(sceneData.getViewPosition(), "viewPosition");
+
+        mesh.vertexArray.bind();
+        mesh.vertexArray.drawElements();
+    }
+
     /////ROTATION////////////////////////////////////////////////////
     /*
     public static void drawCube(Vector3f position, Vector3f rotation)

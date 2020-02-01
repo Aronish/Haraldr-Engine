@@ -73,8 +73,6 @@ public abstract class Application
             }, 0);
         }
 
-        ObjParser.parseObj("models/suzanne.obj");
-
         glfwShowWindow(window.getWindowHandle());
         initialized = true;
     }

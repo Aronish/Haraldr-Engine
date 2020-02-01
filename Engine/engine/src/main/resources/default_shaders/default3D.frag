@@ -1,10 +1,13 @@
 #version 460 core
 
-in vec3 v_TextureCoordinate;
 in vec3 v_Normal;
+in vec3 v_TextureCoordinate;
 in vec3 v_FragmentPosition;
 
-uniform vec3 objColor;
+uniform vec3 diffuseColor; //Object color
+uniform float specularExponent;
+uniform float opacity;
+
 uniform vec3 lightColor;
 uniform vec3 lightPosition;
 uniform vec3 viewPosition;
@@ -26,10 +29,9 @@ void main()
     vec3 viewDirection = normalize(viewPosition - v_FragmentPosition);
     vec3 reflectDirection = reflect(-lightDirection, normal);
 
-    float shininess = 16;
-    float spec = pow(max(dot(viewDirection, reflectDirection), 0.0f), shininess);
+    float spec = pow(max(dot(viewDirection, reflectDirection), 0.0f), specularExponent);
     vec3 specular = specularStrength * spec * lightColor;
 
-    vec3 result = (ambient + diffuse + specular) * objColor;
-    o_Color = vec4(result, 1.0f);
+    vec3 result = (ambient + diffuse + specular) * diffuseColor;
+    o_Color = vec4(result, opacity);
 }

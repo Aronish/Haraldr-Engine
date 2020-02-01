@@ -134,7 +134,6 @@ public abstract class Application
             {
                 int fps = (int) (frames / timer), ups = (int) (updates / timer);
                 window.setTitle("FPS: " + fps + " UPS: " + ups);
-                EventDispatcher.dispatch(new DebugScreenUpdatedEvent(fps, ups), window);
                 timer = 0.0d;
                 frames = 0;
                 updates = 0;

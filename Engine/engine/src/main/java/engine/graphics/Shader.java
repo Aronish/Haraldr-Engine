@@ -16,6 +16,7 @@ import static org.lwjgl.opengl.GL20.glDeleteProgram;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glUniform1f;
 import static org.lwjgl.opengl.GL20.glUniform3f;
 import static org.lwjgl.opengl.GL20.glUniform4f;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
@@ -149,6 +150,15 @@ public class Shader
             e.printStackTrace();
         }
         return stringBuilder.toString();
+    }
+
+    public void setFloat(float value, String name)
+    {
+        if (!uniformLocations.containsKey(name))
+        {
+            uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
+        }
+        glUniform1f(uniformLocations.get(name), value);
     }
 
     public void setMatrix4f(Matrix4f matrix, String name)

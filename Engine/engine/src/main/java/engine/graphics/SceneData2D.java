@@ -20,14 +20,15 @@ public class SceneData2D
                 0, 1, 2,
                 0, 2, 3
         };
-        QUAD = new VertexArray(quadIndices);
         VertexBufferLayout quadLayout = new VertexBufferLayout
         (
             new VertexBufferElement(ShaderDataType.FLOAT2),     // Vertex Positions
             new VertexBufferElement(ShaderDataType.FLOAT2)      // Texture Coordinates
         );
         VertexBuffer quadBuffer = new VertexBuffer(quadVertices, quadLayout, false);
-        QUAD.setVertexBuffer(quadBuffer);
+        QUAD = new VertexArray();
+        QUAD.setVertexBuffers(quadBuffer);
+        QUAD.setIndexBuffer(quadIndices);
     }
 
     public static final Texture defaultTexture = new Texture(1, 1, new int[] { -1 } ); // -1 means all channels at max.

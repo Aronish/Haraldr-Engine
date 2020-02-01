@@ -1,7 +1,9 @@
 package engine.graphics;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL40;
 
+import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -11,20 +13,24 @@ import static org.lwjgl.opengl.GL15.glBufferSubData;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL45.glCreateBuffers;
 
+@SuppressWarnings("unused")
 public class VertexBuffer
 {
     public static final int GL_DRAW_INDIRECT_BUFFER = GL40.GL_DRAW_INDIRECT_BUFFER;
 
     private final int vertexBufferID;
     private final int target;
+
     private VertexBufferLayout layout;
     private float[] data;
+    private int vertexAmount;
 
-    public VertexBuffer(float[] data, VertexBufferLayout layout, boolean dynamic)
+    public VertexBuffer(@NotNull float[] data, @NotNull VertexBufferLayout layout, boolean dynamic)
     {
-        this.target = GL_ARRAY_BUFFER;
-        this.layout = layout;
+        target = GL_ARRAY_BUFFER;
         this.data = data;
+        this.layout = layout;
+        vertexAmount = data.length / layout.getVertexSize();
         vertexBufferID = glCreateBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
         glBufferData(GL_ARRAY_BUFFER, data, dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
@@ -50,14 +56,14 @@ public class VertexBuffer
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    public void bind()
-    {
-        glBindBuffer(target, vertexBufferID);
-    }
-
     public static void bind(int target, int buffer)
     {
         glBindBuffer(target, buffer);
+    }
+
+    public void bind()
+    {
+        glBindBuffer(target, vertexBufferID);
     }
 
     public void unbind()
@@ -65,17 +71,12 @@ public class VertexBuffer
         glBindBuffer(target, 0);
     }
 
-    //Good for decoupling low level libraries from clients. No idea if you should do it like this.
-    //Could also have something that works like this:
-    /*
-    public static void bind(VertexBuffer buffer) { glBindBuffer(buffer.rendererId); }
-    */
-    public void setData(float[] data)
+    public void setData(int[] data)
     {
         glBufferSubData(target, 0, data);
     }
 
-    public void setData(int[] data)
+    public void setData(float[] data)
     {
         glBufferSubData(target, 0, data);
     }
@@ -88,6 +89,11 @@ public class VertexBuffer
     public VertexBufferLayout getLayout()
     {
         return layout;
+    }
+
+    public int getVertexAmount()
+    {
+        return vertexAmount;
     }
 
     public void delete()

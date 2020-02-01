@@ -5,6 +5,7 @@ import engine.graphics.VertexArray;
 import engine.graphics.VertexBuffer;
 import engine.graphics.VertexBufferElement;
 import engine.graphics.VertexBufferLayout;
+import engine.graphics.Wrapper;
 import engine.main.ArrayUtils;
 import engine.main.OrthographicCamera;
 import engine.math.Matrix4f;
@@ -39,12 +40,13 @@ public class MultiDrawIndirectRenderer implements RenderSystem
             indirectIndices.add(4 * i + 2);
             indirectIndices.add(4 * i + 3);
         }
-        vao = new VertexArray(ArrayUtils.toPrimitiveArrayI(indirectIndices));
+        vao = new VertexArray();
+        vao.setIndexBuffer(ArrayUtils.toPrimitiveArrayI(indirectIndices));
         /////MODEL DATA STORE///////////////////////////////////
         List<Float> modelVertexData = new ArrayList<>();
         for (GameObject gameObject : GameObject.instancedObjects)
         {
-            float[] vertexData = gameObject.getModel().getVertexArray().getVertexBuffer().getData();
+            float[] vertexData = gameObject.getModel().getVertexArray().getVertexBuffers().get(0).getData();
             modelVertexData.addAll(ArrayUtils.toList(vertexData));
         }
 
@@ -54,7 +56,7 @@ public class MultiDrawIndirectRenderer implements RenderSystem
                         new VertexBufferElement(ShaderDataType.FLOAT2)
                 );
         VertexBuffer modelVertexBuffer = new VertexBuffer(ArrayUtils.toPrimitiveArrayF(modelVertexData), modelLayout, false);
-        vao.setVertexBuffer(modelVertexBuffer);
+        vao.setVertexBuffers(modelVertexBuffer);
 
         /////MATRICES/////////////////////////////////////
         VertexBufferLayout layout = new VertexBufferLayout
@@ -71,9 +73,9 @@ public class MultiDrawIndirectRenderer implements RenderSystem
         int nextAttribIndex = vao.getNextAttribIndex();
         for (VertexBufferElement element : instancedMatrixBuffer.getLayout())
         {
-            VertexArray.enableVertexAttribArrayWrapper(nextAttribIndex);
-            VertexArray.vertexAttribPointer(nextAttribIndex, element, instancedMatrixBuffer.getLayout().getStride());
-            VertexArray.vertexAttribDivisor(nextAttribIndex, 1);
+            Wrapper.enableVertexAttribArrayWrapper(nextAttribIndex);
+            Wrapper.vertexAttribPointer(nextAttribIndex, element, instancedMatrixBuffer.getLayout().getStride());
+            Wrapper.vertexAttribDivisor(nextAttribIndex, 1);
             nextAttribIndex += 1;
         }
         vao.setNextAttribIndex(nextAttribIndex);

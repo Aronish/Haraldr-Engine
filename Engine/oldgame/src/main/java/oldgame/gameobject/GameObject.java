@@ -1,6 +1,6 @@
 package oldgame.gameobject;
 
-import engine.graphics.Model;
+import engine.graphics.Sprite;
 import oldgame.graphics.Models;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public enum GameObject //TODO: Make marker interface
     ///// MOVABLES ////////////////////////////////////
     PLAYER(Models.PLAYER, false);
 
-    private final Model model;
+    private final Sprite model;
     public final boolean instanced;
 
     public static final List<GameObject> instancedObjects = new ArrayList<>();
@@ -38,13 +38,13 @@ public enum GameObject //TODO: Make marker interface
         }
     }
 
-    GameObject(Model model, boolean instanced)
+    GameObject(Sprite model, boolean instanced)
     {
         this.model = model;
         this.instanced = instanced;
     }
 
-    public Model getModel()
+    public Sprite getModel()
     {
         return model;
     }

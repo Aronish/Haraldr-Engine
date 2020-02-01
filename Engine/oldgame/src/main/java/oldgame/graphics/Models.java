@@ -1,7 +1,7 @@
 package oldgame.graphics;
 
 import oldgame.gameobject.GameObject;
-import engine.graphics.Model;
+import engine.graphics.Sprite;
 import engine.graphics.ShaderDataType;
 import engine.graphics.Texture;
 import engine.graphics.VertexBufferElement;
@@ -20,15 +20,15 @@ public class Models
     private static final float SPRITE_SIZE = 16;
 
     //IMPORTANT! To avoid texture atlas bleeding, textures need duplicate edges so that filtering won't use colors from neighboring textures.
-    public static final Model DIRT_TILE =           initModelImpr(1, 1, 16, 16);
-    public static final Model GRASS_TILE =          initModelImpr(19, 1, 16, 16);
-    public static final Model GRASS_SNOW_TILE =     initModelImpr(37, 1, 16, 16);
-    public static final Model STONE_TILE =          initModelImpr(55, 1, 16, 16);
+    public static final Sprite DIRT_TILE =           initModelImpr(1, 1, 16, 16);
+    public static final Sprite GRASS_TILE =          initModelImpr(19, 1, 16, 16);
+    public static final Sprite GRASS_SNOW_TILE =     initModelImpr(37, 1, 16, 16);
+    public static final Sprite STONE_TILE =          initModelImpr(55, 1, 16, 16);
 
-    public static final Model GRASS_TUFT =          initModelImpr(73, 14, 16, 4);
-    public static final Model TREE =                initModelImpr(1, 19, 16, 48);
+    public static final Sprite GRASS_TUFT =          initModelImpr(73, 14, 16, 4);
+    public static final Sprite TREE =                initModelImpr(1, 19, 16, 48);
 
-    public static final Model PLAYER =              initModelImpr(19, 19, 14, 40);
+    public static final Sprite PLAYER =              initModelImpr(19, 19, 14, 40);
 
     //                                                                           FOR TEXTURE COORDINATES
     @NotNull
@@ -45,7 +45,7 @@ public class Models
     }
 
     @NotNull
-    private static Model initModelImpr(int x, int y, int spriteWidth, int spriteHeight)
+    private static Sprite initModelImpr(int x, int y, int spriteWidth, int spriteHeight)
     {
         float modelWidth = spriteWidth / SPRITE_SIZE;
         float modelHeight = spriteHeight / SPRITE_SIZE;
@@ -54,7 +54,7 @@ public class Models
                 new VertexBufferElement(ShaderDataType.FLOAT2),
                 new VertexBufferElement(ShaderDataType.FLOAT2)
         );
-        return new Model
+        return new Sprite
         (
                 createVertexData(modelWidth, modelHeight, x, y, spriteWidth, spriteHeight),
                 layout, modelWidth, modelHeight

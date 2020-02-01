@@ -2,83 +2,59 @@ package engine.graphics;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
-import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 import static org.lwjgl.opengl.GL43.glMultiDrawElementsIndirect;
-import static org.lwjgl.opengl.GL45.glCreateBuffers;
 import static org.lwjgl.opengl.GL45.glCreateVertexArrays;
 
+@SuppressWarnings("WeakerAccess")
 public class VertexArray
 {
     private int vertexArrayID;
-    private int nextAttribIndex = 0;
-    private VertexBuffer vertexBuffer; //TODO Add support for multiple.
-    private int numIndices, numVertices;
+    private int nextAttribIndex;
+    private List<VertexBuffer> vertexBuffers = new ArrayList<>();
+    private IndexBuffer indexBuffer;
+    private int vertexAmount, indexAmount;
 
     public VertexArray()
     {
         vertexArrayID = glCreateVertexArrays();
     }
 
-    public VertexArray(@NotNull int[] indices)
-    {
-        this();
-        numIndices = indices.length;
-        glBindVertexArray(vertexArrayID);
-        setIndexBuffer(indices);
-        glBindVertexArray(0);
-    }
-
     public void setIndexBuffer(@NotNull int[] indices)
     {
-        numIndices = indices.length;
-        int indexBufferID = glCreateBuffers();
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
-    }
-
-    public void setVertexBuffer(@NotNull VertexBuffer vertexBuffer)
-    {
-        this.vertexBuffer = vertexBuffer;
+        indexAmount = indices.length;
         glBindVertexArray(vertexArrayID);
-        vertexBuffer.bind();
-        int vertexSize = 0;
-        for (VertexBufferElement element : vertexBuffer.getLayout())
-        {
-            glEnableVertexAttribArray(nextAttribIndex);
-            glVertexAttribPointer(nextAttribIndex, element.getSize(), element.getType(), element.isNormalized(), vertexBuffer.getLayout().getStride(), element.getOffset());
-            vertexSize += element.getSize();
-            ++nextAttribIndex;
-        }
-        numVertices = vertexBuffer.getData().length / vertexSize;
+        indexBuffer = new IndexBuffer(indices);
         glBindVertexArray(0);
     }
 
-    public static void enableVertexAttribArrayWrapper(int attribIndex)
+    public void setVertexBuffers(@NotNull VertexBuffer... vertexBuffers)
     {
-        glEnableVertexAttribArray(attribIndex);
-    }
-
-    public static void vertexAttribPointer(int attribIndex, @NotNull VertexBufferElement element, int stride)
-    {
-        glVertexAttribPointer(attribIndex, element.getSize(), element.getType(), element.isNormalized(), stride, element.getOffset());
-    }
-
-    public static void vertexAttribDivisor(int attribIndex, int divisor)
-    {
-        glVertexAttribDivisor(attribIndex, divisor);
+        glBindVertexArray(vertexArrayID);
+        for (VertexBuffer vertexBuffer : vertexBuffers)
+        {
+            this.vertexBuffers.add(vertexBuffer);
+            vertexBuffer.bind();
+            for (VertexBufferElement element : vertexBuffer.getLayout())
+            {
+                glEnableVertexAttribArray(nextAttribIndex);
+                glVertexAttribPointer(nextAttribIndex, element.getSize(), element.getType(), element.isNormalized(), vertexBuffer.getLayout().getStride(), element.getOffset());
+                ++nextAttribIndex;
+            }
+            vertexAmount += vertexBuffer.getVertexAmount();
+            glBindVertexArray(0);
+        }
     }
 
     public void bind()
@@ -93,17 +69,17 @@ public class VertexArray
 
     public void drawElements()
     {
-        glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, indexAmount, GL_UNSIGNED_INT, 0);
     }
 
     public void drawArrays()
     {
-        glDrawArrays(GL_TRIANGLES, 0, numVertices);
+        glDrawArrays(GL_TRIANGLES, 0, vertexAmount);
     }
 
     public void drawInstanced(int count)
     {
-        glDrawElementsInstanced(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0, count);
+        glDrawElementsInstanced(GL_TRIANGLES, indexAmount, GL_UNSIGNED_INT, 0, count);
     }
 
     public void multiDrawIndirect(int count)
@@ -121,16 +97,15 @@ public class VertexArray
         return nextAttribIndex;
     }
 
-    public VertexBuffer getVertexBuffer()
+    public List<VertexBuffer> getVertexBuffers()
     {
-        return vertexBuffer;
+        return vertexBuffers;
     }
 
     public void delete()
     {
         unbind();
         glDeleteVertexArrays(vertexArrayID);
-        vertexBuffer.unbind();
-        vertexBuffer.delete();
+        vertexBuffers.forEach(VertexBuffer::delete);
     }
 }

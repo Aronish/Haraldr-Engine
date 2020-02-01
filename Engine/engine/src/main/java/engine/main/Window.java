@@ -86,7 +86,7 @@ public class Window
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
         glfwWindowHint(GLFW_MAXIMIZED, maximized ? GLFW_TRUE : GLFW_FALSE);
 
-        glfwWindowHint(GLFW_SAMPLES, 4);
+        //glfwWindowHint(GLFW_SAMPLES, 4);
 
         vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         if (vidmode == null)

@@ -9,7 +9,7 @@ import java.util.List;
 public class VertexBufferLayout implements Iterable<VertexBufferElement>
 {
     private List<VertexBufferElement> elements;
-    private int stride = 0;
+    private int stride, vertexSize;
 
     public VertexBufferLayout(VertexBufferElement... elements)
     {
@@ -25,12 +25,18 @@ public class VertexBufferLayout implements Iterable<VertexBufferElement>
             element.setOffset(offset);
             offset += element.getSize() * element.getTypeSize();
             stride += element.getSize() * element.getTypeSize();
+            vertexSize += element.getSize();
         }
     }
 
     public int getStride()
     {
         return stride;
+    }
+
+    public int getVertexSize()
+    {
+        return vertexSize;
     }
 
     @NotNull

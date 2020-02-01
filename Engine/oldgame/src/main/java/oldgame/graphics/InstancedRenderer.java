@@ -1,10 +1,10 @@
 package oldgame.graphics;
 
 import engine.graphics.ShaderDataType;
-import engine.graphics.VertexArray;
 import engine.graphics.VertexBuffer;
 import engine.graphics.VertexBufferElement;
 import engine.graphics.VertexBufferLayout;
+import engine.graphics.Wrapper;
 import engine.main.ArrayUtils;
 import engine.main.OrthographicCamera;
 import engine.math.Matrix4f;
@@ -38,9 +38,9 @@ public class InstancedRenderer implements RenderSystem
             int nextAttribIndex = gameObject.getModel().getVertexArray().getNextAttribIndex();
             for (VertexBufferElement element : instancedMatrixBuffer.getLayout())
             {
-                VertexArray.enableVertexAttribArrayWrapper(nextAttribIndex);
-                VertexArray.vertexAttribPointer(nextAttribIndex, element, instancedMatrixBuffer.getLayout().getStride());
-                VertexArray.vertexAttribDivisor(nextAttribIndex, 1);
+                Wrapper.enableVertexAttribArrayWrapper(nextAttribIndex);
+                Wrapper.vertexAttribPointer(nextAttribIndex, element, instancedMatrixBuffer.getLayout().getStride());
+                Wrapper.vertexAttribDivisor(nextAttribIndex, 1);
                 nextAttribIndex += 1;
             }
             gameObject.getModel().getVertexArray().setNextAttribIndex(nextAttribIndex);

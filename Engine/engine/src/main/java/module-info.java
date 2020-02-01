@@ -37,4 +37,5 @@ module Engine.engine
     exports engine.physics;
 
     opens default_shaders;
+    opens models;
 }

@@ -1,6 +1,7 @@
 package engine.graphics;
 
 import engine.main.OrthographicCamera;
+import engine.main.PerspectiveCamera;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import engine.math.Vector4f;

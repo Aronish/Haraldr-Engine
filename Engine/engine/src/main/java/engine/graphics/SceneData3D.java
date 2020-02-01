@@ -6,7 +6,6 @@ import engine.math.Vector3f;
 public class SceneData3D
 {
     public static final VertexArray CUBE;
-    public static final VertexArray TRI;
 
     static
     {
@@ -71,29 +70,17 @@ public class SceneData3D
                 3, 2, 7, 7, 2, 6,
                 4, 5, 0, 0, 5, 1
         };
-        CUBE = new VertexArray(cubeIndices);
         VertexBufferLayout cubeLayout = new VertexBufferLayout(
                 new VertexBufferElement(ShaderDataType.FLOAT3),
                 new VertexBufferElement(ShaderDataType.FLOAT3)
         );
         VertexBuffer cubeBuffer = new VertexBuffer(cubeVerticesNoIndex, cubeLayout, false);
-        CUBE.setVertexBuffer(cubeBuffer);
-
-        float[] triVertices = {
-                -1f, -1f, 0f,
-                1f, -1f, 0f,
-                0f, 1f, 0f
-        };
-        int[] triIndices = {
-                0, 1, 2
-        };
-        TRI = new VertexArray(triIndices);
-        VertexBufferLayout layout = new VertexBufferLayout(new VertexBufferElement(ShaderDataType.FLOAT3));
-        VertexBuffer triBuffer = new VertexBuffer(triVertices, layout, false);
-        TRI.setVertexBuffer(triBuffer);
+        CUBE = new VertexArray();
+        CUBE.setVertexBuffers(cubeBuffer);
+        CUBE.setIndexBuffer(cubeIndices);
     }
 
-    ///// SCENE //////////
+    ///// SCENE /////////////////////////////////
     private Matrix4f viewMatrix = new Matrix4f();
 
     public Vector3f getViewPosition()

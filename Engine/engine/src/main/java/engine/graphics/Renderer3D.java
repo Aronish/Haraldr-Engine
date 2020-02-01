@@ -10,9 +10,7 @@ public class Renderer3D
 {
     public static SceneData3D sceneData = new SceneData3D();
 
-    public static Vector3f lightPosition = new Vector3f(1f, 2f, 3f);
-    private static Vector3f lightColor = new Vector3f(1f);
-    private static Vector3f objColor = new Vector3f(0.8f, 0.2f, 0.3f);
+    public static Light light = new Light(new Vector3f(1f, 2f, 3f), new Vector3f(1f));
 
     public static void beginScene(@NotNull PerspectiveCamera camera)
     {
@@ -37,12 +35,12 @@ public class Renderer3D
 
     public static void drawCube(@NotNull Shader shader, Vector3f position)
     {
-        drawCube(shader, position, 1f, objColor);
+        drawCube(shader, position, 1f, new Vector3f(1f));
     }
 
     public static void drawCube(@NotNull Shader shader, Vector3f position, float scale)
     {
-        drawCube(shader, position, scale, objColor);
+        drawCube(shader, position, scale, new Vector3f(1f));
     }
 
     public static void drawCube(@NotNull Shader shader, Vector3f position, Vector3f color)
@@ -57,9 +55,10 @@ public class Renderer3D
         shader.setMatrix4f(sceneData.getViewMatrix(), "view");
         shader.setMatrix4f(Matrix4f.perspective, "projection");
         shader.setVector3f(color, "objColor");
-        shader.setVector3f(lightColor, "lightColor");
-        shader.setVector3f(lightPosition, "lightPosition");
+        shader.setVector3f(light.getColor(), "lightColor");
+        shader.setVector3f(light.getPosition(), "lightPosition");
         shader.setVector3f(sceneData.getViewPosition(), "viewPosition");
+        SceneData2D.defaultTexture.bind();
         SceneData3D.CUBE.bind();
         SceneData3D.CUBE.drawArrays();
     }

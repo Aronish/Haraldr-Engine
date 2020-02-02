@@ -24,7 +24,7 @@ public class PerspectiveCameraController
     private static final float MOVEMENT_SENSITIVITY = 0.1f;
     private static final float ZOOM_SENSITIVITY = 2f;
 
-    private float lastX = 640, lastY = 360;
+    private float lastX, lastY;
 
     public void handleRotation(@NotNull PerspectiveCamera camera, @NotNull MouseMovedEvent event)
     {
@@ -59,11 +59,11 @@ public class PerspectiveCameraController
         }
         if (Input.isKeyPressed(window, KEY_SPACE))
         {
-            camera.addPosition(new Vector3f(0f, CAMERA_SPEED * deltaTime, 0f));
+            camera.addPosition(Vector3f.normalize(Vector3f.cross(Vector3f.normalize(Vector3f.cross(camera.getDirection(), PerspectiveCamera.up)), camera.getDirection())).multiply(CAMERA_SPEED * deltaTime));
         }
         if (Input.isKeyPressed(window, KEY_C))
         {
-            camera.addPosition(new Vector3f(0f, -CAMERA_SPEED * deltaTime, 0f));
+            camera.addPosition(Vector3f.normalize(Vector3f.cross(Vector3f.normalize(Vector3f.cross(camera.getDirection(), PerspectiveCamera.up)), camera.getDirection())).multiply(-CAMERA_SPEED * deltaTime));
         }
         if (Input.isKeyPressed(window, KEY_R))
         {

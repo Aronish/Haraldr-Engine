@@ -1,6 +1,6 @@
 # Blender v2.81 (sub 16) OBJ File: ''
 # www.blender.org
-mtllib smooth_sphere.mtl
+mtllib ico_sphere_smooth.mtl
 o Icosphere
 v 0.000000 -0.930305 -0.000000
 v 0.673174 -0.416049 0.489085

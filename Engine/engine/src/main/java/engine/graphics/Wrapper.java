@@ -2,6 +2,7 @@ package engine.graphics;
 
 import org.jetbrains.annotations.NotNull;
 
+import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
@@ -21,5 +22,10 @@ public class Wrapper
     public static void vertexAttribDivisor(int attribIndex, int divisor)
     {
         glVertexAttribDivisor(attribIndex, divisor);
+    }
+
+    public static int getError()
+    {
+        return glGetError();
     }
 }

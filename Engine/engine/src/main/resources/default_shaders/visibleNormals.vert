@@ -8,14 +8,14 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-out vec3 v_Normal;
-out vec2 v_TextureCoordinate;
-out vec3 v_FragmentPosition;
+out GS_DATA
+{
+    vec3 normal;
+} gs_data;
 
 void main()
 {
-    v_Normal = a_Normal;
-    v_TextureCoordinate = a_TextureCoordinate;
-    v_FragmentPosition = (model * vec4(a_Position, 1.0f)).xyz;
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
+    mat3 normalMatrix = mat3(transpose(inverse(view * model)));
+    gs_data.normal = normalize(vec3(projection * vec4(normalMatrix * a_Normal, 0.0f)));
 }

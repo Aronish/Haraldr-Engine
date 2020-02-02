@@ -1,7 +1,6 @@
 package sandbox;
 
 import engine.event.Event;
-import engine.event.EventCategory;
 import engine.event.EventType;
 import engine.event.KeyPressedEvent;
 import engine.event.MouseMovedEvent;
@@ -18,16 +17,16 @@ import engine.main.Window;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
-import static engine.main.Application.MAIN_LOGGER;
-
 public class ExampleLayer extends Layer
 {
-    private Shader objShader = new Shader("default_shaders/default3D");
+    private Shader objShader = new Shader("default_shaders/default3D.vert", "default_shaders/default3D.frag");
     private Shader lightShader = new Shader("default_shaders/default3D.vert", "default_shaders/light.frag");
     private PerspectiveCamera perspectiveCamera = new PerspectiveCamera(new Vector3f(4f, 2f, -1f));
 
     private Mesh suzanne = ObjParser.load("models/suzanne.obj");
-    private Mesh sphere = ObjParser.load("models/smooth_sphere.obj");
+    private Mesh sphere = ObjParser.load("models/nice_sphere.obj");
+
+    private boolean showNormals;
 
     private float sin, cos;
 
@@ -39,7 +38,6 @@ public class ExampleLayer extends Layer
     @Override
     public void onEvent(@NotNull Window window, @NotNull Event event)
     {
-        if (event.isInCategory(EventCategory.CATEGORY_WINDOW)) MAIN_LOGGER.info(event.toString());
         if (event.eventType == EventType.MOUSE_MOVED)
         {
             if (window.isFocused())
@@ -58,6 +56,10 @@ public class ExampleLayer extends Layer
             {
                 lightShader.recompile();
                 objShader.recompile();
+            }
+            if (((KeyPressedEvent) event).keyCode == Key.KEY_N.keyCode)
+            {
+                showNormals = !showNormals;
             }
         }
     }
@@ -80,7 +82,12 @@ public class ExampleLayer extends Layer
         Renderer3D.beginScene(perspectiveCamera);
         Renderer3D.drawCube(lightShader, Renderer3D.light.getPosition(), 0.25f);
         Renderer3D.drawCube(objShader, new Vector3f(-4f, 0f, 2f), new Vector3f(0.8f, 0.2f, 0.3f));
-        Renderer3D.drawMesh(objShader, suzanne);
-        Renderer3D.drawMesh(objShader, sphere, new Vector3f(0f, 3f, -3f));
+        Renderer3D.drawMesh(objShader, suzanne, new Vector3f(0f, 4f, 2f));
+        Renderer3D.drawMesh(objShader, sphere);
+        if (showNormals)
+        {
+            Renderer3D.drawMesh(Shader.VISIBLE_NORMALS, suzanne, new Vector3f(0f, 4f, 2f));
+            Renderer3D.drawMesh(Shader.VISIBLE_NORMALS, sphere);
+        }
     }
 }

@@ -1,7 +1,7 @@
 #version 460 core
 
 in vec3 v_Normal;
-in vec3 v_TextureCoordinate;
+in vec2 v_TextureCoordinate;
 in vec3 v_FragmentPosition;
 
 uniform vec3 diffuseColor; //Object color

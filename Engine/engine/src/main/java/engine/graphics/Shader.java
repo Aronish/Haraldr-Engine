@@ -1,5 +1,6 @@
 package engine.graphics;
 
+import engine.main.ArrayUtils;
 import engine.main.EntryPoint;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
@@ -9,8 +10,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
@@ -20,6 +24,7 @@ import static org.lwjgl.opengl.GL20.glUniform1f;
 import static org.lwjgl.opengl.GL20.glUniform3f;
 import static org.lwjgl.opengl.GL20.glUniform4f;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
+import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 import static org.lwjgl.opengl.GL46.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL46.GL_VERTEX_SHADER;
 import static org.lwjgl.opengl.GL46.glAttachShader;
@@ -38,118 +43,52 @@ import static org.lwjgl.opengl.GL46.glValidateProgram;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class Shader
 {
-    public static final Shader DEFAULT2D = new Shader("default_shaders/default2D");
-    public static final Shader DEFAULT3D = new Shader("default_shaders/default3D");
+    public static final Shader DEFAULT2D = new Shader("default_shaders/default2D.vert", "default_shaders/default2D.frag");
+    public static final Shader DEFAULT3D = new Shader("default_shaders/default3D.vert", "default_shaders/default3D.frag");
+    public static final Shader VISIBLE_NORMALS = new Shader("default_shaders/visibleNormals.vert", "default_shaders/visibleNormals.geom", "default_shaders/visibleNormals.frag");
 
-    private String vertexShaderPath, fragmentShaderPath;
     private int shaderProgram;
+    private List<InternalShader> internalShaders = new ArrayList<>();
     private Map<String, Integer> uniformLocations = new HashMap<>();
-
-    /**
-     * Constructor with a parameter for the general shader file path.
-     * Both kinds of shaders must have the same name as the extensions are added afterwards for simplicity.
-     * @param generalShaderPath the general shader file path, with no extension.
-     */
-    public Shader(String generalShaderPath)
-    {
-        this(generalShaderPath + ".vert", generalShaderPath + ".frag");
-    }
 
     public Shader(String vertexShaderPath, String fragmentShaderPath)
     {
-        this.vertexShaderPath = vertexShaderPath;
-        this.fragmentShaderPath = fragmentShaderPath;
+        internalShaders.add(new InternalShader(GL_VERTEX_SHADER, vertexShaderPath));
+        internalShaders.add(new InternalShader(GL_FRAGMENT_SHADER, fragmentShaderPath));
         compile();
     }
 
-    /**
-     * Creates a shader object for the specified shader type with the specified source code.
-     * @param shaderType the shader type to create (GL_VERTEX_SHADER or GL_FRAGMENT_SHADER).
-     * @param source the source code in a single string.
-     * @return the shader object ID.
-     */
-    private int createShader(int shaderType, String source)
+    public Shader(String vertexShaderPath, String geometryShaderPath, String fragmentShaderPath)
     {
-        int shader = glCreateShader(shaderType);
-        glShaderSource(shader, source);
-        glCompileShader(shader);
-        if (EntryPoint.DEBUG) System.out.println(glGetShaderInfoLog(shader));
-        return shader;
+        internalShaders.add(new InternalShader(GL_VERTEX_SHADER, vertexShaderPath));
+        internalShaders.add(new InternalShader(GL_GEOMETRY_SHADER, geometryShaderPath));
+        internalShaders.add(new InternalShader(GL_FRAGMENT_SHADER, fragmentShaderPath));
+        compile();
     }
 
-    private int createProgram(int vertexShader, int fragmentShader)
+    private int createProgram(@NotNull int... shaders)
     {
         int shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
+        for (int shader : shaders)
+        {
+            glAttachShader(shaderProgram, shader);
+        }
         glLinkProgram(shaderProgram);
         glValidateProgram(shaderProgram);
         if (EntryPoint.DEBUG) System.out.println(glGetProgramInfoLog(shaderProgram));
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
+
+        for (int shader : shaders)
+        {
+            glDeleteShader(shader);
+        }
         return shaderProgram;
     }
 
     private void compile()
     {
-        int vertexShader = createShader(GL_VERTEX_SHADER, readShaderFile(vertexShaderPath));
-        int fragmentShader = createShader(GL_FRAGMENT_SHADER, readShaderFile(fragmentShaderPath));
-        shaderProgram = createProgram(vertexShader, fragmentShader);
-    }
-
-    /**
-     * Finds appropriate module to read from and reads the shader file.
-     * @param path the file path of the shader file.
-     * @return the source code of the shader in one string. Might be null.
-     */
-    @Nullable
-    private String readShaderFile(String path)
-    {
-        try (InputStream inputStream = Shader.class.getModule().getResourceAsStream(path))
-        {
-            if (inputStream == null)
-            {
-                try (InputStream inputStreamClient = EntryPoint.application.getClass().getModule().getResourceAsStream(path))
-                {
-                    if (inputStreamClient == null)
-                    {
-                        throw new NullPointerException("Shader file not found!");
-                    }
-                    else
-                    {
-                        return readToStringBuilder(inputStreamClient);
-                    }
-                }
-            }
-            else
-            {
-                return readToStringBuilder(inputStream);
-            }
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @NotNull
-    private String readToStringBuilder(@NotNull InputStream file)
-    {
-        StringBuilder stringBuilder = new StringBuilder();
-        try
-        {
-            int data = file.read();
-            while (data != -1)
-            {
-                stringBuilder.append((char) data);
-                data = file.read();
-            }
-        }catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        return stringBuilder.toString();
+        internalShaders.forEach(InternalShader::compile);
+        List<Integer> internalShaderIds = internalShaders.stream().map(InternalShader::getShaderId).collect(Collectors.toList());
+        shaderProgram = createProgram(ArrayUtils.toPrimitiveArrayI(internalShaderIds));
     }
 
     public void setFloat(float value, String name)
@@ -208,6 +147,89 @@ public class Shader
     {
         unbind();
         glDeleteProgram(shaderProgram);
+        internalShaders.clear();
         uniformLocations.clear();
+    }
+
+    private static class InternalShader
+    {
+        private String sourcePath;
+        private int shaderType, shaderId;
+
+        private InternalShader(int shaderType, String sourcePath)
+        {
+            this.sourcePath = sourcePath;
+            this.shaderType = shaderType;
+        }
+
+        private void compile()
+        {
+            shaderId = createShader(shaderType, readShaderFile(sourcePath));
+        }
+
+        private static int createShader(int shaderType, String source)
+        {
+            int shader = glCreateShader(shaderType);
+            glShaderSource(shader, source);
+            glCompileShader(shader);
+
+            if (EntryPoint.DEBUG) System.out.println(glGetShaderInfoLog(shader));
+            return shader;
+        }
+
+        private int getShaderId()
+        {
+            return shaderId;
+        }
+
+        @Nullable
+        private static String readShaderFile(String path)
+        {
+            try (InputStream inputStream = Shader.class.getModule().getResourceAsStream(path))
+            {
+                if (inputStream == null)
+                {
+                    try (InputStream inputStreamClient = EntryPoint.application.getClass().getModule().getResourceAsStream(path))
+                    {
+                        if (inputStreamClient == null)
+                        {
+                            throw new NullPointerException("Shader file not found!");
+                        }
+                        else
+                        {
+                            return readToStringBuilder(inputStreamClient);
+                        }
+                    }
+                }
+                else
+                {
+                    return readToStringBuilder(inputStream);
+                }
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @NotNull
+        private static String readToStringBuilder(@NotNull InputStream file)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            try
+            {
+                int data = file.read();
+                while (data != -1)
+                {
+                    stringBuilder.append((char) data);
+                    data = file.read();
+                }
+            }catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            return stringBuilder.toString();
+        }
     }
 }

@@ -138,7 +138,7 @@ public class ObjParser
                 {
                     if (inputStreamClient == null)
                     {
-                        throw new NullPointerException("Obj file not found!");
+                        throw new NullPointerException("Material file not found!");
                     }
                     else
                     {
@@ -206,16 +206,16 @@ public class ObjParser
         }
         else
         {
-            indexMap.put(indexSet, vertices.size());
+            indexMap.put(indexSet, vertices.size() / 8);
             indices.add(vertices.size() / 8);
             vertices.add(inputPositions.get(indexSet.position - 1).getX());
             vertices.add(inputPositions.get(indexSet.position - 1).getY());
             vertices.add(inputPositions.get(indexSet.position - 1).getZ());
-            vertices.add(inputTextureCoordinates.get(indexSet.textureCoordinate - 1).getX());
-            vertices.add(inputTextureCoordinates.get(indexSet.textureCoordinate - 1).getY());
             vertices.add(inputNormals.get(indexSet.normal - 1).getX());
             vertices.add(inputNormals.get(indexSet.normal - 1).getY());
             vertices.add(inputNormals.get(indexSet.normal - 1).getZ());
+            vertices.add(inputTextureCoordinates.get(indexSet.textureCoordinate - 1).getX());
+            vertices.add(inputTextureCoordinates.get(indexSet.textureCoordinate - 1).getY());
         }
     }
 

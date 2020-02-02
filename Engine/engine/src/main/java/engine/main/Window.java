@@ -93,10 +93,11 @@ public class Window
         {
             throw new IllegalStateException("Vidmode was not found!");
         }
-        initWidth = fullscreen || maximized ? vidmode.width() : width;
-        initHeight = fullscreen || maximized ? vidmode.height() : height;
-        windowWidth = fullscreen || maximized ? vidmode.width() : width;
-        windowHeight = fullscreen || maximized ? vidmode.height() : height;
+
+        initWidth       = fullscreen ? vidmode.width()  : (maximized ? vidmode.width() : width);
+        initHeight      = fullscreen ? vidmode.height() : (maximized ? vidmode.height() - 63 : height); // -63 for window borders
+        windowWidth     = fullscreen ? vidmode.width()  : (maximized ? vidmode.width() : width);
+        windowHeight    = fullscreen ? vidmode.height() : (maximized ? vidmode.height() - 63 : height);
 
         windowHandle = glfwCreateWindow(windowWidth, windowHeight, "OpenGL Game", (fullscreen ? glfwGetPrimaryMonitor() : NULL), NULL);
         if (windowHandle == NULL)
@@ -112,7 +113,7 @@ public class Window
         setCursorVisible(true);
         setFocus(true);
         setVSync(vSync);
-        ///// CALLBACKS ///////////////////////////////
+        ///// CALLBACKS ///////////////////////////////////////////////////////////
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
             if (action == GLFW_PRESS){
                 EventDispatcher.dispatch(new KeyPressedEvent(key), this);

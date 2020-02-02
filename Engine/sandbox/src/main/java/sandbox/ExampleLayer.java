@@ -9,6 +9,7 @@ import engine.graphics.Mesh;
 import engine.graphics.ObjParser;
 import engine.graphics.Renderer3D;
 import engine.graphics.Shader;
+import engine.graphics.Texture;
 import engine.input.Key;
 import engine.layer.Layer;
 import engine.main.Application;

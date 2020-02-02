@@ -1,7 +1,7 @@
 package engine.graphics;
 
 import engine.main.ArrayUtils;
-import engine.main.EntryPoint;
+import engine.main.IOUtils;
 import engine.math.Vector2f;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.Contract;
@@ -17,40 +17,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static engine.main.Application.MAIN_LOGGER;
-
 public class ObjParser
 {
     @Nullable
     public static Mesh load(String path)
     {
-        try (InputStream inputStream = ObjParser.class.getModule().getResourceAsStream(path))
-        {
-            if (inputStream == null)
-            {
-                try (InputStream inputStreamClient = EntryPoint.application.getClass().getModule().getResourceAsStream(path))
-                {
-                    if (inputStreamClient == null)
-                    {
-                        throw new NullPointerException("Obj file not found!");
-                    }
-                    else
-                    {
-                        return load(inputStreamClient);
-                    }
-                }
-            }
-            else
-            {
-                return load(inputStream);
-            }
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        MAIN_LOGGER.error("Model at " + path + " could not be read!");
-        return null;
+        return IOUtils.readResource(path, ObjParser::load);
     }
 
     @NotNull
@@ -80,7 +52,7 @@ public class ObjParser
                 switch (split[0])
                 {
                     case "mtllib":
-                        material = loadMaterial("models/" + split[1]);
+                        material = IOUtils.readResource("models/" + split[1], ObjParser::loadMaterial);
                         break;
                     case "v":
                         inputPositions.add(new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3])));
@@ -125,38 +97,6 @@ public class ObjParser
         }
 
         return mesh;
-    }
-
-    @Nullable
-    private static Material loadMaterial(String path)
-    {
-        try (InputStream inputStream = ObjParser.class.getModule().getResourceAsStream(path))
-        {
-            if (inputStream == null)
-            {
-                try (InputStream inputStreamClient = EntryPoint.application.getClass().getModule().getResourceAsStream(path))
-                {
-                    if (inputStreamClient == null)
-                    {
-                        throw new NullPointerException("Material file not found!");
-                    }
-                    else
-                    {
-                        return loadMaterial(inputStreamClient);
-                    }
-                }
-            }
-            else
-            {
-                return loadMaterial(inputStream);
-            }
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        MAIN_LOGGER.error("Material at " + path + " could not be read!");
-        return null;
     }
 
     @NotNull

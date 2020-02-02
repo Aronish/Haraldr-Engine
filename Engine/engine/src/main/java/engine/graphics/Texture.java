@@ -1,6 +1,7 @@
 package engine.graphics;
 
 import engine.main.EntryPoint;
+import engine.main.IOUtils;
 import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
@@ -53,33 +54,7 @@ public class Texture
      */
     private int load(String path)
     {
-        /////READ TEXTURE///
-        int[] pixelData = null;
-        try (InputStream inputStreamEngine = Texture.class.getModule().getResourceAsStream(path))
-        {
-            if (inputStreamEngine == null)
-            {
-                try (InputStream inputStreamClient = EntryPoint.application.getClass().getModule().getResourceAsStream(path))
-                {
-                    if (inputStreamClient == null)
-                    {
-                        throw new NullPointerException("Texture not found!");
-                    }
-                    else
-                    {
-                        pixelData = readToIntArray(inputStreamClient);
-                    }
-                }
-            }
-            else
-            {
-                pixelData = readToIntArray(inputStreamEngine);
-            }
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        int[] pixelData = IOUtils.readResource(path, this::readToIntArray);
         return createTexture(pixelData);
     }
 

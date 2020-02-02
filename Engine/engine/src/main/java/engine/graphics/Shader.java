@@ -2,11 +2,11 @@ package engine.graphics;
 
 import engine.main.ArrayUtils;
 import engine.main.EntryPoint;
+import engine.main.IOUtils;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import engine.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -164,7 +164,7 @@ public class Shader
 
         private void compile()
         {
-            shaderId = createShader(shaderType, readShaderFile(sourcePath));
+            shaderId = createShader(shaderType, IOUtils.readResource(sourcePath, InternalShader::readSourceToString));
         }
 
         private static int createShader(int shaderType, String source)
@@ -182,39 +182,8 @@ public class Shader
             return shaderId;
         }
 
-        @Nullable
-        private static String readShaderFile(String path)
-        {
-            try (InputStream inputStream = Shader.class.getModule().getResourceAsStream(path))
-            {
-                if (inputStream == null)
-                {
-                    try (InputStream inputStreamClient = EntryPoint.application.getClass().getModule().getResourceAsStream(path))
-                    {
-                        if (inputStreamClient == null)
-                        {
-                            throw new NullPointerException("Shader file not found!");
-                        }
-                        else
-                        {
-                            return readToStringBuilder(inputStreamClient);
-                        }
-                    }
-                }
-                else
-                {
-                    return readToStringBuilder(inputStream);
-                }
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
         @NotNull
-        private static String readToStringBuilder(@NotNull InputStream file)
+        private static String readSourceToString(@NotNull InputStream file)
         {
             StringBuilder stringBuilder = new StringBuilder();
             try

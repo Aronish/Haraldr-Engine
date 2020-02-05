@@ -233,9 +233,9 @@ public class Matrix4f
         float cosAngle = (float) Math.cos(radians);
         float sinAngle = (float) Math.sin(radians);
         result.matrix[0] = cosAngle;
-        result.matrix[2] = -sinAngle;
-        result.matrix[8] = sinAngle;
-        result.matrix[10] = cosAngle;
+        result.matrix[1] = sinAngle;
+        result.matrix[4] = -sinAngle;
+        result.matrix[5] = cosAngle;
         return result;
     }
 
@@ -290,7 +290,7 @@ public class Matrix4f
         //Camera looks towards positive z to begin with.
         Matrix4f result = new Matrix4f();
         float near = 0.5f;
-        float far = 100f;
+        float far = 20f;
         float range = far - near;
         float tanHalfFov = (float) Math.tan(Math.toRadians(fov / 2));
 

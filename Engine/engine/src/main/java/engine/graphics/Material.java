@@ -4,8 +4,8 @@ import engine.math.Vector3f;
 
 public class Material
 {
-    private Vector3f ambient, diffuse, specular;
-    private float specularExponent, opacity;
+    private Vector3f ambient = new Vector3f(1f), diffuse = new Vector3f(1f), specular = new Vector3f(1f);
+    private float specularExponent = 4f, opacity = 1f;
 
     public void setAmbient(Vector3f ambient)
     {

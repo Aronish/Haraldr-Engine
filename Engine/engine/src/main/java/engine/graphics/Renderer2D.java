@@ -1,7 +1,6 @@
 package engine.graphics;
 
 import engine.main.OrthographicCamera;
-import engine.main.PerspectiveCamera;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import engine.math.Vector4f;
@@ -12,7 +11,6 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
-//TODO: More deferred approach. Many unnecessary shader bindings. Batch things together.
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Renderer2D
 {
@@ -23,9 +21,9 @@ public class Renderer2D
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public static void setClearColor(float r, float g, float b, float a)
+    public static void setClearColor(@NotNull Vector4f clearColor)
     {
-        glClearColor(r, g, b, a);
+        glClearColor(clearColor.getX(), clearColor.getY(), clearColor.getZ(), clearColor.getW());
     }
 
     public static void beginScene(@NotNull OrthographicCamera camera)

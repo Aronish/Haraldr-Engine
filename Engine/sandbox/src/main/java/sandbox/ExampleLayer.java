@@ -8,6 +8,7 @@ import engine.event.MouseScrolledEvent;
 import engine.graphics.Mesh;
 import engine.graphics.ObjParser;
 import engine.graphics.Renderer3D;
+import engine.graphics.SceneData3D;
 import engine.graphics.Shader;
 import engine.graphics.Texture;
 import engine.input.Key;
@@ -24,8 +25,9 @@ public class ExampleLayer extends Layer
     private Shader lightShader = new Shader("default_shaders/default3D.vert", "default_shaders/light.frag");
     private PerspectiveCamera perspectiveCamera = new PerspectiveCamera(new Vector3f(4f, 2f, -1f));
 
-    private Mesh suzanne = ObjParser.load("models/suzanne.obj");
-    private Mesh sphere = ObjParser.load("models/nice_sphere.obj");
+    private Texture brickColor = new Texture("default_textures/brickwall.jpg");
+    private Texture brickNormals = new Texture("default_textures/brickwall_normal.jpg");
+    private Mesh wall = ObjParser.load("models/plane.obj");
 
     private boolean showNormals;
 
@@ -68,9 +70,9 @@ public class ExampleLayer extends Layer
     @Override
     public void onUpdate(@NotNull Window window, float deltaTime)
     {
-        sin = (float) Math.sin(Application.time);
-        cos = (float) Math.cos(Application.time);
-        Renderer3D.light.setPosition(new Vector3f(cos * 3, 0f, sin * 3));
+        sin = (float) Math.sin(Application.time / 3f);
+        cos = (float) Math.cos(Application.time / 3f);
+        Renderer3D.light.setPosition(new Vector3f(cos, sin, 1f));
         if (window.isFocused())
         {
             perspectiveCamera.getController().handleMovement(perspectiveCamera, window.getWindowHandle(), deltaTime);
@@ -81,14 +83,7 @@ public class ExampleLayer extends Layer
     public void onRender()
     {
         Renderer3D.beginScene(perspectiveCamera);
-        Renderer3D.drawCube(lightShader, Renderer3D.light.getPosition(), 0.25f);
-        Renderer3D.drawCube(objShader, new Vector3f(-4f, 0f, 2f), new Vector3f(0.8f, 0.2f, 0.3f));
-        Renderer3D.drawMesh(objShader, suzanne, new Vector3f(0f, 4f, 2f));
-        Renderer3D.drawMesh(objShader, sphere);
-        if (showNormals)
-        {
-            Renderer3D.drawMesh(Shader.VISIBLE_NORMALS, suzanne, new Vector3f(0f, 4f, 2f));
-            Renderer3D.drawMesh(Shader.VISIBLE_NORMALS, sphere);
-        }
+        Renderer3D.drawCube(lightShader, Renderer3D.light.getPosition(), 0.0625f);
+        Renderer3D.drawMesh(objShader, wall, brickColor, brickNormals, new Vector3f(0f), 2f);
     }
 }

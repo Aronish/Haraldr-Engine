@@ -3,7 +3,7 @@ package engine.graphics;
 public class Mesh
 {
     private VertexArray vertexArray;
-    private Material material;
+    private Material material = new Material();
 
     public Mesh(VertexArray vertexArray)
     {

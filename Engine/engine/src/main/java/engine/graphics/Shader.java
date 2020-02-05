@@ -16,11 +16,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniform1f;
+import static org.lwjgl.opengl.GL20.glUniform1i;
 import static org.lwjgl.opengl.GL20.glUniform3f;
 import static org.lwjgl.opengl.GL20.glUniform4f;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
@@ -89,6 +91,15 @@ public class Shader
         internalShaders.forEach(InternalShader::compile);
         List<Integer> internalShaderIds = internalShaders.stream().map(InternalShader::getShaderId).collect(Collectors.toList());
         shaderProgram = createProgram(ArrayUtils.toPrimitiveArrayI(internalShaderIds));
+    }
+
+    public void setInteger(int value, String name)
+    {
+        if (!uniformLocations.containsKey(name))
+        {
+            uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
+        }
+        glUniform1i(uniformLocations.get(name), value);
     }
 
     public void setFloat(float value, String name)

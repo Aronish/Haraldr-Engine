@@ -2,6 +2,7 @@ package sandbox;
 
 import engine.graphics.Renderer2D;
 import engine.main.Application;
+import engine.math.Vector4f;
 
 class ExampleApplication extends Application
 {
@@ -16,7 +17,7 @@ class ExampleApplication extends Application
     protected void init(int windowWidth, int windowHeight, boolean maximized, boolean fullscreen, boolean vSync)
     {
         super.init(windowWidth, windowHeight, maximized, fullscreen, vSync);
-        Renderer2D.setClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        Renderer2D.setClearColor(new Vector4f(0.5f));
         layerStack.pushLayers(new ExampleLayer("Ex"));
     }
 }

@@ -35,7 +35,7 @@ public class ObjParser
 
         List<Float> vertices                    = new ArrayList<>();
         List<Integer> indices                   = new ArrayList<>();
-        Material material = null;
+        Material material = new Material();
 
         Map<IndexSet, Integer> indexMap = new HashMap<>();
 
@@ -44,7 +44,6 @@ public class ObjParser
             while (true)
             {
                 String line = reader.readLine();
-
                 if (line == null) break;
                 line = line.trim();
                 String[] split = line.split("\\s+");
@@ -79,7 +78,6 @@ public class ObjParser
         {
             e.printStackTrace();
         }
-
         VertexBufferLayout layout = new VertexBufferLayout(
                 new VertexBufferElement(ShaderDataType.FLOAT3), //Position
                 new VertexBufferElement(ShaderDataType.FLOAT3), //Normal
@@ -91,11 +89,7 @@ public class ObjParser
         vertexArray.setIndexBuffer(ArrayUtils.toPrimitiveArrayI(indices));
 
         Mesh mesh = new Mesh(vertexArray);
-        if (material != null)
-        {
-            mesh.setMaterial(material);
-        }
-
+        mesh.setMaterial(material);
         return mesh;
     }
 

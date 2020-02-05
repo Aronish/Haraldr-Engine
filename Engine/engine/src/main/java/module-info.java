@@ -38,4 +38,5 @@ module Engine.engine
 
     opens default_shaders;
     opens models;
+    opens default_textures;
 }

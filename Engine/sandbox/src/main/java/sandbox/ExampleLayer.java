@@ -8,7 +8,6 @@ import engine.event.MouseScrolledEvent;
 import engine.graphics.Mesh;
 import engine.graphics.ObjParser;
 import engine.graphics.Renderer3D;
-import engine.graphics.SceneData3D;
 import engine.graphics.Shader;
 import engine.graphics.Texture;
 import engine.input.Key;
@@ -73,6 +72,8 @@ public class ExampleLayer extends Layer
         sin = (float) Math.sin(Application.time / 3f);
         cos = (float) Math.cos(Application.time / 3f);
         Renderer3D.light.setPosition(new Vector3f(cos, sin, 1f));
+        Renderer3D.light.setColor(new Vector3f(cos / 2f + 1f, sin / 2f + 1f, cos * sin / 2f + 1f));
+        //perspectiveCamera.setPosition(new Vector3f(cos, sin, 1f));
         if (window.isFocused())
         {
             perspectiveCamera.getController().handleMovement(perspectiveCamera, window.getWindowHandle(), deltaTime);
@@ -83,7 +84,7 @@ public class ExampleLayer extends Layer
     public void onRender()
     {
         Renderer3D.beginScene(perspectiveCamera);
-        Renderer3D.drawCube(lightShader, Renderer3D.light.getPosition(), 0.0625f);
+        Renderer3D.drawCube(lightShader, Renderer3D.light.getPosition(), 0.0625f, Renderer3D.light.getColor());
         Renderer3D.drawMesh(objShader, wall, brickColor, brickNormals, new Vector3f(0f), 2f);
     }
 }

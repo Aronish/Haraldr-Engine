@@ -5,8 +5,6 @@ layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_TextureCoordinate;
 
 uniform mat4 model;
-//uniform mat4 view;
-//uniform mat4 projection;
 
 layout (std140, binding = 0) uniform matrices
 {

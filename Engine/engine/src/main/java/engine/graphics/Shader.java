@@ -77,8 +77,7 @@ public class Shader
         }
         glLinkProgram(shaderProgram);
         glValidateProgram(shaderProgram);
-        if (EntryPoint.DEBUG) System.out.println(glGetProgramInfoLog(shaderProgram));
-
+        if (EntryPoint.DEBUG) MAIN_LOGGER.info(glGetProgramInfoLog(shaderProgram));
         for (int shader : shaders)
         {
             glDeleteShader(shader);

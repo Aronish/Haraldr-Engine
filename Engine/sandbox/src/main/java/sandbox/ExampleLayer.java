@@ -24,8 +24,8 @@ public class ExampleLayer extends Layer
     private Shader lightShader = new Shader("default_shaders/default3D.vert", "default_shaders/light.frag");
     private PerspectiveCamera perspectiveCamera = new PerspectiveCamera(new Vector3f(4f, 2f, -1f));
 
-    private Texture brickColor = new Texture("default_textures/brickwall.jpg");
-    private Texture brickNormals = new Texture("default_textures/brickwall_normal.jpg");
+    private Texture brickColor = new Texture("default_textures/BricksPaintedWhite001_COL_4K.jpg");
+    private Texture brickNormals = new Texture("default_textures/BricksPaintedWhite001_NRM_4K.jpg");
     private Mesh wall = ObjParser.load("models/plane.obj");
 
     private boolean showNormals;

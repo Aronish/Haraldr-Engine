@@ -9,7 +9,7 @@ class ExampleApplication extends Application
     @Override
     public void start()
     {
-        init(1280, 720, true, false, false);
+        init(1280, 720, true, false, true);
         loop();
     }
 

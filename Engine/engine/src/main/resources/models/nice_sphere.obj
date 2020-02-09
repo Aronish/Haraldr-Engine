@@ -1,6 +1,6 @@
 # Blender v2.81 (sub 16) OBJ File: ''
 # www.blender.org
-mtllib nice_sphere.mtl
+#mtllib nice_sphere.mtl
 o Sphere
 v -0.006968 0.971956 -0.210513
 v -0.004973 0.918859 -0.378544

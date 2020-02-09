@@ -35,7 +35,8 @@ public class ObjParser
 
         List<Float> vertices                    = new ArrayList<>();
         List<Integer> indices                   = new ArrayList<>();
-        Material material = new Material();
+        Material material = null;
+        boolean foundMaterial = false;
 
         Map<IndexSet, Integer> indexMap = new HashMap<>();
 
@@ -52,6 +53,7 @@ public class ObjParser
                 {
                     case "mtllib":
                         material = IOUtils.readResource("models/" + split[1], ObjParser::loadMaterial);
+                        foundMaterial = true;
                         break;
                     case "v":
                         inputPositions.add(new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3])));
@@ -72,6 +74,10 @@ public class ObjParser
                         }
                         break;
                 }
+            }
+            if (!foundMaterial)
+            {
+                material = IOUtils.readResource("models/default.mtl", ObjParser::loadMaterial);
             }
             reader.close();
         }catch (IOException e)

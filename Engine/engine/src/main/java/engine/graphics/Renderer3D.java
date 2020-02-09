@@ -5,6 +5,8 @@ import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE1;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
@@ -77,7 +79,7 @@ public class Renderer3D
 
     public static void drawMesh(@NotNull Shader shader, @NotNull Mesh mesh, Vector3f position)
     {
-        drawMesh(shader, mesh, position, 1f);
+        drawMesh(shader, mesh, SceneData2D.defaultTexture, position, 1f);
     }
 
     public static void drawMesh(@NotNull Shader shader, @NotNull Mesh mesh, Vector3f position, float scale)
@@ -89,7 +91,8 @@ public class Renderer3D
     {
         Material material = mesh.getMaterial();
         shader.bind();
-        texture.bind();
+        shader.setInteger(0, "diffuseTexture");
+        texture.bind(0);
         shader.setMatrix4f(Matrix4f.translate(position, false).multiply(Matrix4f.scale(new Vector3f(scale))), "model");
         //Material Properties
         shader.setVector3f(material.getAmbient(), "material.ambientColor");
@@ -112,10 +115,8 @@ public class Renderer3D
         shader.bind();
         shader.setInteger(0, "diffuseTexture");
         shader.setInteger(1, "normalMap");
-        glActiveTexture(GL_TEXTURE0);
-        texture.bind();
-        glActiveTexture(GL_TEXTURE1);
-        normalMap.bind();
+        texture.bind(0);
+        normalMap.bind(1);
         shader.setMatrix4f(Matrix4f.translate(position, false).multiply(Matrix4f.rotateZ(90f)).multiply(Matrix4f.scale(new Vector3f(scale))), "model");
         //Material Properties
         shader.setVector3f(material.getAmbient(), "material.ambientColor");
@@ -130,5 +131,7 @@ public class Renderer3D
 
         mesh.getVertexArray().bind();
         mesh.getVertexArray().drawElements();
+
+        normalMap.unbind(1);
     }
 }

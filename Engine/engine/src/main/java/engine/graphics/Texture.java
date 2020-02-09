@@ -25,6 +25,7 @@ import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
+import static org.lwjgl.opengl.GL45.glBindTextureUnit;
 
 /**
  * Represents an OpenGL texture.
@@ -153,19 +154,18 @@ public class Texture
         return width;
     }
 
-    public void bind()
+    public void bind(int textureUnit)
     {
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glBindTextureUnit(textureUnit, texture);
     }
 
-    public void unbind()
+    public void unbind(int textureUnit)
     {
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTextureUnit(textureUnit, 0);
     }
 
     public void delete()
     {
-        unbind();
         glDeleteTextures(texture);
     }
 }

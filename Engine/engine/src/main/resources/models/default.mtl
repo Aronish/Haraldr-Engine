@@ -1,0 +1,11 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+# (Blender had a default color value of 0.8 on all types)
+
+newmtl None
+Ns 100
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+d 1
+illum 2

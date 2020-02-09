@@ -24,9 +24,10 @@ public class ExampleLayer extends Layer
     private Shader lightShader = new Shader("default_shaders/default3D.vert", "default_shaders/light.frag");
     private PerspectiveCamera perspectiveCamera = new PerspectiveCamera(new Vector3f(4f, 2f, -1f));
 
-    private Texture brickColor = new Texture("default_textures/BricksPaintedWhite001_COL_4K.jpg");
-    private Texture brickNormals = new Texture("default_textures/BricksPaintedWhite001_NRM_4K.jpg");
+    private Texture brickColor = new Texture("default_textures/brickwall.jpg");
+    private Texture brickNormals = new Texture("default_textures/brickwall_normal.jpg");
     private Mesh wall = ObjParser.load("models/plane.obj");
+    private Mesh sphere = ObjParser.load("models/nice_sphere.obj");
 
     private boolean showNormals;
 
@@ -86,5 +87,6 @@ public class ExampleLayer extends Layer
         Renderer3D.beginScene(perspectiveCamera);
         Renderer3D.drawCube(lightShader, Renderer3D.light.getPosition(), 0.0625f, Renderer3D.light.getColor());
         Renderer3D.drawMesh(objShader, wall, brickColor, brickNormals, new Vector3f(0f), 2f);
+        Renderer3D.drawMesh(objShader, sphere, new Vector3f(2f, 0f, 2f));
     }
 }

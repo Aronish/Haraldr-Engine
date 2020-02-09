@@ -63,7 +63,7 @@ public class Models
 
     public static void dispose()
     {
-        SPRITE_SHEET.unbind();
+        SPRITE_SHEET.unbind(0);
         SPRITE_SHEET.delete();
         for (GameObject gameObjectType : GameObject.values())
         {

@@ -31,8 +31,6 @@ public class SceneData2D
         QUAD.setIndexBuffer(quadIndices);
     }
 
-    public static final Texture defaultTexture = new Texture(1, 1, new int[] { -1 } ); // -1 means all channels at max.
-
     /////SCENE///////////////////////////////////
     private Matrix4f viewMatrix = new Matrix4f();
 

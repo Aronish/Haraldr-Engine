@@ -30,8 +30,8 @@ const float specularStrength = 1.0f;
 
 void main()
 {
-    //vec3 normal = normalize(v_Normal);
-    vec3 normal = normalize(texture(normalMap, v_TextureCoordinate).rgb * 2.0f - 1.0f);
+    vec3 normal = normalize(v_Normal);
+    //vec3 normal = normalize(texture(normalMap, v_TextureCoordinate).rgb * 2.0f - 1.0f);
     vec3 lightDirection = normalize(lightPosition - v_FragmentPosition);
     vec3 viewDirection = normalize(viewPosition - v_FragmentPosition);
     vec3 reflectDirection = reflect(-lightDirection, normal);
@@ -48,5 +48,6 @@ void main()
 
     vec3 result = (ambient + diffuse + specular);
     o_Color = texture(diffuseTexture, v_TextureCoordinate) * vec4(result, material.opacity);
+    //o_Color = vec4(v_FragmentPosition, 1.0f);
 }
 //strength * lightColor * (lightComponent * componentColor)

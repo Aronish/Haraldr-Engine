@@ -73,14 +73,19 @@ public class VertexArray
         glBindVertexArray(0);
     }
 
+    public void drawArrays()
+    {
+        glDrawArrays(GL_TRIANGLES, 0, vertexAmount);
+    }
+
     public void drawElements()
     {
         glDrawElements(GL_TRIANGLES, indexAmount, GL_UNSIGNED_INT, 0);
     }
 
-    public void drawArrays()
+    public void drawElements(int drawMode)
     {
-        glDrawArrays(GL_TRIANGLES, 0, vertexAmount);
+        glDrawElements(drawMode, indexAmount, GL_UNSIGNED_INT, 0);
     }
 
     public void drawInstanced(int count)

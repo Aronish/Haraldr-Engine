@@ -5,14 +5,10 @@ import engine.event.EventType;
 import engine.event.KeyPressedEvent;
 import engine.event.MouseMovedEvent;
 import engine.event.MouseScrolledEvent;
-import engine.graphics.Mesh;
-import engine.graphics.ObjParser;
 import engine.graphics.Renderer3D;
 import engine.graphics.Shader;
-import engine.graphics.Texture;
 import engine.input.Key;
 import engine.layer.Layer;
-import engine.main.Application;
 import engine.main.PerspectiveCamera;
 import engine.main.Window;
 import engine.math.Vector3f;
@@ -21,17 +17,10 @@ import org.jetbrains.annotations.NotNull;
 public class ExampleLayer extends Layer
 {
     private Shader objShader = new Shader("default_shaders/default3D.vert", "default_shaders/default3D.frag");
-    private Shader lightShader = new Shader("default_shaders/default3D.vert", "default_shaders/light.frag");
+    private Shader lightShader = new Shader("default_shaders/default3D.vert", "default_shaders/simpleColor.frag");
     private PerspectiveCamera perspectiveCamera = new PerspectiveCamera(new Vector3f(4f, 2f, -1f));
 
-    private Texture brickColor = new Texture("default_textures/brickwall.jpg");
-    private Texture brickNormals = new Texture("default_textures/brickwall_normal.jpg");
-    private Mesh wall = ObjParser.load("models/plane.obj");
-    private Mesh sphere = ObjParser.load("models/nice_sphere.obj");
-
     private boolean showNormals;
-
-    private float sin, cos;
 
     public ExampleLayer(String name)
     {
@@ -70,11 +59,6 @@ public class ExampleLayer extends Layer
     @Override
     public void onUpdate(@NotNull Window window, float deltaTime)
     {
-        sin = (float) Math.sin(Application.time / 3f);
-        cos = (float) Math.cos(Application.time / 3f);
-        Renderer3D.light.setPosition(new Vector3f(cos, sin, 1f));
-        Renderer3D.light.setColor(new Vector3f(cos / 2f + 1f, sin / 2f + 1f, cos * sin / 2f + 1f));
-        //perspectiveCamera.setPosition(new Vector3f(cos, sin, 1f));
         if (window.isFocused())
         {
             perspectiveCamera.getController().handleMovement(perspectiveCamera, window.getWindowHandle(), deltaTime);
@@ -86,7 +70,7 @@ public class ExampleLayer extends Layer
     {
         Renderer3D.beginScene(perspectiveCamera);
         Renderer3D.drawCube(lightShader, Renderer3D.light.getPosition(), 0.0625f, Renderer3D.light.getColor());
-        Renderer3D.drawMesh(objShader, wall, brickColor, brickNormals, new Vector3f(0f), 2f);
-        Renderer3D.drawMesh(objShader, sphere, new Vector3f(2f, 0f, 2f));
+        Renderer3D.drawCube(objShader, new Vector3f(), new Vector3f(0.8f, 0.2f, 0.3f));
+        Renderer3D.drawVector(Renderer3D.rotationAxis, new Vector3f());
     }
 }

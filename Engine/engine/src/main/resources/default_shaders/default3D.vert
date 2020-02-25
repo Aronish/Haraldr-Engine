@@ -18,7 +18,8 @@ out vec3 v_FragmentPosition;
 
 void main()
 {
-    v_Normal = a_Normal;
+    mat3 normalMatrix = mat3(model);
+    v_Normal = normalMatrix * a_Normal;
     v_TextureCoordinate = a_TextureCoordinate;
     v_FragmentPosition = (model * vec4(a_Position, 1.0f)).xyz;
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);

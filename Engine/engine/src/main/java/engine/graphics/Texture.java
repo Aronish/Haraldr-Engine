@@ -32,6 +32,8 @@ import static org.lwjgl.opengl.GL45.glBindTextureUnit;
  */
 public class Texture
 {
+    public static final Texture DEFAULT_TEXTURE = new Texture(1, 1, new int[] { -1 });
+
     private int width, height;
     private int texture;
 
@@ -89,46 +91,6 @@ public class Texture
         glBindTexture(GL_TEXTURE_2D, 0);
         return result;
     }
-
-    //STB
-    /*
-    private int loadSTB(String path)
-    {
-        ByteBuffer data = null;
-        STBImage.stbi_set_flip_vertically_on_load(true);
-        try(MemoryStack stack = stackPush())
-        {
-            IntBuffer pWidth = stack.mallocInt(1);
-            IntBuffer pHeight = stack.mallocInt(1);
-            IntBuffer pChannels = stack.mallocInt(1);
-            try
-            {
-                data = STBImage.stbi_load_from_memory(Font.ioResourceToByteBuffer(path, 256*256*4), pWidth, pHeight, pChannels, 4);
-                MAIN_LOGGER.info(pWidth.get(0) + " " + pHeight.get(0) + " " + pChannels.get(0));
-            }catch (IOException e)
-            {
-                MAIN_LOGGER.info("stbi_load_from_memory failed!");
-                e.printStackTrace();
-            }
-            //TODO: Try getting stb_image working.
-            width = pWidth.get(0);
-            height = pHeight.get(0);
-        }
-        if (data == null) throw new RuntimeException("Data was null!");
-
-        int result = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, result);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        STBImage.stbi_image_free(data);
-        return texture;
-    }
-    */
 
     @Nullable
     private int[] readToIntArray(InputStream inputStream)

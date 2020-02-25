@@ -124,9 +124,9 @@ public class Vector3f
 
     public void normalize()
     {
-        this.x /= length();
-        this.y /= length();
-        this.z /= length();
+        x /= length();
+        y /= length();
+        z /= length();
     }
 
     @NotNull

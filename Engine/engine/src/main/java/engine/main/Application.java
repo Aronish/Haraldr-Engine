@@ -13,6 +13,8 @@ import engine.input.Key;
 import engine.layer.Layer;
 import engine.layer.LayerStack;
 import engine.math.Matrix4f;
+import engine.math.Quaternion;
+import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;

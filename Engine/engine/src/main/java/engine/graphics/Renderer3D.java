@@ -2,15 +2,12 @@ package engine.graphics;
 
 import engine.main.PerspectiveCamera;
 import engine.math.Matrix4f;
+import engine.math.Quaternion;
 import engine.math.Vector3f;
+import engine.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
 
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE1;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL20.glUniform1i;
+import static org.lwjgl.opengl.GL11.GL_LINES;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Renderer3D
@@ -19,13 +16,33 @@ public class Renderer3D
     private static UniformBuffer matrixBuffer = new UniformBuffer(128);
 
     public static Light light = new Light(new Vector3f(1f, 2f, 3f), new Vector3f(1f, 1f, 0.85f));
+    public static Shader vectorShader = new Shader("default_shaders/lines.vert", "default_shaders/simpleColor.frag");
+
+    public static final Material DEFAULT_MATERIAL = new Material(
+            new Vector3f(0.3f),
+            new Vector3f(0.8f, 0.2f, 0.3f),
+            new Vector3f(0.8f, 0.2f, 0.3f),
+            32f,
+            1f
+    );
 
     public static void beginScene(@NotNull PerspectiveCamera camera)
     {
+        rotationAxis = camera.getDirection();
         sceneData.setViewPosition(camera.getPosition());
         matrixBuffer.setData(camera.getViewMatrix().matrix, 0);
         matrixBuffer.setData(Matrix4f.perspective.matrix, 64);
         Shader.DEFAULT3D.bind();
+    }
+
+    public static void drawVector(Vector3f vector, Vector3f translation)
+    {
+        vectorShader.bind();
+        vectorShader.setMatrix4f(Matrix4f.translate(translation, false), "model");
+        vectorShader.setVector3f(new Vector3f(0f, 1f, 0f), "color");
+        sceneData.setVector(vector);
+        SceneData3D.VECTOR.bind();
+        SceneData3D.VECTOR.drawElements(GL_LINES);
     }
 
     public static void drawCube(Vector3f position)
@@ -55,15 +72,22 @@ public class Renderer3D
         drawCube(shader, position, 1f, color);
     }
 
+    private static float rotation = 0f;
+    public static Vector3f rotationAxis = new Vector3f(0f, 1f, 0f);
+
     public static void drawCube(@NotNull Shader shader, Vector3f position, float scale, Vector3f color)
     {
+        rotation += 0.5f;
+        Texture.DEFAULT_TEXTURE.bind(0);
         shader.bind();
-        shader.setMatrix4f(Matrix4f.translate(position, false).multiply(Matrix4f.scale(new Vector3f(scale))), "model");
-        //Lighting
-        shader.setVector3f(color, "diffuseColor");
-        shader.setFloat(16, "specularExponent");
-        shader.setFloat(1f, "opacity");
-
+        shader.setMatrix4f(Matrix4f.translate(position, false).multiply(Matrix4f.fromQuaternion(Quaternion.fromAxis(rotationAxis, rotation))).multiply(Matrix4f.scale(new Vector3f(scale))), "model");
+        //Material Properties
+        shader.setVector3f(DEFAULT_MATERIAL.getAmbient(), "material.ambientColor");
+        shader.setVector3f(color, "material.diffuseColor");
+        shader.setVector3f(DEFAULT_MATERIAL.getSpecular(), "material.specularColor");
+        shader.setFloat(DEFAULT_MATERIAL.getSpecularExponent(), "material.specularExponent");
+        shader.setFloat(DEFAULT_MATERIAL.getOpacity(), "material.opacity");
+        //Light
         shader.setVector3f(light.getColor(), "lightColor");
         shader.setVector3f(light.getPosition(), "lightPosition");
         shader.setVector3f(sceneData.getViewPosition(), "viewPosition");
@@ -79,12 +103,12 @@ public class Renderer3D
 
     public static void drawMesh(@NotNull Shader shader, @NotNull Mesh mesh, Vector3f position)
     {
-        drawMesh(shader, mesh, SceneData2D.defaultTexture, position, 1f);
+        drawMesh(shader, mesh, Texture.DEFAULT_TEXTURE, position, 1f);
     }
 
     public static void drawMesh(@NotNull Shader shader, @NotNull Mesh mesh, Vector3f position, float scale)
     {
-        drawMesh(shader, mesh, SceneData2D.defaultTexture, position, scale); //TODO: Fix SceneData things.
+        drawMesh(shader, mesh, Texture.DEFAULT_TEXTURE, position, scale); //TODO: Fix SceneData things.
     }
 
     public static void drawMesh(@NotNull Shader shader, @NotNull Mesh mesh, @NotNull Texture texture, Vector3f position, float scale)

@@ -7,6 +7,17 @@ public class Material
     private Vector3f ambient = new Vector3f(1f), diffuse = new Vector3f(1f), specular = new Vector3f(1f);
     private float specularExponent = 4f, opacity = 1f;
 
+    public Material() {}
+
+    public Material(Vector3f ambient, Vector3f diffuse, Vector3f specular, float specularExponent, float opacity)
+    {
+        this.ambient = ambient;
+        this.diffuse = diffuse;
+        this.specular = specular;
+        this.specularExponent = specularExponent;
+        this.opacity = opacity;
+    }
+
     public void setAmbient(Vector3f ambient)
     {
         this.ambient = ambient;

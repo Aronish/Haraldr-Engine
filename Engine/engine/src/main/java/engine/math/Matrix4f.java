@@ -3,6 +3,8 @@ package engine.math;
 import engine.event.WindowResizedEvent;
 import org.jetbrains.annotations.NotNull;
 
+import static engine.main.Application.MAIN_LOGGER;
+
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Matrix4f
 {
@@ -21,7 +23,7 @@ public class Matrix4f
     public static Matrix4f pixelOrthographic;
     public static Matrix4f perspective;
 
-    public float[] matrix = new float[16];
+    public float[] matrix = new float[16]; //Stored in column major both in memory and value-wise.
 
     public static void onResize(@NotNull WindowResizedEvent event)
     {
@@ -236,6 +238,24 @@ public class Matrix4f
         result.matrix[1] = sinAngle;
         result.matrix[4] = -sinAngle;
         result.matrix[5] = cosAngle;
+        return result;
+    }
+
+    @NotNull
+    public static Matrix4f fromQuaternion(@NotNull Quaternion quaternion)
+    {
+        Matrix4f result = new Matrix4f();
+        quaternion.normalize();
+        result.matrix[0] = 1 - 2 * (quaternion.getY() * quaternion.getY() + quaternion.getZ() * quaternion.getZ());
+        result.matrix[1] = 2 * (quaternion.getX() * quaternion.getY() + quaternion.getZ() * quaternion.getW());
+        result.matrix[2] = 2 * (quaternion.getX() * quaternion.getZ() - quaternion.getY() * quaternion.getW());
+        result.matrix[4] = 2 * (quaternion.getX() * quaternion.getY() - quaternion.getZ() * quaternion.getW());
+        result.matrix[5] = 1 - 2 * (quaternion.getX() * quaternion.getX() + quaternion.getZ() * quaternion.getZ());
+        result.matrix[6] = 2 * (quaternion.getY() * quaternion.getZ() + quaternion.getX() * quaternion.getW());
+        result.matrix[8] = 2 * (quaternion.getX() * quaternion.getZ() + quaternion.getY() * quaternion.getW());
+        result.matrix[9] = 2 * (quaternion.getY() * quaternion.getZ() - quaternion.getX() * quaternion.getW());
+        result.matrix[10] = 1 - 2 * (quaternion.getX() * quaternion.getX() + quaternion.getY() * quaternion.getY());
+        result.matrix[15] = 1;
         return result;
     }
 

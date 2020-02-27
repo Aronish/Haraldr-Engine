@@ -38,10 +38,11 @@ public class Vector3f
         this.z = (float) z;
     }
 
-    public void set(float x, float y)
+    public void set(float x, float y, float z)
     {
         this.x = x;
         this.y = y;
+        this.z = z;
     }
 
     public void set(@NotNull Vector3f other)

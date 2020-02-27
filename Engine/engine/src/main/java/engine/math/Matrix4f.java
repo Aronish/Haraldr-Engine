@@ -242,9 +242,10 @@ public class Matrix4f
     }
 
     @NotNull
-    public static Matrix4f fromQuaternion(@NotNull Quaternion quaternion)
+    public static Matrix4f rotate(Vector3f axis, float angle)
     {
         Matrix4f result = new Matrix4f();
+        Quaternion quaternion = Quaternion.fromAxis(axis, angle);
         quaternion.normalize();
         result.matrix[0] = 1 - 2 * (quaternion.getY() * quaternion.getY() + quaternion.getZ() * quaternion.getZ());
         result.matrix[1] = 2 * (quaternion.getX() * quaternion.getY() + quaternion.getZ() * quaternion.getW());

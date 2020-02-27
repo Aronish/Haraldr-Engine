@@ -52,7 +52,7 @@ public class WorldLayer extends Layer
     @Override
     public void onRender()
     {
-        Models.SPRITE_SHEET.bind();
+        Models.SPRITE_SHEET.bind(0);
         GameRenderer2D.renderSystem.renderGridCells(camera, visibleGridCells);
         GameRenderer2D.render(camera, Shaders.SHADER, player);
     }

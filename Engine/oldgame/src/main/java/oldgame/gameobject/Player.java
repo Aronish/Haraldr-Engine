@@ -84,7 +84,7 @@ public class Player extends MovableEntity
 
     public void resetPosition()
     {
-        position.set(0.0f, 250.0f);
+        position.set(0.0f, 250.0f, 0f);
     }
 
     @Override

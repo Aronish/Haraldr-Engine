@@ -2,6 +2,7 @@ package oldgame.main;
 
 import engine.graphics.Renderer2D;
 import engine.main.Application;
+import engine.math.Vector4f;
 import oldgame.graphics.Models;
 import oldgame.graphics.Shaders;
 import oldgame.layer.WorldLayer;
@@ -20,7 +21,7 @@ public class GameApplication extends Application
     {
         super.init(windowWidth, windowHeight, maximized, fullscreen, vSync);
         layerStack.pushLayers(new WorldLayer("World"));
-        Renderer2D.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
+        Renderer2D.setClearColor(new Vector4f(0.2f, 0.6f, 0.65f, 1.0f));
     }
 
     @Override

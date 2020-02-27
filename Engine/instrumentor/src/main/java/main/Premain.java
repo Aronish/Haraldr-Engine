@@ -8,6 +8,6 @@ public class Premain
 {
     public static void premain(String agentArgs, @NotNull Instrumentation instrumentation)
     {
-        System.out.println("Ran Preprocessor");
+        System.out.println("Ran Instrumentor");
     }
 }

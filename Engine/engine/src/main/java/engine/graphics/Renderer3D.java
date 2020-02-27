@@ -1,10 +1,10 @@
 package engine.graphics;
 
+import engine.main.Application;
 import engine.main.PerspectiveCamera;
 import engine.math.Matrix4f;
 import engine.math.Quaternion;
 import engine.math.Vector3f;
-import engine.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.opengl.GL11.GL_LINES;
@@ -28,7 +28,7 @@ public class Renderer3D
 
     public static void beginScene(@NotNull PerspectiveCamera camera)
     {
-        rotationAxis = camera.getDirection();
+        //rotationAxis = camera.getDirection();
         sceneData.setViewPosition(camera.getPosition());
         matrixBuffer.setData(camera.getViewMatrix().matrix, 0);
         matrixBuffer.setData(Matrix4f.perspective.matrix, 64);
@@ -73,14 +73,18 @@ public class Renderer3D
     }
 
     private static float rotation = 0f;
+    private static float sin, cos;
     public static Vector3f rotationAxis = new Vector3f(0f, 1f, 0f);
 
     public static void drawCube(@NotNull Shader shader, Vector3f position, float scale, Vector3f color)
     {
         rotation += 0.5f;
+        sin = (float) Math.sin(Application.time);
+        cos = (float) Math.cos(Application.time);
+        rotationAxis.set(sin, cos, sin);
         Texture.DEFAULT_TEXTURE.bind(0);
         shader.bind();
-        shader.setMatrix4f(Matrix4f.translate(position, false).multiply(Matrix4f.fromQuaternion(Quaternion.fromAxis(rotationAxis, rotation))).multiply(Matrix4f.scale(new Vector3f(scale))), "model");
+        shader.setMatrix4f(Matrix4f.translate(position, false).multiply(Matrix4f.rotate(rotationAxis, rotation)).multiply(Matrix4f.scale(new Vector3f(scale))), "model");
         //Material Properties
         shader.setVector3f(DEFAULT_MATERIAL.getAmbient(), "material.ambientColor");
         shader.setVector3f(color, "material.diffuseColor");

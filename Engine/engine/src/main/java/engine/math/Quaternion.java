@@ -18,12 +18,12 @@ public class Quaternion
 
     @NotNull
     @Contract("_, _ -> new")
-    public static Quaternion fromAxis(@NotNull Vector3f rotationAxis, float angle)
+    public static Quaternion fromAxis(@NotNull Vector3f axis, float angle)
     {
-        rotationAxis.normalize();
+        axis.normalize();
         float halfAngle = (float) Math.toRadians(angle * 0.5f);
         float sinHalfAngle = (float) Math.sin(halfAngle);
-        return new Quaternion((float) Math.cos(halfAngle), rotationAxis.getX() * sinHalfAngle, rotationAxis.getY() * sinHalfAngle, rotationAxis.getZ() * sinHalfAngle);
+        return new Quaternion((float) Math.cos(halfAngle), axis.getX() * sinHalfAngle, axis.getY() * sinHalfAngle, axis.getZ() * sinHalfAngle);
     }
 
     public void normalize()

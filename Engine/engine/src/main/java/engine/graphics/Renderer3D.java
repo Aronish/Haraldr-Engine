@@ -1,150 +1,86 @@
 package engine.graphics;
 
-import engine.main.Application;
 import engine.main.PerspectiveCamera;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
-import static org.lwjgl.opengl.GL11.GL_LINES;
-
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Renderer3D
 {
-    public static SceneData3D sceneData = new SceneData3D();
-    private static UniformBuffer matrixBuffer = new UniformBuffer(128);
+    private SceneLights sceneLights = new SceneLights();
+    private Vector3f viewPosition = new Vector3f();
+    private UniformBuffer matrixBuffer = new UniformBuffer(128);
 
-    public static Shader vectorShader = new Shader("default_shaders/lines.vert", "default_shaders/simpleColor.frag");
-
-    public static final DiffuseMaterial DEFAULT_DIFFUSE_MATERIAL = new DiffuseMaterial(
-            new Vector3f(0.3f),
-            new Vector3f(0.8f, 0.2f, 0.3f),
-            new Vector3f(0.8f, 0.2f, 0.3f),
-            32f,
-            1f
-    );
-
-    public static void beginScene(@NotNull PerspectiveCamera camera)
+    public SceneLights getSceneLights()
     {
-        //rotationAxis = camera.getDirection();
-        sceneData.setViewPosition(camera.getPosition());
-        matrixBuffer.setData(camera.getViewMatrix().matrix, 0);
-        matrixBuffer.setData(Matrix4f.perspective.matrix, 64);
-        Shader.DEFAULT3D.bind();
+        return sceneLights;
     }
 
-    public static void drawVector(Vector3f vector, Vector3f translation)
+    public Vector3f getViewPosition()
     {
-        vectorShader.bind();
-        vectorShader.setMatrix4f(Matrix4f.translate(translation, false), "model");
-        vectorShader.setVector3f(new Vector3f(0f, 1f, 0f), "color");
-        sceneData.setVector(vector);
-        SceneData3D.VECTOR.bind();
-        SceneData3D.VECTOR.drawElements(GL_LINES);
+        return viewPosition;
     }
 
-    public static void drawCube(Vector3f position)
+    public void begin(@NotNull PerspectiveCamera camera)
+    {
+        viewPosition = camera.getPosition();
+        matrixBuffer.bind();
+        matrixBuffer.setDataUnsafe(camera.getViewMatrix().matrix, 0);
+        matrixBuffer.setDataUnsafe(Matrix4f.perspective.matrix, 64);
+    }
+
+    /////CUBE//////////////////////////////
+
+    public void drawCube()
+    {
+        drawCube(new Vector3f(), 1f);
+    }
+
+    public void drawCube(Vector3f position)
     {
         drawCube(position, 1f);
     }
 
-    public static void drawCube(Vector3f position, float scale)
-    {
-        Shader.DEFAULT3D.setMatrix4f(Matrix4f.translate(position, false).multiply(Matrix4f.scale(new Vector3f(scale))), "model");
-        SceneData3D.CUBE.bind();
-        SceneData3D.CUBE.drawElements();
-    }
-
-    public static void drawCube(@NotNull Shader shader, Vector3f position)
-    {
-        drawCube(shader, position, 1f, new Vector3f(1f));
-    }
-
-    public static void drawCube(@NotNull Shader shader, Vector3f position, float scale)
-    {
-        drawCube(shader, position, scale, new Vector3f(1f));
-    }
-
-    public static void drawCube(@NotNull Shader shader, Vector3f position, Vector3f color)
-    {
-        drawCube(shader, position, 1f, color);
-    }
-
-    public static void drawCube(@NotNull Shader shader, Vector3f position, float scale, Vector3f color)
+    public void drawCube(Vector3f position, float scale)
     {
         Texture.DEFAULT_TEXTURE.bind(0);
-        shader.bind();
-        shader.setMatrix4f(Matrix4f.translate(position, false).multiply(Matrix4f.scale(new Vector3f(scale))), "model");
-        //Light
-        shader.setVector3f(color, "color");
-        //shader.setVector3f(light.getPosition(), "lightPosition");
-        shader.setVector3f(sceneData.getViewPosition(), "viewPosition");
+        Shader.DIFFUSE.bind();
+        Shader.DIFFUSE.setMatrix4f(Matrix4f.translate(position, false).multiply(Matrix4f.scale(new Vector3f(scale))), "model");
+        Shader.DIFFUSE.setVector3f(viewPosition, "viewPosition");
 
-        SceneData3D.CUBE.bind();
-        SceneData3D.CUBE.drawArrays();
+        for (int i = 0; i < sceneLights.getLights().size(); ++i)
+        {
+            Light light = sceneLights.getLights().get(i);
+            Shader.DIFFUSE.setVector3f(light.getPosition(), "pointLights[" + i + "].position");
+            Shader.DIFFUSE.setVector3f(light.getColor(), "pointLights[" + i + "].color");
+            Shader.DIFFUSE.setFloat(1.0f, "pointLights[" + i + "].constant");
+            Shader.DIFFUSE.setFloat(0.7f, "pointLights[" + i + "].linear");
+            Shader.DIFFUSE.setFloat(1.8f, "pointLights[" + i + "].quadratic");
+        }
+        DefaultModels.CUBE.bind();
+        DefaultModels.CUBE.drawElements();
     }
-/*
-    public static void drawMesh(@NotNull Shader shader, @NotNull Mesh mesh)
+
+    public void drawCube(Vector3f position, DiffuseMaterial material)
     {
-        drawMesh(shader, mesh, new Vector3f());
+        drawCube(position, 1f, material);
     }
 
-    public static void drawMesh(@NotNull Shader shader, @NotNull Mesh mesh, Vector3f position)
+    public void drawCube(Vector3f position, float scale, DiffuseMaterial material)
     {
-        drawMesh(shader, mesh, Texture.DEFAULT_TEXTURE, position, 1f);
+        //TODO: Set material uniforms
+        Texture.DEFAULT_TEXTURE.bind(0);
+        Shader.DIFFUSE.bind();
+        Shader.DIFFUSE.setMatrix4f(Matrix4f.translate(position, false).multiply(Matrix4f.scale(new Vector3f(scale))), "model");
+        Shader.DIFFUSE.setVector3f(viewPosition, "viewPosition");
+
+        for (int i = 0; i < sceneLights.getLights().size(); ++i)
+        {
+            Shader.DIFFUSE.setVector3f(sceneLights.getLights().get(i).getColor(), "lightColor[" + i + "]");
+            Shader.DIFFUSE.setVector3f(sceneLights.getLights().get(i).getPosition(), "lightPosition[" + i + "]");
+        }
+        DefaultModels.CUBE.bind();
+        DefaultModels.CUBE.drawElements();
     }
-
-    public static void drawMesh(@NotNull Shader shader, @NotNull Mesh mesh, Vector3f position, float scale)
-    {
-        drawMesh(shader, mesh, Texture.DEFAULT_TEXTURE, position, scale);
-    }
-    public static void drawMesh(@NotNull Shader shader, @NotNull Mesh mesh, @NotNull Texture texture, Vector3f position, float scale)
-    {
-        DiffuseMaterial material = mesh.getMaterial();
-        shader.bind();
-        shader.setInteger(0, "diffuseTexture");
-        texture.bind(0);
-        shader.setMatrix4f(Matrix4f.translate(position, false).multiply(Matrix4f.scale(new Vector3f(scale))), "model");
-        //Material Properties
-        shader.setVector3f(material.getAmbient(), "material.ambientColor");
-        shader.setVector3f(material.getDiffuse(), "material.diffuseColor");
-        shader.setVector3f(material.getSpecular(), "material.specularColor");
-        shader.setFloat(material.getSpecularExponent(), "material.specularExponent");
-        shader.setFloat(material.getOpacity(), "material.opacity");
-        //Light
-        shader.setVector3f(light.getColor(), "lightColor");
-        shader.setVector3f(light.getPosition(), "lightPosition");
-        shader.setVector3f(sceneData.getViewPosition(), "viewPosition");
-
-        mesh.getVertexArray().bind();
-        mesh.getVertexArray().drawElements();
-    }
-
-    public static void drawMesh(@NotNull Shader shader, @NotNull Mesh mesh, @NotNull Texture texture, @NotNull Texture normalMap, Vector3f position, float scale)
-    {
-        DiffuseMaterial material = mesh.getMaterial();
-        shader.bind();
-        shader.setInteger(0, "diffuseTexture");
-        shader.setInteger(1, "normalMap");
-        texture.bind(0);
-        normalMap.bind(1);
-        shader.setMatrix4f(Matrix4f.translate(position, false).multiply(Matrix4f.rotateZ(90f)).multiply(Matrix4f.scale(new Vector3f(scale))), "model");
-        //Material Properties
-        shader.setVector3f(material.getAmbient(), "material.ambientColor");
-        shader.setVector3f(material.getDiffuse(), "material.diffuseColor");
-        shader.setVector3f(material.getSpecular(), "material.specularColor");
-        shader.setFloat(material.getSpecularExponent(), "material.specularExponent");
-        shader.setFloat(material.getOpacity(), "material.opacity");
-        //Light
-        shader.setVector3f(light.getColor(), "lightColor");
-        shader.setVector3f(light.getPosition(), "lightPosition");
-        shader.setVector3f(sceneData.getViewPosition(), "viewPosition");
-
-        mesh.getVertexArray().bind();
-        mesh.getVertexArray().drawElements();
-
-        normalMap.unbind(1);
-    }
-
-*/
 }

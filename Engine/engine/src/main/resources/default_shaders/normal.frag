@@ -9,7 +9,7 @@ const float OPACITY = 1.0f;
 
 in vec2 v_TextureCoordinate;
 in vec3 v_FragmentPosition;
-//TODO: Multiple lights
+
 uniform vec3 lightColor[MAX_LIGHTS];
 uniform vec3 lightPosition[MAX_LIGHTS];
 uniform vec3 viewPosition;
@@ -19,6 +19,7 @@ layout(binding = 1) uniform sampler2D normalMap;
 
 out vec4 o_Color;
 
+//TODO: Different light types
 vec3 simpleLight(vec3 lightPosition, vec3 lightColor, vec3 normal, vec3 viewDirection)
 {
     vec3 lightDirection = normalize(lightPosition - v_FragmentPosition);

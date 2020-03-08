@@ -1,6 +1,5 @@
 package engine.graphics;
 
-public class ForwardRenderer
+public class ForwardRenderer extends Renderer3D
 {
-    public SceneLights sceneLights = new SceneLights();
 }

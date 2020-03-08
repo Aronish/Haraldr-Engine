@@ -46,7 +46,7 @@ import static org.lwjgl.opengl.GL46.glValidateProgram;
 public class Shader
 {
     public static final Shader DEFAULT2D = new Shader("default_shaders/default2D.vert", "default_shaders/default2D.frag");
-    public static final Shader DEFAULT3D = new Shader("default_shaders/default3D.vert", "default_shaders/default3D.frag");
+    public static final Shader DIFFUSE = new Shader("default_shaders/diffuse.vert", "default_shaders/diffuse.frag");
     public static final Shader VISIBLE_NORMALS = new Shader("default_shaders/visibleNormals.vert", "default_shaders/visibleNormals.geom", "default_shaders/visibleNormals.frag");
 
     private int shaderProgram;

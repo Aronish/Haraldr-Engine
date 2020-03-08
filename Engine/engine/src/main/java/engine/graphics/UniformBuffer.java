@@ -30,6 +30,11 @@ public class UniformBuffer
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 
+    public void setDataUnsafe(float[] data, int offset)
+    {
+        glBufferSubData(GL_UNIFORM_BUFFER, offset, data);
+    }
+
     public void bind()
     {
         glBindBufferRange(GL_UNIFORM_BUFFER, 0, uniformBufferId, 0, size);

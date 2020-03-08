@@ -22,6 +22,7 @@ import static org.lwjgl.opengl.GL43.glMultiDrawElementsIndirect;
 import static org.lwjgl.opengl.GL45.glCreateBuffers;
 import static org.lwjgl.opengl.GL45.glCreateVertexArrays;
 
+@SuppressWarnings("unused")
 public class VertexArray
 {
     private int vertexArrayID;

@@ -5,10 +5,20 @@ public enum DefaultModels
     CUBE("models/cube.obj"),
     PLANE("models/plane.obj");
 
-    public final Mesh mesh;
+    public final VertexArray mesh;
 
     DefaultModels(String modelPath)
     {
-        mesh = new Mesh(ObjParser.load(modelPath));
+        mesh = ObjParser.load(modelPath);
+    }
+
+    public void bind()
+    {
+        mesh.bind();
+    }
+
+    public void drawElements()
+    {
+        mesh.drawElements();
     }
 }

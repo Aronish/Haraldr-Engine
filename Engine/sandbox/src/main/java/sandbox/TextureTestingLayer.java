@@ -10,7 +10,6 @@ import engine.graphics.ForwardRenderer;
 import engine.graphics.Light;
 import engine.graphics.Material;
 import engine.graphics.Model;
-import engine.graphics.Renderer3D;
 import engine.graphics.Shader;
 import engine.input.Key;
 import engine.layer.Layer;
@@ -20,27 +19,31 @@ import engine.main.Window;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
-public class ExampleLayer extends Layer
+public class TextureTestingLayer extends Layer
 {
-    private Shader shader = new Shader("default_shaders/normal.vert",  "default_shaders/normal.frag");
-    private Shader lightShader = new Shader("default_shaders/default3D.vert", "default_shaders/simpleColor.frag");
-    //private Material material = new Material("default_textures/BricksPaintedWhite001_COL_4K.jpg", "default_textures/BricksPaintedWhite001_NRM_4K.jpg", shader);
-    private Material material = new Material("default_textures/brickwall.jpg", "default_textures/brickwall_normal.jpg", shader);
-    private Model model = new Model(DefaultModels.PLANE.mesh, material);
-
     private ForwardRenderer renderer = new ForwardRenderer();
+    private PerspectiveCamera perspectiveCamera = new PerspectiveCamera(new Vector3f(4f, 2f, -1f));
+
+    private Model model = new Model(
+            DefaultModels.PLANE.mesh,
+            new Material(
+                    "default_textures/brickwall.jpg",
+                    "default_textures/brickwall_normal.jpg",
+                    new Shader("default_shaders/normal.vert",  "default_shaders/normal.frag")
+            )
+    );
+    //private Model model = new Model(DefaultModels.PLANE.mesh, new Material("default_textures/BricksPaintedWhite001_COL_4K.jpg", "default_textures/BricksPaintedWhite001_NRM_4K.jpg", shader));
+
     private static Light light = new Light(new Vector3f(2f, 2f, 1f), new Vector3f(0.4f, 0.2f, 0.85f));
     private static Light light2 = new Light(new Vector3f(-2f, -2f, 1f), new Vector3f(0.2f, 0.6f, 0.2f));
 
-    private PerspectiveCamera perspectiveCamera = new PerspectiveCamera(new Vector3f(4f, 2f, -1f));
-
     private boolean showNormals;
 
-    public ExampleLayer(String name)
+    public TextureTestingLayer(String name)
     {
         super(name);
-        renderer.sceneLights.addLight(light);
-        renderer.sceneLights.addLight(light2);
+        renderer.getSceneLights().addLight(light);
+        renderer.getSceneLights().addLight(light2);
     }
 
     @Override
@@ -90,9 +93,9 @@ public class ExampleLayer extends Layer
     @Override
     public void onRender()
     {
-        Renderer3D.beginScene(perspectiveCamera);
-        Renderer3D.drawCube(lightShader, light.getPosition(), 0.0625f, light.getColor());
-        Renderer3D.drawCube(lightShader, light2.getPosition(), 0.0625f, light2.getColor());
-        model.render(renderer, perspectiveCamera);
+        renderer.begin(perspectiveCamera);
+        light.render(renderer);
+        light2.render(renderer);
+        model.render(renderer);
     }
 }

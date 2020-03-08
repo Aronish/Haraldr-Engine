@@ -1,7 +1,7 @@
 #version 460 core
 
 layout(location = 0) in vec3 a_Position;
-layout(location = 1) in vec3 a_Normal; //TEMPORARY
+layout(location = 1) in vec3 a_Normal; //Here to avoid different layout, unused
 layout(location = 2) in vec2 a_TextureCoordinate;
 
 uniform mat4 model = mat4(1.0f);

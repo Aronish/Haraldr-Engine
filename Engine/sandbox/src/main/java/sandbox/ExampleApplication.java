@@ -9,7 +9,7 @@ class ExampleApplication extends Application
     @Override
     public void start()
     {
-        init(1280, 720, true, false, true);
+        init(1280, 720, true, false, false);
         loop();
     }
 
@@ -17,7 +17,7 @@ class ExampleApplication extends Application
     protected void init(int windowWidth, int windowHeight, boolean maximized, boolean fullscreen, boolean vSync)
     {
         super.init(windowWidth, windowHeight, maximized, fullscreen, vSync);
-        Renderer2D.setClearColor(new Vector4f(0f));
+        Renderer2D.setClearColor(new Vector4f(0.2f, 0.4f, 0.4f, 1f));
         layerStack.pushLayers(new ExampleLayer("Ex"));
     }
 }

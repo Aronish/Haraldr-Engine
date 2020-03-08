@@ -1,27 +1,26 @@
 package engine.graphics;
 
-public class Mesh
+public class Mesh //NEEDED?
 {
     private VertexArray vertexArray;
-    private Material material = new Material();
 
     public Mesh(VertexArray vertexArray)
     {
         this.vertexArray = vertexArray;
     }
 
-    public void setMaterial(Material material)
+    public void bind()
     {
-        this.material = material;
+        vertexArray.bind();
     }
 
-    public VertexArray getVertexArray()
+    public void unbind()
     {
-        return vertexArray;
+        vertexArray.unbind();
     }
 
-    public Material getMaterial()
+    public void draw()
     {
-        return material;
+        vertexArray.drawElements();
     }
 }

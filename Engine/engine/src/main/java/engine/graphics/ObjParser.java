@@ -20,14 +20,14 @@ import java.util.Map;
 public class ObjParser
 {
     @Nullable
-    public static Mesh load(String path)
+    public static VertexArray load(String path)
     {
         return IOUtils.readResource(path, ObjParser::load);
     }
 
     @NotNull
     @Contract("_ -> new")
-    private static Mesh load(InputStream file)
+    private static VertexArray load(InputStream file)
     {
         List<Vector3f> inputPositions           = new ArrayList<>();
         List<Vector2f> inputTextureCoordinates  = new ArrayList<>();
@@ -35,7 +35,7 @@ public class ObjParser
 
         List<Float> vertices                    = new ArrayList<>();
         List<Integer> indices                   = new ArrayList<>();
-        Material material = null;
+        DiffuseMaterial material = null;
         boolean foundMaterial = false;
 
         Map<IndexSet, Integer> indexMap = new HashMap<>();
@@ -94,16 +94,14 @@ public class ObjParser
         vertexArray.setVertexBuffers(vertexBuffer);
         vertexArray.setIndexBuffer(ArrayUtils.toPrimitiveArrayI(indices));
 
-        Mesh mesh = new Mesh(vertexArray);
-        mesh.setMaterial(material);
-        return mesh;
+        return vertexArray;
     }
 
     @NotNull
-    private static Material loadMaterial(InputStream file)
+    private static DiffuseMaterial loadMaterial(InputStream file)
     {
         BufferedReader reader = new BufferedReader(new InputStreamReader(file));
-        Material material = new Material();
+        DiffuseMaterial material = new DiffuseMaterial();
         try{
             while (true)
             {

@@ -1,70 +1,34 @@
 package engine.graphics;
 
-import engine.math.Vector3f;
-
 public class Material
 {
-    private Vector3f ambient = new Vector3f(1f), diffuse = new Vector3f(1f), specular = new Vector3f(1f);
-    private float specularExponent = 4f, opacity = 1f;
+    private Texture diffuseColor;
+    private Texture normalMap;
+    private Shader shader;
 
-    public Material() {}
-
-    public Material(Vector3f ambient, Vector3f diffuse, Vector3f specular, float specularExponent, float opacity)
+    public Material(String diffuseColor, String normalMap, Shader shader)
     {
-        this.ambient = ambient;
-        this.diffuse = diffuse;
-        this.specular = specular;
-        this.specularExponent = specularExponent;
-        this.opacity = opacity;
+        this.diffuseColor = new Texture(diffuseColor);
+        this.normalMap = new Texture(normalMap);
+        this.shader = shader;
     }
 
-    public void setAmbient(Vector3f ambient)
+    public void bind()
     {
-        this.ambient = ambient;
+        shader.bind();
+        diffuseColor.bind(0);
+        normalMap.bind(1);
     }
 
-    public void setDiffuse(Vector3f diffuse)
+    public void unbind()
     {
-        this.diffuse = diffuse;
+        shader.bind();
+        diffuseColor.unbind(0);
+        normalMap.unbind(1);
     }
 
-    public void setSpecular(Vector3f specular)
+    public Shader getShader()
     {
-        this.specular = specular;
-    }
-
-    public void setSpecularExponent(float specularExponent)
-    {
-        this.specularExponent = specularExponent;
-    }
-
-    public void setOpacity(float opacity)
-    {
-        this.opacity = opacity;
-    }
-
-    public Vector3f getAmbient()
-    {
-        return ambient;
-    }
-
-    public Vector3f getDiffuse()
-    {
-        return diffuse;
-    }
-
-    public Vector3f getSpecular()
-    {
-        return specular;
-    }
-
-    public float getSpecularExponent()
-    {
-        return specularExponent;
-    }
-
-    public float getOpacity()
-    {
-        return opacity;
+        return shader;
     }
 }

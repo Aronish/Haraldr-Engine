@@ -16,13 +16,14 @@ import engine.layer.Layer;
 import engine.main.Application;
 import engine.main.PerspectiveCamera;
 import engine.main.Window;
+import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
 public class TextureTestingLayer extends Layer
 {
     private ForwardRenderer renderer = new ForwardRenderer();
-    private PerspectiveCamera perspectiveCamera = new PerspectiveCamera(new Vector3f(4f, 2f, -1f));
+    private PerspectiveCamera perspectiveCamera = new PerspectiveCamera(new Vector3f(0f, 2f, 2f));
 
     private Model model = new Model(
             DefaultModels.PLANE.mesh,
@@ -30,7 +31,8 @@ public class TextureTestingLayer extends Layer
                     "default_textures/brickwall.jpg",
                     "default_textures/brickwall_normal.jpg",
                     new Shader("default_shaders/normal.vert",  "default_shaders/normal.frag")
-            )
+            ),
+            Matrix4f.scale(new Vector3f(8f, 8f, 1f))
     );
     //private Model model = new Model(DefaultModels.PLANE.mesh, new Material("default_textures/BricksPaintedWhite001_COL_4K.jpg", "default_textures/BricksPaintedWhite001_NRM_4K.jpg", shader));
 
@@ -86,8 +88,8 @@ public class TextureTestingLayer extends Layer
         sinOff  = (float) Math.sin(Application.time / 3 + 2f) * 2f;
         cos     = (float) Math.cos(Application.time / 3) * 2f;
         cosOff  = (float) Math.cos(Application.time / 3 + 2f) * 2f;
-        light.setPosition(new Vector3f(sin, cos, 1f));
-        light2.setPosition(new Vector3f(sinOff, cosOff, 1f));
+        light.setPosition(new Vector3f(sin * 2f, cos * 2f, 1f));
+        light2.setPosition(new Vector3f(sinOff * 2f, cosOff * 2f, 1f));
     }
 
     @Override

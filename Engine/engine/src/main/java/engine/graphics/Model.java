@@ -4,33 +4,50 @@ import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class Model
 {
     private VertexArray mesh;
-    public Material material;
+    private Material material;
+    private Matrix4f modelMatrix;
 
-    private static Matrix4f modelMatrix = Matrix4f.scale(new Vector3f(4f, 4f, 1f));
-
-    public Model(String modelPath)
+    public Model(String modelPath, Material material)
     {
-        mesh = ObjParser.load(modelPath);
+        this(ObjParser.load(modelPath), material, new Matrix4f());
+    }
+
+    public Model(String modelPath, Material material, Matrix4f modelMatrix)
+    {
+        this(ObjParser.load(modelPath), material, modelMatrix);
     }
 
     public Model(VertexArray mesh, Material material)
     {
+        this(mesh, material, new Matrix4f());
+    }
+
+    public Model(VertexArray mesh, Material material, Matrix4f modelMatrix)
+    {
         this.mesh = mesh;
         this.material = material;
+        this.modelMatrix = modelMatrix;
     }
 
     public void render(@NotNull ForwardRenderer renderer)
     {
+        List<Light> lights = renderer.getSceneLights().getLights();
         material.bind();
         material.getShader().setMatrix4f(modelMatrix, "model");
         material.getShader().setVector3f(renderer.getViewPosition(), "viewPosition");
-        for (int i = 0; i < renderer.getSceneLights().getLights().size(); ++i)
+        material.getShader().setFloat(lights.size(), "numPointLights");
+        for (int i = 0; i < lights.size(); ++i)
         {
-            material.getShader().setVector3f(renderer.getSceneLights().getLights().get(i).getColor(), "lightColor[" + i + "]");
-            material.getShader().setVector3f(renderer.getSceneLights().getLights().get(i).getPosition(), "lightPosition[" + i + "]");
+            material.getShader().setVector3f(lights.get(i).getPosition(), "pointLights[" + i + "].position");
+            material.getShader().setVector3f(lights.get(i).getColor(), "pointLights[" + i + "].color");
+            material.getShader().setFloat(1.0f, "pointLights[" + i + "].constant");
+            material.getShader().setFloat(0.07f, "pointLights[" + i + "].linear");
+            material.getShader().setFloat(0.017f, "pointLights[" + i + "].quadratic");
         }
         mesh.bind();
         mesh.drawElements();

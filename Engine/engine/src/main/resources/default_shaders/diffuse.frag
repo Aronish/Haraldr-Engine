@@ -1,6 +1,6 @@
 #version 460 core
 
-#define MAX_LIGHTS 4
+#define MAX_LIGHTS 2
 const float AMBIENT_STRENGTH = 0.1f;
 const float DIFFUSE_STRENGTH = 1.0f;
 const float SPECULAR_STRENGTH = 0.8f;
@@ -79,7 +79,7 @@ void main()
     vec3 viewDirection = normalize(viewPosition - v_FragmentPosition);
     vec3 result;
 
-    for (int i = 0; i < MAX_LIGHTS; ++i)
+    for (int i = 0; i < numPointLights; ++i)
     {
         result += pointLight(pointLights[i], normalize(v_Normal), viewDirection);
     }

@@ -6,6 +6,7 @@ const float DIFFUSE_STRENGTH = 1.0f;
 const float SPECULAR_STRENGTH = 0.8f;
 const float SPECULAR_EXPONENT = 200.0f;
 const float OPACITY = 1.0f;
+//TODO: Add intensity variables
 
 struct PointLight
 {
@@ -21,10 +22,11 @@ in vec3 v_FragmentPosition;
 
 uniform PointLight pointLights[MAX_LIGHTS];
 uniform float numPointLights;
+
 uniform vec3 viewPosition;
 
-layout(binding = 0) uniform sampler2D diffuseTexture;
-layout(binding = 1) uniform sampler2D normalMap;
+layout(location = 0) uniform sampler2D diffuseTexture;
+layout(location = 1) uniform sampler2D normalMap;
 
 out vec4 o_Color;
 
@@ -53,15 +55,15 @@ vec3 pointLight(PointLight light, vec3 normal, vec3 viewDirection)
 
 void main()
 {
-    vec3 normal = normalize(texture(normalMap, v_TextureCoordinate).rgb * 2.0f - 1.0f); // Read normals
+    vec3 normal = normalize(texture(normalMap, v_TextureCoordinate).xyz * 2.0f - 1.0f); // Read normals
     vec3 viewDirection = normalize(viewPosition - v_FragmentPosition);
     vec3 result;
 
-    for (int i = 0; i < numPointLights; ++i)
+    for (uint i = 0; i < numPointLights; ++i)
     {
         result += pointLight(pointLights[i], normal, viewDirection);
     }
 
     o_Color = texture(diffuseTexture, v_TextureCoordinate) * vec4(result, OPACITY);
 }
-//strength * lightColor * (lightComponent * componentColor)
+//strength * lightColor * lightComponent * componentColor

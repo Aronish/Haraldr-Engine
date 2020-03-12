@@ -30,11 +30,10 @@ public class TextureTestingLayer extends Layer
             new Material(
                     "default_textures/brickwall.jpg",
                     "default_textures/brickwall_normal.jpg",
-                    new Shader("default_shaders/normal.vert",  "default_shaders/normal.frag")
+                    Shader.NORMAL
             ),
             Matrix4f.scale(new Vector3f(8f, 8f, 1f))
     );
-    //private Model model = new Model(DefaultModels.PLANE.mesh, new Material("default_textures/BricksPaintedWhite001_COL_4K.jpg", "default_textures/BricksPaintedWhite001_NRM_4K.jpg", shader));
 
     private static Light light = new Light(new Vector3f(2f, 2f, 1f), new Vector3f(0.4f, 0.2f, 0.85f));
     private static Light light2 = new Light(new Vector3f(-2f, -2f, 1f), new Vector3f(0.2f, 0.6f, 0.2f));
@@ -84,12 +83,12 @@ public class TextureTestingLayer extends Layer
         {
             perspectiveCamera.getController().handleMovement(perspectiveCamera, window.getWindowHandle(), deltaTime);
         }
-        sin     = (float) Math.sin(Application.time / 3) * 2f;
-        sinOff  = (float) Math.sin(Application.time / 3 + 2f) * 2f;
-        cos     = (float) Math.cos(Application.time / 3) * 2f;
-        cosOff  = (float) Math.cos(Application.time / 3 + 2f) * 2f;
-        light.setPosition(new Vector3f(sin * 2f, cos * 2f, 1f));
-        light2.setPosition(new Vector3f(sinOff * 2f, cosOff * 2f, 1f));
+        sin     = (float) Math.sin(Application.time / 3);
+        sinOff  = (float) Math.sin(Application.time / 3 + 2f);
+        cos     = (float) Math.cos(Application.time / 3);
+        cosOff  = (float) Math.cos(Application.time / 3 + 2f);
+        light.setPosition(new Vector3f(sin, cos, 1f));
+        light2.setPosition(new Vector3f(sinOff, cosOff, 1f));
     }
 
     @Override

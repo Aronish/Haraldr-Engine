@@ -17,7 +17,7 @@ import static engine.input.Key.KEY_W;
 
 public class PerspectiveCameraController
 {
-    private static final float CAMERA_SPEED = 2f;
+    private static final float CAMERA_SPEED = 4f;
     private static final float MOVEMENT_SENSITIVITY = 0.1f;
     private static final float ZOOM_SENSITIVITY = 2f;
 

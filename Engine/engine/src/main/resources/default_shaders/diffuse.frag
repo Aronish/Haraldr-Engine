@@ -4,6 +4,7 @@
 const float AMBIENT_STRENGTH = 0.1f;
 const float DIFFUSE_STRENGTH = 1.0f;
 const float SPECULAR_STRENGTH = 0.8f;
+//TODO: Add intensity variables
 
 struct Material
 {
@@ -28,29 +29,14 @@ in vec2 v_TextureCoordinate;
 in vec3 v_FragmentPosition;
 
 uniform Material material = { { 0.3f, 0.3, 0.3f }, { 0.8f, 0.2f, 0.3f }, { 0.8f, 0.2f, 0.3f }, 32.0f, 1.0f };
-uniform PointLight pointLights[MAX_LIGHTS];
 uniform vec3 viewPosition;
+
+uniform PointLight pointLights[MAX_LIGHTS];
+uniform float numPointLights;
 
 layout(location = 0) uniform sampler2D diffuseTexture;
 
 out vec4 o_Color;
-
-//TODO: Different light types
-vec3 simpleLight(vec3 lightPosition, vec3 lightColor, vec3 normal, vec3 viewDirection)
-{
-    vec3 lightDirection = normalize(lightPosition - v_FragmentPosition);
-    vec3 halfWayDirection = normalize(lightDirection + viewDirection);
-    //AMBIENT
-    vec3 ambient = AMBIENT_STRENGTH * lightColor * material.ambientColor;
-    //DIFFUSE
-    float diff = max(dot(normal, lightDirection), 0.0f);
-    vec3 diffuse = DIFFUSE_STRENGTH * lightColor * diff * material.diffuseColor;
-    //SPECULAR
-    float spec = pow(max(dot(normal, halfWayDirection), 0.0f), material.specularExponent); // Blinn-Phong
-    vec3 specular = SPECULAR_STRENGTH * lightColor * spec * material.specularColor;
-
-    return (ambient + diffuse + specular);
-}
 
 vec3 pointLight(PointLight light, vec3 normal, vec3 viewDirection)
 {
@@ -67,9 +53,9 @@ vec3 pointLight(PointLight light, vec3 normal, vec3 viewDirection)
     float spec = pow(max(dot(normal, halfWayDirection), 0.0f), material.specularExponent); // Blinn-Phong
     vec3 specular = SPECULAR_STRENGTH * light.color * spec * material.specularColor;
 
-    //ambient *= attenuation;
-    //diffuse *= attenuation;
-    //specular *= attenuation;
+    ambient *= attenuation;
+    diffuse *= attenuation;
+    specular *= attenuation;
 
     return (ambient + diffuse + specular);
 }
@@ -77,11 +63,12 @@ vec3 pointLight(PointLight light, vec3 normal, vec3 viewDirection)
 void main()
 {
     vec3 viewDirection = normalize(viewPosition - v_FragmentPosition);
+    vec3 normal = normalize(v_Normal);
     vec3 result;
 
-    for (int i = 0; i < numPointLights; ++i)
+    for (uint i = 0; i < numPointLights; ++i)
     {
-        result += pointLight(pointLights[i], normalize(v_Normal), viewDirection);
+        result += pointLight(pointLights[i], normal, viewDirection);
     }
 
     o_Color = texture(diffuseTexture, v_TextureCoordinate) * vec4(result, material.opacity);

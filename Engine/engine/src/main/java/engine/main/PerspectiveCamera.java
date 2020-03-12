@@ -13,7 +13,7 @@ public class PerspectiveCamera
     private Matrix4f lookAt;
     private Vector3f position;
 
-    private float pitch = -20f, yaw = 135f;
+    private float pitch = -20f, yaw = -90f;
     private Vector3f direction = new Vector3f(
             (float) Math.cos(Math.toRadians(yaw) * Math.cos(Math.toRadians(pitch))),
             (float) Math.sin(Math.toRadians(pitch)),

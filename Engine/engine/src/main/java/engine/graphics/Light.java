@@ -49,7 +49,6 @@ public class Light
         LIGHT_SHADER.bind();
         LIGHT_SHADER.setMatrix4f(Matrix4f.translate(position, false).multiply(Matrix4f.scale(new Vector3f(0.0625f))), "model");
         LIGHT_SHADER.setVector3f(color, "color");
-
         DefaultModels.CUBE.bind();
         DefaultModels.CUBE.drawElements();
     }

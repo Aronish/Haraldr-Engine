@@ -18,7 +18,7 @@ class ExampleApplication extends Application
     {
         super.init(windowWidth, windowHeight, maximized, fullscreen, vSync);
         Renderer2D.setClearColor(new Vector4f(0.1f, 0.1f, 0.2f, 1f));
-        //layerStack.pushLayers(new TextureTestingLayer("TexTest"));
-        layerStack.pushLayers(new LightCastersLayer("LightCasters"));
+        layerStack.pushLayers(new TextureTestingLayer("TexTest"));
+        //layerStack.pushLayers(new LightCastersLayer("LightCasters"));
     }
 }

@@ -5,6 +5,8 @@ import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
+import static engine.main.Application.MAIN_LOGGER;
+
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Renderer3D
 {
@@ -34,20 +36,21 @@ public class Renderer3D
 
     public void drawCube()
     {
-        drawCube(new Vector3f(), 1f);
+        drawCube(new Vector3f(), 1f, new Vector3f(), 0f);
     }
 
     public void drawCube(Vector3f position)
     {
-        drawCube(position, 1f);
+        drawCube(position, 1f, new Vector3f(), 0f);
     }
 
-    public void drawCube(Vector3f position, float scale)
+    public void drawCube(Vector3f position, float scale, Vector3f rotationAxis, float rotation)
     {
         Texture.DEFAULT_TEXTURE.bind(0);
         Shader.DIFFUSE.bind();
-        Shader.DIFFUSE.setMatrix4f(Matrix4f.translate(position, false).multiply(Matrix4f.scale(new Vector3f(scale))), "model");
+        Shader.DIFFUSE.setMatrix4f(Matrix4f.translate(position, false).multiply(Matrix4f.rotate(rotationAxis, rotation)).multiply(Matrix4f.scale(new Vector3f(scale))), "model");
         Shader.DIFFUSE.setVector3f(viewPosition, "viewPosition");
+        Shader.DIFFUSE.setFloat(sceneLights.getLights().size(), "numPointLights");
 
         for (int i = 0; i < sceneLights.getLights().size(); ++i)
         {
@@ -55,8 +58,8 @@ public class Renderer3D
             Shader.DIFFUSE.setVector3f(light.getPosition(), "pointLights[" + i + "].position");
             Shader.DIFFUSE.setVector3f(light.getColor(), "pointLights[" + i + "].color");
             Shader.DIFFUSE.setFloat(1.0f, "pointLights[" + i + "].constant");
-            Shader.DIFFUSE.setFloat(0.7f, "pointLights[" + i + "].linear");
-            Shader.DIFFUSE.setFloat(1.8f, "pointLights[" + i + "].quadratic");
+            Shader.DIFFUSE.setFloat(0.045f, "pointLights[" + i + "].linear");
+            Shader.DIFFUSE.setFloat(0.0075f, "pointLights[" + i + "].quadratic");
         }
         DefaultModels.CUBE.bind();
         DefaultModels.CUBE.drawElements();

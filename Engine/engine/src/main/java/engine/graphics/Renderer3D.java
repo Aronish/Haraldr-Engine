@@ -27,7 +27,7 @@ public class Renderer3D
     public void begin(@NotNull PerspectiveCamera camera)
     {
         viewPosition = camera.getPosition();
-        matrixBuffer.bind();
+        matrixBuffer.bind(0);
         matrixBuffer.setDataUnsafe(camera.getViewMatrix().matrix, 0);
         matrixBuffer.setDataUnsafe(Matrix4f.perspective.matrix, 64);
     }

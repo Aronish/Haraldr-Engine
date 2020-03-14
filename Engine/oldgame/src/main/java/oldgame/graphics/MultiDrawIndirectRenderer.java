@@ -81,7 +81,7 @@ public class MultiDrawIndirectRenderer implements RenderSystem
         vao.setNextAttribIndex(nextAttribIndex);
         vao.unbind();
 
-        indirectBuffer = new VertexBuffer(VertexBuffer.GL_DRAW_INDIRECT_BUFFER, 1000, true);
+        indirectBuffer = new VertexBuffer(Wrapper.GL_DRAW_INDIRECT_BUFFER, 1000, true);
     }
 
     @Override

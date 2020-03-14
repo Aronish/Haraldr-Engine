@@ -46,8 +46,8 @@ public class Model
             material.getShader().setVector3f(lights.get(i).getPosition(), "pointLights[" + i + "].position");
             material.getShader().setVector3f(lights.get(i).getColor(), "pointLights[" + i + "].color");
             material.getShader().setFloat(1.0f, "pointLights[" + i + "].constant");
-            material.getShader().setFloat(0.07f, "pointLights[" + i + "].linear");
-            material.getShader().setFloat(0.017f, "pointLights[" + i + "].quadratic");
+            material.getShader().setFloat(0.045f, "pointLights[" + i + "].linear");
+            material.getShader().setFloat(0.0075f, "pointLights[" + i + "].quadratic");
         }
         mesh.bind();
         mesh.drawElements();

@@ -7,6 +7,7 @@ import engine.event.MouseMovedEvent;
 import engine.event.MouseScrolledEvent;
 import engine.graphics.ForwardRenderer;
 import engine.graphics.Light;
+import engine.graphics.PointLight;
 import engine.graphics.Shader;
 import engine.input.Key;
 import engine.layer.Layer;
@@ -14,14 +15,15 @@ import engine.main.Application;
 import engine.main.PerspectiveCamera;
 import engine.main.Window;
 import engine.math.Vector3f;
+import org.jetbrains.annotations.NotNull;
 
 public class LightCastersLayer extends Layer
 {
     private ForwardRenderer renderer = new ForwardRenderer();
     private PerspectiveCamera perspectiveCamera = new PerspectiveCamera(new Vector3f(4f, 2f, -1f));
 
-    private Light light = new Light(new Vector3f(-10f, 0f, 0f), new Vector3f(1.0f, 1.0f, 0.85f));
-    private Light light2 = new Light(new Vector3f(-10f, 0f, 0f), new Vector3f(0.4f, 0.0f, 0.9f));
+    private Light light = new PointLight(new Vector3f(-10f, 0f, 0f), new Vector3f(1.0f, 1.0f, 0.85f));
+    private Light light2 = new PointLight(new Vector3f(-10f, 0f, 0f), new Vector3f(0.4f, 0.0f, 0.9f));
 
     public LightCastersLayer(String name)
     {
@@ -31,7 +33,7 @@ public class LightCastersLayer extends Layer
     }
 
     @Override
-    public void onEvent(Window window, Event event)
+    public void onEvent(Window window, @NotNull Event event)
     {
         if (event.eventType == EventType.MOUSE_MOVED)
         {
@@ -57,7 +59,7 @@ public class LightCastersLayer extends Layer
     private float sin, cos, sinOff, cosOff;
 
     @Override
-    public void onUpdate(Window window, float deltaTime)
+    public void onUpdate(@NotNull Window window, float deltaTime)
     {
         if (window.isFocused())
         {

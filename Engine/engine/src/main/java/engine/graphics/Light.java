@@ -5,12 +5,12 @@ import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public class Light
+public abstract class Light
 {
     private static final Shader LIGHT_SHADER = new Shader("default_shaders/diffuse.vert", "default_shaders/simpleColor.frag");
 
-    private Vector3f position;
-    private Vector3f color;
+    protected Vector3f position;
+    protected Vector3f color;
 
     public Light()
     {
@@ -42,6 +42,8 @@ public class Light
     {
         this.color = color;
     }
+
+    public abstract void addToBuffer();
 
     public void render(@NotNull ForwardRenderer renderer)
     {

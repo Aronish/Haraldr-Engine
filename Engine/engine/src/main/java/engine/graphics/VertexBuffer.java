@@ -16,8 +16,6 @@ import static org.lwjgl.opengl.GL45.glCreateBuffers;
 @SuppressWarnings("unused")
 public class VertexBuffer
 {
-    public static final int GL_DRAW_INDIRECT_BUFFER = GL40.GL_DRAW_INDIRECT_BUFFER;
-
     private final int vertexBufferID;
     private final int target;
 

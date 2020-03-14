@@ -10,6 +10,7 @@ import engine.graphics.ForwardRenderer;
 import engine.graphics.Light;
 import engine.graphics.Material;
 import engine.graphics.Model;
+import engine.graphics.PointLight;
 import engine.graphics.Shader;
 import engine.input.Key;
 import engine.layer.Layer;
@@ -32,11 +33,11 @@ public class TextureTestingLayer extends Layer
                     "default_textures/brickwall_normal.jpg",
                     Shader.NORMAL
             ),
-            Matrix4f.scale(new Vector3f(8f, 8f, 1f))
+            Matrix4f.scale(new Vector3f(4f, 4f, 1f))
     );
 
-    private static Light light = new Light(new Vector3f(2f, 2f, 1f), new Vector3f(0.4f, 0.2f, 0.85f));
-    private static Light light2 = new Light(new Vector3f(-2f, -2f, 1f), new Vector3f(0.2f, 0.6f, 0.2f));
+    private static Light light = new PointLight(new Vector3f(2f, 2f, 1f), new Vector3f(0.4f, 0.2f, 0.85f));
+    private static Light light2 = new PointLight(new Vector3f(-2f, -2f, 1f), new Vector3f(0.2f, 0.6f, 0.2f));
 
     private boolean showNormals;
 
@@ -87,8 +88,8 @@ public class TextureTestingLayer extends Layer
         sinOff  = (float) Math.sin(Application.time / 3 + 2f);
         cos     = (float) Math.cos(Application.time / 3);
         cosOff  = (float) Math.cos(Application.time / 3 + 2f);
-        light.setPosition(new Vector3f(sin, cos, 1f));
-        light2.setPosition(new Vector3f(sinOff, cosOff, 1f));
+        light.setPosition(new Vector3f(sin * 2f, cos * 2f, 1f));
+        light2.setPosition(new Vector3f(sinOff * 2f, cosOff * 2f, 1f));
     }
 
     @Override

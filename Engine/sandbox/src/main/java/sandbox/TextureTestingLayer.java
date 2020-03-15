@@ -6,12 +6,13 @@ import engine.event.KeyPressedEvent;
 import engine.event.MouseMovedEvent;
 import engine.event.MouseScrolledEvent;
 import engine.graphics.DefaultModels;
+import engine.graphics.DirectionalLight;
 import engine.graphics.ForwardRenderer;
-import engine.graphics.Light;
 import engine.graphics.Material;
 import engine.graphics.Model;
 import engine.graphics.PointLight;
 import engine.graphics.Shader;
+import engine.graphics.Spotlight;
 import engine.input.Key;
 import engine.layer.Layer;
 import engine.main.Application;
@@ -36,16 +37,28 @@ public class TextureTestingLayer extends Layer
             Matrix4f.scale(new Vector3f(4f, 4f, 1f))
     );
 
-    private static Light light = new PointLight(new Vector3f(2f, 2f, 1f), new Vector3f(0.4f, 0.2f, 0.85f));
-    private static Light light2 = new PointLight(new Vector3f(-2f, -2f, 1f), new Vector3f(0.2f, 0.6f, 0.2f));
+    private Model model2 = new Model(
+            DefaultModels.PLANE.mesh,
+            new Material(
+                    "default_textures/brickwall.jpg",
+                    "default_textures/brickwall_normal.jpg",
+                    Shader.NORMAL
+            ),
+            Matrix4f.translate(new Vector3f(9f, 0f, 0f)).multiply(Matrix4f.scale(new Vector3f(4f, 4f, 1f)))
+    );
+
+    private PointLight pointLight = new PointLight(new Vector3f(4f, 0f, 3f), new Vector3f(0.8f, 0.2f, 0.3f));
+    private Spotlight spotlight = new Spotlight(new Vector3f(4f, 0f, 2f), new Vector3f(0f, 0f, -1f), new Vector3f(0.8f, 0.2f, 0.3f), 25f, 25f);
+    private DirectionalLight directionalLight = new DirectionalLight(new Vector3f(2f), new Vector3f(), new Vector3f(0.2f, 0.3f, 0.8f));
 
     private boolean showNormals;
 
     public TextureTestingLayer(String name)
     {
         super(name);
-        renderer.getSceneLights().addLight(light);
-        renderer.getSceneLights().addLight(light2);
+        renderer.getSceneLights().addDirectionalLight(directionalLight);
+        renderer.getSceneLights().addPointLight(pointLight);
+        renderer.getSceneLights().addSpotLight(spotlight);
     }
 
     @Override
@@ -75,8 +88,6 @@ public class TextureTestingLayer extends Layer
         }
     }
 
-    private float sin, sinOff, cos, cosOff;
-
     @Override
     public void onUpdate(@NotNull Window window, float deltaTime)
     {
@@ -84,20 +95,24 @@ public class TextureTestingLayer extends Layer
         {
             perspectiveCamera.getController().handleMovement(perspectiveCamera, window.getWindowHandle(), deltaTime);
         }
-        sin     = (float) Math.sin(Application.time / 3);
-        sinOff  = (float) Math.sin(Application.time / 3 + 2f);
-        cos     = (float) Math.cos(Application.time / 3);
-        cosOff  = (float) Math.cos(Application.time / 3 + 2f);
-        light.setPosition(new Vector3f(sin * 2f, cos * 2f, 1f));
-        light2.setPosition(new Vector3f(sinOff * 2f, cosOff * 2f, 1f));
+        float sin = (float) Math.sin(Application.time / 3);
+        float sinOff = (float) Math.sin(Application.time / 3 + 2f);
+        float cos = (float) Math.cos(Application.time / 3);
+        float cosOff = (float) Math.cos(Application.time / 3 + 2f);
+        spotlight.setDirection(new Vector3f(sin, 0f, cos));
+        directionalLight.setDirection(new Vector3f(sinOff, 0f, cosOff));
     }
 
     @Override
     public void onRender()
     {
         renderer.begin(perspectiveCamera);
-        light.render(renderer);
-        light2.render(renderer);
+        pointLight.render();
+        spotlight.render();
+        spotlight.renderDirectionVector();
+        directionalLight.render();
+        directionalLight.renderDirectionVector();
         model.render(renderer);
+        model2.render(renderer);
     }
 }

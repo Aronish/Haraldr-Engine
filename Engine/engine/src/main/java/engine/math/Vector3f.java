@@ -61,6 +61,26 @@ public class Vector3f
         this.y = y;
     }
 
+    public void setZ(float z)
+    {
+        this.z = z;
+    }
+
+    public void addX(float dx)
+    {
+        x += dx;
+    }
+
+    public void addY(float dy)
+    {
+        y += dy;
+    }
+
+    public void addZ(float dz)
+    {
+        z += dz;
+    }
+
     public float getX()
     {
         return x;
@@ -76,11 +96,21 @@ public class Vector3f
         return z;
     }
 
-    @NotNull
-    @Contract("_, _ -> new")
-    public static Vector3f add(@NotNull Vector3f first, @NotNull Vector3f second)
+    public void normalize()
     {
-        return new Vector3f(first.x + second.x, first.y + second.y, first.z + second.z);
+        x /= length();
+        y /= length();
+        z /= length();
+    }
+
+    public float length()
+    {
+        return (float) Math.sqrt(x * x + y * y + z * z);
+    }
+
+    public Vector3f multiply(float scalar)
+    {
+        return new Vector3f(x * scalar, y * scalar, z * scalar);
     }
 
     public void add(@NotNull Vector3f other)
@@ -90,31 +120,23 @@ public class Vector3f
         z += other.z;
     }
 
-    @NotNull
-    @Contract("_, _ -> new")
-    public static Vector3f subtract(@NotNull Vector3f first, @NotNull Vector3f second)
-    {
-        return new Vector3f(first.x - second.x, first.y - second.y, first.z - second.z);
-    }
-
-    /**
-     * Subtracts a value from the y component.
-     * @param dy the value to subtract.
-     * @return the resulting vector.
-     */
     public Vector3f subtractY(float dy)
     {
         return new Vector3f(x, y - dy);
     }
 
-    public Vector3f multiply(float scalar)
+    @NotNull
+    @Contract("_, _ -> new")
+    public static Vector3f add(@NotNull Vector3f first, @NotNull Vector3f second)
     {
-        return new Vector3f(x * scalar, y * scalar, z * scalar);
+        return new Vector3f(first.x + second.x, first.y + second.y, first.z + second.z);
     }
 
-    public float length()
+    @NotNull
+    @Contract("_, _ -> new")
+    public static Vector3f subtract(@NotNull Vector3f first, @NotNull Vector3f second)
     {
-        return (float) Math.sqrt(x * x + y * y + z * z);
+        return new Vector3f(first.x - second.x, first.y - second.y, first.z - second.z);
     }
 
     @Contract(pure = true)
@@ -123,18 +145,18 @@ public class Vector3f
         return (second.y - first.y) / (second.x - first.x);
     }
 
-    public void normalize()
-    {
-        x /= length();
-        y /= length();
-        z /= length();
-    }
-
     @NotNull
     @Contract("_ -> new")
     public static Vector3f normalize(@NotNull Vector3f vector)
     {
         return new Vector3f(vector.x / vector.length(), vector.y / vector.length(), vector.z / vector.length());
+    }
+
+    @NotNull
+    @Contract("_ -> new")
+    public static Vector3f negate(@NotNull Vector3f vector3f)
+    {
+        return new Vector3f(-vector3f.x, -vector3f.y, -vector3f.z);
     }
 
     @NotNull

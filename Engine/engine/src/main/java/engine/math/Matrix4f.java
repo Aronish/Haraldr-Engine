@@ -3,8 +3,6 @@ package engine.math;
 import engine.event.WindowResizedEvent;
 import org.jetbrains.annotations.NotNull;
 
-import static engine.main.Application.MAIN_LOGGER;
-
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Matrix4f
 {
@@ -132,16 +130,16 @@ public class Matrix4f
     }
 
     @NotNull
-    public static Matrix4f transform(Vector3f position, float angle, @NotNull Vector2f scale, boolean isCamera)
+    public static Matrix4f transform(Vector3f position, float angle, @NotNull Vector2f scale)
     {
-        return translate(scale.getX() == -1 ? Vector3f.add(position, new Vector3f(1.0f, 0.0f)) : position, isCamera).multiply(scale(scale));
+        return translate(scale.getX() == -1 ? Vector3f.add(position, new Vector3f(1.0f, 0.0f)) : position).multiply(scale(scale));
     }
 
     /////UNUSED WITH PIXELORTHOGRAPHIC////////////////////////////////////////////////////////////////////////
         @NotNull
         private static Matrix4f transformPixelSpace(Vector3f pixelPosition, Vector2f scale, int width, int height)
         {
-            return translate(clampToUnitSpace(pixelPosition, width, height), false).multiply(scale(scale));
+            return translate(clampToUnitSpace(pixelPosition, width, height)).multiply(scale(scale));
         }
 
         @NotNull
@@ -177,19 +175,12 @@ public class Matrix4f
     }
 
     @NotNull
-    public static Matrix4f translate(Vector3f vector, boolean isCamera)
+    public static Matrix4f translate(@NotNull Vector3f vector)
     {
         Matrix4f result = identity();
-        if (isCamera)
-        {
-            result.matrix[12] = -vector.getX();
-            result.matrix[13] = -vector.getY();
-            result.matrix[14] = -vector.getZ();
-        }else{
-            result.matrix[12] = vector.getX();
-            result.matrix[13] = vector.getY();
-            result.matrix[14] = vector.getZ();
-        }
+        result.matrix[12] = vector.getX();
+        result.matrix[13] = vector.getY();
+        result.matrix[14] = vector.getZ();
         return result;
     }
 
@@ -339,7 +330,7 @@ public class Matrix4f
         result.matrix[2] = direction.getX();
         result.matrix[6] = direction.getY();
         result.matrix[10] = direction.getZ();
-        return result.multiply(translate(position, true));
+        return result.multiply(translate(Vector3f.negate(position)));
     }
 
     public void print()

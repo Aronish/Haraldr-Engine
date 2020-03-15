@@ -1,15 +1,16 @@
 package engine.graphics;
 
 import engine.math.Vector3f;
+import org.jetbrains.annotations.NotNull;
 
-public class PointLight extends Light
+@SuppressWarnings({"unused", "WeakerAccess"})
+public class PointLight extends Light implements SceneLightCompat
 {
     private float constant, linear, quadratic;
 
-    //TEMPORARY
     public PointLight(Vector3f position, Vector3f color)
     {
-        super(position, color);
+        this(position, color, 1f, 0.045f, 0.0075f);
     }
 
     public PointLight(Vector3f position, Vector3f color, float linear, float quadratic)
@@ -26,8 +27,22 @@ public class PointLight extends Light
     }
 
     @Override
-    public void addToBuffer()
+    public void updateBufferData(@NotNull UniformBuffer lightSetup, int offset)
     {
-        //TODO: Add sensible implementation.
+        lightSetup.setData(new float[] {
+                position.getX(), position.getY(), position.getZ(),  0f,
+                color.getX(), color.getY(), color.getZ(),
+                constant, linear, quadratic
+        }, offset);
+    }
+
+    @Override
+    public void updateBufferDataUnsafe(@NotNull UniformBuffer lightSetup, int offset)
+    {
+        lightSetup.setDataUnsafe(new float[] {
+                position.getX(), position.getY(), position.getZ(),  0f,
+                color.getX(), color.getY(), color.getZ(),
+                constant, linear, quadratic
+        }, offset);
     }
 }

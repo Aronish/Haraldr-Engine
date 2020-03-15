@@ -2,25 +2,12 @@ package engine.graphics;
 
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
-import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public abstract class Light
 {
-    private static final Shader LIGHT_SHADER = new Shader("default_shaders/diffuse.vert", "default_shaders/simpleColor.frag");
-
     protected Vector3f position;
     protected Vector3f color;
-
-    public Light()
-    {
-        this(new Vector3f(), new Vector3f(1f));
-    }
-
-    public Light(Vector3f position)
-    {
-        this(position, new Vector3f(1f));
-    }
 
     public Light(Vector3f position, Vector3f color)
     {
@@ -43,14 +30,12 @@ public abstract class Light
         this.color = color;
     }
 
-    public abstract void addToBuffer();
-
-    public void render(@NotNull ForwardRenderer renderer)
+    public void render()
     {
         Texture.DEFAULT_TEXTURE.bind(0);
-        LIGHT_SHADER.bind();
-        LIGHT_SHADER.setMatrix4f(Matrix4f.translate(position, false).multiply(Matrix4f.scale(new Vector3f(0.0625f))), "model");
-        LIGHT_SHADER.setVector3f(color, "color");
+        Shader.LIGHT_SHADER.bind();
+        Shader.LIGHT_SHADER.setMatrix4f(Matrix4f.translate(position).multiply(Matrix4f.scale(new Vector3f(0.0625f))), "model");
+        Shader.LIGHT_SHADER.setVector3f(color, "color");
         DefaultModels.CUBE.bind();
         DefaultModels.CUBE.drawElements();
     }

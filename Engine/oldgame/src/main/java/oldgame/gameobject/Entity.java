@@ -47,7 +47,7 @@ public abstract class Entity
 
     public void updateMatrix()
     {
-        matrix = Matrix4f.transform(this.position, this.rotation, this.scale, false);
+        matrix = Matrix4f.transform(this.position, this.rotation, this.scale);
     }
 
     public float[] getMatrixArray()

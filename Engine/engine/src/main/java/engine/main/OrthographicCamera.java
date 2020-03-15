@@ -28,7 +28,7 @@ public class OrthographicCamera
 
     protected void calculateViewMatrix()
     {
-        viewMatrix = Matrix4f.transform(position, 0.0f, scaleVector.setBoth(scale), true);
+        viewMatrix = Matrix4f.transform(Vector3f.negate(position), 0.0f, scaleVector.setBoth(scale));
     }
 
     public void setPosition(@NotNull Vector3f position)

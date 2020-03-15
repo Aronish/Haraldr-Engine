@@ -11,12 +11,9 @@ import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 public class UniformBuffer
 {
     private int uniformBufferId;
-    private int size;
-    private float[] data;
 
     public UniformBuffer(int size)
     {
-        this.size = size;
         uniformBufferId = glGenBuffers();
         glBindBuffer(GL_UNIFORM_BUFFER, uniformBufferId);
         glBufferData(GL_UNIFORM_BUFFER, size, GL_DYNAMIC_DRAW);
@@ -25,7 +22,6 @@ public class UniformBuffer
 
     public void setData(float[] data, int offset)
     {
-        this.data = data;
         glBindBuffer(GL_UNIFORM_BUFFER, uniformBufferId);
         glBufferSubData(GL_UNIFORM_BUFFER, offset, data);
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -33,12 +29,21 @@ public class UniformBuffer
 
     public void setDataUnsafe(float[] data, int offset)
     {
-        this.data = data;
         glBufferSubData(GL_UNIFORM_BUFFER, offset, data);
     }
 
     public void bind(int bindingPoint)
     {
         glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, uniformBufferId);
+    }
+
+    public void bindBuffer()
+    {
+        glBindBuffer(GL_UNIFORM_BUFFER, uniformBufferId);
+    }
+
+    public void unbindBuffer()
+    {
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 }

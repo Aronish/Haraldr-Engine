@@ -40,7 +40,7 @@ public class Renderer2D
     public static void drawQuad(Vector3f position, Vector4f color)
     {
         Texture.DEFAULT_TEXTURE.bind(0);
-        Shader.DEFAULT2D.setMatrix4f(Matrix4f.translate(position, false), "model");
+        Shader.DEFAULT2D.setMatrix4f(Matrix4f.translate(position), "model");
         Shader.DEFAULT2D.setMatrix4f(sceneData.getViewMatrix(), "view");
         Shader.DEFAULT2D.setMatrix4f(Matrix4f.orthographic, "projection");
         Shader.DEFAULT2D.setVector4f(color, "color");
@@ -58,7 +58,7 @@ public class Renderer2D
     {
         shader.bind();
         Texture.DEFAULT_TEXTURE.bind(0);
-        shader.setMatrix4f(Matrix4f.translate(position, false), "model");
+        shader.setMatrix4f(Matrix4f.translate(position), "model");
         shader.setMatrix4f(sceneData.getViewMatrix(), "view");
         shader.setMatrix4f(Matrix4f.orthographic, "projection");
         shader.setVector4f(color, "color");
@@ -75,7 +75,7 @@ public class Renderer2D
     public static void drawQuad(Vector3f position, @NotNull Texture texture, Vector4f tintColor)
     {
         texture.bind(0);
-        Shader.DEFAULT2D.setMatrix4f(Matrix4f.translate(position, false), "model");
+        Shader.DEFAULT2D.setMatrix4f(Matrix4f.translate(position), "model");
         Shader.DEFAULT2D.setMatrix4f(sceneData.getViewMatrix(), "view");
         Shader.DEFAULT2D.setMatrix4f(Matrix4f.orthographic, "projection");
         Shader.DEFAULT2D.setVector4f(tintColor, "color");
@@ -93,7 +93,7 @@ public class Renderer2D
     {
         shader.bind();
         texture.bind(0);
-        shader.setMatrix4f(Matrix4f.translate(position, false), "model");
+        shader.setMatrix4f(Matrix4f.translate(position), "model");
         shader.setMatrix4f(sceneData.getViewMatrix(), "view");
         shader.setMatrix4f(Matrix4f.orthographic, "projection");
         shader.setVector4f(tintColor, "color");

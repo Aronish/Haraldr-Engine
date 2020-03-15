@@ -5,10 +5,11 @@ import engine.event.EventType;
 import engine.event.KeyPressedEvent;
 import engine.event.MouseMovedEvent;
 import engine.event.MouseScrolledEvent;
+import engine.graphics.DirectionalLight;
 import engine.graphics.ForwardRenderer;
-import engine.graphics.Light;
 import engine.graphics.PointLight;
 import engine.graphics.Shader;
+import engine.graphics.Spotlight;
 import engine.input.Key;
 import engine.layer.Layer;
 import engine.main.Application;
@@ -22,14 +23,18 @@ public class LightCastersLayer extends Layer
     private ForwardRenderer renderer = new ForwardRenderer();
     private PerspectiveCamera perspectiveCamera = new PerspectiveCamera(new Vector3f(4f, 2f, -1f));
 
-    private Light light = new PointLight(new Vector3f(-10f, 0f, 0f), new Vector3f(1.0f, 1.0f, 0.85f));
-    private Light light2 = new PointLight(new Vector3f(-10f, 0f, 0f), new Vector3f(0.4f, 0.0f, 0.9f));
+    private DirectionalLight directionalLight = new DirectionalLight(new Vector3f(), new Vector3f(), new Vector3f(0.2f, 0.3f, 0.8f));
+    private Spotlight spotLight = new Spotlight(new Vector3f(5f), new Vector3f(1f, 2f, 3f), new Vector3f(0.3f, 0.8f, 0.2f), 20f, 30f);
+    private PointLight pointLight = new PointLight(new Vector3f(-10f, 0f, 0f), new Vector3f(1.0f, 1.0f, 0.85f), 0.7f, 0.14f);
+    private PointLight pointLight2 = new PointLight(new Vector3f(-10f, 0f, 0f), new Vector3f(0.9f, 0.0f, 0.6f));
 
     public LightCastersLayer(String name)
     {
         super(name);
-        renderer.getSceneLights().addLight(light);
-        renderer.getSceneLights().addLight(light2);
+        renderer.getSceneLights().addSpotLight(spotLight);
+        renderer.getSceneLights().addDirectionalLight(directionalLight);
+        renderer.getSceneLights().addPointLight(pointLight);
+        renderer.getSceneLights().addPointLight(pointLight2);
     }
 
     @Override
@@ -65,13 +70,15 @@ public class LightCastersLayer extends Layer
         {
             perspectiveCamera.getController().handleMovement(perspectiveCamera, window.getWindowHandle(), deltaTime);
         }
-        rotation += 100f * deltaTime;
+        rotation += 100 * deltaTime;
         sin = (float) Math.sin(Application.time / 3f);
         cos = (float) Math.cos(Application.time / 3f);
         sinOff = (float) Math.sin((Application.time + 10f) / 3f);
         cosOff = (float) Math.cos((Application.time + 10f) / 3f);
-        light.setPosition(new Vector3f(sin * 3f, 0f, cos * 3f));
-        light2.setPosition(new Vector3f(-4f,cosOff * 3f, sinOff * 3f + 2f));
+        spotLight.setDirection(new Vector3f(sin, cos, cos));
+        pointLight.setPosition(new Vector3f(sin * 3f, 0f, cos * 3f));
+        pointLight2.setPosition(new Vector3f(-4f,cosOff * 3f, sinOff * 3f + 2f));
+        directionalLight.setDirection(new Vector3f(sin, cos, sinOff));
     }
 
     private float rotation;
@@ -87,11 +94,15 @@ public class LightCastersLayer extends Layer
     public void onRender()
     {
         renderer.begin(perspectiveCamera);
-        light.render(renderer);
-        light2.render(renderer);
-        renderer.drawCube(new Vector3f(1f, 2f, 3f), 1f, rotationAxes[0], rotation);
+        spotLight.render();
+        spotLight.renderDirectionVector();
+        directionalLight.render();
+        directionalLight.renderDirectionVector();
+        pointLight.render();
+        pointLight2.render();
+        renderer.drawCube(new Vector3f(1f, 2f, 3f), 1f, rotationAxes[0], -rotation);
         renderer.drawCube(new Vector3f(-3, 5f, 5f), 1f, rotationAxes[1], rotation);
-        renderer.drawCube(new Vector3f(4f, 0f, -1f), 1f, rotationAxes[2], rotation);
+        renderer.drawCube(new Vector3f(4f, 0f, -1f), 1f, rotationAxes[2], -rotation);
         renderer.drawCube(new Vector3f(-7f, 0f, 3f), 1f, rotationAxes[3], rotation);
     }
 }

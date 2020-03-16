@@ -2,21 +2,34 @@ package engine.graphics;
 
 import engine.math.Vector3f;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class DiffuseMaterial extends Material
 {
+    public static final Material DEFAULT = new DiffuseMaterial();
+
     private Vector3f ambient;
     private Vector3f diffuse;
     private Vector3f specular;
     private float specularExponent;
     private float opacity;
+    private Texture diffuseTexture;
 
     public DiffuseMaterial()
     {
-        this(new Vector3f(1f), new Vector3f(1f), new Vector3f(1f), 4f, 1f);
+        this(new Vector3f(1f), new Vector3f(1f), new Vector3f(1f), 4f, 1f, Texture.DEFAULT_TEXTURE);
+    }
+
+    public DiffuseMaterial(Texture diffuseTexture)
+    {
+        this(new Vector3f(1f), new Vector3f(1f), new Vector3f(1f), 4f, 1f, diffuseTexture);
     }
 
     public DiffuseMaterial(Vector3f ambient, Vector3f diffuse, Vector3f specular, float specularExponent, float opacity)
+    {
+        this(ambient, diffuse, specular, specularExponent, opacity, Texture.DEFAULT_TEXTURE);
+    }
+
+    public DiffuseMaterial(Vector3f ambient, Vector3f diffuse, Vector3f specular, float specularExponent, float opacity, Texture diffuseTexture)
     {
         super(Shader.DIFFUSE);
         this.ambient = ambient;
@@ -24,6 +37,7 @@ public class DiffuseMaterial extends Material
         this.specular = specular;
         this.specularExponent = specularExponent;
         this.opacity = opacity;
+        this.diffuseTexture = diffuseTexture;
     }
 
     @Override
@@ -35,6 +49,7 @@ public class DiffuseMaterial extends Material
         shader.setVector3f(specular, "material.specularColor");
         shader.setFloat(specularExponent, "material.specularExponent");
         shader.setFloat(opacity, "material.opacity");
+        diffuseTexture.bind(0);
     }
 
     @Override

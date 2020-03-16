@@ -9,7 +9,7 @@ public enum DefaultModels
 
     DefaultModels(String modelPath)
     {
-        mesh = ObjParser.load(modelPath);
+        mesh = ObjParser.loadMesh(modelPath);
     }
 
     public void bind()

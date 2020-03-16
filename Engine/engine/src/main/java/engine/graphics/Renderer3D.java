@@ -4,7 +4,6 @@ import engine.main.PerspectiveCamera;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.opengl.GLDebugMessageARBCallbackI;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Renderer3D
@@ -61,7 +60,7 @@ public class Renderer3D
 
     public void drawCube(Matrix4f transformation)
     {
-        Shader.DIFFUSE.bind();
+        DiffuseMaterial.DEFAULT.bind();
         Shader.DIFFUSE.setMatrix4f(transformation, "model");
         Shader.DIFFUSE.setVector3f(viewPosition, "viewPosition");
         Texture.DEFAULT_TEXTURE.bind(0);
@@ -71,32 +70,31 @@ public class Renderer3D
 
     /////CUSTOM////////////////////////////////////////////////////////////
 
-    public void drawCube(Vector3f position, DiffuseMaterial customMaterial)
+    public void drawCube(Vector3f position, Material customMaterial)
     {
         drawCube(Matrix4f.translate(position), customMaterial);
     }
 
-    public void drawCube(Vector3f position, float scale, DiffuseMaterial customMaterial)
+    public void drawCube(Vector3f position, float scale, Material customMaterial)
     {
         drawCube(Matrix4f.translate(position).multiply(Matrix4f.scale(new Vector3f(scale))), customMaterial);
     }
 
-    public void drawCube(Vector3f position, Vector3f rotationAxis, float rotation, DiffuseMaterial customMaterial)
+    public void drawCube(Vector3f position, Vector3f rotationAxis, float rotation, Material customMaterial)
     {
         drawCube(Matrix4f.translate(position).multiply(Matrix4f.rotate(rotationAxis, rotation)), customMaterial);
     }
 
-    public void drawCube(Vector3f position, float scale, Vector3f rotationAxis, float rotation, DiffuseMaterial customMaterial)
+    public void drawCube(Vector3f position, float scale, Vector3f rotationAxis, float rotation, Material customMaterial)
     {
         drawCube(Matrix4f.translate(position).multiply(Matrix4f.rotate(rotationAxis, rotation)).multiply(Matrix4f.scale(new Vector3f(scale))), customMaterial);
     }
 
-    public void drawCube(Matrix4f transformation, @NotNull DiffuseMaterial customMaterial)
+    public void drawCube(Matrix4f transformation, @NotNull Material customMaterial)
     {
         customMaterial.bind();
         customMaterial.getShader().setMatrix4f(transformation, "model");
         customMaterial.getShader().setVector3f(viewPosition, "viewPosition");
-        Texture.DEFAULT_TEXTURE.bind(0);
         DefaultModels.CUBE.bind();
         DefaultModels.CUBE.drawElements();
     }

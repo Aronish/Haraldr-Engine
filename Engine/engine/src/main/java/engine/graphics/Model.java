@@ -8,16 +8,16 @@ public class Model
 {
     private VertexArray mesh;
     private Material material;
-    private Matrix4f modelMatrix;
+    private Matrix4f transformationMatrix;
 
     public Model(String modelPath, Material material)
     {
-        this(ObjParser.load(modelPath), material, Matrix4f.identity());
+        this(ObjParser.loadMesh(modelPath), material, Matrix4f.identity());
     }
 
-    public Model(String modelPath, Material material, Matrix4f modelMatrix)
+    public Model(String modelPath, Material material, Matrix4f transformationMatrix)
     {
-        this(ObjParser.load(modelPath), material, modelMatrix);
+        this(ObjParser.loadMesh(modelPath), material, transformationMatrix);
     }
 
     public Model(VertexArray mesh, Material material)
@@ -25,17 +25,22 @@ public class Model
         this(mesh, material, Matrix4f.identity());
     }
 
-    public Model(VertexArray mesh, Material material, Matrix4f modelMatrix)
+    public Model(VertexArray mesh, Material material, Matrix4f transformationMatrix)
     {
         this.mesh = mesh;
         this.material = material;
-        this.modelMatrix = modelMatrix;
+        this.transformationMatrix = transformationMatrix;
+    }
+
+    public void setTransformationMatrix(Matrix4f transformationMatrix)
+    {
+        this.transformationMatrix = transformationMatrix;
     }
 
     public void render(@NotNull ForwardRenderer renderer)
     {
         material.bind();
-        material.getShader().setMatrix4f(modelMatrix, "model");
+        material.getShader().setMatrix4f(transformationMatrix, "model");
         material.getShader().setVector3f(renderer.getViewPosition(), "viewPosition");
         mesh.bind();
         mesh.drawElements();

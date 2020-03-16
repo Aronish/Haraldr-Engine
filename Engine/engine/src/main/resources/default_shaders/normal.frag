@@ -59,6 +59,11 @@ layout(binding = 1) uniform sampler2D normalMap;
 
 out vec4 o_Color;
 
+float when_gt(float x, float y)
+{
+    return max(sign(x - y), 0.0);
+}
+
 vec3 calculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDirection)
 {
     vec3 lightDirection = normalize(-light.direction);
@@ -69,7 +74,8 @@ vec3 calculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir
     float diff = max(dot(normal, lightDirection), 0.0f);
     vec3 diffuse = DIFFUSE_STRENGTH * light.color * diff;
     //Specular
-    float spec = pow(max(dot(normal, halfWayDirection), 0.0f), SPECULAR_EXPONENT);
+    float specularFactor = max(dot(normal, halfWayDirection), 0.0f);
+    float spec = pow(specularFactor, SPECULAR_EXPONENT) * when_gt(diff, 0.0f); //Fixes some leaking
     vec3 specular = SPECULAR_STRENGTH * light.color * spec;
 
     return (ambient + diffuse + specular);
@@ -85,7 +91,8 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDirection)
     float diff = max(dot(normal, lightDirection), 0.0f);
     vec3 diffuse = DIFFUSE_STRENGTH * light.color * diff;
     //Specular
-    float spec = pow(max(dot(normal, halfWayDirection), 0.0f), SPECULAR_EXPONENT);
+    float specularFactor = max(dot(normal, halfWayDirection), 0.0f);
+    float spec = pow(specularFactor, SPECULAR_EXPONENT) * when_gt(diff, 0.0f); //Fixes some leaking
     vec3 specular = SPECULAR_STRENGTH * light.color * spec;
     //Attenuation
     float distance = length(light.position - v_FragmentPosition);
@@ -110,7 +117,8 @@ vec3 calculateSpotlight(Spotlight light, vec3 normal, vec3 viewDirection)
     float diff = max(dot(normal, lightDirection), 0.0f);
     vec3 diffuse = DIFFUSE_STRENGTH * light.color * diff;
     //Specular
-    float spec = pow(max(dot(normal, halfWayDirection), 0.0f), SPECULAR_EXPONENT);
+    float specularFactor = max(dot(normal, halfWayDirection), 0.0f);
+    float spec = pow(specularFactor, SPECULAR_EXPONENT) * when_gt(diff, 0.0f); //Fixes some leaking
     vec3 specular = SPECULAR_STRENGTH * light.color * spec;
     //Cutoff
     diffuse *= intensity;

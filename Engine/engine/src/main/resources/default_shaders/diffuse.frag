@@ -50,7 +50,7 @@ in vec3 v_Normal;
 in vec2 v_TextureCoordinate;
 in vec3 v_FragmentPosition;
 
-uniform Material material = { { 0.3f, 0.3, 0.3f }, { 0.8f, 0.2f, 0.3f }, { 0.8f, 0.2f, 0.3f }, 32.0f, 1.0f };
+uniform Material material;
 uniform vec3 viewPosition;
 
 layout(std140, binding = 1) uniform lightSetup
@@ -67,6 +67,10 @@ layout(location = 0) uniform sampler2D diffuseTexture;
 
 out vec4 o_Color;
 
+float when_gt(float x, float y)
+{
+    return max(sign(x - y), 0.0);
+}
 
 vec3 calculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDirection)
 {
@@ -78,7 +82,8 @@ vec3 calculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir
     float diff = max(dot(normal, lightDirection), 0.0f);
     vec3 diffuse = DIFFUSE_STRENGTH * light.color * diff * material.diffuseColor;
     //Specular
-    float spec = pow(max(dot(normal, halfWayDirection), 0.0f), material.specularExponent);
+    float specularFactor = max(dot(normal, halfWayDirection), 0.0f);
+    float spec = pow(specularFactor, material.specularExponent) * when_gt(diff, 0.0f); //Fixes some leaking
     vec3 specular = SPECULAR_STRENGTH * light.color * spec * material.specularColor;
 
     return (ambient + diffuse + specular);
@@ -94,7 +99,8 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDirection)
     float diff = max(dot(normal, lightDirection), 0.0f);
     vec3 diffuse = DIFFUSE_STRENGTH * light.color * diff * material.diffuseColor;
     //Specular
-    float spec = pow(max(dot(normal, halfWayDirection), 0.0f), material.specularExponent);
+    float specularFactor = max(dot(normal, halfWayDirection), 0.0f);
+    float spec = pow(specularFactor, material.specularExponent) * when_gt(diff, 0.0f); //Fixes some leaking
     vec3 specular = SPECULAR_STRENGTH * light.color * spec * material.specularColor;
     //Attenuation
     float distance = length(light.position - v_FragmentPosition);
@@ -119,7 +125,8 @@ vec3 calculateSpotlight(Spotlight light, vec3 normal, vec3 viewDirection)
     float diff = max(dot(normal, lightDirection), 0.0f);
     vec3 diffuse = DIFFUSE_STRENGTH * light.color * diff * material.diffuseColor;
     //Specular
-    float spec = pow(max(dot(normal, halfWayDirection), 0.0f), material.specularExponent);
+    float specularFactor = max(dot(normal, halfWayDirection), 0.0f);
+    float spec = pow(specularFactor, material.specularExponent) * when_gt(diff, 0.0f); //Fixes some leaking
     vec3 specular = SPECULAR_STRENGTH * light.color * spec * material.specularColor;
     //Cutoff
     diffuse *= intensity;

@@ -20,14 +20,14 @@ import java.util.Map;
 public class ObjParser
 {
     @Nullable
-    public static VertexArray load(String path)
+    public static VertexArray loadMesh(String path)
     {
-        return IOUtils.readResource(path, ObjParser::load);
+        return IOUtils.readResource(path, ObjParser::loadMesh);
     }
 
     @NotNull
     @Contract("_ -> new")
-    private static VertexArray load(InputStream file)
+    private static VertexArray loadMesh(InputStream file)
     {
         List<Vector3f> inputPositions           = new ArrayList<>();
         List<Vector2f> inputTextureCoordinates  = new ArrayList<>();
@@ -35,8 +35,6 @@ public class ObjParser
 
         List<Float> vertices                    = new ArrayList<>();
         List<Integer> indices                   = new ArrayList<>();
-        DiffuseMaterial material = null;
-        boolean foundMaterial = false;
 
         Map<IndexSet, Integer> indexMap = new HashMap<>();
 
@@ -51,10 +49,6 @@ public class ObjParser
 
                 switch (split[0])
                 {
-                    case "mtllib":
-                        material = IOUtils.readResource("models/" + split[1], ObjParser::loadMaterial);
-                        foundMaterial = true;
-                        break;
                     case "v":
                         inputPositions.add(new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3])));
                         break;
@@ -74,10 +68,6 @@ public class ObjParser
                         }
                         break;
                 }
-            }
-            if (!foundMaterial)
-            {
-                material = IOUtils.readResource("models/default.mtl", ObjParser::loadMaterial);
             }
             reader.close();
         }catch (IOException e)

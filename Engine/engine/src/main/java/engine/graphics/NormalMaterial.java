@@ -10,16 +10,6 @@ public class NormalMaterial extends Material
         this(new Texture(diffuseTexture), new Texture(normalMap));
     }
 
-    public NormalMaterial(Texture diffuseTexture, String normalMap)
-    {
-        this(diffuseTexture, new Texture(normalMap));
-    }
-
-    public NormalMaterial(String diffuseTexture, Texture normalMap)
-    {
-        this(new Texture(diffuseTexture), normalMap);
-    }
-
     public NormalMaterial(Texture diffuseTexture, Texture normalMap)
     {
         super(Shader.NORMAL);

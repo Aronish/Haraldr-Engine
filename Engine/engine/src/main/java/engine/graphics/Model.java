@@ -3,6 +3,7 @@ package engine.graphics;
 import engine.math.Matrix4f;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class Model
 {
     private VertexArray mesh;
@@ -11,7 +12,7 @@ public class Model
 
     public Model(String modelPath, Material material)
     {
-        this(ObjParser.load(modelPath), material, new Matrix4f());
+        this(ObjParser.load(modelPath), material, Matrix4f.identity());
     }
 
     public Model(String modelPath, Material material, Matrix4f modelMatrix)
@@ -21,7 +22,7 @@ public class Model
 
     public Model(VertexArray mesh, Material material)
     {
-        this(mesh, material, new Matrix4f());
+        this(mesh, material, Matrix4f.identity());
     }
 
     public Model(VertexArray mesh, Material material, Matrix4f modelMatrix)

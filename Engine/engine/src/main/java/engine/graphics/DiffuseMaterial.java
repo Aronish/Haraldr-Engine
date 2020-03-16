@@ -2,20 +2,45 @@ package engine.graphics;
 
 import engine.math.Vector3f;
 
-public class DiffuseMaterial
+@SuppressWarnings("unused")
+public class DiffuseMaterial extends Material
 {
-    private Vector3f ambient = new Vector3f(1f), diffuse = new Vector3f(1f), specular = new Vector3f(1f);
-    private float specularExponent = 4f, opacity = 1f;
+    private Vector3f ambient;
+    private Vector3f diffuse;
+    private Vector3f specular;
+    private float specularExponent;
+    private float opacity;
 
-    public DiffuseMaterial() {}
+    public DiffuseMaterial()
+    {
+        this(new Vector3f(1f), new Vector3f(1f), new Vector3f(1f), 4f, 1f);
+    }
 
     public DiffuseMaterial(Vector3f ambient, Vector3f diffuse, Vector3f specular, float specularExponent, float opacity)
     {
+        super(Shader.DIFFUSE);
         this.ambient = ambient;
         this.diffuse = diffuse;
         this.specular = specular;
         this.specularExponent = specularExponent;
         this.opacity = opacity;
+    }
+
+    @Override
+    public void bind()
+    {
+        shader.bind();
+        shader.setVector3f(ambient, "material.ambientColor");
+        shader.setVector3f(diffuse, "material.diffuseColor");
+        shader.setVector3f(specular, "material.specularColor");
+        shader.setFloat(specularExponent, "material.specularExponent");
+        shader.setFloat(opacity, "material.opacity");
+    }
+
+    @Override
+    public void unbind()
+    {
+        shader.unbind();
     }
 
     public void setAmbient(Vector3f ambient)

@@ -7,11 +7,11 @@ import engine.event.MouseMovedEvent;
 import engine.event.MouseScrolledEvent;
 import engine.graphics.DefaultModels;
 import engine.graphics.DiffuseMaterial;
-import engine.graphics.DirectionalLight;
 import engine.graphics.ForwardRenderer;
 import engine.graphics.Model;
 import engine.graphics.NormalMaterial;
 import engine.graphics.PointLight;
+import engine.graphics.Spotlight;
 import engine.graphics.Texture;
 import engine.input.Key;
 import engine.layer.Layer;
@@ -36,7 +36,6 @@ public class TextureTestingLayer extends Layer
             Matrix4f.rotate(new Vector3f(1f, 0f, 0f), -90f).multiply(Matrix4f.scale(new Vector3f(4f, 4f, 4f)))
     );
 
-    private DirectionalLight directionalLight = new DirectionalLight(new Vector3f(), new Vector3f(1f), new Vector3f(1.0f, 1.0f,0.8f));
     private PointLight pointLight = new PointLight(new Vector3f(0f, 2f, 0f), new Vector3f(0.8f, 0.2f, 0.3f));
 
     private boolean showNormals;
@@ -44,8 +43,8 @@ public class TextureTestingLayer extends Layer
     public TextureTestingLayer(String name)
     {
         super(name);
-        renderer.getSceneLights().addDirectionalLight(directionalLight);
         renderer.getSceneLights().addPointLight(pointLight);
+        renderer.getSceneLights().addSpotLight(new Spotlight(new Vector3f(), new Vector3f(), new Vector3f(1.0f, 0.4f, 0.0f), 20f, 20f));
     }
 
     @Override
@@ -89,7 +88,6 @@ public class TextureTestingLayer extends Layer
         float sinOff = (float) Math.sin(Application.time / 3 + 2f);
         float cos = (float) Math.cos(Application.time / 3);
         float cosOff = (float) Math.cos(Application.time / 3 + 2f);
-        directionalLight.setDirection(new Vector3f(sin, sinOff, cos));
         rotation += 25f * deltaTime;
         //model.setTransformationMatrix(Matrix4f.rotate(rotationAxis, rotation).multiply(Matrix4f.scale(new Vector3f(4f))));
     }

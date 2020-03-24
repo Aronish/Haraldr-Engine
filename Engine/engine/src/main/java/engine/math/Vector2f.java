@@ -1,5 +1,6 @@
 package engine.math;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import static engine.main.Application.MAIN_LOGGER;
@@ -71,5 +72,12 @@ public class Vector2f
     public void printVector()
     {
         MAIN_LOGGER.info("X: " + x + " Y: " + y);
+    }
+
+    @NotNull
+    @Contract("_, _ -> new")
+    public static Vector2f subtract(@NotNull Vector2f first, @NotNull Vector2f second)
+    {
+        return new Vector2f(first.x - second.x, first.y - second.y);
     }
 }

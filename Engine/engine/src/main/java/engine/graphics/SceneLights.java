@@ -5,9 +5,9 @@ import java.util.List;
 
 public class SceneLights
 {
-    private static final int MAX_DIRECTIONAL_LIGHTS = 1, DIRECTIONAL_LIGHT_SIZE = 32;
-    private static final int MAX_POINT_LIGHTS = 3, POINT_LIGHT_SIZE = 48;
-    private static final int MAX_SPOTLIGHTS = 3, SPOTLIGHT_SIZE = 64;
+    private static final int MAX_DIRECTIONAL_LIGHTS = 1,    DIRECTIONAL_LIGHT_SIZE = 32;
+    private static final int MAX_POINT_LIGHTS = 3,          POINT_LIGHT_SIZE = 48;
+    private static final int MAX_SPOTLIGHTS = 3,            SPOTLIGHT_SIZE = 64;
 
     private UniformBuffer lightSetupBuffer = new UniformBuffer(MAX_DIRECTIONAL_LIGHTS * DIRECTIONAL_LIGHT_SIZE + MAX_POINT_LIGHTS * POINT_LIGHT_SIZE + MAX_SPOTLIGHTS * SPOTLIGHT_SIZE + 12);
     private List<DirectionalLight> directionalLights = new ArrayList<>();

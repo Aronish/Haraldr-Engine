@@ -44,16 +44,6 @@ in vec3 v_FragmentPosition;
 
 uniform vec3 viewPosition;
 
-layout(std140, binding = 1) uniform lightSetup
-{
-    DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
-    PointLight pointLights[MAX_POINT_LIGHTS];
-    Spotlight spotlights[MAX_SPOTLIGHTS];
-    float numDirectionalLights;
-    float numPointLights;
-    float numSpotlights;
-};
-
 layout(binding = 0) uniform sampler2D diffuseTexture;
 layout(binding = 1) uniform sampler2D normalMap;
 
@@ -126,26 +116,39 @@ vec3 calculateSpotlight(Spotlight light, vec3 normal, vec3 viewDirection)
     return (ambient + diffuse + specular);
 }
 
+in LIGHTING
+{
+    DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
+    PointLight pointLights[MAX_POINT_LIGHTS];
+    Spotlight spotlights[MAX_SPOTLIGHTS];
+    float numDirectionalLights;
+    float numPointLights;
+    float numSpotlights;
+} lighting;
+
 void main()
 {
     vec3 normal = normalize(texture(normalMap, v_TextureCoordinate).rgb * 2.0f - 1.0f); // Read normals
     vec3 viewDirection = normalize(viewPosition - v_FragmentPosition);
-    vec3 result;
+    vec3 result = vec3(0.0f);
 
-    for (uint i = 0; i < numDirectionalLights; ++i)
+    for (uint i = 0; i < lighting.numDirectionalLights; ++i)
     {
-        result += calculateDirectionalLight(directionalLights[i], normal, viewDirection);
+        result += calculateDirectionalLight(lighting.directionalLights[i], normal, viewDirection);
     }
 
-    for (uint i = 0; i < numPointLights; ++i)
+    for (uint i = 0; i < lighting.numPointLights; ++i)
     {
-        result += calculatePointLight(pointLights[i], normal, viewDirection);
+        result += calculatePointLight(lighting.pointLights[i], normal, viewDirection);
     }
 
-    for (uint i = 0; i < numSpotlights; ++i)
+    //WHAT THE HELL IS WRONG!
+    /*
+    for (uint i = 0; i < lighting.numPointLights; ++i)
     {
-        result += calculateSpotlight(spotlights[i], normal, viewDirection);
+        result += calculateSpotlight(lighting.spotlights[i], normal, viewDirection);
     }
+    */
 
     o_Color = texture(diffuseTexture, v_TextureCoordinate) * vec4(result, OPACITY);
 }

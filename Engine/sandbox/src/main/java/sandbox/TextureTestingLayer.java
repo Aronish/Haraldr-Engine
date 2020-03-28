@@ -11,7 +11,6 @@ import engine.graphics.ForwardRenderer;
 import engine.graphics.Model;
 import engine.graphics.NormalMaterial;
 import engine.graphics.PointLight;
-import engine.graphics.Spotlight;
 import engine.graphics.Texture;
 import engine.input.Key;
 import engine.layer.Layer;
@@ -28,15 +27,16 @@ public class TextureTestingLayer extends Layer
     private PerspectiveCamera perspectiveCamera = new PerspectiveCamera(new Vector3f(0f, 2f, 2f));
 
     private Model model = new Model(
-            DefaultModels.PLANE.mesh,
+            "models/suzanne.obj",
             new NormalMaterial(
-                    "default_textures/brickwall.jpg",
-                    "default_textures/brickwall_normal.jpg"
+                    "default_textures/BricksPaintedWhite_COL_4K.jpg",
+                    "default_textures/BricksPaintedWhite_NRM_4K.jpg"
             ),
-            Matrix4f.rotate(new Vector3f(1f, 0f, 0f), -90f).multiply(Matrix4f.scale(new Vector3f(4f, 4f, 4f)))
+            Matrix4f.rotate(new Vector3f(1f, 0f, 0f), 0f).multiply(Matrix4f.scale(new Vector3f(2f)))
     );
 
-    private PointLight pointLight = new PointLight(new Vector3f(0f, 2f, 0f), new Vector3f(0.8f, 0.2f, 0.3f));
+    private PointLight pointLight = new PointLight(new Vector3f(1f, 2f, 3f), new Vector3f(0.8f, 0.5f, 0.3f));
+    private PointLight pointLight2 = new PointLight(new Vector3f(1f, 2f, 3f), new Vector3f(1f));
 
     private boolean showNormals;
 
@@ -44,7 +44,7 @@ public class TextureTestingLayer extends Layer
     {
         super(name);
         renderer.getSceneLights().addPointLight(pointLight);
-        renderer.getSceneLights().addSpotLight(new Spotlight(new Vector3f(), new Vector3f(), new Vector3f(1.0f, 0.4f, 0.0f), 20f, 20f));
+        renderer.getSceneLights().addPointLight(pointLight2);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class TextureTestingLayer extends Layer
         }
     }
 
-    private Vector3f rotationAxis = new Vector3f(1f, 0f, 0f);
+    private Vector3f rotationAxis = new Vector3f(0f, 1f, 0f);
     private float rotation;
 
     @Override
@@ -84,11 +84,12 @@ public class TextureTestingLayer extends Layer
         {
             perspectiveCamera.getController().handleMovement(perspectiveCamera, window.getWindowHandle(), deltaTime);
         }
-        float sin = (float) Math.sin(Application.time / 3);
+        float sin = (float) Math.sin(Application.time / 2);
         float sinOff = (float) Math.sin(Application.time / 3 + 2f);
-        float cos = (float) Math.cos(Application.time / 3);
+        float cos = (float) Math.cos(Application.time / 2);
         float cosOff = (float) Math.cos(Application.time / 3 + 2f);
         rotation += 25f * deltaTime;
+        pointLight2.setPosition(new Vector3f(cos * 3f, sin * 3f, 2f));
         //model.setTransformationMatrix(Matrix4f.rotate(rotationAxis, rotation).multiply(Matrix4f.scale(new Vector3f(4f))));
     }
 
@@ -101,6 +102,7 @@ public class TextureTestingLayer extends Layer
     {
         renderer.begin(perspectiveCamera);
         pointLight.render();
+        pointLight2.render();
         model.render(renderer);
     }
 }

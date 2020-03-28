@@ -34,8 +34,8 @@ struct Spotlight
 
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec3 a_Normal;
-layout(location = 2) in vec3 a_Tangent;
-layout(location = 3) in vec2 a_TextureCoordinate;
+layout(location = 2) in vec2 a_TextureCoordinate;
+layout(location = 3) in vec3 a_Tangent;
 
 uniform mat4 model = mat4(1.0f);
 
@@ -55,29 +55,45 @@ layout(std140, binding = 1) uniform lightSetup
     float numSpotlights;
 };
 
+uniform vec3 viewPosition;
+
 out vec2 v_TextureCoordinate;
 out vec3 v_FragmentPosition;
+out vec3 v_ViewPosition;
 
 out LIGHTING
 {
     DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
     PointLight pointLights[MAX_POINT_LIGHTS];
     Spotlight spotlights[MAX_SPOTLIGHTS];
-    float numDirectionalLights;
-    float numPointLights;
-    float numSpotlights;
 } lighting;
+
+flat out float v_NumPointLights;
+flat out float v_NumDirectionalLights;
+flat out float v_NumSpotlights;
 
 void main()
 {
-    lighting.directionalLights = directionalLights;
-    lighting.pointLights = pointLights;
-    lighting.spotlights = spotlights;
-    lighting.numDirectionalLights = numDirectionalLights;
-    lighting.numPointLights = numPointLights;
-    lighting.numSpotlights = numSpotlights;
+    vec3 normal     = normalize(vec3(model * vec4(a_Normal, 0.0f)));
+    vec3 tangent    = normalize(vec3(model * vec4(a_Tangent, 0.0f)));
+    vec3 bitangent  = normalize(cross(normal, tangent)); // Is already in camera space.
+    mat3 TBN        = transpose(mat3(tangent, bitangent, normal));
 
-    v_TextureCoordinate = a_TextureCoordinate;
-    v_FragmentPosition = (model * vec4(a_Position, 1.0f)).xyz;
+    lighting.pointLights = pointLights;
+    for (uint i = 0; i < numPointLights; ++i)
+    {
+        lighting.pointLights[i].position = TBN * pointLights[i].position;
+    }
+    //lighting.directionalLights = directionalLights;
+    //lighting.spotlights = spotlights;
+
+    v_NumPointLights = numPointLights;
+    v_NumDirectionalLights = numDirectionalLights;
+    v_NumSpotlights = numSpotlights;
+
+    v_TextureCoordinate = a_TextureCoordinate; // Not important for lighting, don't put in tangent space.
+    v_FragmentPosition  = TBN * vec3((model * vec4(a_Position, 0.0f)));
+    v_ViewPosition      = TBN * viewPosition;
+
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
 }

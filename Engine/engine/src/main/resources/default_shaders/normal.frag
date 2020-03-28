@@ -41,13 +41,10 @@ struct Spotlight
 
 in vec2 v_TextureCoordinate;
 in vec3 v_FragmentPosition;
-
-uniform vec3 viewPosition;
+in vec3 v_ViewPosition;
 
 layout(binding = 0) uniform sampler2D diffuseTexture;
 layout(binding = 1) uniform sampler2D normalMap;
-
-out vec4 o_Color;
 
 float when_gt(float x, float y)
 {
@@ -121,17 +118,25 @@ in LIGHTING
     DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
     PointLight pointLights[MAX_POINT_LIGHTS];
     Spotlight spotlights[MAX_SPOTLIGHTS];
-    float numDirectionalLights;
-    float numPointLights;
-    float numSpotlights;
 } lighting;
+
+flat in float v_NumPointLights;
+flat in float v_NumDirectionalLights;
+flat in float v_NumSpotlights;
+
+out vec4 o_Color;
 
 void main()
 {
     vec3 normal = normalize(texture(normalMap, v_TextureCoordinate).rgb * 2.0f - 1.0f); // Read normals
-    vec3 viewDirection = normalize(viewPosition - v_FragmentPosition);
+    vec3 viewDirection = normalize(v_ViewPosition - v_FragmentPosition);
     vec3 result = vec3(0.0f);
 
+    for (uint i = 0; i < v_NumPointLights; ++i)
+    {
+        result += calculatePointLight(lighting.pointLights[i], normal, viewDirection);
+    }
+/*
     for (uint i = 0; i < lighting.numDirectionalLights; ++i)
     {
         result += calculateDirectionalLight(lighting.directionalLights[i], normal, viewDirection);
@@ -139,17 +144,9 @@ void main()
 
     for (uint i = 0; i < lighting.numPointLights; ++i)
     {
-        result += calculatePointLight(lighting.pointLights[i], normal, viewDirection);
-    }
-
-    //WHAT THE HELL IS WRONG!
-    /*
-    for (uint i = 0; i < lighting.numPointLights; ++i)
-    {
         result += calculateSpotlight(lighting.spotlights[i], normal, viewDirection);
     }
-    */
-
+*/
     o_Color = texture(diffuseTexture, v_TextureCoordinate) * vec4(result, OPACITY);
 }
 //strength * lightColor * lightComponent

@@ -2,7 +2,7 @@
 
 #define MAX_DIRECTIONAL_LIGHTS 1
 #define MAX_POINT_LIGHTS 3
-#define MAX_SPOTLIGHTS 3
+#define MAX_SPOTLIGHTS 2
 
 //Squeezing allowed!
 struct DirectionalLight
@@ -63,8 +63,8 @@ out vec3 v_ViewPosition;
 
 out LIGHTING
 {
-    DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
     PointLight pointLights[MAX_POINT_LIGHTS];
+    DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
     Spotlight spotlights[MAX_SPOTLIGHTS];
 } lighting;
 
@@ -76,6 +76,7 @@ void main()
 {
     vec3 normal     = normalize(vec3(model * vec4(a_Normal, 0.0f)));
     vec3 tangent    = normalize(vec3(model * vec4(a_Tangent, 0.0f)));
+    tangent = normalize(tangent - dot(tangent, normal) * normal); // Fixes potential weird edges
     vec3 bitangent  = normalize(cross(normal, tangent)); // Is already in camera space.
     mat3 TBN        = transpose(mat3(tangent, bitangent, normal));
 
@@ -84,8 +85,19 @@ void main()
     {
         lighting.pointLights[i].position = TBN * pointLights[i].position;
     }
-    //lighting.directionalLights = directionalLights;
-    //lighting.spotlights = spotlights;
+
+    lighting.directionalLights = directionalLights;
+    for (uint i = 0; i < numDirectionalLights; ++i)
+    {
+        lighting.directionalLights[i].direction = TBN * directionalLights[i].direction;
+    }
+
+    lighting.spotlights = spotlights;
+    for (uint i = 0; i < numSpotlights; ++i)
+    {
+        lighting.spotlights[i].position = TBN * spotlights[i].position;
+        lighting.spotlights[i].direction = TBN * spotlights[i].direction;
+    }
 
     v_NumPointLights = numPointLights;
     v_NumDirectionalLights = numDirectionalLights;

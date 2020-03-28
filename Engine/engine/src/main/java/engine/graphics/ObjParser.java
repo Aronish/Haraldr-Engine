@@ -88,15 +88,6 @@ public class ObjParser
         VertexArray vertexArray = new VertexArray();
         vertexArray.setVertexBuffers(vertexBuffer);
         vertexArray.setIndexBuffer(ArrayUtils.toPrimitiveArrayI(indices));
-
-        System.out.println();
-        for (int i = 0; i < vertices.size(); ++i)
-        {
-            System.out.printf("%5s\t", vertices.get(i));
-            if ((i + 1) % 11 == 0) System.out.println();
-        }
-        System.out.println();
-
         return vertexArray;
     }
 

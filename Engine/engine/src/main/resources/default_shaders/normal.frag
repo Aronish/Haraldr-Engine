@@ -2,7 +2,7 @@
 
 #define MAX_DIRECTIONAL_LIGHTS 1
 #define MAX_POINT_LIGHTS 3
-#define MAX_SPOTLIGHTS 3
+#define MAX_SPOTLIGHTS 2
 
 const float AMBIENT_STRENGTH = 0.2f;
 const float DIFFUSE_STRENGTH = 1.0f;
@@ -93,6 +93,7 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDirection)
 
 vec3 calculateSpotlight(Spotlight light, vec3 normal, vec3 viewDirection)
 {
+    //vec3 lightDirection = normalize(-light.direction);
     vec3 lightDirection = normalize(light.position - v_FragmentPosition);
     vec3 halfWayDirection = normalize(lightDirection + viewDirection);
     float theta = dot(lightDirection, normalize(-light.direction));
@@ -115,8 +116,8 @@ vec3 calculateSpotlight(Spotlight light, vec3 normal, vec3 viewDirection)
 
 in LIGHTING
 {
-    DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
     PointLight pointLights[MAX_POINT_LIGHTS];
+    DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
     Spotlight spotlights[MAX_SPOTLIGHTS];
 } lighting;
 
@@ -136,17 +137,17 @@ void main()
     {
         result += calculatePointLight(lighting.pointLights[i], normal, viewDirection);
     }
-/*
-    for (uint i = 0; i < lighting.numDirectionalLights; ++i)
+
+    for (uint i = 0; i < v_NumDirectionalLights; ++i)
     {
         result += calculateDirectionalLight(lighting.directionalLights[i], normal, viewDirection);
     }
 
-    for (uint i = 0; i < lighting.numPointLights; ++i)
+    for (uint i = 0; i < v_NumSpotlights; ++i)
     {
         result += calculateSpotlight(lighting.spotlights[i], normal, viewDirection);
     }
-*/
+
     o_Color = texture(diffuseTexture, v_TextureCoordinate) * vec4(result, OPACITY);
 }
 //strength * lightColor * lightComponent

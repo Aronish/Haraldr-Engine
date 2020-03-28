@@ -2,6 +2,7 @@ package engine.graphics;
 
 public enum DefaultModels
 {
+    SPHERE("models/sphere.obj"),
     CUBE("models/cube.obj"),
     PLANE("models/plane.obj");
 

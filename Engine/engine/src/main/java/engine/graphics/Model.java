@@ -3,7 +3,7 @@ package engine.graphics;
 import engine.math.Matrix4f;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings("unused")
 public class Model
 {
     private VertexArray mesh;

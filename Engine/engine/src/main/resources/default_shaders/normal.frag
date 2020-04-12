@@ -42,20 +42,25 @@ struct Spotlight
 };
 
 /////INPUT AND UNIFORMS//////////////
-
+/*
 in TEST
 {
     vec3 positions[MAX_POINT_LIGHTS];
-} test;
-
+} pointLightPositions;
+*/
 in vec2 v_TextureCoordinate;
 in vec3 v_FragmentPosition;
 in vec3 v_ViewPosition;
 
-layout(std140, binding = 2) buffer lightSetup2
+layout(std140, binding = 1) buffer lightSetup
 {
-    PointLight pointLights2[MAX_POINT_LIGHTS];
-} test2;
+    PointLight pointLights[MAX_POINT_LIGHTS];
+} pointLights;
+
+layout (std140, binding = 2) buffer interfaceBlock
+{
+    vec3 positions[MAX_POINT_LIGHTS];
+} pointLightPositions;
 
 /////TEXTURES////////////////////////////////////////
 layout(binding = 0) uniform sampler2D diffuseTexture;
@@ -139,9 +144,9 @@ void main()
     vec3 result = vec3(0.0f);
 
     //Calculate light contribution
-    for (uint i = 0; i < test2.pointLights2.length(); ++i)
+    for (uint i = 0; i < pointLights.pointLights.length(); ++i)
     {
-        result += calculatePointLight(test2.pointLights2[i], test.positions[i], normal, viewDirection);
+        result += calculatePointLight(pointLights.pointLights[i], pointLightPositions.positions[i], normal, viewDirection);
     }
 
     o_Color = texture(diffuseTexture, v_TextureCoordinate) * vec4(result, OPACITY);

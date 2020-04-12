@@ -48,25 +48,24 @@ layout (std140, binding = 0) uniform matrices
     mat4 view;
     mat4 projection;
 };
-/*
-layout(std140, binding = 1) uniform lightSetup
+
+layout(std140, binding = 1) buffer lightSetup
 {
     PointLight pointLights[MAX_POINT_LIGHTS];
-};
-*/
+} pointLights;
 
-layout(std140, binding = 2) buffer lightSetup2
+layout (std140, binding = 2) buffer interfaceBlock
 {
-    PointLight pointLights2[MAX_POINT_LIGHTS];
-} test2;
+    vec3 positions[MAX_POINT_LIGHTS];
+} pointLightPositions;
 
 /////OUTPUT//////////////////
-
+/*
 out TEST
 {
     vec3 positions[MAX_POINT_LIGHTS];
-} test;
-
+} pointLightPositions;
+*/
 out vec2 v_TextureCoordinate;
 out vec3 v_FragmentPosition;
 out vec3 v_ViewPosition;
@@ -81,14 +80,9 @@ void main()
     mat3 TBN        = transpose(mat3(tangent, bitangent, normal));
 
     //Lights to tangent space
-    //test.positions[4] = TBN * pointLights2[4].position;
-    /*for (uint i = 0; i < pointLights.length(); ++i)
+    for (uint i = 0; i < pointLights.pointLights.length(); ++i)
     {
-        test.pointLights[i].position = TBN * pointLights[i].position;
-    }*/
-    for (uint i = 0; i < test2.pointLights2.length(); ++i)
-    {
-        test.positions[i] = TBN * test2.pointLights2[i].position;
+        pointLightPositions.positions[i] = TBN * pointLights.pointLights[i].position;
     }
 
     v_TextureCoordinate = a_TextureCoordinate;                          // Not important for lighting, don't put in tangent space.

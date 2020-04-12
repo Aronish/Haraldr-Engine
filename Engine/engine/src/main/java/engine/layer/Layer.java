@@ -22,6 +22,8 @@ public abstract class Layer
 
     public abstract void onRender();
 
+    public abstract void onDispose();
+
     public String getName()
     {
         return name;

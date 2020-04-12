@@ -54,4 +54,9 @@ public class Model
         mesh.bind();
         mesh.drawElements();
     }
+
+    public void delete()
+    {
+        mesh.delete();
+    }
 }

@@ -6,6 +6,7 @@ import engine.event.EventDispatcher;
 import engine.event.EventType;
 import engine.event.WindowResizedEvent;
 import engine.graphics.Renderer2D;
+import engine.graphics.Shader;
 import engine.input.Input;
 import engine.input.Key;
 import engine.layer.Layer;
@@ -27,6 +28,7 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glGetInteger;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB;
 import static org.lwjgl.opengl.GL32.GL_MAX_FRAGMENT_INPUT_COMPONENTS;
 import static org.lwjgl.opengl.GL32.GL_MAX_VERTEX_OUTPUT_COMPONENTS;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
@@ -64,6 +66,7 @@ public abstract class Application
 
         //glEnable(GL_MULTISAMPLE);
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_FRAMEBUFFER_SRGB);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -120,10 +123,10 @@ public abstract class Application
     protected void loop()
     {
         if (!initialized) throw new IllegalStateException("Application was not initialized correctly before main loop start!");
-        double frameRate = 60.0d;
-        double updatePeriod = 1.0d / frameRate;
+        double frameRate = 60d;
+        double updatePeriod = 1d / frameRate;
         double currentTime = glfwGetTime();
-        double timer = 0.0d;
+        double timer = 0d;
         int frames = 0;
         int updates = 0;
 
@@ -133,7 +136,7 @@ public abstract class Application
             double frameTime = newTime - currentTime;
             currentTime = newTime;
             timer += frameTime;
-            if (timer >= 1.0d)
+            if (timer >= 1d)
             {
                 int fps = (int) (frames / timer), ups = (int) (updates / timer);
                 window.setTitle("FPS: " + fps + " UPS: " + ups);
@@ -141,7 +144,7 @@ public abstract class Application
                 frames = 0;
                 updates = 0;
             }
-            while (frameTime > 0.0)
+            while (frameTime > 0d)
             {
                 double deltaTime = Math.min(frameTime, updatePeriod);
                 update((float) deltaTime);
@@ -155,6 +158,11 @@ public abstract class Application
 
     public void dispose()
     {
+        Shader.DEFAULT2D.delete();
+        Shader.DIFFUSE.delete();
+        Shader.NORMAL.delete();
+        Shader.LIGHT_SHADER.delete();
+        Shader.VISIBLE_NORMALS.delete();
         glfwTerminate();
     }
 }

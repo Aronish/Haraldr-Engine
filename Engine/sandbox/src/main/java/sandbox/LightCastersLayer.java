@@ -105,4 +105,9 @@ public class LightCastersLayer extends Layer
         renderer.drawCube(new Vector3f(4f, 0f, -1f), 1f, rotationAxes[2], -rotation);
         renderer.drawCube(new Vector3f(-7f, 0f, 3f), 1f, rotationAxes[3], rotation);
     }
+
+    @Override
+    public void onDispose()
+    {
+    }
 }

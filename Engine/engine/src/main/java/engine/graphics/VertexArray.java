@@ -25,10 +25,9 @@ import static org.lwjgl.opengl.GL45.glCreateVertexArrays;
 @SuppressWarnings("unused")
 public class VertexArray
 {
-    private int vertexArrayID;
+    private final int vertexArrayID;
+    private final List<VertexBuffer> vertexBuffers = new ArrayList<>();
     private int nextAttribIndex;
-    private List<VertexBuffer> vertexBuffers = new ArrayList<>();
-    private int indexBufferID;
     private int vertexAmount, indexAmount;
 
     public VertexArray()
@@ -39,7 +38,7 @@ public class VertexArray
     public void setIndexBuffer(@NotNull int[] indices)
     {
         indexAmount = indices.length;
-        indexBufferID = glCreateBuffers();
+        int indexBufferID = glCreateBuffers();
         glBindVertexArray(vertexArrayID);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);

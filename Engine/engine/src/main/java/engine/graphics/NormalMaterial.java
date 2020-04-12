@@ -32,4 +32,10 @@ public class NormalMaterial extends Material
         diffuseTexture.unbind(0);
         normalMap.unbind(1);
     }
+
+    public void delete()
+    {
+        diffuseTexture.delete();
+        normalMap.delete();
+    }
 }

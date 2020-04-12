@@ -31,6 +31,12 @@ public class Renderer3D
         sceneLights.bind();
     }
 
+    public void dispose()
+    {
+        sceneLights.dispose();
+        matrixBuffer.delete();
+    }
+
     /////DEFAULT//////////
 
     public void drawCube()

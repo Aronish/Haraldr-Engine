@@ -10,7 +10,6 @@ import engine.graphics.ForwardRenderer;
 import engine.graphics.Model;
 import engine.graphics.NormalMaterial;
 import engine.graphics.PointLight;
-import engine.input.Key;
 import engine.layer.Layer;
 import engine.main.Application;
 import engine.main.PerspectiveCamera;
@@ -96,5 +95,11 @@ public class TextureTestingLayer extends Layer
         {
             model.renderTemp(renderer, transformationMatrices[i]);
         }
+    }
+
+    @Override
+    public void onDispose()
+    {
+        model.delete();
     }
 }

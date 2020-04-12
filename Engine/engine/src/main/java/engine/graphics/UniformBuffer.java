@@ -4,6 +4,7 @@ import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glBufferSubData;
+import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL30.glBindBufferBase;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
@@ -45,5 +46,10 @@ public class UniformBuffer
     public void unbindBuffer()
     {
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    }
+
+    public void delete()
+    {
+        glDeleteBuffers(uniformBufferId);
     }
 }

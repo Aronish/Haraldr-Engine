@@ -48,8 +48,8 @@ public class Shader
     public static final Shader DEFAULT2D = new Shader("default_shaders/default2D.vert", "default_shaders/default2D.frag");
     public static final Shader DIFFUSE = new Shader("default_shaders/diffuse.vert", "default_shaders/diffuse.frag");
     public static final Shader NORMAL = new Shader("default_shaders/normal.vert", "default_shaders/normal.frag");
-    public static final Shader VISIBLE_NORMALS = new Shader("default_shaders/visibleNormals.vert", "default_shaders/visibleNormals.geom", "default_shaders/visibleNormals.frag");
     public static final Shader LIGHT_SHADER = new Shader("default_shaders/diffuse.vert", "default_shaders/simpleColor.frag");
+    public static final Shader VISIBLE_NORMALS = new Shader("default_shaders/visibleNormals.vert", "default_shaders/visibleNormals.geom", "default_shaders/visibleNormals.frag");
 
     private int shaderProgram;
     private List<InternalShader> internalShaders = new ArrayList<>();

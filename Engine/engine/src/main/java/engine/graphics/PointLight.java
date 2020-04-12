@@ -45,4 +45,13 @@ public class PointLight extends Light implements SceneLightCompat
                 constant, linear, quadratic
         }, offset);
     }
+
+    public void updateBufferDataUnsafe2(@NotNull ShaderStorageBuffer lightSetup, int offset)
+    {
+        lightSetup.setDataUnsafe(new float[] {
+                position.getX(), position.getY(), position.getZ(), 0f,
+                color.getX(), color.getY(), color.getZ(),
+                constant, linear, quadratic
+        }, offset);
+    }
 }

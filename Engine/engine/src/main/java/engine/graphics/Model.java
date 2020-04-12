@@ -45,4 +45,13 @@ public class Model
         mesh.bind();
         mesh.drawElements();
     }
+
+    public void renderTemp(@NotNull ForwardRenderer renderer, Matrix4f transformationMatrix)
+    {
+        material.bind();
+        material.getShader().setMatrix4f(transformationMatrix, "model");
+        material.getShader().setVector3f(renderer.getViewPosition(), "viewPosition");
+        mesh.bind();
+        mesh.drawElements();
+    }
 }

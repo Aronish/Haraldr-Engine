@@ -1,20 +1,16 @@
 package engine.main;
 
 import engine.debug.Logger;
-import engine.event.DebugScreenUpdatedEvent;
 import engine.event.Event;
 import engine.event.EventDispatcher;
 import engine.event.EventType;
 import engine.event.WindowResizedEvent;
-import engine.graphics.ObjParser;
 import engine.graphics.Renderer2D;
 import engine.input.Input;
 import engine.input.Key;
 import engine.layer.Layer;
 import engine.layer.LayerStack;
 import engine.math.Matrix4f;
-import engine.math.Quaternion;
-import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
@@ -31,10 +27,11 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glGetInteger;
-import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
-import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB;
-import static org.lwjgl.opengl.GL31.GL_MAX_UNIFORM_BLOCK_SIZE;
+import static org.lwjgl.opengl.GL32.GL_MAX_FRAGMENT_INPUT_COMPONENTS;
+import static org.lwjgl.opengl.GL32.GL_MAX_VERTEX_OUTPUT_COMPONENTS;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
+import static org.lwjgl.opengl.GL43.GL_MAX_SHADER_STORAGE_BLOCK_SIZE;
+import static org.lwjgl.opengl.GL43.GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS;
 import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
 import static org.lwjgl.system.MemoryUtil.memUTF8;
 

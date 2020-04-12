@@ -8,9 +8,9 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Renderer3D
 {
-    private SceneLights sceneLights = new SceneLights();
+    private final SceneLights sceneLights = new SceneLights();
+    private final UniformBuffer matrixBuffer = new UniformBuffer(128);
     private Vector3f viewPosition = new Vector3f();
-    private UniformBuffer matrixBuffer = new UniformBuffer(128);
 
     public SceneLights getSceneLights()
     {

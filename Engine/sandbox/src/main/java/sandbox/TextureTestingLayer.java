@@ -6,14 +6,10 @@ import engine.event.KeyPressedEvent;
 import engine.event.MouseMovedEvent;
 import engine.event.MouseScrolledEvent;
 import engine.graphics.DefaultModels;
-import engine.graphics.DiffuseMaterial;
-import engine.graphics.DirectionalLight;
 import engine.graphics.ForwardRenderer;
 import engine.graphics.Model;
 import engine.graphics.NormalMaterial;
 import engine.graphics.PointLight;
-import engine.graphics.Spotlight;
-import engine.graphics.Texture;
 import engine.input.Key;
 import engine.layer.Layer;
 import engine.main.Application;
@@ -25,30 +21,35 @@ import org.jetbrains.annotations.NotNull;
 
 public class TextureTestingLayer extends Layer
 {
-    private ForwardRenderer renderer = new ForwardRenderer();
-    private PerspectiveCamera perspectiveCamera = new PerspectiveCamera(new Vector3f(0f, 2f, 2f));
+    private final ForwardRenderer renderer = new ForwardRenderer();
+    private final PerspectiveCamera perspectiveCamera = new PerspectiveCamera(new Vector3f(0f, 2f, 2f));
 
-    private Model model = new Model(
+    private final Model model = new Model(
             DefaultModels.SPHERE.mesh,
             new NormalMaterial(
                     "default_textures/BricksPaintedWhite_COL_4K.jpg",
                     "default_textures/BricksPaintedWhite_NRM_4K.jpg"
             ),
-            Matrix4f.rotate(new Vector3f(1f, 0f, 0f), 0f).multiply(Matrix4f.scale(new Vector3f(1f)))
+            Matrix4f.translate(new Vector3f(0f, 1.8f, 0f)).multiply(Matrix4f.rotate(new Vector3f(1f, 1f, 0f), 60f).multiply(Matrix4f.scale(new Vector3f(1f))))
     );
 
-    private PointLight pointLight = new PointLight(new Vector3f(2f), new Vector3f(0.8f, 0.7f, 0.3f));
-    private PointLight pointLight2 = new PointLight(new Vector3f(1f, 2f, 3f), new Vector3f(1f));
-    private Spotlight spotlight = new Spotlight(new Vector3f(0f, -3f, 0f), new Vector3f(0.5f, 0.5f, 0f), new Vector3f(1f), 30f, 40f);
-
-    private boolean showNormals;
+    private final Matrix4f[] transformationMatrices = new Matrix4f[25];
 
     public TextureTestingLayer(String name)
     {
         super(name);
-        //renderer.getSceneLights().addPointLight(pointLight);
-        //renderer.getSceneLights().addPointLight(pointLight2);
-        renderer.getSceneLights().addSpotLight(spotlight);
+        for (int i = 0; i < 20; ++i)
+        {
+            renderer.getSceneLights().addPointLight(new PointLight
+            (
+                new Vector3f(i, Math.sin(i) + 5f, 1f),
+                new Vector3f((float) Math.random(), Math.random(), 1f - Math.random()), 1.0f, 0.7f, 1.8f)
+            );
+        }
+        for (int i = 0; i < 25; ++i)
+        {
+            transformationMatrices[i] = Matrix4f.translate(new Vector3f(i % 5 * 2.5f, EntryPoint.fastFloor(i / 5f) * 2.5f, 0f));
+        }
     }
 
     @Override
@@ -61,24 +62,17 @@ public class TextureTestingLayer extends Layer
                 perspectiveCamera.getController().handleRotation(perspectiveCamera, (MouseMovedEvent) event);
             }
         }
+        if (event.eventType == EventType.KEY_PRESSED)
+        {
+            EventHandler.onKeyPress((KeyPressedEvent) event, window);
+        }
         if (event.eventType == EventType.MOUSE_SCROLLED)
         {
             perspectiveCamera.getController().handleScroll((MouseScrolledEvent) event);
         }
-        if (event.eventType == EventType.KEY_PRESSED)
-        {
-            EventHandler.onKeyPress((KeyPressedEvent) event, window);
-            if (((KeyPressedEvent) event).keyCode == Key.KEY_Q.keyCode)
-            {
-            }
-            if (((KeyPressedEvent) event).keyCode == Key.KEY_N.keyCode)
-            {
-                showNormals = !showNormals;
-            }
-        }
     }
 
-    private Vector3f rotationAxis = new Vector3f(0f, 1f, 0f);
+    private final Vector3f rotationAxis = new Vector3f(0f, 1f, 0f);
     private float rotation;
 
     @Override
@@ -89,21 +83,18 @@ public class TextureTestingLayer extends Layer
             perspectiveCamera.getController().handleMovement(perspectiveCamera, window.getWindowHandle(), deltaTime);
         }
         float sin = (float) Math.sin(Application.time / 2);
-        float sinOff = (float) Math.sin(Application.time / 3 + 2f);
         float cos = (float) Math.cos(Application.time / 2);
-        float cosOff = (float) Math.cos(Application.time / 3 + 2f);
         rotation += 25f * deltaTime;
-        //pointLight2.setPosition(new Vector3f(cos * 3f, sin * 3f, 2f));
-        //model.setTransformationMatrix(Matrix4f.rotate(rotationAxis, rotation).multiply(Matrix4f.scale(new Vector3f(1f))));
+        model.setTransformationMatrix(Matrix4f.rotate(rotationAxis, rotation));
     }
 
     @Override
     public void onRender()
     {
         renderer.begin(perspectiveCamera);
-        //pointLight.render();
-        spotlight.render();
-        spotlight.renderDirectionVector();
-        model.render(renderer);
+        for (int i = 0; i < 25; ++i)
+        {
+            model.renderTemp(renderer, transformationMatrices[i]);
+        }
     }
 }

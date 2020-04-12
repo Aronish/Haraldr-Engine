@@ -37,4 +37,16 @@ public class Spotlight extends DirectionalLight implements SceneLightCompat
                 (float) Math.cos(Math.toRadians(outerCutOff))
         }, offset);
     }
+
+    public void updateBufferDataUnsafe2(@NotNull ShaderStorageBuffer lightSetup, int offset)
+    {
+        lightSetup.setDataUnsafe(new float[] {
+                position.getX(), position.getY(), position.getZ(), 0f,
+                direction.getX(), direction.getY(), direction.getZ(), 0f,
+                color.getX(), color.getY(), color.getZ(),
+                (float) Math.cos(Math.toRadians(innerCutOff)),
+                (float) Math.cos(Math.toRadians(outerCutOff)),
+                0f
+        }, offset);
+    }
 }

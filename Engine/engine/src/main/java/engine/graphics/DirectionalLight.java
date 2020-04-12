@@ -46,4 +46,12 @@ public class DirectionalLight extends Light implements SceneLightCompat
                 color.getX(), color.getY(), color.getZ()
         }, offset);
     }
+
+    public void updateBufferDataUnsafe2(@NotNull ShaderStorageBuffer lightSetup, int offset)
+    {
+        lightSetup.setDataUnsafe(new float[] {
+                direction.getX(), direction.getY(), direction.getZ(), 0f,
+                color.getX(), color.getY(), color.getZ()
+        }, offset);
+    }
 }

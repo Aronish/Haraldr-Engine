@@ -1,8 +1,6 @@
 #version 460 core
 
-#define MAX_DIRECTIONAL_LIGHTS 1
-#define MAX_POINT_LIGHTS 3
-#define MAX_SPOTLIGHTS 2
+#define MAX_POINT_LIGHTS 20
 
 const float AMBIENT_STRENGTH = 0.2f;
 const float DIFFUSE_STRENGTH = 1.0f;
@@ -11,40 +9,59 @@ const float SPECULAR_EXPONENT = 400.0f;
 const float OPACITY = 1.0f;
 //TODO: Add intensity variables
 
+/////LIGHT TYPES//////////////////////////////
 //Squeezing allowed!
-struct DirectionalLight
-{
-    vec3 direction; //16    0   1
-    vec3 color;     //16    16
-    //Total 32 Pad 0 Size 32
+struct PointLight
+{                       //std140        std430
+    vec3 position;      //16    0   1   12
+    vec3 color;         //16    16  0   12
+    float constant;     //4     28      4
+    float linear;       //4     32      4
+    float quadratic;    //4     36      4
+//std140: Total 40 Pad 8 Size 48
+//std430: Total: 36 Alignment: vec3 Pad: 0 Size: 36
 };
 
-struct PointLight
-{
-    vec3 position;      //16    0   1
-    vec3 color;         //16    16  0
-    float constant;     //4     28
-    float linear;       //4     32
-    float quadratic;    //4     36
-    //Total 40 Pad 8 Size 48
+struct DirectionalLight
+{                   //std140            std430
+    vec3 direction; //16    0   1       12
+    vec3 color;     //16    16          12
+//std140: Total 32 Pad 0 Size 32
+//std430: Total 24 Alignment: vec3 Pad: 0 Size: 24
 };
 
 struct Spotlight
-{
-    vec3 position;      //16    0   1
-    vec3 direction;     //16    16  1
-    vec3 color;         //16    32  0
-    float innerCutOff;  //4     44
-    float outerCutOff;  //4     48
-    //Total 52 Pad 12 Size 64
+{                       //std140        std430
+    vec3 position;      //16    0   1   12
+    vec3 direction;     //16    16  1   12
+    vec3 color;         //16    32  0   12
+    float innerCutOff;  //4     44      4
+    float outerCutOff;  //4     48      4
+//std140: Total 52 Pad 12 Size 64
+//std430: Total 44 Alignment: vec3 Pad: 4 Size: 48
 };
+
+/////INPUT AND UNIFORMS//////////////
+
+in TEST
+{
+    vec3 positions[MAX_POINT_LIGHTS];
+} test;
 
 in vec2 v_TextureCoordinate;
 in vec3 v_FragmentPosition;
 in vec3 v_ViewPosition;
 
+layout(std140, binding = 2) buffer lightSetup2
+{
+    PointLight pointLights2[MAX_POINT_LIGHTS];
+} test2;
+
+/////TEXTURES////////////////////////////////////////
 layout(binding = 0) uniform sampler2D diffuseTexture;
 layout(binding = 1) uniform sampler2D normalMap;
+/////OUTPUT//////
+out vec4 o_Color;
 
 float when_gt(float x, float y)
 {
@@ -68,9 +85,9 @@ vec3 calculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir
     return (ambient + diffuse + specular);
 }
 
-vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDirection)
+vec3 calculatePointLight(PointLight light, vec3 lightPosition, vec3 normal, vec3 viewDirection)
 {
-    vec3 lightDirection = normalize(light.position - v_FragmentPosition);
+    vec3 lightDirection = normalize(lightPosition - v_FragmentPosition);
     vec3 halfWayDirection = normalize(lightDirection + viewDirection);
     //Ambient
     vec3 ambient = AMBIENT_STRENGTH * light.color;
@@ -82,7 +99,7 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDirection)
     float spec = pow(specularFactor, SPECULAR_EXPONENT) * when_gt(diff, 0.0f); //Fixes some leaking
     vec3 specular = SPECULAR_STRENGTH * light.color * spec;
     //Attenuation
-    float distance = length(light.position - v_FragmentPosition);
+    float distance = length(lightPosition - v_FragmentPosition);
     float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
     ambient *= attenuation;
     diffuse *= attenuation;
@@ -109,23 +126,11 @@ vec3 calculateSpotlight(Spotlight light, vec3 normal, vec3 viewDirection)
     float spec = pow(specularFactor, SPECULAR_EXPONENT) * when_gt(diff, 0.0f); //Fixes some leaking
     vec3 specular = SPECULAR_STRENGTH * light.color * spec;
     //Cutoff
+    //TODO: Maybe add ambient back with attenuation fixed.
     diffuse *= intensity;
     specular *= intensity;
-    return (ambient + diffuse + specular);
+    return (diffuse + specular);
 }
-
-in LIGHTING
-{
-    PointLight pointLights[MAX_POINT_LIGHTS];
-    DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
-    Spotlight spotlights[MAX_SPOTLIGHTS];
-} lighting;
-
-flat in float v_NumPointLights;
-flat in float v_NumDirectionalLights;
-flat in float v_NumSpotlights;
-
-out vec4 o_Color;
 
 void main()
 {
@@ -133,19 +138,10 @@ void main()
     vec3 viewDirection = normalize(v_ViewPosition - v_FragmentPosition);
     vec3 result = vec3(0.0f);
 
-    for (uint i = 0; i < v_NumPointLights; ++i)
+    //Calculate light contribution
+    for (uint i = 0; i < test2.pointLights2.length(); ++i)
     {
-        result += calculatePointLight(lighting.pointLights[i], normal, viewDirection);
-    }
-
-    for (uint i = 0; i < v_NumDirectionalLights; ++i)
-    {
-        result += calculateDirectionalLight(lighting.directionalLights[i], normal, viewDirection);
-    }
-
-    for (uint i = 0; i < v_NumSpotlights; ++i)
-    {
-        result += calculateSpotlight(lighting.spotlights[i], normal, viewDirection);
+        result += calculatePointLight(test2.pointLights2[i], test.positions[i], normal, viewDirection);
     }
 
     o_Color = texture(diffuseTexture, v_TextureCoordinate) * vec4(result, OPACITY);

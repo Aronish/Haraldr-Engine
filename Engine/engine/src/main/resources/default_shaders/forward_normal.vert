@@ -1,37 +1,36 @@
 #version 460 core
 
-#define MAX_POINT_LIGHTS 20
+#define MAX_POINT_LIGHTS 15
+#define MAX_SPOTLIGHTS 5
+#define MAX_DIRECTIONAL_LIGHTS 1
 
 /////LIGHT TYPES//////////////////////////////
 //Squeezing allowed!
 struct PointLight
 {                       //std140        std430
-    vec3 position;      //16    0   1   12
-    vec3 color;         //16    16  0   12
+    vec4 position;      //16    0   1   12
+    vec4 color;         //16    16  0   12
     float constant;     //4     28      4
     float linear;       //4     32      4
     float quadratic;    //4     36      4
 //std140: Total 40 Pad 8 Size 48
-//std430: Total: 36 Alignment: vec3 Pad: 0 Size: 36
 };
 
 struct DirectionalLight
 {                   //std140            std430
-    vec3 direction; //16    0   1       12
-    vec3 color;     //16    16          12
+    vec4 direction; //16    0   1       12
+    vec4 color;     //16    16          12
     //std140: Total 32 Pad 0 Size 32
-    //std430: Total 24 Alignment: vec3 Pad: 0 Size: 24
 };
 
 struct Spotlight
 {                       //std140        std430
-    vec3 position;      //16    0   1   12
-    vec3 direction;     //16    16  1   12
-    vec3 color;         //16    32  0   12
+    vec4 position;      //16    0   1   12
+    vec4 direction;     //16    16  1   12
+    vec4 color;         //16    32  0   12
     float innerCutOff;  //4     44      4
     float outerCutOff;  //4     48      4
     //std140: Total 52 Pad 12 Size 64
-    //std430: Total 44 Alignment: vec3 Pad: 4 Size: 48
 };
 
 /////INPUT AND UNIFORMS/////////////////
@@ -49,23 +48,24 @@ layout (std140, binding = 0) uniform matrices
     mat4 projection;
 };
 
-layout(std140, binding = 1) buffer lightSetup
+layout(std140, binding = 1) uniform lightSetup
 {
     PointLight pointLights[MAX_POINT_LIGHTS];
-} pointLights;
-
-layout (std140, binding = 2) buffer interfaceBlock
-{
-    vec3 positions[MAX_POINT_LIGHTS];
-} pointLightPositions;
+    Spotlight spotlights[MAX_SPOTLIGHTS];
+    DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
+    float numPointLights;
+    float numSpotlights;
+    float numDirectionalLights;
+};
 
 /////OUTPUT//////////////////
-/*
-out TEST
+out tangentSpaceLighting
 {
-    vec3 positions[MAX_POINT_LIGHTS];
-} pointLightPositions;
-*/
+    vec3 pointLightPositions[MAX_POINT_LIGHTS];
+    vec3 spotlightPositions[MAX_SPOTLIGHTS];
+    vec3 spotlightDirections[MAX_SPOTLIGHTS];
+    vec3 directionalLightDirections[MAX_DIRECTIONAL_LIGHTS];
+};
 out vec2 v_TextureCoordinate;
 out vec3 v_FragmentPosition;
 out vec3 v_ViewPosition;
@@ -80,9 +80,20 @@ void main()
     mat3 TBN        = transpose(mat3(tangent, bitangent, normal));
 
     //Lights to tangent space
-    for (uint i = 0; i < pointLights.pointLights.length(); ++i)
+    for (uint i = 0; i < numPointLights; ++i)
     {
-        pointLightPositions.positions[i] = TBN * pointLights.pointLights[i].position;
+        pointLightPositions[i] = TBN * pointLights[i].position.xyz;
+    }
+
+    for (uint i = 0; i < numSpotlights; ++i)
+    {
+        spotlightPositions[i] = TBN * spotlights[i].position.xyz;
+        spotlightDirections[i] = TBN * spotlights[i].direction.xyz;
+    }
+
+    for (uint i = 0; i < numDirectionalLights; ++i)
+    {
+        directionalLightDirections[i] = TBN * directionalLights[i].direction.xyz;
     }
 
     v_TextureCoordinate = a_TextureCoordinate;                          // Not important for lighting, don't put in tangent space.

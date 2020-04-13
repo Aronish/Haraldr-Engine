@@ -9,30 +9,42 @@ public class SceneLights
     private static final int MAX_POINT_LIGHTS = 15,         POINT_LIGHT_SIZE = 48;
     private static final int MAX_SPOTLIGHTS = 5,            SPOTLIGHT_SIZE = 64;
 
-    private final UniformBuffer lightSetupBuffer = new UniformBuffer(MAX_POINT_LIGHTS * POINT_LIGHT_SIZE + MAX_SPOTLIGHTS * SPOTLIGHT_SIZE + MAX_DIRECTIONAL_LIGHTS * DIRECTIONAL_LIGHT_SIZE + 12);
+    private final int TOTAL_LIGHTS_SIZE = MAX_POINT_LIGHTS * POINT_LIGHT_SIZE + MAX_SPOTLIGHTS * SPOTLIGHT_SIZE + MAX_DIRECTIONAL_LIGHTS * DIRECTIONAL_LIGHT_SIZE;
+    private final UniformBuffer lightSetupBuffer = new UniformBuffer(TOTAL_LIGHTS_SIZE + 12);
     private final List<DirectionalLight> directionalLights = new ArrayList<>();
     private final List<PointLight> pointLights = new ArrayList<>();
     private final List<Spotlight> spotlights = new ArrayList<>();
 
-    public void addPointLight(PointLight pointLight)
+    public void addLight(Light light)
+    {
+        //Really isn't possible to do easily in any other generic way. Not beautiful, but works.
+        if (light instanceof PointLight)
+            addPointLight((PointLight) light);
+        else if (light instanceof Spotlight)
+            addSpotLight((Spotlight) light);
+        else if (light instanceof DirectionalLight)
+            addDirectionalLight((DirectionalLight) light);
+    }
+
+    private void addPointLight(PointLight pointLight)
     {
         if (pointLights.size() >= MAX_POINT_LIGHTS) return;
         pointLights.add(pointLight);
-        lightSetupBuffer.setData(new float[] { pointLights.size() }, MAX_POINT_LIGHTS * POINT_LIGHT_SIZE + MAX_SPOTLIGHTS * SPOTLIGHT_SIZE + MAX_DIRECTIONAL_LIGHTS * DIRECTIONAL_LIGHT_SIZE);
+        lightSetupBuffer.setData(new float[] { pointLights.size() }, TOTAL_LIGHTS_SIZE);
     }
 
-    public void addSpotLight(Spotlight spotlight)
+    private void addSpotLight(Spotlight spotlight)
     {
         if (spotlights.size() >= MAX_SPOTLIGHTS) return;
         spotlights.add(spotlight);
-        lightSetupBuffer.setData(new float[] { spotlights.size() }, MAX_POINT_LIGHTS * POINT_LIGHT_SIZE + MAX_SPOTLIGHTS * SPOTLIGHT_SIZE + MAX_DIRECTIONAL_LIGHTS * DIRECTIONAL_LIGHT_SIZE + 4);
+        lightSetupBuffer.setData(new float[] { spotlights.size() }, TOTAL_LIGHTS_SIZE + 4);
     }
 
-    public void addDirectionalLight(DirectionalLight directionalLight)
+    private void addDirectionalLight(DirectionalLight directionalLight)
     {
         if (spotlights.size() >= MAX_DIRECTIONAL_LIGHTS) return;
         directionalLights.add(directionalLight);
-        lightSetupBuffer.setData(new float[] { directionalLights.size() }, MAX_POINT_LIGHTS * POINT_LIGHT_SIZE + MAX_SPOTLIGHTS * SPOTLIGHT_SIZE + MAX_DIRECTIONAL_LIGHTS * DIRECTIONAL_LIGHT_SIZE + 8);
+        lightSetupBuffer.setData(new float[] { directionalLights.size() }, TOTAL_LIGHTS_SIZE + 8);
     }
 
     public void bind()

@@ -31,10 +31,10 @@ public class LightCastersLayer extends Layer
     public LightCastersLayer(String name)
     {
         super(name);
-        renderer.getSceneLights().addSpotLight(spotLight);
-        renderer.getSceneLights().addDirectionalLight(directionalLight);
-        renderer.getSceneLights().addPointLight(pointLight);
-        renderer.getSceneLights().addPointLight(pointLight2);
+        renderer.getSceneLights().addLight(spotLight);
+        renderer.getSceneLights().addLight(directionalLight);
+        renderer.getSceneLights().addLight(pointLight);
+        renderer.getSceneLights().addLight(pointLight2);
     }
 
     @Override

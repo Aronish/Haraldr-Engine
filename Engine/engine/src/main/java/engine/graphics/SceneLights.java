@@ -25,14 +25,14 @@ public class SceneLights
     {
         if (spotlights.size() >= MAX_SPOTLIGHTS) return;
         spotlights.add(spotlight);
-        lightSetupBuffer.setData(new float[] { pointLights.size() }, MAX_POINT_LIGHTS * POINT_LIGHT_SIZE + MAX_SPOTLIGHTS * SPOTLIGHT_SIZE + MAX_DIRECTIONAL_LIGHTS * DIRECTIONAL_LIGHT_SIZE + 4);
+        lightSetupBuffer.setData(new float[] { spotlights.size() }, MAX_POINT_LIGHTS * POINT_LIGHT_SIZE + MAX_SPOTLIGHTS * SPOTLIGHT_SIZE + MAX_DIRECTIONAL_LIGHTS * DIRECTIONAL_LIGHT_SIZE + 4);
     }
 
     public void addDirectionalLight(DirectionalLight directionalLight)
     {
         if (spotlights.size() >= MAX_DIRECTIONAL_LIGHTS) return;
         directionalLights.add(directionalLight);
-        lightSetupBuffer.setData(new float[] { pointLights.size() }, MAX_POINT_LIGHTS * POINT_LIGHT_SIZE + MAX_SPOTLIGHTS * SPOTLIGHT_SIZE + MAX_DIRECTIONAL_LIGHTS * DIRECTIONAL_LIGHT_SIZE + 8);
+        lightSetupBuffer.setData(new float[] { directionalLights.size() }, MAX_POINT_LIGHTS * POINT_LIGHT_SIZE + MAX_SPOTLIGHTS * SPOTLIGHT_SIZE + MAX_DIRECTIONAL_LIGHTS * DIRECTIONAL_LIGHT_SIZE + 8);
     }
 
     public void bind()

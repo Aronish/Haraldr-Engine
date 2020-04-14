@@ -56,6 +56,7 @@ layout(std140, binding = 1) uniform lightSetup
     float numPointLights;
     float numSpotlights;
     float numDirectionalLights;
+    float ambientStrength;
 };
 
 /////OUTPUT//////////////////

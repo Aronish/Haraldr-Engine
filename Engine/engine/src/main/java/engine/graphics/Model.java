@@ -12,12 +12,12 @@ public class Model
 
     public Model(String modelPath, Material material)
     {
-        this(ObjParser.loadMesh(modelPath), material, Matrix4f.identity());
+        this(ResourceManager.getMesh(modelPath), material, Matrix4f.identity());
     }
 
     public Model(String modelPath, Material material, Matrix4f transformationMatrix)
     {
-        this(ObjParser.loadMesh(modelPath), material, transformationMatrix);
+        this(ResourceManager.getMesh(modelPath), material, transformationMatrix);
     }
 
     public Model(VertexArray mesh, Material material)
@@ -53,6 +53,11 @@ public class Model
         material.getShader().setVector3f(renderer.getViewPosition(), "viewPosition");
         mesh.bind();
         mesh.drawElements();
+    }
+
+    public Material getMaterial()
+    {
+        return material;
     }
 
     public void delete()

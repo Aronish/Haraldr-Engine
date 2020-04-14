@@ -302,7 +302,7 @@ public class Matrix4f
         //Camera looks towards positive z to begin with.
         Matrix4f result = new Matrix4f();
         float near = 0.5f;
-        float far = 20f;
+        float far = 200f;
         float range = far - near;
         float tanHalfFov = (float) Math.tan(Math.toRadians(fov / 2));
 

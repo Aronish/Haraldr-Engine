@@ -8,9 +8,9 @@ public enum DefaultModels
 
     public final VertexArray mesh;
 
-    DefaultModels(String modelPath)
+    DefaultModels(String path)
     {
-        mesh = ObjParser.loadMesh(modelPath);
+        mesh = ResourceManager.getMesh(path);
     }
 
     public void bind()

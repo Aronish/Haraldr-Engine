@@ -10,45 +10,87 @@ public class DiffuseMaterial extends Material
     private Vector3f ambient;
     private Vector3f diffuse;
     private Vector3f specular;
-    private float specularExponent;
-    private float opacity;
     private Texture diffuseTexture;
 
     public DiffuseMaterial()
     {
-        this(new Vector3f(1f), new Vector3f(1f), new Vector3f(1f), 4f, 1f, Texture.DEFAULT_TEXTURE);
+        this(new Vector3f(1f), new Vector3f(1f), new Vector3f(1f), Texture.DEFAULT_TEXTURE);
+    }
+
+    public DiffuseMaterial(String diffuseTexture)
+    {
+        this(new Vector3f(1f), new Vector3f(1f), new Vector3f(1f), diffuseTexture);
     }
 
     public DiffuseMaterial(Texture diffuseTexture)
     {
-        this(new Vector3f(1f), new Vector3f(1f), new Vector3f(1f), 4f, 1f, diffuseTexture);
+        this(new Vector3f(1f), new Vector3f(1f), new Vector3f(1f), diffuseTexture);
     }
 
-    public DiffuseMaterial(Vector3f ambient, Vector3f diffuse, Vector3f specular, float specularExponent, float opacity)
+    public DiffuseMaterial(Vector3f ambient, Vector3f diffuse, Vector3f specular)
     {
-        this(ambient, diffuse, specular, specularExponent, opacity, Texture.DEFAULT_TEXTURE);
+        this(ambient, diffuse, specular, Texture.DEFAULT_TEXTURE);
     }
 
-    public DiffuseMaterial(Vector3f ambient, Vector3f diffuse, Vector3f specular, float specularExponent, float opacity, Texture diffuseTexture)
+    public DiffuseMaterial(Vector3f ambient, Vector3f diffuse, Vector3f specular, String diffuseTexture)
     {
-        super(Shader.DIFFUSE);
+        this(ambient, diffuse, specular, ResourceManager.getTexture(diffuseTexture));
+    }
+
+    public DiffuseMaterial(Vector3f ambient, Vector3f diffuse, Vector3f specular, Texture diffuseTexture)
+    {
+        super(Shader.DIFFUSE, 0.5f);
         this.ambient = ambient;
         this.diffuse = diffuse;
         this.specular = specular;
-        this.specularExponent = specularExponent;
-        this.opacity = opacity;
+        this.diffuseTexture = diffuseTexture;
+    }
+
+    public DiffuseMaterial(Vector3f ambient, Vector3f diffuse, Vector3f specular, float diffuseStrength)
+    {
+        this(ambient, diffuse, specular, diffuseStrength, Texture.DEFAULT_TEXTURE);
+    }
+
+    public DiffuseMaterial(Vector3f ambient, Vector3f diffuse, Vector3f specular, float diffuseStrength, String diffuseTexture)
+    {
+        this(ambient, diffuse, specular, diffuseStrength, ResourceManager.getTexture(diffuseTexture));
+    }
+
+    public DiffuseMaterial(Vector3f ambient, Vector3f diffuse, Vector3f specular, float diffuseStrength, Texture diffuseTexture)
+    {
+        super(Shader.DIFFUSE, diffuseStrength);
+        this.ambient = ambient;
+        this.diffuse = diffuse;
+        this.specular = specular;
+        this.diffuseTexture = diffuseTexture;
+    }
+
+    public DiffuseMaterial(Vector3f ambient, Vector3f diffuse, Vector3f specular, float diffuseStrength, float specularStrength, float specularExponent, float opacity)
+    {
+        this(ambient, diffuse, specular, diffuseStrength, specularStrength, specularExponent, opacity, Texture.DEFAULT_TEXTURE);
+    }
+
+    public DiffuseMaterial(Vector3f ambient, Vector3f diffuse, Vector3f specular, float diffuseStrength, float specularStrength, float specularExponent, float opacity, String diffuseTexture)
+    {
+        this(ambient, diffuse, specular, diffuseStrength, specularStrength, specularExponent, opacity, ResourceManager.getTexture(diffuseTexture));
+    }
+
+    public DiffuseMaterial(Vector3f ambient, Vector3f diffuse, Vector3f specular, float diffuseStrength, float specularStrength, float specularExponent, float opacity, Texture diffuseTexture)
+    {
+        super(Shader.DIFFUSE, diffuseStrength, specularStrength, specularExponent, opacity);
+        this.ambient = ambient;
+        this.diffuse = diffuse;
+        this.specular = specular;
         this.diffuseTexture = diffuseTexture;
     }
 
     @Override
     public void bind()
     {
-        shader.bind();
-        shader.setVector3f(ambient, "material.ambientColor");
-        shader.setVector3f(diffuse, "material.diffuseColor");
-        shader.setVector3f(specular, "material.specularColor");
-        shader.setFloat(specularExponent, "material.specularExponent");
-        shader.setFloat(opacity, "material.opacity");
+        super.bind();
+        shader.setVector3f(ambient, "materialProperties.ambientColor");
+        shader.setVector3f(diffuse, "materialProperties.diffuseColor");
+        shader.setVector3f(specular, "materialProperties.specularColor");
         diffuseTexture.bind(0);
     }
 
@@ -73,16 +115,6 @@ public class DiffuseMaterial extends Material
         this.specular = specular;
     }
 
-    public void setSpecularExponent(float specularExponent)
-    {
-        this.specularExponent = specularExponent;
-    }
-
-    public void setOpacity(float opacity)
-    {
-        this.opacity = opacity;
-    }
-
     public Vector3f getAmbient()
     {
         return ambient;
@@ -96,15 +128,5 @@ public class DiffuseMaterial extends Material
     public Vector3f getSpecular()
     {
         return specular;
-    }
-
-    public float getSpecularExponent()
-    {
-        return specularExponent;
-    }
-
-    public float getOpacity()
-    {
-        return opacity;
     }
 }

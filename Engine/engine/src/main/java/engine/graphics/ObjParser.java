@@ -107,7 +107,7 @@ public class ObjParser
                 switch (split[0])
                 {
                     case "Ns":
-                        material.setSpecularExponent(Float.parseFloat(split[1]));
+                        //material.setSpecularExponent(Float.parseFloat(split[1]));
                         break;
                     case "Ka":
                         material.setAmbient(new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3])));
@@ -119,7 +119,7 @@ public class ObjParser
                         material.setSpecular(new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3])));
                         break;
                     case "d":
-                        material.setOpacity(Float.parseFloat(split[1]));
+                        //material.setOpacity(Float.parseFloat(split[1]));
                         break;
                 }
             }

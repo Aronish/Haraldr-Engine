@@ -1,5 +1,6 @@
 package engine.graphics;
 
+import engine.main.Application;
 import engine.main.PerspectiveCamera;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
@@ -8,9 +9,14 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class ForwardRenderer
 {
-    private final SceneLights sceneLights = new SceneLights();
     private final UniformBuffer matrixBuffer = new UniformBuffer(128);
+    private SceneLights sceneLights = new SceneLights();
     private Vector3f viewPosition = new Vector3f();
+
+    public void setSceneLights(SceneLights sceneLights)
+    {
+        this.sceneLights = sceneLights;
+    }
 
     public SceneLights getSceneLights()
     {

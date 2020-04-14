@@ -8,12 +8,23 @@ public class SceneLights
     private static final int MAX_DIRECTIONAL_LIGHTS = 1,    DIRECTIONAL_LIGHT_SIZE = 32;
     private static final int MAX_POINT_LIGHTS = 15,         POINT_LIGHT_SIZE = 48;
     private static final int MAX_SPOTLIGHTS = 5,            SPOTLIGHT_SIZE = 64;
-
     private final int TOTAL_LIGHTS_SIZE = MAX_POINT_LIGHTS * POINT_LIGHT_SIZE + MAX_SPOTLIGHTS * SPOTLIGHT_SIZE + MAX_DIRECTIONAL_LIGHTS * DIRECTIONAL_LIGHT_SIZE;
-    private final UniformBuffer lightSetupBuffer = new UniformBuffer(TOTAL_LIGHTS_SIZE + 12);
+
+    private float ambientStrength;
+    private final UniformBuffer lightSetupBuffer = new UniformBuffer(TOTAL_LIGHTS_SIZE + 16);
     private final List<DirectionalLight> directionalLights = new ArrayList<>();
     private final List<PointLight> pointLights = new ArrayList<>();
     private final List<Spotlight> spotlights = new ArrayList<>();
+
+    {
+        setAmbientStrength(0.1f);
+    }
+
+    public void setAmbientStrength(float ambientStrength)
+    {
+        this.ambientStrength = ambientStrength;
+        lightSetupBuffer.setData(new float[] { ambientStrength }, TOTAL_LIGHTS_SIZE + 12);
+    }
 
     public void addLight(Light light)
     {
@@ -46,7 +57,7 @@ public class SceneLights
         directionalLights.add(directionalLight);
         lightSetupBuffer.setData(new float[] { directionalLights.size() }, TOTAL_LIGHTS_SIZE + 8);
     }
-
+//TODO: Only update changed lights
     public void bind()
     {
         lightSetupBuffer.bind(1);

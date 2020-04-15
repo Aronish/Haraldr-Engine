@@ -291,26 +291,26 @@ public class Matrix4f
         pixelOrthographic = orthographic(width, 0, 0, height, -NEAR_FAR, NEAR_FAR);
     }
 
+    public static float near = 0.1f, far = 100f;
+
     public static void recalculatePerspective(float aspectRatio)
     {
-        perspective = perspective(fov, aspectRatio);
+        perspective = perspective(fov, aspectRatio, near, far);
     }
 
     @NotNull
-    public static Matrix4f perspective(float fov, float aspectRatio)
+    public static Matrix4f perspective(float fov, float aspectRatio, float near, float far)
     {
         //Camera looks towards positive z to begin with.
         Matrix4f result = new Matrix4f();
-        float near = 0.5f;
-        float far = 200f;
         float range = far - near;
-        float tanHalfFov = (float) Math.tan(Math.toRadians(fov / 2));
+        float tanHalfFov = (float) Math.tan(Math.toRadians(fov / 2f));
 
-        result.matrix[0] = 1.0f / (tanHalfFov * aspectRatio);
-        result.matrix[5] = 1.0f / tanHalfFov;
+        result.matrix[0] = 1f / (tanHalfFov * aspectRatio);
+        result.matrix[5] = 1f / tanHalfFov;
         result.matrix[10] = -(far + near) / range;
-        result.matrix[11] = -2f * far * near / range;
-        result.matrix[14] = -1; // It is apparently this way around.
+        result.matrix[11] = -1f; // It is definitely this way for some reason. It has been wrong all the time lol.
+        result.matrix[14] = -2f * far * near / range;
         return result;
     }
 

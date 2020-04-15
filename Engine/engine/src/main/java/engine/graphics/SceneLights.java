@@ -17,7 +17,7 @@ public class SceneLights
     private final List<Spotlight> spotlights = new ArrayList<>();
 
     {
-        setAmbientStrength(0.1f);
+        setAmbientStrength(0.2f);
     }
 
     public void setAmbientStrength(float ambientStrength)
@@ -53,7 +53,7 @@ public class SceneLights
 
     private void addDirectionalLight(DirectionalLight directionalLight)
     {
-        if (spotlights.size() >= MAX_DIRECTIONAL_LIGHTS) return;
+        if (directionalLights.size() >= MAX_DIRECTIONAL_LIGHTS) return;
         directionalLights.add(directionalLight);
         lightSetupBuffer.setData(new float[] { directionalLights.size() }, TOTAL_LIGHTS_SIZE + 8);
     }

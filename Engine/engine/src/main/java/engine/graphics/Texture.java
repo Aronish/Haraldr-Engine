@@ -1,6 +1,5 @@
 package engine.graphics;
 
-import engine.main.EntryPoint;
 import engine.main.IOUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,7 +8,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_LINEAR_MIPMAP_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;
@@ -38,6 +36,12 @@ public class Texture
 
     private int width, height;
     private int texture;
+
+    public Texture(int rendererId)
+    {
+        //VERY TEMPORARY
+        texture = rendererId;
+    }
 
     public Texture(int width, int height, int[] pixelData)
     {

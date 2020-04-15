@@ -9,7 +9,7 @@ class ExampleApplication extends Application
     @Override
     public void start()
     {
-        init(1280, 720, true, false, false);
+        init(1280, 720, false, false, false);
         loop();
     }
 
@@ -18,7 +18,8 @@ class ExampleApplication extends Application
     {
         super.init(windowWidth, windowHeight, maximized, fullscreen, vSync);
         Renderer2D.setClearColor(new Vector4f(0.1f, 0.1f, 0.2f, 1f));
-        layerStack.pushLayers(new TextureTestingLayer("TexTest"));
+        layerStack.pushLayer(new CubeMapLayer("CubeMaps"));
+        //layerStack.pushLayers(new TextureTestingLayer("TexTest"));
         //layerStack.pushLayers(new LightCastersLayer("LightCasters"));
     }
 }

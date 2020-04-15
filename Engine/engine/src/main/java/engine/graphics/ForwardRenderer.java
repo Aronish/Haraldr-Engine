@@ -75,7 +75,6 @@ public class ForwardRenderer
         DiffuseMaterial.DEFAULT.bind();
         Shader.DIFFUSE.setMatrix4f(transformation, "model");
         Shader.DIFFUSE.setVector3f(viewPosition, "viewPosition");
-        Texture.DEFAULT_TEXTURE.bind(0);
         DefaultModels.CUBE.bind();
         DefaultModels.CUBE.drawElements();
     }

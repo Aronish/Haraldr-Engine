@@ -1,45 +1,37 @@
 package engine.graphics;
 
+import engine.event.EventDispatcher;
+import engine.event.WindowResizedEvent;
 import engine.main.Application;
+import engine.main.EntryPoint;
 import engine.main.IOUtils;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
-import org.jetbrains.annotations.NotNull;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 
-import static org.lwjgl.BufferUtils.createByteBuffer;
+import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_EQUAL;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_LEQUAL;
 import static org.lwjgl.opengl.GL11.GL_LESS;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_RGB;
-import static org.lwjgl.opengl.GL11.GL_RGB8;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL11.glDepthFunc;
-import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
@@ -49,10 +41,9 @@ import static org.lwjgl.opengl.GL12.GL_TEXTURE_WRAP_R;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT24;
+import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
-import static org.lwjgl.opengl.GL30.GL_DEPTH24_STENCIL8;
 import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
-import static org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL_ATTACHMENT;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_COMPLETE;
 import static org.lwjgl.opengl.GL30.GL_RENDERBUFFER;
@@ -65,22 +56,16 @@ import static org.lwjgl.opengl.GL30.glFramebufferTexture2D;
 import static org.lwjgl.opengl.GL30.glGenFramebuffers;
 import static org.lwjgl.opengl.GL30.glGenRenderbuffers;
 import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
-import static org.lwjgl.opengl.GL45.glBindTextureUnit;
 
 public class CubeMap
 {
     private static final Shader MAP_CUBEMAP = new Shader("default_shaders/map_cubemap.vert", "default_shaders/map_cubemap.frag");
     private static final Shader CUBEMAP = new Shader("default_shaders/cubemap.vert", "default_shaders/cubemap.frag");
-    private int width, height, texture, cubemap, texture2;
+    private int height, cubemap;
 
     public CubeMap(String path)
     {
-        cubemap = loadHdr(path);
-    }
-
-    public int test()
-    {
-        return texture;
+        cubemap = createCubeMapFromHdr(path);
     }
 
     public void renderSkyBox()
@@ -93,44 +78,30 @@ public class CubeMap
         glDepthFunc(GL_LESS);
     }
 
-    public void delete()
+    private int createCubeMapFromHdr(String path)
     {
-        glDeleteTextures(texture);
-        glDeleteTextures(cubemap);
-    }
-
-    private int loadHdr(String path)
-    {
+        System.out.println("CREATED CUBEMAP");
         //Load equirectangular hdr
-        FloatBuffer data = readToFloatArray(path);
-        int result = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, result);
-        System.out.println(width + " " + height);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        texture = result;
-        STBImage.stbi_image_free(data);
+        int equirectangularHdr = loadHdrImage(path);
 
         //Framebuffer for mapping to cubemap texture
-        int captureFBO = glGenFramebuffers(), captureRBO = glGenRenderbuffers();
-        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 1024, 1024);
-        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) System.out.println("INCOMPLETE");
-        else System.out.println("COMPLETE");
+        int mappingFrameBuffer = glGenFramebuffers(), depthRenderBuffer = glGenRenderbuffers();
+        glBindRenderbuffer(GL_RENDERBUFFER, depthRenderBuffer);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, height, height); //Assuming 2:1 equirectangular
+        glBindFramebuffer(GL_FRAMEBUFFER, mappingFrameBuffer);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderBuffer);
+        if (EntryPoint.DEBUG)
+        {
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) MAIN_LOGGER.error("Cube map mapping framebuffer INCOMPLETE!");
+            else MAIN_LOGGER.info("Cube map mapping framebuffer COMPLETE!");
+        }
 
         //Allocating memory for cubemap
         int cubemap = glGenTextures();
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
         for (int i = 0; i < 6; ++i)
         {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 1024, 1024, 0, GL_RGB, GL_FLOAT, 0);
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, height, height, 0, GL_RGB, GL_FLOAT, 0);
         }
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -138,8 +109,8 @@ public class CubeMap
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        Matrix4f captureProjection = Matrix4f.perspective(90f, 1f, 0.1f, 10f);
-        Matrix4f[] captureViews = {
+        Matrix4f mappingProjection = Matrix4f.perspective(90f, 1f, 0.1f, 10f);
+        Matrix4f[] mappingViews = {
                 Matrix4f.lookAt(new Vector3f(), new Vector3f(1f, 0f, 0f), new Vector3f(0f, -1f, 0f)),
                 Matrix4f.lookAt(new Vector3f(), new Vector3f(-1f, 0f, 0f), new Vector3f(0f, -1f, 0f)),
                 Matrix4f.lookAt(new Vector3f(), new Vector3f(0f, 1f, 0f), new Vector3f(0f, 0f, 1f)),
@@ -147,92 +118,62 @@ public class CubeMap
                 Matrix4f.lookAt(new Vector3f(), new Vector3f(0f, 0f, 1f), new Vector3f(0f, -1f, 0f)),
                 Matrix4f.lookAt(new Vector3f(), new Vector3f(0f, 0f, -1f), new Vector3f(0f, -1f, 0f)),
         };
-
+        //Render cube faces to cubemap texture
         MAP_CUBEMAP.bind();
-        MAP_CUBEMAP.setMatrix4f(Matrix4f.scale(new Vector3f(0.5f)), "model");
-        MAP_CUBEMAP.setMatrix4f(captureProjection, "captureProjection");
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glViewport(0, 0, 1024, 1024);
-        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+        MAP_CUBEMAP.setMatrix4f(Matrix4f.scale(new Vector3f(0.5f)), "model"); //(Cube .obj is two units in size)
+        MAP_CUBEMAP.setMatrix4f(mappingProjection, "mappingProjection");
+        glBindTexture(GL_TEXTURE_2D, equirectangularHdr);
+        glViewport(0, 0, height, height);
+        glBindFramebuffer(GL_FRAMEBUFFER, mappingFrameBuffer);
         glClearColor(1f, 1f, 1f, 1f);
         for (int i = 0; i < 6; ++i)
         {
-            MAP_CUBEMAP.setMatrix4f(captureViews[i], "captureView");
+            MAP_CUBEMAP.setMatrix4f(mappingViews[i], "mappingView");
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, cubemap, 0);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             DefaultModels.CUBE.bind();
             DefaultModels.CUBE.drawElements();
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, 1280, 720);
+        glDeleteBuffers(mappingFrameBuffer);
+        glDeleteBuffers(depthRenderBuffer);
+        glDeleteTextures(equirectangularHdr);
+        glViewport(0, 0, Application.initWidth, Application.initHeight);
         return cubemap;
     }
 
-    private FloatBuffer readToFloatArray(String path)
+    private int loadHdrImage(String path)
     {
-        FloatBuffer image = null;
+        FloatBuffer image;
         STBImage.stbi_set_flip_vertically_on_load(true);
+        int width1;
         try (MemoryStack stack = MemoryStack.stackPush())
         {
-            IntBuffer width = stack.callocInt(1);
-            IntBuffer height = stack.callocInt(1);
-            IntBuffer comps = stack.callocInt(1);
-            ByteBuffer data = ioResourceToByteBuffer(path, 32 * 1024);
-            /*if (!STBImage.stbi_info_from_memory(data, width, height, comps))
-            {
-                System.out.println("FAILED" + STBImage.stbi_failure_reason());
-            }
-            else
-            {
-                System.out.println("Worked " + STBImage.stbi_failure_reason());
-                System.out.println(width.get() + " " + height.get() + " " + comps.get());
-            }*/
-            image = STBImage.stbi_loadf_from_memory(data, width, height, comps, 0);
-            if (image == null) System.out.println("Was Null!");
-            this.width = width.get();
+            IntBuffer width = stack.mallocInt(1);
+            IntBuffer height = stack.mallocInt(1);
+            IntBuffer comps = stack.mallocInt(1);
+            ByteBuffer data = IOUtils.readResource(path, (stream) -> IOUtils.inputStreamToByteBuffer(stream, 4 * 4096)); //Assuming hdr format as 4 8bit channels
+            if (data != null) image = STBImage.stbi_loadf_from_memory(data, width, height, comps, 0);
+            else throw new NullPointerException("Resource at " + path + " not found!");
+
+            width1 = width.get();
             this.height = height.get();
-        }catch (IOException e)
-        {
-            e.printStackTrace();
         }
-        return image;
+        assert image != null : "Image was somehow null here!";
+        int hdr = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, hdr);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width1, height, 0, GL_RGB, GL_FLOAT, image);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        STBImage.stbi_image_free(image);
+        return hdr;
     }
 
-    private static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException
+    public void delete()
     {
-        return IOUtils.readResource(resource, CubeMap::readDataTest);
-    }
-
-    private static @NotNull ByteBuffer readDataTest(InputStream data)
-    {
-        ByteBuffer buffer = null;
-        try
-        {
-            ReadableByteChannel rbc = Channels.newChannel(data);
-            buffer = createByteBuffer(32 * 1024);
-            while (true) {
-                int bytes = rbc.read(buffer);
-                if (bytes == -1)
-                {
-                    break;
-                }
-                if (buffer.remaining() == 0)
-                {
-                    buffer = resizeBuffer(buffer, buffer.capacity() * 3 / 2); // 50%
-                }
-            }
-        }catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        buffer.flip();
-        return buffer;
-    }
-
-    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
-        ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
-        buffer.flip();
-        newBuffer.put(buffer);
-        return newBuffer;
+        glDeleteTextures(cubemap);
     }
 }

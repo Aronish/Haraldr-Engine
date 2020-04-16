@@ -6,19 +6,15 @@ import engine.event.KeyPressedEvent;
 import engine.event.MouseMovedEvent;
 import engine.event.MouseScrolledEvent;
 import engine.graphics.CubeMap;
-import engine.graphics.DefaultModels;
-import engine.graphics.DiffuseMaterial;
 import engine.graphics.DirectionalLight;
 import engine.graphics.ForwardRenderer;
 import engine.graphics.Model;
 import engine.graphics.NormalMaterial;
 import engine.graphics.SceneLights;
 import engine.graphics.Spotlight;
-import engine.graphics.Texture;
 import engine.input.Button;
 import engine.input.Input;
 import engine.layer.Layer;
-import engine.main.Application;
 import engine.main.PerspectiveCamera;
 import engine.main.Window;
 import engine.math.Matrix4f;
@@ -82,8 +78,6 @@ public class CubeMapLayer extends Layer
         }
     }
 
-    private float sin;
-
     @Override
     public void onUpdate(Window window, float deltaTime)
     {
@@ -91,11 +85,8 @@ public class CubeMapLayer extends Layer
         {
             perspectiveCamera.getController().handleMovement(perspectiveCamera, window.getWindowHandle(), deltaTime);
         }
-        sin = (float) Math.sin(Application.time / 3f) * 0.5f + 0.5f;
         flashLight.setDirection(perspectiveCamera.getDirection());
         flashLight.setPosition(perspectiveCamera.getPosition());
-        //Matrix4f.near = sin;
-        //Matrix4f.recalculatePerspective(1280/720f);
     }
 
     @Override
@@ -110,5 +101,6 @@ public class CubeMapLayer extends Layer
     public void onDispose()
     {
         model.delete();
+        environmentMap.delete();
     }
 }

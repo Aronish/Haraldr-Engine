@@ -1,11 +1,8 @@
 #version 460 core
 
 in vec3 v_LocalPosition;
-
 layout (location = 0) uniform sampler2D equirectangularMap;
-
 out vec4 o_Color;
-
 const vec2 invAtan = vec2(0.1591f, 0.3183f);
 
 vec2 SampleSphericalMap(vec3 v)

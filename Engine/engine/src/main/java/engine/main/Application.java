@@ -23,19 +23,11 @@ import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_EQUAL;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glDepthFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glGetInteger;
-import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB;
-import static org.lwjgl.opengl.GL32.GL_MAX_FRAGMENT_INPUT_COMPONENTS;
-import static org.lwjgl.opengl.GL32.GL_MAX_VERTEX_OUTPUT_COMPONENTS;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
-import static org.lwjgl.opengl.GL43.GL_MAX_SHADER_STORAGE_BLOCK_SIZE;
-import static org.lwjgl.opengl.GL43.GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS;
 import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
 import static org.lwjgl.system.MemoryUtil.memUTF8;
 
@@ -48,6 +40,7 @@ public abstract class Application
     private Window window;
 
     public static double time;
+    public static int initWidth, initHeight;
 
     public abstract void start();
 
@@ -61,9 +54,10 @@ public abstract class Application
     {
         /////WINDOW///////////////////////////////////////////////////////
         window = new Window(windowWidth, windowHeight, maximized, fullscreen, vSync);
+        initWidth = window.getInitWidth();
+        initHeight = window.getInitHeight();
         /////OPENGL CODE WON'T WORK BEFORE THIS///////////////////////////
         EventDispatcher.addCallback(new EventCallback());
-        //EventDispatcher.addCallback(new DebugEventHandler());
         Matrix4f.init(window.getWidth(), window.getHeight());
 
         //glEnable(GL_MULTISAMPLE);

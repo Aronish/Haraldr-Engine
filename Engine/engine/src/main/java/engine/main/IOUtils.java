@@ -1,10 +1,17 @@
 package engine.main;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.function.Function;
+
+import static org.lwjgl.BufferUtils.createByteBuffer;
 
 public class IOUtils
 {
@@ -38,33 +45,30 @@ public class IOUtils
         return null;
     }
 
-    public static @Nullable InputStream readResourceToInputStream(String path)
+    public static @NotNull ByteBuffer inputStreamToByteBuffer(InputStream data, int initialCapacity)
     {
-        try (InputStream inputStream = IOUtils.class.getModule().getResourceAsStream(path))
+        ByteBuffer buffer = null;
+        try
         {
-            if (inputStream == null)
-            {
-                try (InputStream inputStreamClient = EntryPoint.application.getClass().getModule().getResourceAsStream(path))
+            ReadableByteChannel rbc = Channels.newChannel(data);
+            buffer = createByteBuffer(initialCapacity);
+            while (true) {
+                int bytes = rbc.read(buffer);
+                if (bytes == -1) break;
+                if (buffer.remaining() == 0)
                 {
-                    if (inputStreamClient == null)
-                    {
-                        throw new NullPointerException("Resource at path " + path + " not found!");
-                    }
-                    else
-                    {
-                        return inputStreamClient;
-                    }
+                    buffer = resizeBuffer(buffer, buffer.capacity() * 3 / 2); // 50%
                 }
             }
-            else
-            {
-                return inputStream;
-            }
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+        }catch (IOException e) { e.printStackTrace(); }
+        buffer.flip();
+        return buffer;
+    }
+
+    private static @NotNull ByteBuffer resizeBuffer(@NotNull ByteBuffer buffer, int newCapacity) {
+        ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
+        buffer.flip();
+        newBuffer.put(buffer);
+        return newBuffer;
     }
 }

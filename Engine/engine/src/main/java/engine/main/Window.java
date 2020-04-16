@@ -212,6 +212,16 @@ public class Window
         return windowHeight;
     }
 
+    public int getInitWidth()
+    {
+        return initWidth;
+    }
+
+    public int getInitHeight()
+    {
+        return initHeight;
+    }
+
     public boolean isFocused()
     {
         return focused;

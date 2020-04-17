@@ -62,8 +62,8 @@ public abstract class Application
         EventDispatcher.addCallback(new EventCallback());
         Matrix4f.init(window.getWidth(), window.getHeight());
 
-        //glEnable(GL_MULTISAMPLE);
         //glEnable(GL_FRAMEBUFFER_SRGB);
+        //glEnable(GL_MULTISAMPLE); // Definitely has performance impact
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
@@ -72,7 +72,8 @@ public abstract class Application
         if (EntryPoint.DEBUG)
         {
             glEnable(GL_DEBUG_OUTPUT);
-            glDebugMessageCallback((source, type, id, severity, length, message, userparam) -> {
+            glDebugMessageCallback((source, type, id, severity, length, message, userparam) ->
+            {
                 System.out.println("Source: " + Integer.toHexString(source) + "\nType: " + Integer.toHexString(type) + "\nSeverity: " + Integer.toHexString(severity) + "\nLength: " + length);
                 System.out.println(memUTF8(message) + "\n");
             }, 0);

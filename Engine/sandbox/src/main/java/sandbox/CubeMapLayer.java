@@ -10,9 +10,10 @@ import engine.graphics.DefaultModels;
 import engine.graphics.lighting.DirectionalLight;
 import engine.graphics.ForwardRenderer;
 import engine.graphics.Model;
-import engine.graphics.material.ReflectiveDiffuseMaterial;
+import engine.graphics.material.ReflectiveMaterial;
 import engine.graphics.lighting.SceneLights;
 import engine.graphics.lighting.Spotlight;
+import engine.graphics.material.RefractiveMaterial;
 import engine.input.Button;
 import engine.input.Input;
 import engine.layer.Layer;
@@ -33,13 +34,13 @@ public class CubeMapLayer extends Layer
     private CubeMap environmentMap = new CubeMap("default_hdris/cape_hill_4k.hdr");
 
     private Model model = new Model(
-            DefaultModels.CUBE.mesh,
-            new ReflectiveDiffuseMaterial(
+            DefaultModels.PLANE.mesh,
+            new ReflectiveMaterial(
                     environmentMap,
-                    "default_textures/MetalSpottyDiscoloration001_COL_4K_SPECULAR.jpg",
-                    "default_textures/MetalSpottyDiscoloration001_REFL_4K_SPECULAR.jpg"
+                    "default_textures/TilesRectangularMirrorGray001_COL_4K.jpg",
+                    "default_textures/TilesRectangularMirrorGray001_REFL_4K.jpg"
             ),
-            Matrix4f.rotate(new Vector3f(0f, 1f, 0f), -90f)
+            Matrix4f.rotate(new Vector3f(1f), -45f).multiply(Matrix4f.scale(new Vector3f(5f)))
     );
 
     public CubeMapLayer(String name)
@@ -91,7 +92,7 @@ public class CubeMapLayer extends Layer
             perspectiveCamera.getController().handleMovement(perspectiveCamera, window.getWindowHandle(), deltaTime);
         }
         rotation += 10f * deltaTime;
-        model.setTransformationMatrix(Matrix4f.rotate(new Vector3f(0f, 1f, 0f), rotation));
+        //model.setTransformationMatrix(Matrix4f.rotate(new Vector3f(0f, 1f, 0f), rotation));
         flashLight.setDirection(perspectiveCamera.getDirection());
         flashLight.setPosition(perspectiveCamera.getPosition());
     }

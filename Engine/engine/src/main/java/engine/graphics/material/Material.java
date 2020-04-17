@@ -5,7 +5,7 @@ import engine.graphics.Shader;
 public abstract class Material
 {
     protected Shader shader;
-    private float diffuseStrength, specularStrength, specularExponent, opacity;
+    private float diffuseStrength, specularStrength, specularExponent, opacity; // Actually maybe temporary
 
     public Material(Shader shader)
     {

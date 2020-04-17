@@ -115,8 +115,9 @@ public class Matrix4f
     {
         scale += zoom;
         fov += zoom;
-        if (scale < 0f) scale = 0f; // Avoids flipping everything
+        if (scale < 0f) scale = 0f;
         if (fov < 10f) fov = 10f;
+        if (fov > 179f) fov = 179f;
         recalculateOrthographic(FIXED_ORTHOGRAPHIC_AXIS / dynamicOrthographicAxis);
         recalculatePerspective(aspectRatio);
     }

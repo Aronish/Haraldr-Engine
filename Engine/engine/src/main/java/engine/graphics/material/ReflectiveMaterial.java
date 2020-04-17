@@ -5,17 +5,27 @@ import engine.graphics.ResourceManager;
 import engine.graphics.Shader;
 import engine.graphics.Texture;
 
-public class ReflectiveDiffuseMaterial extends Material
+public class ReflectiveMaterial extends Material
 {
     private CubeMap environmentMap;
     private Texture diffuseTexture, reflectionMap;
 
-    public ReflectiveDiffuseMaterial(CubeMap environmentMap, String diffuseTexture, String reflectionMap)
+    public ReflectiveMaterial(CubeMap environmentMap)
+    {
+        this(environmentMap, Texture.DEFAULT_TEXTURE, Texture.DEFAULT_TEXTURE);
+    }
+
+    public ReflectiveMaterial(CubeMap environmentMap, String diffuseTexture, String reflectionMap)
+    {
+        this(environmentMap, ResourceManager.getTexture(diffuseTexture), ResourceManager.getTexture(reflectionMap));
+    }
+
+    public ReflectiveMaterial(CubeMap environmentMap, Texture diffuseTexture, Texture reflectionMap)
     {
         super(Shader.REFLECTIVE_DIFFUSE);
         this.environmentMap = environmentMap;
-        this.diffuseTexture = ResourceManager.getTexture(diffuseTexture);
-        this.reflectionMap = ResourceManager.getTexture(reflectionMap);
+        this.diffuseTexture = diffuseTexture;
+        this.reflectionMap = reflectionMap;
     }
 
     @Override

@@ -50,6 +50,7 @@ public class Shader
     public static final Shader NORMAL = new Shader("default_shaders/forward_normal.vert", "default_shaders/forward_normal.frag");
     public static final Shader LIGHT_SHADER = new Shader("default_shaders/diffuse.vert", "default_shaders/simpleColor.frag");
     public static final Shader VISIBLE_NORMALS = new Shader("default_shaders/visibleNormals.vert", "default_shaders/visibleNormals.geom", "default_shaders/visibleNormals.frag");
+    public static final Shader REFLECTIVE_DIFFUSE = new Shader("default_shaders/reflective_diffuse.vert", "default_shaders/reflective_diffuse.frag");
 
     private int shaderProgram;
     private List<InternalShader> internalShaders = new ArrayList<>();

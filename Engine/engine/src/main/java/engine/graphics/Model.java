@@ -1,5 +1,6 @@
 package engine.graphics;
 
+import engine.graphics.material.Material;
 import engine.math.Matrix4f;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +47,7 @@ public class Model
         mesh.drawElements();
     }
 
-    public void renderTemp(@NotNull ForwardRenderer renderer, Matrix4f transformationMatrix)
+    public void renderTransformed(@NotNull ForwardRenderer renderer, Matrix4f transformationMatrix)
     {
         material.bind();
         material.getShader().setMatrix4f(transformationMatrix, "model");

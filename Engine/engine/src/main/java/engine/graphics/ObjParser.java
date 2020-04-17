@@ -90,7 +90,7 @@ public class ObjParser
         vertexArray.setIndexBuffer(ArrayUtils.toPrimitiveArrayI(indices));
         return vertexArray;
     }
-
+/*
     @NotNull
     private static DiffuseMaterial loadMaterial(InputStream file)
     {
@@ -116,7 +116,7 @@ public class ObjParser
                         material.setDiffuse(new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3])));
                         break;
                     case "Ks":
-                        material.setSpecular(new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3])));
+                        material.setSpecularColor(new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3])));
                         break;
                     case "d":
                         //material.setOpacity(Float.parseFloat(split[1]));
@@ -129,7 +129,7 @@ public class ObjParser
         }
         return material;
     }
-
+*/
     private static void insertVertex(List<Float> vertices,
                                      List<Integer> indices,
                                      @NotNull Map<IndexSet, Integer> indexMap,

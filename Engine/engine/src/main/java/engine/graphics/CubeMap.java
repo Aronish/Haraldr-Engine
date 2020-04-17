@@ -1,7 +1,5 @@
 package engine.graphics;
 
-import engine.event.EventDispatcher;
-import engine.event.WindowResizedEvent;
 import engine.main.Application;
 import engine.main.EntryPoint;
 import engine.main.IOUtils;
@@ -15,9 +13,11 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import static engine.main.Application.MAIN_LOGGER;
+import static org.lwjgl.opengl.GL11.GL_BACK;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_FRONT;
 import static org.lwjgl.opengl.GL11.GL_LEQUAL;
 import static org.lwjgl.opengl.GL11.GL_LESS;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
@@ -30,6 +30,7 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glCullFace;
 import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL11.glDepthFunc;
 import static org.lwjgl.opengl.GL11.glGenTextures;
@@ -56,6 +57,7 @@ import static org.lwjgl.opengl.GL30.glFramebufferTexture2D;
 import static org.lwjgl.opengl.GL30.glGenFramebuffers;
 import static org.lwjgl.opengl.GL30.glGenRenderbuffers;
 import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
+import static org.lwjgl.opengl.GL45.glBindTextureUnit;
 
 public class CubeMap
 {
@@ -68,14 +70,26 @@ public class CubeMap
         cubemap = createCubeMapFromHdr(path);
     }
 
+    public void bind(int unit)
+    {
+        glBindTextureUnit(unit, cubemap);
+    }
+
+    public void unbind(int unit)
+    {
+        glBindTextureUnit(unit, 0);
+    }
+
     public void renderSkyBox()
     {
         glDepthFunc(GL_LEQUAL);
+        glCullFace(GL_FRONT);
         CUBEMAP.bind();
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
         DefaultModels.CUBE.bind();
         DefaultModels.CUBE.drawElements();
         glDepthFunc(GL_LESS);
+        glCullFace(GL_BACK);
     }
 
     private int createCubeMapFromHdr(String path)
@@ -126,6 +140,7 @@ public class CubeMap
         glViewport(0, 0, height, height);
         glBindFramebuffer(GL_FRAMEBUFFER, mappingFrameBuffer);
         glClearColor(1f, 1f, 1f, 1f);
+        glCullFace(GL_FRONT);
         for (int i = 0; i < 6; ++i)
         {
             MAP_CUBEMAP.setMatrix4f(mappingViews[i], "mappingView");
@@ -139,6 +154,7 @@ public class CubeMap
         glDeleteBuffers(depthRenderBuffer);
         glDeleteTextures(equirectangularHdr);
         glViewport(0, 0, Application.initWidth, Application.initHeight);
+        glCullFace(GL_BACK);
         return cubemap;
     }
 

@@ -30,6 +30,8 @@ module Engine.engine
     exports engine.debug;
     exports engine.event;
     exports engine.graphics;
+    exports engine.graphics.material;
+    exports engine.graphics.lighting;
     exports engine.input;
     exports engine.layer;
     exports engine.main;

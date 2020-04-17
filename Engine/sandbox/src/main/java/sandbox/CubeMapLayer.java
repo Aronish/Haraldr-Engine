@@ -6,12 +6,13 @@ import engine.event.KeyPressedEvent;
 import engine.event.MouseMovedEvent;
 import engine.event.MouseScrolledEvent;
 import engine.graphics.CubeMap;
-import engine.graphics.DirectionalLight;
+import engine.graphics.DefaultModels;
+import engine.graphics.lighting.DirectionalLight;
 import engine.graphics.ForwardRenderer;
 import engine.graphics.Model;
-import engine.graphics.NormalMaterial;
-import engine.graphics.SceneLights;
-import engine.graphics.Spotlight;
+import engine.graphics.material.ReflectiveDiffuseMaterial;
+import engine.graphics.lighting.SceneLights;
+import engine.graphics.lighting.Spotlight;
 import engine.input.Button;
 import engine.input.Input;
 import engine.layer.Layer;
@@ -19,6 +20,7 @@ import engine.main.PerspectiveCamera;
 import engine.main.Window;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
+import org.jetbrains.annotations.NotNull;
 
 public class CubeMapLayer extends Layer
 {
@@ -31,10 +33,11 @@ public class CubeMapLayer extends Layer
     private CubeMap environmentMap = new CubeMap("default_hdris/cape_hill_4k.hdr");
 
     private Model model = new Model(
-            "models/suzanne.obj",
-            new NormalMaterial(
-                    "default_textures/BricksPaintedWhite_COL_4K.jpg",
-                    "default_textures/BricksPaintedWhite_NRM_4K.jpg"
+            DefaultModels.CUBE.mesh,
+            new ReflectiveDiffuseMaterial(
+                    environmentMap,
+                    "default_textures/MetalSpottyDiscoloration001_COL_4K_SPECULAR.jpg",
+                    "default_textures/MetalSpottyDiscoloration001_REFL_4K_SPECULAR.jpg"
             ),
             Matrix4f.rotate(new Vector3f(0f, 1f, 0f), -90f)
     );
@@ -48,7 +51,7 @@ public class CubeMapLayer extends Layer
     }
 
     @Override
-    public void onEvent(Window window, Event event)
+    public void onEvent(Window window, @NotNull Event event)
     {
         if (event.eventType == EventType.MOUSE_MOVED)
         {
@@ -78,13 +81,17 @@ public class CubeMapLayer extends Layer
         }
     }
 
+    private float rotation;
+
     @Override
-    public void onUpdate(Window window, float deltaTime)
+    public void onUpdate(@NotNull Window window, float deltaTime)
     {
         if (window.isFocused())
         {
             perspectiveCamera.getController().handleMovement(perspectiveCamera, window.getWindowHandle(), deltaTime);
         }
+        rotation += 10f * deltaTime;
+        model.setTransformationMatrix(Matrix4f.rotate(new Vector3f(0f, 1f, 0f), rotation));
         flashLight.setDirection(perspectiveCamera.getDirection());
         flashLight.setPosition(perspectiveCamera.getPosition());
     }

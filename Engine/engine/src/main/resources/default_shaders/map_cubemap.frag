@@ -17,6 +17,9 @@ void main()
 {
     vec2 uv = SampleSphericalMap(normalize(v_LocalPosition)); // make sure to normalize v_LocalPosition
     vec3 color = texture(equirectangularMap, uv).rgb;
+    //Gamma correction
+    color = color / (color + vec3(1.f));
+    color = pow(color, vec3(1.f/2.2f));
 
-    o_Color = vec4(color, 1f);
+    o_Color = vec4(color, 1.f);
 }

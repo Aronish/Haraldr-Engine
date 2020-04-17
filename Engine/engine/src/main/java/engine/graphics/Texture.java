@@ -124,14 +124,14 @@ public class Texture
         return width;
     }
 
-    public void bind(int textureUnit)
+    public void bind(int unit)
     {
-        glBindTextureUnit(textureUnit, texture);
+        glBindTextureUnit(unit, texture);
     }
 
-    public void unbind(int textureUnit)
+    public void unbind(int unit)
     {
-        glBindTextureUnit(textureUnit, 0);
+        glBindTextureUnit(unit, 0);
     }
 
     public void delete()

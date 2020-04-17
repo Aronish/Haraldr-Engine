@@ -1,6 +1,8 @@
 package engine.graphics;
 
-import engine.main.Application;
+import engine.graphics.lighting.SceneLights;
+import engine.graphics.material.DiffuseMaterial;
+import engine.graphics.material.Material;
 import engine.main.PerspectiveCamera;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;

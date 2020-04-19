@@ -11,7 +11,6 @@ import org.lwjgl.system.MemoryStack;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Objects;
 
 import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_BACK;
@@ -191,20 +190,5 @@ public class CubeMap
     public void delete()
     {
         glDeleteTextures(cubemap);
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CubeMap cubeMap = (CubeMap) o;
-        return cubemap == cubeMap.cubemap;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(cubemap);
     }
 }

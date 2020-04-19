@@ -9,12 +9,10 @@ import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glBufferSubData;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
@@ -31,40 +29,20 @@ public class VertexArray
     private final List<VertexBuffer> vertexBuffers = new ArrayList<>();
     private int nextAttribIndex;
     private int vertexAmount, indexAmount;
-    private int indexBuffer;
-    private int[] indices;
 
     public VertexArray()
     {
         vertexArrayID = glCreateVertexArrays();
     }
 
-    public VertexArray(int size)
-    {
-        vertexArrayID = glCreateVertexArrays();
-        indexBuffer = glCreateBuffers();
-        glBindVertexArray(vertexArrayID);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, GL_DYNAMIC_DRAW);
-        glBindVertexArray(0);
-    }
-
     public void setIndexBuffer(@NotNull int[] indices)
     {
         indexAmount = indices.length;
-        this.indices = indices;
         int indexBufferID = glCreateBuffers();
         glBindVertexArray(vertexArrayID);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
         glBindVertexArray(0);
-    }
-
-    public void setIndicesUnsafe(@NotNull int[] indices)
-    {
-        indexAmount = indices.length;
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indices);
     }
 
     public void setVertexBuffers(@NotNull VertexBuffer... vertexBuffers)
@@ -133,11 +111,6 @@ public class VertexArray
     public List<VertexBuffer> getVertexBuffers()
     {
         return vertexBuffers;
-    }
-
-    public int[] getIndices()
-    {
-        return indices;
     }
 
     public void delete()

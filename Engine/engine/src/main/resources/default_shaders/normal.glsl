@@ -74,7 +74,7 @@ out vec3 v_ViewPosition;
 
 void main()
 {
-    mat3 normalMatrix = mat3(model); // (Note: Tangent space vectors don't care about translation) Currently does not support uneven scaling.
+    mat3 normalMatrix = mat3(model); // (Note: Tangent space vectors don't care about translation)
     vec3 normal     = normalize(normalMatrix * a_Normal);
     vec3 tangent    = normalize(normalMatrix * a_Tangent);
     tangent = normalize(tangent - dot(tangent, normal) * normal);       // Fixes potential weird edges

@@ -5,8 +5,6 @@ import engine.graphics.Shader;
 import engine.graphics.Texture;
 import engine.math.Vector3f;
 
-import java.util.Objects;
-
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class DiffuseMaterial extends Material
 {
@@ -75,21 +73,5 @@ public class DiffuseMaterial extends Material
     {
         shader.unbind();
         diffuseTexture.unbind(0);
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DiffuseMaterial that = (DiffuseMaterial) o;
-        return diffuseColor.equals(that.diffuseColor) &&
-                diffuseTexture.equals(that.diffuseTexture);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(diffuseColor, diffuseTexture);
     }
 }

@@ -101,6 +101,13 @@ public class CubeMapLayer extends Layer
     {
         renderer.begin(perspectiveCamera);
         model.render(renderer);
+        for (int x = 0; x < 20; ++x)
+        {
+            for (int z = 0; z < 20; ++z)
+            {
+                renderer.drawCube(new Vector3f(x * 5f, 3f, z * 5f));
+            }
+        }
         environmentMap.renderSkyBox();
     }
 

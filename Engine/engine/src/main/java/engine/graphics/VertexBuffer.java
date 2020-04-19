@@ -1,7 +1,9 @@
 package engine.graphics;
 
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL40;
 
+import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -67,12 +69,12 @@ public class VertexBuffer
         glBindBuffer(target, 0);
     }
 
-    public void setDataUnsafe(int[] data)
+    public void setData(int[] data)
     {
         glBufferSubData(target, 0, data);
     }
 
-    public void setDataUnsafe(float[] data)
+    public void setData(float[] data)
     {
         glBufferSubData(target, 0, data);
     }

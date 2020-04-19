@@ -87,23 +87,6 @@ public class Matrix4f
     }
 
     @NotNull
-    public float[] multiply(float x, float y, float z)
-    {
-        float[] start = { x, y, z, 1.0f };
-        float[] result = new float[4];
-        for (int xx = 0; xx < 4; xx++)
-        {
-            float sum = 0.0f;
-            for (int e = 0; e < 4; e++)
-            {
-                sum += matrix[xx + e * 4] * start[e];
-            }
-            result[xx] = sum;
-        }
-        return new float[] { result[0], result[1], result[2] };
-    }
-
-    @NotNull
     public Vector4f multiply(@NotNull Vector4f multiplicand)
     {
         float[] start = { multiplicand.getX(), multiplicand.getY(), multiplicand.getZ(), multiplicand.getW() };
@@ -309,7 +292,7 @@ public class Matrix4f
         pixelOrthographic = orthographic(width, 0, 0, height, -NEAR_FAR, NEAR_FAR);
     }
 
-    public static float near = 0.1f, far = 300f;
+    public static float near = 0.1f, far = 100f;
 
     public static void recalculatePerspective(float aspectRatio)
     {

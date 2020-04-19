@@ -7,7 +7,6 @@ import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.Objects;
 
 import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_LINEAR_MIPMAP_LINEAR;
@@ -144,20 +143,5 @@ public class Texture
     public void delete()
     {
         glDeleteTextures(texture);
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Texture that = (Texture) o;
-        return texture == that.texture;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(texture);
     }
 }

@@ -3,8 +3,6 @@ package engine.math;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 import static engine.main.Application.MAIN_LOGGER;
 
 @SuppressWarnings("unused")
@@ -115,11 +113,6 @@ public class Vector3f
         return new Vector3f(x * scalar, y * scalar, z * scalar);
     }
 
-    public Vector3f multiply(@NotNull Matrix4f transformationMatrix)
-    {
-        return transformationMatrix.multiply(this);
-    }
-
     public void add(@NotNull Vector3f other)
     {
         x += other.x;
@@ -176,22 +169,5 @@ public class Vector3f
     public void print()
     {
         MAIN_LOGGER.info("X: " + x + " Y: " + y + " Z: " + z);
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Vector3f that = (Vector3f) o;
-        return Float.compare(that.x, x) == 0 &&
-                Float.compare(that.y, y) == 0 &&
-                Float.compare(that.z, z) == 0;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(x, y, z);
     }
 }

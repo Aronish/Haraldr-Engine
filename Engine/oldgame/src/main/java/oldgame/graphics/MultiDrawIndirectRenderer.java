@@ -119,10 +119,10 @@ public class MultiDrawIndirectRenderer implements RenderSystem
         }
 
         instancedMatrixBuffer.bind();
-        instancedMatrixBuffer.setData(ArrayUtils.toPrimitiveArrayF(matrices));
+        instancedMatrixBuffer.setDataUnsafe(ArrayUtils.toPrimitiveArrayF(matrices));
 
         indirectBuffer.bind();
-        indirectBuffer.setData(ArrayUtils.toPrimitiveArrayI(indirectData));
+        indirectBuffer.setDataUnsafe(ArrayUtils.toPrimitiveArrayI(indirectData));
 
         vao.bind();
         vao.multiDrawIndirect(indirectData.size() / 5);

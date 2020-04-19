@@ -4,6 +4,8 @@ import engine.graphics.ResourceManager;
 import engine.graphics.Shader;
 import engine.graphics.Texture;
 
+import java.util.Objects;
+
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class NormalMaterial extends Material
 {
@@ -54,5 +56,21 @@ public class NormalMaterial extends Material
         unbind();
         diffuseTexture.delete();
         normalMap.delete();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NormalMaterial that = (NormalMaterial) o;
+        return diffuseTexture.equals(that.diffuseTexture) &&
+                normalMap.equals(that.normalMap);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(diffuseTexture, normalMap);
     }
 }

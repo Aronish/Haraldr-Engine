@@ -14,6 +14,8 @@ public abstract class Renderer3D
 
     public abstract void begin(PerspectiveCamera camera);
 
+    public abstract void end();
+
     public Vector3f getViewPosition()
     {
         return viewPosition;

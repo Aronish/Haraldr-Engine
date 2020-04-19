@@ -63,7 +63,7 @@ public class InstancedRenderer implements RenderSystem
             }
             if (matrices.size() != 0)
             {
-                instancedMatrixBuffer.setData(ArrayUtils.toPrimitiveArrayF(matrices));
+                instancedMatrixBuffer.setDataUnsafe(ArrayUtils.toPrimitiveArrayF(matrices));
                 gameObject.getModel().getVertexArray().bind();
                 gameObject.getModel().getVertexArray().drawInstanced(matrices.size() / 16);
             }

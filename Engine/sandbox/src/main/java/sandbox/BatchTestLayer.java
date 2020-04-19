@@ -6,23 +6,20 @@ import engine.event.KeyPressedEvent;
 import engine.event.MouseMovedEvent;
 import engine.event.MouseScrolledEvent;
 import engine.graphics.CubeMap;
-import engine.graphics.DefaultModels;
 import engine.graphics.ForwardRenderer;
-import engine.graphics.Model;
 import engine.graphics.lighting.DirectionalLight;
 import engine.graphics.lighting.SceneLights;
 import engine.graphics.lighting.Spotlight;
-import engine.graphics.material.NormalMaterial;
+import engine.graphics.material.ReflectiveMaterial;
 import engine.input.Button;
 import engine.input.Input;
 import engine.layer.Layer;
 import engine.main.PerspectiveCamera;
 import engine.main.Window;
-import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
-public class CubeMapLayer extends Layer
+public class BatchTestLayer extends Layer
 {
     private ForwardRenderer renderer = new ForwardRenderer();
     private PerspectiveCamera perspectiveCamera = new PerspectiveCamera();
@@ -31,17 +28,14 @@ public class CubeMapLayer extends Layer
     private final SceneLights sceneLights = new SceneLights();
 
     private CubeMap environmentMap = new CubeMap("default_hdris/cape_hill_4k.hdr");
-    private Model model = new Model(
-            DefaultModels.PLANE.mesh,
-            new NormalMaterial(
-                    "default_textures/brickwall.jpg",
-                    "default_textures/brickwall_normal.jpg",
-                    1f, 0.5f, 480f, 1f
-            ),
-            Matrix4f.rotate(new Vector3f(0f, 1f, 0f), 45f)
+
+    private ReflectiveMaterial reflectiveMaterial = new ReflectiveMaterial(
+            environmentMap,
+            "default_textures/MetalSpottyDiscoloration001_COL_4K_SPECULAR.jpg",
+            "default_textures/MetalSpottyDiscoloration001_REFL_4K_SPECULAR.jpg"
     );
 
-    public CubeMapLayer(String name)
+    public BatchTestLayer(String name)
     {
         super(name);
         sceneLights.addLight(flashLight);
@@ -80,8 +74,6 @@ public class CubeMapLayer extends Layer
         }
     }
 
-    private float rotation;
-
     @Override
     public void onUpdate(@NotNull Window window, float deltaTime)
     {
@@ -89,9 +81,6 @@ public class CubeMapLayer extends Layer
         {
             perspectiveCamera.getController().handleMovement(perspectiveCamera, window.getWindowHandle(), deltaTime);
         }
-        rotation += 10f * deltaTime;
-        //reflectiveSuzanne.setTransformationMatrix(Matrix4f.translate(new Vector3f(0f, 0f, 8f)).multiply(Matrix4f.rotate(new Vector3f(1f), rotation)).multiply(Matrix4f.scale(new Vector3f(5f))));
-        //refractiveSuzanne.setTransformationMatrix(Matrix4f.translate(new Vector3f(0f, 0f, -8f)).multiply(Matrix4f.rotate(new Vector3f(-1f), rotation)).multiply(Matrix4f.scale(new Vector3f(5f))));
         flashLight.setDirection(perspectiveCamera.getDirection());
         flashLight.setPosition(perspectiveCamera.getPosition());
     }
@@ -100,7 +89,14 @@ public class CubeMapLayer extends Layer
     public void onRender()
     {
         renderer.begin(perspectiveCamera);
-        model.render(renderer);
+        for (int y = 0; y < 100; ++y)
+        {
+            for (int x = 0; x < 100; ++x)
+            {
+                renderer.drawCube(new Vector3f(x * 2.1f, y * 2.1f, 0f));
+            }
+        }
+        renderer.end();
         environmentMap.renderSkyBox();
     }
 
@@ -108,6 +104,5 @@ public class CubeMapLayer extends Layer
     public void onDispose()
     {
         environmentMap.delete();
-        model.delete();
     }
 }

@@ -5,6 +5,8 @@ import engine.graphics.ResourceManager;
 import engine.graphics.Shader;
 import engine.graphics.Texture;
 
+import java.util.Objects;
+
 public class ReflectiveMaterial extends Material
 {
     private CubeMap environmentMap;
@@ -44,5 +46,22 @@ public class ReflectiveMaterial extends Material
         environmentMap.unbind(0);
         diffuseTexture.unbind(1);
         reflectionMap.unbind(2);
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ReflectiveMaterial that = (ReflectiveMaterial) o;
+        return environmentMap.equals(that.environmentMap) &&
+                diffuseTexture.equals(that.diffuseTexture) &&
+                reflectionMap.equals(that.reflectionMap);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(environmentMap, diffuseTexture, reflectionMap);
     }
 }

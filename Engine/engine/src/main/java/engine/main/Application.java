@@ -87,7 +87,7 @@ public abstract class Application
                     MAIN_LOGGER.info(String.format("[OPENGL] (Source: %s, Type: %s, Severity: %s):", Integer.toHexString(source), Integer.toHexString(type), Integer.toHexString(severity)));
                     MAIN_LOGGER.info(memUTF8(message) + "\n");
                 }
-                if (type == GL_DEBUG_TYPE_ERROR || type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR) stop(new WindowClosedEvent());
+                //if (type == GL_DEBUG_TYPE_ERROR || type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR) stop(new WindowClosedEvent());
             }, 0);
         }
 

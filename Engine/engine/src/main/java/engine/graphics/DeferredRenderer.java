@@ -9,4 +9,10 @@ public class DeferredRenderer extends Renderer3D
     {
 
     }
+
+    @Override
+    public void end()
+    {
+
+    }
 }

@@ -28,13 +28,13 @@ public abstract class EntryPoint
         {
             if (args[0].equals("DEBUG"))
             {
-                MAIN_LOGGER.info("Debug Mode Enabled!");
+                MAIN_LOGGER.info("DEBUG MODE ENABLED!");
                 DEBUG = true;
-                argumentValidator.validateArguments(Arrays.copyOfRange(args, 1, args.length));
+                argumentValidator.validateArguments(Arrays.asList(Arrays.copyOfRange(args, 1, args.length)));
             }
             else
             {
-                argumentValidator.validateArguments(args);
+                argumentValidator.validateArguments(Arrays.asList(args));
             }
         }
 

@@ -17,12 +17,12 @@ public class ReflectiveMaterial extends Material
 
     public ReflectiveMaterial(CubeMap environmentMap, String diffuseTexture, String reflectionMap)
     {
-        this(environmentMap, ResourceManager.getTexture(diffuseTexture), ResourceManager.getTexture(reflectionMap));
+        this(environmentMap, ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(reflectionMap, false));
     }
 
     public ReflectiveMaterial(CubeMap environmentMap, Texture diffuseTexture, Texture reflectionMap)
     {
-        super(Shader.REFLECTIVE_DIFFUSE);
+        super(Shader.REFLECTIVE);
         this.environmentMap = environmentMap;
         this.diffuseTexture = diffuseTexture;
         this.reflectionMap = reflectionMap;

@@ -98,8 +98,8 @@ public class EventHandler
         {
             if (event.keyCode == Key.KEY_B.keyCode)
             {
-                window.setVSync(!window.VSyncOn());
-                Application.MAIN_LOGGER.info("VSync: " + window.VSyncOn());
+                window.setVSync(!window.vSyncOn());
+                Application.MAIN_LOGGER.info("VSync: " + window.vSyncOn());
             }
         }
     }

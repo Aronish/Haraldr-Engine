@@ -7,9 +7,9 @@ import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import engine.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.system.MemoryStack;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,9 +17,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static engine.main.Application.MAIN_LOGGER;
+import static org.lwjgl.opengl.GL11.GL_FALSE;
+import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
+import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
+import static org.lwjgl.opengl.GL20.GL_VALIDATE_STATUS;
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
+import static org.lwjgl.opengl.GL20.glGetProgramiv;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
+import static org.lwjgl.opengl.GL20.glGetShaderiv;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniform1f;
 import static org.lwjgl.opengl.GL20.glUniform1i;
@@ -39,36 +45,49 @@ import static org.lwjgl.opengl.GL46.glShaderSource;
 import static org.lwjgl.opengl.GL46.glUseProgram;
 import static org.lwjgl.opengl.GL46.glValidateProgram;
 
-/**
- * Loads a shader program with a vertex and fragment shader.
- */
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings("unused")
 public class Shader
 {
-    public static final Shader DEFAULT2D = new Shader("default_shaders/default2D.vert", "default_shaders/default2D.frag");
-    public static final Shader DIFFUSE = new Shader("default_shaders/diffuse.vert", "default_shaders/diffuse.frag");
-    public static final Shader NORMAL = new Shader("default_shaders/normal.vert", "default_shaders/normal.frag");
-    public static final Shader LIGHT_SHADER = new Shader("default_shaders/diffuse.vert", "default_shaders/simpleColor.frag");
-    public static final Shader VISIBLE_NORMALS = new Shader("default_shaders/visibleNormals.vert", "default_shaders/visibleNormals.geom", "default_shaders/visibleNormals.frag");
-    public static final Shader REFLECTIVE_DIFFUSE = new Shader("default_shaders/reflective.vert", "default_shaders/reflective.frag");
-    public static final Shader REFRACTIVE = new Shader("default_shaders/refractive.vert", "default_shaders/refractive.frag");
+    private static final String SPLIT_TOKEN = "#shader ";
+    private static final int TYPE_SPECIFIER_LENGTH = 4;
+
+    public static final Shader DEFAULT2D            = new Shader("default_shaders/default2D.glsl");
+    public static final Shader DIFFUSE              = new Shader("default_shaders/diffuse.glsl");
+    public static final Shader NORMAL               = new Shader("default_shaders/normal.glsl");
+    public static final Shader LIGHT_SHADER         = new Shader("default_shaders/simple_color.glsl");
+    public static final Shader VISIBLE_NORMALS      = new Shader("default_shaders/visible_normals.glsl");
+    public static final Shader REFLECTIVE           = new Shader("default_shaders/reflective.glsl");
+    public static final Shader REFRACTIVE           = new Shader("default_shaders/refractive.glsl");
 
     private int shaderProgram;
-    private List<InternalShader> internalShaders = new ArrayList<>();
+    private List<InternalShaderCombined> internalShaders = new ArrayList<>();
     private Map<String, Integer> uniformLocations = new HashMap<>();
 
-    public Shader(String vertexShaderPath, String fragmentShaderPath)
+    public Shader(String path)
     {
-        internalShaders.add(new InternalShader(GL_VERTEX_SHADER, vertexShaderPath));
-        internalShaders.add(new InternalShader(GL_FRAGMENT_SHADER, fragmentShaderPath));
-        compile();
-    }
-
-    public Shader(String vertexShaderPath, String geometryShaderPath, String fragmentShaderPath)
-    {
-        internalShaders.add(new InternalShader(GL_VERTEX_SHADER, vertexShaderPath));
-        internalShaders.add(new InternalShader(GL_GEOMETRY_SHADER, geometryShaderPath));
-        internalShaders.add(new InternalShader(GL_FRAGMENT_SHADER, fragmentShaderPath));
+        String fullSource = IOUtils.readResource(path, IOUtils::resourceToString);
+        assert fullSource != null : "Shader#Shader(String)#fullSource should never be null!";
+        String[] splitSource = fullSource.split(SPLIT_TOKEN);
+        for (int string = 1; string < splitSource.length; ++string)
+        {
+            String type = splitSource[string].substring(0, TYPE_SPECIFIER_LENGTH);
+            String source = splitSource[string].substring(TYPE_SPECIFIER_LENGTH);
+            switch (type)
+            {
+                case "vert":
+                    internalShaders.add(new InternalShaderCombined(GL_VERTEX_SHADER, source));
+                    break;
+                case "frag":
+                    internalShaders.add(new InternalShaderCombined(GL_FRAGMENT_SHADER, source));
+                    break;
+                case "geom":
+                    internalShaders.add(new InternalShaderCombined(GL_GEOMETRY_SHADER, source));
+                    break;
+                default:
+                    MAIN_LOGGER.error("Unknown shader type " + type + "!");
+                    break;
+            }
+        }
         compile();
     }
 
@@ -81,7 +100,20 @@ public class Shader
         }
         glLinkProgram(shaderProgram);
         glValidateProgram(shaderProgram);
-        if (EntryPoint.DEBUG) MAIN_LOGGER.info(glGetProgramInfoLog(shaderProgram));
+        if (EntryPoint.DEBUG)
+        {
+            try (MemoryStack stack = MemoryStack.stackPush())
+            {
+                IntBuffer linkStatus = stack.mallocInt(1);
+                IntBuffer validateStatus = stack.mallocInt(1);
+                glGetProgramiv(shaderProgram, GL_LINK_STATUS, linkStatus);
+                glGetProgramiv(shaderProgram, GL_VALIDATE_STATUS, validateStatus);
+                if (linkStatus.get() == GL_FALSE || validateStatus.get() == GL_FALSE)
+                {
+                    MAIN_LOGGER.info(String.format("Program %d Info Log: %s", shaderProgram, glGetProgramInfoLog(shaderProgram)));
+                }
+            }
+        }
         for (int shader : shaders)
         {
             glDeleteShader(shader);
@@ -91,8 +123,8 @@ public class Shader
 
     private void compile()
     {
-        internalShaders.forEach(InternalShader::compile);
-        List<Integer> internalShaderIds = internalShaders.stream().map(InternalShader::getShaderId).collect(Collectors.toList());
+        internalShaders.forEach(InternalShaderCombined::compile);
+        List<Integer> internalShaderIds = internalShaders.stream().map(InternalShaderCombined::getShaderId).collect(Collectors.toList());
         shaderProgram = createProgram(ArrayUtils.toPrimitiveArrayI(internalShaderIds));
     }
 
@@ -165,20 +197,20 @@ public class Shader
         uniformLocations.clear();
     }
 
-    private static class InternalShader
+    private static class InternalShaderCombined
     {
-        private String sourcePath;
+        private String source;
         private int shaderType, shaderId;
 
-        private InternalShader(int shaderType, String sourcePath)
+        private InternalShaderCombined(int shaderType, String source)
         {
-            this.sourcePath = sourcePath;
+            this.source = source;
             this.shaderType = shaderType;
         }
 
         private void compile()
         {
-            shaderId = createShader(shaderType, IOUtils.readResource(sourcePath, InternalShader::readSourceToString));
+            shaderId = createShader(shaderType, source);
         }
 
         private static int createShader(int shaderType, String source)
@@ -186,33 +218,24 @@ public class Shader
             int shader = glCreateShader(shaderType);
             glShaderSource(shader, source);
             glCompileShader(shader);
-
-            if (EntryPoint.DEBUG) System.out.println(glGetShaderInfoLog(shader));
+            if (EntryPoint.DEBUG)
+            {
+                try (MemoryStack stack = MemoryStack.stackPush())
+                {
+                    IntBuffer compileStatus = stack.mallocInt(1);
+                    glGetShaderiv(shader, GL_COMPILE_STATUS, compileStatus);
+                    if (compileStatus.get() == GL_FALSE)
+                    {
+                        MAIN_LOGGER.error(String.format("Shader %d Info Log: %s", shader, glGetShaderInfoLog(shader)));
+                    }
+                }
+            }
             return shader;
         }
 
         private int getShaderId()
         {
             return shaderId;
-        }
-
-        @NotNull
-        private static String readSourceToString(@NotNull InputStream file)
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            try
-            {
-                int data = file.read();
-                while (data != -1)
-                {
-                    stringBuilder.append((char) data);
-                    data = file.read();
-                }
-            }catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            return stringBuilder.toString();
         }
     }
 }

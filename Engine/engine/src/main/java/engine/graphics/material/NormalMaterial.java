@@ -11,7 +11,7 @@ public class NormalMaterial extends Material
 
     public NormalMaterial(String diffuseTexture, String normalMap)
     {
-        this(ResourceManager.getTexture(diffuseTexture), ResourceManager.getTexture(normalMap));
+        this(ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(normalMap, false));
     }
 
     public NormalMaterial(Texture diffuseTexture, Texture normalMap)
@@ -23,7 +23,7 @@ public class NormalMaterial extends Material
 
     public NormalMaterial(String diffuseTexture, String normalMap, float diffuseStrength, float specularStrength, float specularExponent, float opacity)
     {
-        this(ResourceManager.getTexture(diffuseTexture), ResourceManager.getTexture(normalMap), diffuseStrength, specularStrength, specularExponent, opacity);
+        this(ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(normalMap, false), diffuseStrength, specularStrength, specularExponent, opacity);
     }
 
     public NormalMaterial(Texture diffuseTexture, Texture normalMap, float diffuseStrength, float specularStrength, float specularExponent, float opacity)

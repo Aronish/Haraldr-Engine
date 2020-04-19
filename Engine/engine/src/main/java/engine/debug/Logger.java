@@ -4,6 +4,7 @@ import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Logger with different log levels. Much nicer than println.
@@ -95,7 +96,7 @@ public class Logger
 
     private <T> void log(T message)
     {
-        System.out.println(String.format("%s [%s] [%s]: %s", LocalTime.now(), prefix, logLevel, message));
+        System.out.println(String.format("%s [%s] [%s]: %s", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss:n")).substring(0, 16), prefix, logLevel, message));
     }
 
     private enum LogLevel

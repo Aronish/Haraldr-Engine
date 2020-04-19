@@ -24,7 +24,7 @@ public class RefractiveMaterial extends Material
 
     public RefractiveMaterial(CubeMap environmentMap, String diffuseTexture, String refractionMap)
     {
-        this(environmentMap, 1f / 1.52f, ResourceManager.getTexture(diffuseTexture), ResourceManager.getTexture(refractionMap));
+        this(environmentMap, 1f / 1.52f, ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(refractionMap, false));
     }
 
     public RefractiveMaterial(CubeMap environmentMap, Texture diffuseTexture, Texture refractionMap)
@@ -34,7 +34,7 @@ public class RefractiveMaterial extends Material
 
     public RefractiveMaterial(CubeMap environmentMap, float refractiveRatio, String diffuseTexture, String refractionMap)
     {
-        this(environmentMap, refractiveRatio, ResourceManager.getTexture(diffuseTexture), ResourceManager.getTexture(refractionMap));
+        this(environmentMap, refractiveRatio, ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(refractionMap, false));
     }
 
     public RefractiveMaterial(CubeMap environmentMap, float refractiveRatio, Texture diffuseTexture, Texture refractionMap)
@@ -44,6 +44,11 @@ public class RefractiveMaterial extends Material
         this.refractiveRatio = refractiveRatio;
         this.diffuseTexture = diffuseTexture;
         this.refractionMap = refractionMap;
+    }
+
+    public void setRefractiveRatio(float refractiveRatio)
+    {
+        this.refractiveRatio = refractiveRatio;
     }
 
     @Override

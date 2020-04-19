@@ -38,7 +38,7 @@ public class DiffuseMaterial extends Material
 
     public DiffuseMaterial(String diffuseTexture)
     {
-        this(ResourceManager.getTexture(diffuseTexture));
+        this(ResourceManager.getTexture(diffuseTexture, true));
     }
 
     public DiffuseMaterial(Texture diffuseTexture)
@@ -50,7 +50,7 @@ public class DiffuseMaterial extends Material
 
     public DiffuseMaterial(String diffuseTexture, float diffuseStrength, float specularStrength, float specularExponent, float opacity)
     {
-        this(ResourceManager.getTexture(diffuseTexture), diffuseStrength, specularStrength, specularExponent, opacity);
+        this(ResourceManager.getTexture(diffuseTexture, true), diffuseStrength, specularStrength, specularExponent, opacity);
     }
 
     public DiffuseMaterial(Texture diffuseTexture, float diffuseStrength, float specularStrength, float specularExponent, float opacity)

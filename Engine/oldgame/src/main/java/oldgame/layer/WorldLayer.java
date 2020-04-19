@@ -117,4 +117,10 @@ public class WorldLayer extends Layer
             }
         }
     }
+
+    @Override
+    public void onDispose()
+    {
+
+    }
 }

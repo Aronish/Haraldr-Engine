@@ -45,7 +45,25 @@ public class IOUtils
         return null;
     }
 
-    public static @NotNull ByteBuffer inputStreamToByteBuffer(InputStream data, int initialCapacity)
+    public static @NotNull String resourceToString(@NotNull InputStream file)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        try
+        {
+            int data = file.read();
+            while (data != -1)
+            {
+                stringBuilder.append((char) data);
+                data = file.read();
+            }
+        }catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return stringBuilder.toString();
+    }
+
+    public static @NotNull ByteBuffer resourceToByteBuffer(InputStream data, int initialCapacity)
     {
         ByteBuffer buffer = null;
         try

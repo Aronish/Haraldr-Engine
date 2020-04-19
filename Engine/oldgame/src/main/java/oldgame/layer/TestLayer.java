@@ -28,4 +28,10 @@ public class TestLayer extends Layer
     {
 
     }
+
+    @Override
+    public void onDispose()
+    {
+
+    }
 }

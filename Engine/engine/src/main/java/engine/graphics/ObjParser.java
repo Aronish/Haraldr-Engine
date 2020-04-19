@@ -1,6 +1,7 @@
 package engine.graphics;
 
 import engine.main.ArrayUtils;
+import engine.main.EntryPoint;
 import engine.main.IOUtils;
 import engine.math.Vector2f;
 import engine.math.Vector3f;
@@ -17,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static engine.main.Application.MAIN_LOGGER;
+
 public class ObjParser
 {
     public static final int VERTEX_ELEMENT_COUNT = 11;
@@ -24,7 +27,9 @@ public class ObjParser
     @Nullable
     public static VertexArray loadMesh(String path)
     {
-        return IOUtils.readResource(path, ObjParser::loadMesh);
+        VertexArray mesh = IOUtils.readResource(path, ObjParser::loadMesh);
+        if (EntryPoint.DEBUG) MAIN_LOGGER.info("Loaded mesh " + path);
+        return mesh;
     }
 
     @NotNull

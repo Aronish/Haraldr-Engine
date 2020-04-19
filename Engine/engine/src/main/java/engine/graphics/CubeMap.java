@@ -61,9 +61,9 @@ import static org.lwjgl.opengl.GL45.glBindTextureUnit;
 
 public class CubeMap
 {
-    private static final Shader MAP_CUBEMAP = new Shader("default_shaders/map_cubemap.vert", "default_shaders/map_cubemap.frag");
-    private static final Shader CUBEMAP = new Shader("default_shaders/cubemap.vert", "default_shaders/cubemap.frag");
-    private int height, cubemap;
+    private static final Shader MAP_CUBEMAP = new Shader("default_shaders/map_cubemap.glsl");
+    private static final Shader CUBEMAP = new Shader("default_shaders/cubemap.glsl");
+    private int size, cubemap;
 
     public CubeMap(String path)
     {
@@ -94,20 +94,18 @@ public class CubeMap
 
     private int createCubeMapFromHdr(String path)
     {
-        System.out.println("CREATED CUBEMAP");
         //Load equirectangular hdr
         int equirectangularHdr = loadHdrImage(path);
 
         //Framebuffer for mapping to cubemap texture
         int mappingFrameBuffer = glGenFramebuffers(), depthRenderBuffer = glGenRenderbuffers();
         glBindRenderbuffer(GL_RENDERBUFFER, depthRenderBuffer);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, height, height); //Assuming 2:1 equirectangular
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, size, size); //Assuming 2:1 equirectangular
         glBindFramebuffer(GL_FRAMEBUFFER, mappingFrameBuffer);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderBuffer);
         if (EntryPoint.DEBUG)
         {
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) MAIN_LOGGER.error("Cube map mapping framebuffer INCOMPLETE!");
-            else MAIN_LOGGER.info("Cube map mapping framebuffer COMPLETE!");
         }
 
         //Allocating memory for cubemap
@@ -115,7 +113,7 @@ public class CubeMap
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
         for (int i = 0; i < 6; ++i)
         {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, height, height, 0, GL_RGB, GL_FLOAT, 0);
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, size, size, 0, GL_RGB, GL_FLOAT, 0);
         }
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -137,7 +135,7 @@ public class CubeMap
         MAP_CUBEMAP.setMatrix4f(Matrix4f.scale(new Vector3f(0.5f)), "model"); //(Cube .obj is two units in size)
         MAP_CUBEMAP.setMatrix4f(mappingProjection, "mappingProjection");
         glBindTexture(GL_TEXTURE_2D, equirectangularHdr);
-        glViewport(0, 0, height, height);
+        glViewport(0, 0, size, size);
         glBindFramebuffer(GL_FRAMEBUFFER, mappingFrameBuffer);
         glClearColor(1f, 1f, 1f, 1f);
         glCullFace(GL_FRONT);
@@ -168,17 +166,18 @@ public class CubeMap
             IntBuffer width = stack.mallocInt(1);
             IntBuffer height = stack.mallocInt(1);
             IntBuffer comps = stack.mallocInt(1);
-            ByteBuffer data = IOUtils.readResource(path, (stream) -> IOUtils.inputStreamToByteBuffer(stream, 4 * 4096)); //Assuming hdr format as 4 8bit channels
+            ByteBuffer data = IOUtils.readResource(path, (stream) -> IOUtils.resourceToByteBuffer(stream, 4 * 4096)); //Assuming hdr format as 4 8bit channels
             if (data != null) image = STBImage.stbi_loadf_from_memory(data, width, height, comps, 0);
             else throw new NullPointerException("Resource at " + path + " not found!");
 
             width1 = width.get();
-            this.height = height.get();
+            this.size = height.get();
+            if (EntryPoint.DEBUG) MAIN_LOGGER.info(String.format("Loaded HDR %s | Width: %d, Height: %d, Components: %d", path, width1, this.size, comps.get()));
         }
         assert image != null : "Image was somehow null here!";
         int hdr = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, hdr);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width1, height, 0, GL_RGB, GL_FLOAT, image);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width1, size, 0, GL_RGB, GL_FLOAT, image);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

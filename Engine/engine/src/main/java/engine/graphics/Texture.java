@@ -1,5 +1,6 @@
 package engine.graphics;
 
+import engine.main.EntryPoint;
 import engine.main.IOUtils;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
@@ -26,6 +27,8 @@ import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
+import static org.lwjgl.opengl.GL21.GL_SRGB8;
+import static org.lwjgl.opengl.GL21.GL_SRGB8_ALPHA8;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.opengl.GL45.glBindTextureUnit;
 
@@ -43,13 +46,14 @@ public class Texture
         texture = createTexture(pixelData);
     }
 
-    public Texture(String path)
+    public Texture(String path, boolean isColorData)
     {
-        texture = load(path);
+        texture = load(path, isColorData);
     }
 
-    private int load(String path)
+    private int load(String path, boolean isColorData)
     {
+        isColorData = false; // TODO: FIX GAMMA CORRECTION
         ByteBuffer image;
         STBImage.stbi_set_flip_vertically_on_load(true);
         int internalFormat, format;
@@ -58,30 +62,32 @@ public class Texture
             IntBuffer width = stack.mallocInt(1);
             IntBuffer height = stack.mallocInt(1);
             IntBuffer comps = stack.mallocInt(1);
-            ByteBuffer data = IOUtils.readResource(path, (stream -> IOUtils.inputStreamToByteBuffer(stream, 2))); //I don't know what this buffer size is
+            ByteBuffer data = IOUtils.readResource(path, (stream -> IOUtils.resourceToByteBuffer(stream, 2))); //I don't know what this buffer size is
             if (data != null) image = STBImage.stbi_load_from_memory(data, width, height, comps, 0);
             else throw new NullPointerException("Image at " + path + " not found!");
 
             this.width = width.get();
             this.height = height.get();
-            switch (comps.get())
+            int components = comps.get();
+            if (EntryPoint.DEBUG) MAIN_LOGGER.info(String.format("Loaded texture %s | Width: %d, Height: %d, Components: %d", path, this.width, this.height, components));
+            switch (components)
             {
                 case 3:
-                    internalFormat = GL_RGB8;
+                    internalFormat = isColorData ? GL_SRGB8 : GL_RGB8;
                     format = GL_RGB;
                     break;
                 case 4:
-                    internalFormat = GL_RGBA8;
+                    internalFormat = isColorData ? GL_SRGB8_ALPHA8 : GL_RGBA8;
                     format = GL_RGBA;
                     break;
                 default:
                     MAIN_LOGGER.error("Image format not supported!");
-                    internalFormat = GL_RGBA8;
+                    internalFormat = GL_SRGB8_ALPHA8;
                     format = GL_RGBA;
                     break;
             }
         }
-        assert image != null : "Somehow image was null here!";
+        assert image != null : "Image was somehow null here!";
         int texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

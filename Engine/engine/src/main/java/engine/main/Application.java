@@ -4,6 +4,7 @@ import engine.debug.Logger;
 import engine.event.Event;
 import engine.event.EventDispatcher;
 import engine.event.EventType;
+import engine.event.WindowClosedEvent;
 import engine.event.WindowResizedEvent;
 import engine.graphics.Renderer2D;
 import engine.graphics.Shader;
@@ -30,6 +31,9 @@ import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
+import static org.lwjgl.opengl.GL43.GL_DEBUG_SEVERITY_NOTIFICATION;
+import static org.lwjgl.opengl.GL43.GL_DEBUG_TYPE_ERROR;
+import static org.lwjgl.opengl.GL43.GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR;
 import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
 import static org.lwjgl.system.MemoryUtil.memUTF8;
 
@@ -52,10 +56,10 @@ public abstract class Application
         event.setHandled(true);
     }
 
-    protected void init(int windowWidth, int windowHeight, boolean maximized, boolean fullscreen, boolean vSync)
+    protected void init(Window.WindowProperties windowProperties)
     {
         /////WINDOW///////////////////////////////////////////////////////
-        window = new Window(windowWidth, windowHeight, maximized, fullscreen, vSync);
+        window = new Window(windowProperties);
         initWidth = window.getInitWidth();
         initHeight = window.getInitHeight();
         /////OPENGL CODE WON'T WORK BEFORE THIS///////////////////////////
@@ -63,7 +67,10 @@ public abstract class Application
         Matrix4f.init(window.getWidth(), window.getHeight());
 
         //glEnable(GL_FRAMEBUFFER_SRGB);
-        //glEnable(GL_MULTISAMPLE); // Definitely has performance impact
+        if (ProgramArguments.isArgumentSet("MSAA"))
+        {
+            glEnable(GL_MULTISAMPLE); // Definitely has performance impact even if GLFW_SAMPLES is 0.
+        }
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
@@ -74,8 +81,13 @@ public abstract class Application
             glEnable(GL_DEBUG_OUTPUT);
             glDebugMessageCallback((source, type, id, severity, length, message, userparam) ->
             {
-                System.out.println("Source: " + Integer.toHexString(source) + "\nType: " + Integer.toHexString(type) + "\nSeverity: " + Integer.toHexString(severity) + "\nLength: " + length);
-                System.out.println(memUTF8(message) + "\n");
+                if (severity != GL_DEBUG_SEVERITY_NOTIFICATION)
+                {
+                    System.out.println();
+                    MAIN_LOGGER.info(String.format("[OPENGL] (Source: %s, Type: %s, Severity: %s):", Integer.toHexString(source), Integer.toHexString(type), Integer.toHexString(severity)));
+                    MAIN_LOGGER.info(memUTF8(message) + "\n");
+                }
+                if (type == GL_DEBUG_TYPE_ERROR || type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR) stop(new WindowClosedEvent());
             }, 0);
         }
 
@@ -163,6 +175,8 @@ public abstract class Application
         Shader.NORMAL.delete();
         Shader.LIGHT_SHADER.delete();
         Shader.VISIBLE_NORMALS.delete();
+        Shader.REFLECTIVE.delete();
+        Shader.REFRACTIVE.delete();
         glfwTerminate();
     }
 }

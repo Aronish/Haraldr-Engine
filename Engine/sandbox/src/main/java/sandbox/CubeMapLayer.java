@@ -7,13 +7,12 @@ import engine.event.MouseMovedEvent;
 import engine.event.MouseScrolledEvent;
 import engine.graphics.CubeMap;
 import engine.graphics.DefaultModels;
-import engine.graphics.lighting.DirectionalLight;
 import engine.graphics.ForwardRenderer;
 import engine.graphics.Model;
-import engine.graphics.material.ReflectiveMaterial;
+import engine.graphics.lighting.DirectionalLight;
 import engine.graphics.lighting.SceneLights;
 import engine.graphics.lighting.Spotlight;
-import engine.graphics.material.RefractiveMaterial;
+import engine.graphics.material.NormalMaterial;
 import engine.input.Button;
 import engine.input.Input;
 import engine.layer.Layer;
@@ -27,20 +26,19 @@ public class CubeMapLayer extends Layer
 {
     private ForwardRenderer renderer = new ForwardRenderer();
     private PerspectiveCamera perspectiveCamera = new PerspectiveCamera();
-    private final Spotlight flashLight = new Spotlight(perspectiveCamera.getPosition(), perspectiveCamera.getDirection(), new Vector3f(1f), 20f, 25f);
-    private final DirectionalLight directionalLight = new DirectionalLight(new Vector3f(5f), new Vector3f(-1f, -2f, -3f), new Vector3f(1f, 1f, 0.8f));
+    private final Spotlight flashLight = new Spotlight(perspectiveCamera.getPosition(), perspectiveCamera.getDirection(), new Vector3f(1f), 10f, 25f);
+    private final DirectionalLight directionalLight = new DirectionalLight(new Vector3f(0f), new Vector3f(-1f, -2f, -3f), new Vector3f(1f, 1f, 0.8f));
     private final SceneLights sceneLights = new SceneLights();
 
     private CubeMap environmentMap = new CubeMap("default_hdris/cape_hill_4k.hdr");
-
     private Model model = new Model(
             DefaultModels.PLANE.mesh,
-            new ReflectiveMaterial(
-                    environmentMap,
-                    "default_textures/TilesRectangularMirrorGray001_COL_4K.jpg",
-                    "default_textures/TilesRectangularMirrorGray001_REFL_4K.jpg"
+            new NormalMaterial(
+                    "default_textures/brickwall.jpg",
+                    "default_textures/brickwall_normal.jpg",
+                    1f, 0.5f, 480f, 1f
             ),
-            Matrix4f.rotate(new Vector3f(1f), -45f).multiply(Matrix4f.scale(new Vector3f(5f)))
+            Matrix4f.rotate(new Vector3f(0f, 1f, 0f), 45f)
     );
 
     public CubeMapLayer(String name)
@@ -92,7 +90,8 @@ public class CubeMapLayer extends Layer
             perspectiveCamera.getController().handleMovement(perspectiveCamera, window.getWindowHandle(), deltaTime);
         }
         rotation += 10f * deltaTime;
-        //model.setTransformationMatrix(Matrix4f.rotate(new Vector3f(0f, 1f, 0f), rotation));
+        //reflectiveSuzanne.setTransformationMatrix(Matrix4f.translate(new Vector3f(0f, 0f, 8f)).multiply(Matrix4f.rotate(new Vector3f(1f), rotation)).multiply(Matrix4f.scale(new Vector3f(5f))));
+        //refractiveSuzanne.setTransformationMatrix(Matrix4f.translate(new Vector3f(0f, 0f, -8f)).multiply(Matrix4f.rotate(new Vector3f(-1f), rotation)).multiply(Matrix4f.scale(new Vector3f(5f))));
         flashLight.setDirection(perspectiveCamera.getDirection());
         flashLight.setPosition(perspectiveCamera.getPosition());
     }
@@ -102,13 +101,20 @@ public class CubeMapLayer extends Layer
     {
         renderer.begin(perspectiveCamera);
         model.render(renderer);
+        for (int x = 0; x < 20; ++x)
+        {
+            for (int z = 0; z < 20; ++z)
+            {
+                renderer.drawCube(new Vector3f(x * 5f, 3f, z * 5f));
+            }
+        }
         environmentMap.renderSkyBox();
     }
 
     @Override
     public void onDispose()
     {
-        model.delete();
         environmentMap.delete();
+        model.delete();
     }
 }

@@ -10,6 +10,7 @@ import engine.event.MouseScrolledEvent;
 import engine.event.WindowClosedEvent;
 import engine.event.WindowFocusEvent;
 import engine.event.WindowResizedEvent;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 
@@ -63,15 +64,15 @@ public class Window
 {
     private long windowHandle;
     private GLFWVidMode vidmode;
-    private boolean VSyncOn;
+    private boolean vSyncOn;
     private boolean isFullscreen;
     private boolean focused = true;
     private int windowWidth, windowHeight, initWidth, initHeight;
 
-    Window(int width, int height, boolean maximized, boolean fullscreen, boolean vSync)
+    Window(@NotNull WindowProperties windowProperties)
     {
-        isFullscreen = fullscreen;
-        VSyncOn = vSync;
+        isFullscreen = windowProperties.fullscreen;
+        vSyncOn = windowProperties.vsync;
 
         if (!glfwInit())
         {
@@ -84,9 +85,9 @@ public class Window
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-        glfwWindowHint(GLFW_MAXIMIZED, maximized ? GLFW_TRUE : GLFW_FALSE);
+        glfwWindowHint(GLFW_MAXIMIZED, windowProperties.maximized ? GLFW_TRUE : GLFW_FALSE);
 
-        glfwWindowHint(GLFW_SAMPLES, 0);
+        glfwWindowHint(GLFW_SAMPLES, windowProperties.samples);
 
         vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         if (vidmode == null)
@@ -94,12 +95,12 @@ public class Window
             throw new IllegalStateException("Vidmode was not found!");
         }
 
-        initWidth       = fullscreen ? vidmode.width()  : (maximized ? vidmode.width() : width);
-        initHeight      = fullscreen ? vidmode.height() : (maximized ? vidmode.height() - 63 : height); // -63 for window borders
-        windowWidth     = fullscreen ? vidmode.width()  : (maximized ? vidmode.width() : width);
-        windowHeight    = fullscreen ? vidmode.height() : (maximized ? vidmode.height() - 63 : height);
+        initWidth       = windowProperties.fullscreen ? vidmode.width()  : (windowProperties.maximized ? vidmode.width() : windowProperties.width);
+        initHeight      = windowProperties.fullscreen ? vidmode.height() : (windowProperties.maximized ? vidmode.height() - 63 : windowProperties.height); // -63 for window borders
+        windowWidth     = windowProperties.fullscreen ? vidmode.width()  : (windowProperties.maximized ? vidmode.width() : windowProperties.width);
+        windowHeight    = windowProperties.fullscreen ? vidmode.height() : (windowProperties.maximized ? vidmode.height() - 63 : windowProperties.height);
 
-        windowHandle = glfwCreateWindow(windowWidth, windowHeight, "OpenGL Game", (fullscreen ? glfwGetPrimaryMonitor() : NULL), NULL);
+        windowHandle = glfwCreateWindow(windowWidth, windowHeight, "OpenGL Game", (windowProperties.fullscreen ? glfwGetPrimaryMonitor() : NULL), NULL);
         if (windowHandle == NULL)
         {
             glfwTerminate();
@@ -112,7 +113,7 @@ public class Window
 
         setCursorVisible(true);
         setFocus(true);
-        setVSync(vSync);
+        setVSync(windowProperties.vsync);
         ///// CALLBACKS ///////////////////////////////////////////////////////////
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
             if (action == GLFW_PRESS){
@@ -183,7 +184,7 @@ public class Window
 
     public void setVSync(boolean enabled)
     {
-        VSyncOn = enabled;
+        vSyncOn = enabled;
         glfwSwapInterval(enabled ? 1 : 0);
     }
 
@@ -192,9 +193,9 @@ public class Window
         glfwSetWindowTitle(windowHandle, title);
     }
 
-    public boolean VSyncOn()
+    public boolean vSyncOn()
     {
-        return VSyncOn;
+        return vSyncOn;
     }
 
     public long getWindowHandle()
@@ -225,5 +226,21 @@ public class Window
     public boolean isFocused()
     {
         return focused;
+    }
+
+    public static class WindowProperties
+    {
+        public final int width, height, samples;
+        public final boolean maximized, fullscreen, vsync;
+
+        public WindowProperties(int width, int height, int samples, boolean maximized, boolean fullscreen, boolean vsync)
+        {
+            this.width = width;
+            this.height = height;
+            this.samples = samples;
+            this.maximized = maximized;
+            this.fullscreen = fullscreen;
+            this.vsync = vsync;
+        }
     }
 }

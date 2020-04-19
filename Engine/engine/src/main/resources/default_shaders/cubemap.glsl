@@ -1,3 +1,4 @@
+#shader vert
 #version 460 core
 layout (location = 0) in vec3 a_Position;
 
@@ -17,4 +18,19 @@ void main()
     vec4 clipPos = projection * rotView * vec4(v_LocalPosition, 1.f);
 
     gl_Position = clipPos.xyww;
+}
+
+#shader frag
+#version 460 core
+
+in vec3 v_LocalPosition;
+
+layout (location = 0) uniform samplerCube environmentMap;
+
+out vec4 o_Color;
+
+void main()
+{
+    vec3 envColor = texture(environmentMap, v_LocalPosition).rgb;
+    o_Color = vec4(envColor, 1.f);
 }

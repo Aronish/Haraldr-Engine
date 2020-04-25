@@ -16,6 +16,8 @@ public abstract class Layer
         LOGGER = new Logger(name);
     }
 
+    public abstract void onAttach(Window window);
+
     public abstract void onEvent(Window window, Event event);
 
     public abstract void onUpdate(Window window, float deltaTime);

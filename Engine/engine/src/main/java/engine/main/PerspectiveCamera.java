@@ -7,13 +7,11 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class PerspectiveCamera
 {
-    public static final Vector3f up = new Vector3f(0f, 1f, 0f);
-
     private Matrix4f viewMatrix;
     private Matrix4f lookAt;
     private Vector3f position;
 
-    private float pitch = -20f, yaw = -90f;
+    private float pitch = 0f, yaw = 0f;
     private Vector3f direction = new Vector3f(
             (float) Math.cos(Math.toRadians(yaw) * Math.cos(Math.toRadians(pitch))),
             (float) Math.sin(Math.toRadians(pitch)),
@@ -24,30 +22,22 @@ public class PerspectiveCamera
 
     public PerspectiveCamera()
     {
-        this(new Vector3f(), 0f);
+        this(new Vector3f());
     }
 
     public PerspectiveCamera(Vector3f position)
     {
-        this(position, 0f);
+        this.position = position;
+        this.controller = new PerspectiveCameraController(this);
+        calculateViewMatrix();
     }
 
     public PerspectiveCamera(PerspectiveCameraController controller)
     {
-        this(new Vector3f(), 0f, controller);
-    }
-
-    public PerspectiveCamera(Vector3f position, float horizontalRotation)
-    {
-        this(position, horizontalRotation, new PerspectiveCameraController());
+        this(new Vector3f(), controller);
     }
 
     public PerspectiveCamera(Vector3f position, PerspectiveCameraController controller)
-    {
-        this(position, 0f, controller);
-    }
-
-    public PerspectiveCamera(Vector3f position, float horizontalRotation, PerspectiveCameraController controller)
     {
         this.position = position;
         this.controller = controller;
@@ -67,7 +57,7 @@ public class PerspectiveCamera
                 (float) Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch))
         );
         direction.normalize();
-        return Matrix4f.lookAt(position, Vector3f.add(position, direction), up);
+        return Matrix4f.lookAt(position, Vector3f.add(position, direction), Vector3f.UP);
     }
 
     public void setPosition(@NotNull Vector3f position)

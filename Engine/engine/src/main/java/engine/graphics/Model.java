@@ -2,7 +2,6 @@ package engine.graphics;
 
 import engine.graphics.material.Material;
 import engine.math.Matrix4f;
-import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class Model
@@ -13,7 +12,7 @@ public class Model
 
     public Model(String modelPath, Material material)
     {
-        this(ResourceManager.getMesh(modelPath), material, Matrix4f.identity());
+        this(ResourceManager.getMesh(modelPath), material, new Matrix4f());
     }
 
     public Model(String modelPath, Material material, Matrix4f transformationMatrix)
@@ -23,7 +22,7 @@ public class Model
 
     public Model(VertexArray mesh, Material material)
     {
-        this(mesh, material, Matrix4f.identity());
+        this(mesh, material, new Matrix4f());
     }
 
     public Model(VertexArray mesh, Material material, Matrix4f transformationMatrix)
@@ -38,27 +37,43 @@ public class Model
         this.transformationMatrix = transformationMatrix;
     }
 
-    public void render(@NotNull ForwardRenderer renderer)
+    public void render()
     {
         material.bind();
         material.getShader().setMatrix4f(transformationMatrix, "model");
-        material.getShader().setVector3f(renderer.getViewPosition(), "viewPosition");
+        material.getShader().setVector3f(ForwardRenderer.getPerspectiveCamera().getPosition(), "viewPosition");
         mesh.bind();
         mesh.drawElements();
     }
 
-    public void renderTransformed(@NotNull ForwardRenderer renderer, Matrix4f transformationMatrix)
+    public void renderTransformed(Matrix4f transformationMatrix)
     {
         material.bind();
         material.getShader().setMatrix4f(transformationMatrix, "model");
-        material.getShader().setVector3f(renderer.getViewPosition(), "viewPosition");
+        material.getShader().setVector3f(ForwardRenderer.getPerspectiveCamera().getPosition(), "viewPosition");
         mesh.bind();
         mesh.drawElements();
+    }
+
+    public void renderNoMaterial()
+    {
+        mesh.bind();
+        mesh.drawElements();
+    }
+
+    public VertexArray getMesh()
+    {
+        return mesh;
     }
 
     public Material getMaterial()
     {
         return material;
+    }
+
+    public Matrix4f getTransformationMatrix()
+    {
+        return transformationMatrix;
     }
 
     public void delete()

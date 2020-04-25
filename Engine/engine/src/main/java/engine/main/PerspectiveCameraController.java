@@ -17,16 +17,22 @@ import static engine.input.Key.KEY_W;
 
 public class PerspectiveCameraController
 {
-    private static final float CAMERA_SPEED = 0.5f;
+    private static final float CAMERA_SPEED = 3f;
     private static final float MOVEMENT_SENSITIVITY = 0.1f;
     private static final float ZOOM_SENSITIVITY = 2f;
 
+    private PerspectiveCamera reference;
     private float lastX, lastY;
 
-    public void handleRotation(@NotNull PerspectiveCamera camera, @NotNull MouseMovedEvent event)
+    public PerspectiveCameraController(PerspectiveCamera reference)
     {
-        camera.addYaw(((float) event.xPos - lastX) * MOVEMENT_SENSITIVITY);
-        camera.addPitch((lastY - (float) event.yPos) * MOVEMENT_SENSITIVITY);
+        this.reference = reference;
+    }
+
+    public void handleRotation(@NotNull MouseMovedEvent event)
+    {
+        reference.addYaw(((float) event.xPos - lastX) * MOVEMENT_SENSITIVITY);
+        reference.addPitch((lastY - (float) event.yPos) * MOVEMENT_SENSITIVITY);
         lastX = (float) event.xPos;
         lastY = (float) event.yPos;
     }
@@ -36,35 +42,35 @@ public class PerspectiveCameraController
         Matrix4f.addZoom((float) -event.yOffset * ZOOM_SENSITIVITY);
     }
 
-    public void handleMovement(PerspectiveCamera camera, long window, float deltaTime)
+    public void handleMovement(Window window, float deltaTime)
     {
         if (Input.isKeyPressed(window, KEY_W))
         {
-            camera.addPosition(camera.getDirection().multiply(CAMERA_SPEED * deltaTime));
+            reference.addPosition(reference.getDirection().multiply(CAMERA_SPEED * deltaTime));
         }
         if (Input.isKeyPressed(window, KEY_S))
         {
-            camera.addPosition(camera.getDirection().multiply(-CAMERA_SPEED * deltaTime));
+            reference.addPosition(reference.getDirection().multiply(-CAMERA_SPEED * deltaTime));
         }
         if (Input.isKeyPressed(window, KEY_D))
         {
-            camera.addPosition(Vector3f.normalize(Vector3f.cross(camera.getDirection(), PerspectiveCamera.up)).multiply(CAMERA_SPEED * deltaTime));
+            reference.addPosition(Vector3f.normalize(Vector3f.cross(reference.getDirection(), Vector3f.UP)).multiply(CAMERA_SPEED * deltaTime));
         }
         if (Input.isKeyPressed(window, KEY_A))
         {
-            camera.addPosition(Vector3f.normalize(Vector3f.cross(camera.getDirection(), PerspectiveCamera.up)).multiply(-CAMERA_SPEED * deltaTime));
+            reference.addPosition(Vector3f.normalize(Vector3f.cross(reference.getDirection(), Vector3f.UP)).multiply(-CAMERA_SPEED * deltaTime));
         }
         if (Input.isKeyPressed(window, KEY_SPACE))
         {
-            camera.addPosition(Vector3f.normalize(Vector3f.cross(Vector3f.normalize(Vector3f.cross(camera.getDirection(), PerspectiveCamera.up)), camera.getDirection())).multiply(CAMERA_SPEED * deltaTime));
+            reference.addPosition(Vector3f.normalize(Vector3f.cross(Vector3f.normalize(Vector3f.cross(reference.getDirection(), Vector3f.UP)), reference.getDirection())).multiply(CAMERA_SPEED * deltaTime));
         }
         if (Input.isKeyPressed(window, KEY_C))
         {
-            camera.addPosition(Vector3f.normalize(Vector3f.cross(Vector3f.normalize(Vector3f.cross(camera.getDirection(), PerspectiveCamera.up)), camera.getDirection())).multiply(-CAMERA_SPEED * deltaTime));
+            reference.addPosition(Vector3f.normalize(Vector3f.cross(Vector3f.normalize(Vector3f.cross(reference.getDirection(), Vector3f.UP)), reference.getDirection())).multiply(-CAMERA_SPEED * deltaTime));
         }
         if (Input.isKeyPressed(window, KEY_R))
         {
-            camera.setPosition(new Vector3f(0f, 0f, -5f));
+            reference.setPosition(new Vector3f(0f, 0f, -5f));
             Matrix4f.resetZoom();
         }
     }

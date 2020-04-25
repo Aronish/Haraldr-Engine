@@ -4,8 +4,11 @@ import engine.debug.Logger;
 import engine.event.Event;
 import engine.event.EventDispatcher;
 import engine.event.EventType;
+import engine.event.MouseMovedEvent;
+import engine.event.MouseScrolledEvent;
 import engine.event.WindowClosedEvent;
 import engine.event.WindowResizedEvent;
+import engine.graphics.ForwardRenderer;
 import engine.graphics.Renderer2D;
 import engine.graphics.Shader;
 import engine.input.Input;
@@ -43,7 +46,7 @@ public abstract class Application
 
     private boolean initialized = false;
     protected LayerStack layerStack = new LayerStack();
-    private Window window;
+    protected Window window;
 
     public static double time;
     public static int initWidth, initHeight;
@@ -65,6 +68,7 @@ public abstract class Application
         /////OPENGL CODE WON'T WORK BEFORE THIS///////////////////////////
         EventDispatcher.addCallback(new EventCallback());
         Matrix4f.init(window.getWidth(), window.getHeight());
+        ForwardRenderer.init(window);
 
         //glEnable(GL_FRAMEBUFFER_SRGB);
         if (ProgramArguments.isArgumentSet("MSAA"))
@@ -87,7 +91,7 @@ public abstract class Application
                     MAIN_LOGGER.info(String.format("[OPENGL] (Source: %s, Type: %s, Severity: %s):", Integer.toHexString(source), Integer.toHexString(type), Integer.toHexString(severity)));
                     MAIN_LOGGER.info(memUTF8(message) + "\n");
                 }
-                if (type == GL_DEBUG_TYPE_ERROR || type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR) stop(new WindowClosedEvent());
+                //if (type == GL_DEBUG_TYPE_ERROR || type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR) stop(new WindowClosedEvent());
             }, 0);
         }
 
@@ -104,8 +108,19 @@ public abstract class Application
             if (event.eventType == EventType.WINDOW_RESIZED) Matrix4f.onResize((WindowResizedEvent) event);
             if (event.eventType == EventType.KEY_PRESSED)
             {
-                if (Input.isKeyPressed(window.getWindowHandle(), Key.KEY_ESCAPE)) stop(event);
-                if (Input.isKeyPressed(window.getWindowHandle(), Key.KEY_F)) window.changeFullscreen();
+                if (Input.isKeyPressed(window, Key.KEY_ESCAPE)) stop(event);
+                if (Input.isKeyPressed(window, Key.KEY_F)) window.changeFullscreen();
+            }
+            if (event.eventType == EventType.MOUSE_MOVED)
+            {
+                if (window.isFocused())
+                {
+                    ForwardRenderer.getPerspectiveCamera().getController().handleRotation((MouseMovedEvent) event);
+                }
+            }
+            if (event.eventType == EventType.MOUSE_SCROLLED)
+            {
+                ForwardRenderer.getPerspectiveCamera().getController().handleScroll((MouseScrolledEvent) event);
             }
             for (Layer layer : layerStack)
             {
@@ -118,6 +133,10 @@ public abstract class Application
     private void update(float deltaTime)
     {
         time = glfwGetTime();
+        if (window.isFocused())
+        {
+            ForwardRenderer.getPerspectiveCamera().getController().handleMovement(window, deltaTime);
+        }
         for (Layer layer : layerStack)
         {
             layer.onUpdate(window, deltaTime);
@@ -127,8 +146,9 @@ public abstract class Application
 
     private void render()
     {
-        Renderer2D.clear();
+        ForwardRenderer.begin();
         layerStack.reverseIterator().forEachRemaining(Layer::onRender);
+        ForwardRenderer.end();
         glfwSwapBuffers(window.getWindowHandle());
     }
 
@@ -151,7 +171,7 @@ public abstract class Application
             if (timer >= 1d)
             {
                 int fps = (int) (frames / timer), ups = (int) (updates / timer);
-                window.setTitle("FPS: " + fps + " UPS: " + ups);
+                window.setTitle(String.format("FPS: %d UPS: %d Frametime: %f ms", fps, ups, frameTime * 1000d));
                 timer = 0.0d;
                 frames = 0;
                 updates = 0;

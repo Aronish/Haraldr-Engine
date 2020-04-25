@@ -31,10 +31,15 @@ public class LightCastersLayer extends Layer
     public LightCastersLayer(String name)
     {
         super(name);
-        renderer.getSceneLights().addLight(spotLight);
-        renderer.getSceneLights().addLight(directionalLight);
-        renderer.getSceneLights().addLight(pointLight);
-        renderer.getSceneLights().addLight(pointLight2);
+        ForwardRenderer.getSceneLights().addLight(spotLight);
+        ForwardRenderer.getSceneLights().addLight(directionalLight);
+        ForwardRenderer.getSceneLights().addLight(pointLight);
+        ForwardRenderer.getSceneLights().addLight(pointLight2);
+    }
+
+    @Override
+    public void onAttach(Window window)
+    {
     }
 
     @Override
@@ -44,7 +49,7 @@ public class LightCastersLayer extends Layer
         {
             if (window.isFocused())
             {
-                perspectiveCamera.getController().handleRotation(perspectiveCamera, (MouseMovedEvent) event);
+                perspectiveCamera.getController().handleRotation((MouseMovedEvent) event);
             }
         }
         if (event.eventType == EventType.MOUSE_SCROLLED)
@@ -68,7 +73,7 @@ public class LightCastersLayer extends Layer
     {
         if (window.isFocused())
         {
-            perspectiveCamera.getController().handleMovement(perspectiveCamera, window.getWindowHandle(), deltaTime);
+            perspectiveCamera.getController().handleMovement(window, deltaTime);
         }
         rotation += 100 * deltaTime;
         sin = (float) Math.sin(Application.time / 3f);
@@ -93,21 +98,22 @@ public class LightCastersLayer extends Layer
     @Override
     public void onRender()
     {
-        renderer.begin(perspectiveCamera);
+        ForwardRenderer.begin();
         spotLight.render();
         spotLight.renderDirectionVector();
         directionalLight.render();
         directionalLight.renderDirectionVector();
         pointLight.render();
         pointLight2.render();
-        renderer.drawCube(new Vector3f(1f, 2f, 3f), 1f, rotationAxes[0], -rotation);
-        renderer.drawCube(new Vector3f(-3, 5f, 5f), 1f, rotationAxes[1], rotation);
-        renderer.drawCube(new Vector3f(4f, 0f, -1f), 1f, rotationAxes[2], -rotation);
-        renderer.drawCube(new Vector3f(-7f, 0f, 3f), 1f, rotationAxes[3], rotation);
+        //renderer.drawCube(new Vector3f(1f, 2f, 3f), 1f, rotationAxes[0], -rotation);
+        //renderer.drawCube(new Vector3f(-3, 5f, 5f), 1f, rotationAxes[1], rotation);
+        //renderer.drawCube(new Vector3f(4f, 0f, -1f), 1f, rotationAxes[2], -rotation);
+        //renderer.drawCube(new Vector3f(-7f, 0f, 3f), 1f, rotationAxes[3], rotation);
     }
 
     @Override
     public void onDispose()
     {
+
     }
 }

@@ -88,7 +88,7 @@ public class VertexArray
         glDrawElements(drawMode, indexAmount, GL_UNSIGNED_INT, 0);
     }
 
-    public void drawInstanced(int count)
+    public void drawElementsInstanced(int count)
     {
         glDrawElementsInstanced(GL_TRIANGLES, indexAmount, GL_UNSIGNED_INT, 0, count);
     }

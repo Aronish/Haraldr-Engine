@@ -1,6 +1,8 @@
 package engine.main;
 
+import engine.event.EventCallback;
 import engine.event.EventDispatcher;
+import engine.event.EventObserver;
 import engine.event.KeyPressedEvent;
 import engine.event.KeyReleasedEvent;
 import engine.event.MouseMovedEvent;
@@ -13,6 +15,9 @@ import engine.event.WindowResizedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
@@ -68,6 +73,8 @@ public class Window
     private boolean isFullscreen;
     private boolean focused = true;
     private int windowWidth, windowHeight, initWidth, initHeight;
+
+    private List<EventObserver<WindowResizedEvent>> observers = new ArrayList<>();
 
     Window(@NotNull WindowProperties windowProperties)
     {
@@ -140,6 +147,10 @@ public class Window
         glfwSetWindowSizeCallback(windowHandle, (window, newWidth, newHeight) -> {
             windowWidth = newWidth;
             windowHeight = newHeight;
+            for (EventObserver<WindowResizedEvent> observer : observers)
+            {
+                observer.onEvent(new WindowResizedEvent(newWidth, newHeight));
+            }
             EventDispatcher.dispatch(new WindowResizedEvent(newWidth, newHeight), this);
             setViewPortSize(newWidth, newHeight);
         });
@@ -150,6 +161,16 @@ public class Window
         });
 
         glfwSetErrorCallback((error, description) -> MAIN_LOGGER.info(error, description));
+    }
+
+    public void addObserver(EventObserver<WindowResizedEvent> observer)
+    {
+        observers.add(observer);
+    }
+
+    public void removeObserver(EventObserver<WindowResizedEvent> observer)
+    {
+        observers.remove(observer);
     }
 
     public void changeFullscreen()

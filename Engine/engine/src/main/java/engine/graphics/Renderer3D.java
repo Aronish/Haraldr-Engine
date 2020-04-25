@@ -1,26 +1,55 @@
 package engine.graphics;
 
-import engine.graphics.material.DiffuseMaterial;
-import engine.graphics.material.Material;
 import engine.main.PerspectiveCamera;
-import engine.math.Matrix4f;
 import engine.math.Vector3f;
+import engine.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+
+@SuppressWarnings("unused")
 public abstract class Renderer3D
 {
-    protected Vector3f viewPosition = new Vector3f();
+    public static final VertexArray SCREEN_QUAD = new VertexArray();
 
-    public abstract void begin(PerspectiveCamera camera);
-
-    public Vector3f getViewPosition()
+    static
     {
-        return viewPosition;
+        float[] quadVertexData =
+                {
+                        -1f,  1f,   0f, 1f,
+                         1f,  1f,   1f, 1f,
+                         1f, -1f,   1f, 0f,
+                        -1f, -1f,   0f, 0f
+                };
+        VertexBuffer quadVertices = new VertexBuffer(
+                quadVertexData,
+                new VertexBufferLayout(new VertexBufferElement(ShaderDataType.FLOAT2), new VertexBufferElement(ShaderDataType.FLOAT2)),
+                false
+        );
+        SCREEN_QUAD.setVertexBuffers(quadVertices);
+        SCREEN_QUAD.setIndexBuffer(new int[] { 0, 3, 2, 0, 2, 1 });
+    }
+
+    protected static PerspectiveCamera perspectiveCamera = new PerspectiveCamera(); //TODO: Make camera base class.
+
+    public static PerspectiveCamera getPerspectiveCamera()
+    {
+        return perspectiveCamera;
+    }
+
+    public static void clear(int mask)
+    {
+        glClear(mask);
+    }
+
+    public static void setClearColor(@NotNull Vector4f color)
+    {
+        glClearColor(color.getX(), color.getY(), color.getZ(), color.getW());
     }
 
     /////DEFAULT//////////
-
+/*
     public void drawCube()
     {
         drawCube(Matrix4f.identity());
@@ -85,4 +114,5 @@ public abstract class Renderer3D
         DefaultModels.CUBE.bind();
         DefaultModels.CUBE.drawElements();
     }
+*/
 }

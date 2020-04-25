@@ -5,7 +5,6 @@ import engine.main.Window;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO: Create support for subscribing to certain events.
 @SuppressWarnings("unused")
 public class EventDispatcher
 {

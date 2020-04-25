@@ -2,6 +2,8 @@ package engine.graphics;
 
 import engine.main.EntryPoint;
 import engine.main.IOUtils;
+import engine.main.Window;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
@@ -9,6 +11,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import static engine.main.Application.MAIN_LOGGER;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_LINEAR_MIPMAP_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;
@@ -29,31 +32,33 @@ import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL21.GL_SRGB8;
 import static org.lwjgl.opengl.GL21.GL_SRGB8_ALPHA8;
+import static org.lwjgl.opengl.GL30.GL_RGB16F;
+import static org.lwjgl.opengl.GL30.GL_RGBA16F;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.opengl.GL45.glBindTextureUnit;
+import static org.lwjgl.opengl.GL45.glCreateTextures;
 
 public class Texture
 {
     public static final Texture DEFAULT_TEXTURE = new Texture(1, 1, new int[] { -1 });
 
     private int width, height;
-    private int texture;
+    private int textureId;
 
     private Texture(int width, int height, int[] pixelData)
     {
         this.width = width;
         this.height = height;
-        texture = createTexture(pixelData);
+        textureId = createTexture(pixelData);
     }
 
     public Texture(String path, boolean isColorData)
     {
-        texture = load(path, isColorData);
+        textureId = load(path, isColorData);
     }
 
     private int load(String path, boolean isColorData)
     {
-        isColorData = false; // TODO: FIX GAMMA CORRECTION
         ByteBuffer image;
         STBImage.stbi_set_flip_vertically_on_load(true);
         int internalFormat, format;
@@ -132,7 +137,7 @@ public class Texture
 
     public void bind(int unit)
     {
-        glBindTextureUnit(unit, texture);
+        glBindTextureUnit(unit, textureId);
     }
 
     public void unbind(int unit)
@@ -142,6 +147,6 @@ public class Texture
 
     public void delete()
     {
-        glDeleteTextures(texture);
+        glDeleteTextures(textureId);
     }
 }

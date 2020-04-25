@@ -6,19 +6,19 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Matrix4f
 {
+    public static final Matrix4f IDENTITY = identity();
+    /////ORTHOGRAPHIC///////////////////////////
+    public static float dynamicOrthographicAxis;
     public static final float FIXED_ORTHOGRAPHIC_AXIS = 9f;
     private static final float NEAR_FAR = 5f;
-
-    public static float dynamicOrthographicAxis;
     public static float scale = 1f;
     private static final boolean fixedWidth = true; //Fixed width is better
-
+    public static Matrix4f orthographic;
+    public static Matrix4f pixelOrthographic;
+    /////PERSPECTIVE/////////////////////////////
     private static final float DEFAULT_FOV = 60f;
     private static float fov = DEFAULT_FOV;
     private static float aspectRatio;
-
-    public static Matrix4f orthographic;
-    public static Matrix4f pixelOrthographic;
     public static Matrix4f perspective;
 
     public float[] matrix = new float[16]; //Stored in column major both in memory and value-wise.

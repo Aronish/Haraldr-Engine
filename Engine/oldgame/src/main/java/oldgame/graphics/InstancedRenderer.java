@@ -65,7 +65,7 @@ public class InstancedRenderer implements RenderSystem
             {
                 instancedMatrixBuffer.setData(ArrayUtils.toPrimitiveArrayF(matrices));
                 gameObject.getModel().getVertexArray().bind();
-                gameObject.getModel().getVertexArray().drawInstanced(matrices.size() / 16);
+                gameObject.getModel().getVertexArray().drawElementsInstanced(matrices.size() / 16);
             }
         }
     }

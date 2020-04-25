@@ -1,5 +1,6 @@
 package engine.layer;
 
+import engine.main.Window;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
@@ -13,9 +14,10 @@ public class LayerStack implements Iterable<Layer>
 {
     private final Deque<Layer> layerStack = new ArrayDeque<>();
 
-    public void pushLayer(Layer layer)
+    public void pushLayer(Layer layer, Window window)
     {
         layerStack.push(layer);
+        layer.onAttach(window);
     }
 
     public void pushLayers(@NotNull Layer... layers)

@@ -8,10 +8,10 @@ import engine.event.MouseScrolledEvent;
 import engine.graphics.DefaultModels;
 import engine.graphics.ForwardRenderer;
 import engine.graphics.Model;
-import engine.graphics.material.NormalMaterial;
 import engine.graphics.lighting.PointLight;
 import engine.graphics.lighting.SceneLights;
 import engine.graphics.lighting.Spotlight;
+import engine.graphics.material.NormalMaterial;
 import engine.input.Button;
 import engine.input.Input;
 import engine.layer.Layer;
@@ -63,7 +63,13 @@ public class TextureTestingLayer extends Layer
         }
         sceneLights.addLight(flashLight);
         sceneLights.addLight(pointLight);
-        renderer.setSceneLights(sceneLights);
+        ForwardRenderer.setSceneLights(sceneLights);
+    }
+
+    @Override
+    public void onAttach(Window window)
+    {
+
     }
 
     @Override
@@ -73,7 +79,7 @@ public class TextureTestingLayer extends Layer
         {
             if (window.isFocused())
             {
-                perspectiveCamera.getController().handleRotation(perspectiveCamera, (MouseMovedEvent) event);
+                perspectiveCamera.getController().handleRotation((MouseMovedEvent) event);
             }
         }
         if (event.eventType == EventType.KEY_PRESSED)
@@ -105,7 +111,7 @@ public class TextureTestingLayer extends Layer
     {
         if (window.isFocused())
         {
-            perspectiveCamera.getController().handleMovement(perspectiveCamera, window.getWindowHandle(), deltaTime);
+            perspectiveCamera.getController().handleMovement(window, deltaTime);
         }
         float sin = (float) Math.sin(Application.time / 2);
         float cos = (float) Math.cos(Application.time / 2);
@@ -118,9 +124,9 @@ public class TextureTestingLayer extends Layer
     @Override
     public void onRender()
     {
-        renderer.begin(perspectiveCamera);
-        model.render(renderer);
-        wall.render(renderer);
+        ForwardRenderer.begin();
+        model.render();
+        wall.render();
         pointLight.render();
     }
 

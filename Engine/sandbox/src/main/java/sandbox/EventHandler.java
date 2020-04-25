@@ -30,39 +30,4 @@ public class EventHandler
             window.setFocus(!window.isFocused());
         }
     }
-
-    /////TO BE PUT IN ORTHOGRAPHIC CAMERA CONTROLLER////////////////////////////////////////
-
-    public static void processInput(OrthographicCamera camera, long window, float deltaTime)
-    {
-        if (Input.isKeyPressed(window, KEY_A))
-        {
-            camera.addPosition(new Vector3f(-CAMERA_SPEED * deltaTime * Matrix4f.scale, 0.0f));
-        }
-        if (Input.isKeyPressed(window, KEY_D))
-        {
-            camera.addPosition(new Vector3f(CAMERA_SPEED * deltaTime * Matrix4f.scale, 0.0f));
-        }
-        if (Input.isKeyPressed(window, KEY_W))
-        {
-            camera.addPosition(new Vector3f(0.0f, CAMERA_SPEED * deltaTime * Matrix4f.scale));
-        }
-        if (Input.isKeyPressed(window, KEY_S))
-        {
-            camera.addPosition(new Vector3f(0.0f, -CAMERA_SPEED * deltaTime * Matrix4f.scale));
-        }
-        if (Input.isKeyPressed(window, KEY_R))
-        {
-            camera.setPosition(new Vector3f());
-            Matrix4f.setZoom(1f);
-        }
-        if (Input.isKeyPressed(window, KEY_UP))
-        {
-            Matrix4f.addZoom((-1.0f * deltaTime) * Matrix4f.scale);
-        }
-        if (Input.isKeyPressed(window, KEY_DOWN))
-        {
-            Matrix4f.addZoom((1.0f * deltaTime) * Matrix4f.scale);
-        }
-    }
 }

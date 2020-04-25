@@ -8,6 +8,10 @@ import static engine.main.Application.MAIN_LOGGER;
 @SuppressWarnings("unused")
 public class Vector3f
 {
+    public static final Vector3f IDENTITY   = new Vector3f();
+    public static final Vector3f UP         = new Vector3f(0f, 1f, 0f);
+    public static final Vector3f DOWN       = new Vector3f(0f, -1f, 0f);
+
     private float x, y, z;
 
     public Vector3f() {}
@@ -49,6 +53,7 @@ public class Vector3f
     {
         x = other.x;
         y = other.y;
+        z = other.z;
     }
 
     public void setX(float x)
@@ -124,6 +129,8 @@ public class Vector3f
     {
         return new Vector3f(x, y - dy);
     }
+
+    /////STATIC OPERATORS (These Don't modify this) /////////////////////////////
 
     @NotNull
     @Contract("_, _ -> new")

@@ -25,9 +25,9 @@ void main()
 
 in vec3 v_LocalPosition;
 
-layout (location = 0) uniform samplerCube environmentMap;
+layout (binding = 0) uniform samplerCube environmentMap;
 
-out vec4 o_Color;
+layout (location = 0) out vec4 o_Color;
 
 void main()
 {

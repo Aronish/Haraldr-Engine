@@ -9,15 +9,12 @@ import engine.graphics.Model;
 import engine.graphics.lighting.DirectionalLight;
 import engine.graphics.lighting.SceneLights;
 import engine.graphics.lighting.Spotlight;
-import engine.graphics.material.NormalMaterial;
-import engine.graphics.material.ReflectiveMaterial;
 import engine.graphics.material.RefractiveMaterial;
 import engine.input.Button;
 import engine.input.Input;
 import engine.input.Key;
 import engine.layer.Layer;
 import engine.main.Window;
-import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,29 +24,12 @@ public class CubeMapLayer extends Layer
 
     private CubeMap environmentMap = new CubeMap("default_hdris/cape_hill_4k.hdr");
 
-    private Model glassSuzanne = new Model(
-            "models/suzanne_smooth.obj",
+    private Model refractiveSuzanne = new Model(
+            "models/suzanne_semi_smooth.obj",
             new RefractiveMaterial(
                     environmentMap,
                     "default_textures/MetalSpottyDiscoloration001_COL_4K_SPECULAR.jpg",
                     "default_textures/MetalSpottyDiscoloration001_REFL_4K_SPECULAR.jpg"
-            )
-    );
-
-    private Model metalSuzanne = new Model(
-            "models/suzanne_smooth.obj",
-            new ReflectiveMaterial(
-                    environmentMap,
-                    "default_textures/MetalSpottyDiscoloration001_COL_4K_SPECULAR.jpg",
-                    "default_textures/MetalSpottyDiscoloration001_REFL_4K_SPECULAR.jpg"
-            )
-    );
-
-    private Model brickSuzanne = new Model(
-            "models/suzanne_smooth.obj",
-            new NormalMaterial(
-                    "default_textures/BricksPaintedWhite_COL_4K.jpg",
-                    "default_textures/BricksPaintedWhite_NRM_4K.jpg"
             )
     );
 
@@ -100,34 +80,6 @@ public class CubeMapLayer extends Layer
     @Override
     public void onRender()
     {
-        ForwardRenderer.beginBatch();
-        int i = 0;
-        for (int x = 0; x < 20; ++x)
-        {
-            for (int y = 0; y < 20; ++y)
-            {
-                switch (i % 3)
-                {
-                    case 0:
-                        glassSuzanne.setTransformationMatrix(Matrix4f.translate(new Vector3f(x * 2.6f, y * 2.6f, 0f)));
-                        ForwardRenderer.submitModel(glassSuzanne);
-                        //glassSuzanne.render();
-                        break;
-                    case 1:
-                        metalSuzanne.setTransformationMatrix(Matrix4f.translate(new Vector3f(x * 2.6f, y * 2.6f, 0f)));
-                        ForwardRenderer.submitModel(metalSuzanne);
-                        //metalSuzanne.render();
-                        break;
-                    case 2:
-                        brickSuzanne.setTransformationMatrix(Matrix4f.translate(new Vector3f(x * 2.6f, y * 2.6f, 0f)));
-                        ForwardRenderer.submitModel(brickSuzanne);
-                        //brickSuzanne.render();
-                        break;
-                }
-                ++i;
-            }
-        }
-        ForwardRenderer.endBatch();
         environmentMap.renderSkyBox();
     }
 
@@ -135,6 +87,5 @@ public class CubeMapLayer extends Layer
     public void onDispose()
     {
         environmentMap.delete();
-        glassSuzanne.delete();
     }
 }

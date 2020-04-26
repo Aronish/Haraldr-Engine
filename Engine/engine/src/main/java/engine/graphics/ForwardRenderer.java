@@ -63,6 +63,10 @@ public class ForwardRenderer extends Renderer3D
         materialBatches.clear();
     }
 
+    /**
+     * At the moment, material sorting doesn't seem to improve a whole lot. About the same performance.
+     * @param model the model to render.
+     */
     public static void submitModel(@NotNull Model model)
     {
         Material key = model.getMaterial();

@@ -6,11 +6,10 @@ import engine.event.EventDispatcher;
 import engine.event.EventType;
 import engine.event.MouseMovedEvent;
 import engine.event.MouseScrolledEvent;
-import engine.event.WindowClosedEvent;
 import engine.event.WindowResizedEvent;
-import engine.graphics.ForwardRenderer;
-import engine.graphics.Renderer2D;
+import engine.graphics.Renderer3D;
 import engine.graphics.Shader;
+import engine.graphics.pbr.PBRRenderer;
 import engine.input.Input;
 import engine.input.Key;
 import engine.layer.Layer;
@@ -35,8 +34,6 @@ import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_SEVERITY_NOTIFICATION;
-import static org.lwjgl.opengl.GL43.GL_DEBUG_TYPE_ERROR;
-import static org.lwjgl.opengl.GL43.GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR;
 import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
 import static org.lwjgl.system.MemoryUtil.memUTF8;
 
@@ -68,7 +65,8 @@ public abstract class Application
         /////OPENGL CODE WON'T WORK BEFORE THIS///////////////////////////
         EventDispatcher.addCallback(new EventCallback());
         Matrix4f.init(window.getWidth(), window.getHeight());
-        ForwardRenderer.init(window);
+        //ForwardRenderer.init(window);
+        PBRRenderer.init(window);
 
         //glEnable(GL_FRAMEBUFFER_SRGB);
         if (ProgramArguments.isArgumentSet("MSAA"))
@@ -115,12 +113,12 @@ public abstract class Application
             {
                 if (window.isFocused())
                 {
-                    ForwardRenderer.getPerspectiveCamera().getController().handleRotation((MouseMovedEvent) event);
+                    Renderer3D.getPerspectiveCamera().getController().handleRotation((MouseMovedEvent) event);
                 }
             }
             if (event.eventType == EventType.MOUSE_SCROLLED)
             {
-                ForwardRenderer.getPerspectiveCamera().getController().handleScroll((MouseScrolledEvent) event);
+                Renderer3D.getPerspectiveCamera().getController().handleScroll((MouseScrolledEvent) event);
             }
             for (Layer layer : layerStack)
             {
@@ -135,7 +133,7 @@ public abstract class Application
         time = glfwGetTime();
         if (window.isFocused())
         {
-            ForwardRenderer.getPerspectiveCamera().getController().handleMovement(window, deltaTime);
+            Renderer3D.getPerspectiveCamera().getController().handleMovement(window, deltaTime);
         }
         for (Layer layer : layerStack)
         {
@@ -146,9 +144,11 @@ public abstract class Application
 
     private void render()
     {
-        ForwardRenderer.begin();
+        //ForwardRenderer.begin();
+        PBRRenderer.begin();
         layerStack.reverseIterator().forEachRemaining(Layer::onRender);
-        ForwardRenderer.end();
+        //ForwardRenderer.end();
+        PBRRenderer.end();
         glfwSwapBuffers(window.getWindowHandle());
     }
 

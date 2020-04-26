@@ -14,6 +14,7 @@ import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_LINEAR_MIPMAP_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
+import static org.lwjgl.opengl.GL11.GL_RED;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;
 import static org.lwjgl.opengl.GL11.GL_RGB;
 import static org.lwjgl.opengl.GL11.GL_RGB8;
@@ -77,6 +78,10 @@ public class Texture
             if (EntryPoint.DEBUG) MAIN_LOGGER.info(String.format("Loaded texture %s | Width: %d, Height: %d, Components: %d", path, this.width, this.height, components));
             switch (components)
             {
+                case 1:
+                    internalFormat = GL_RED;
+                    format = GL_RED;
+                    break;
                 case 3:
                     internalFormat = isColorData ? GL_SRGB8 : GL_RGB8;
                     format = GL_RGB;

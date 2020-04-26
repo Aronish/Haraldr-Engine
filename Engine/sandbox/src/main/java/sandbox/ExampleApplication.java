@@ -22,7 +22,8 @@ class ExampleApplication extends Application
     {
         super.init(windowProperties);
         Renderer2D.setClearColor(new Vector4f(0.1f, 0.1f, 0.2f, 1f));
-        layerStack.pushLayer(new CubeMapLayer("CubeMaps"), window);
+        layerStack.pushLayer(new PBRLayer("PBR!"), window);
+        //layerStack.pushLayer(new CubeMapLayer("CubeMaps"), window);
         //layerStack.pushLayers(new TextureTestingLayer("TexTest"), window);
         //layerStack.pushLayers(new LightCastersLayer("LightCasters"), window);
     }

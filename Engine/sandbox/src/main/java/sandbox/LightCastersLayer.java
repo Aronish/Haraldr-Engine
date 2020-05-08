@@ -5,10 +5,10 @@ import engine.event.EventType;
 import engine.event.KeyPressedEvent;
 import engine.event.MouseMovedEvent;
 import engine.event.MouseScrolledEvent;
-import engine.graphics.lighting.DirectionalLight;
-import engine.graphics.ForwardRenderer;
-import engine.graphics.lighting.PointLight;
+import engine.graphics.Renderer3D;
 import engine.graphics.Shader;
+import engine.graphics.lighting.DirectionalLight;
+import engine.graphics.lighting.PointLight;
 import engine.graphics.lighting.Spotlight;
 import engine.input.Key;
 import engine.layer.Layer;
@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class LightCastersLayer extends Layer
 {
-    private ForwardRenderer renderer = new ForwardRenderer();
     private PerspectiveCamera perspectiveCamera = new PerspectiveCamera(new Vector3f(4f, 2f, -1f));
 
     private DirectionalLight directionalLight = new DirectionalLight(new Vector3f(), new Vector3f(), new Vector3f(0.2f, 0.3f, 0.8f));
@@ -31,10 +30,10 @@ public class LightCastersLayer extends Layer
     public LightCastersLayer(String name)
     {
         super(name);
-        ForwardRenderer.getSceneLights().addLight(spotLight);
-        ForwardRenderer.getSceneLights().addLight(directionalLight);
-        ForwardRenderer.getSceneLights().addLight(pointLight);
-        ForwardRenderer.getSceneLights().addLight(pointLight2);
+        Renderer3D.getSceneLights().addLight(spotLight);
+        Renderer3D.getSceneLights().addLight(directionalLight);
+        Renderer3D.getSceneLights().addLight(pointLight);
+        Renderer3D.getSceneLights().addLight(pointLight2);
     }
 
     @Override
@@ -98,7 +97,6 @@ public class LightCastersLayer extends Layer
     @Override
     public void onRender()
     {
-        ForwardRenderer.begin();
         spotLight.render();
         spotLight.renderDirectionVector();
         directionalLight.render();

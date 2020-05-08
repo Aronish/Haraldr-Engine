@@ -9,10 +9,12 @@ import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
@@ -28,7 +30,8 @@ public class VertexArray
     private final int vertexArrayID;
     private final List<VertexBuffer> vertexBuffers = new ArrayList<>();
     private int nextAttribIndex;
-    private int vertexAmount, indexAmount;
+    public int vertexAmount, indexAmount;
+    private int indexBufferID;
 
     public VertexArray()
     {
@@ -38,7 +41,7 @@ public class VertexArray
     public void setIndexBuffer(@NotNull int[] indices)
     {
         indexAmount = indices.length;
-        int indexBufferID = glCreateBuffers();
+        indexBufferID = glCreateBuffers();
         glBindVertexArray(vertexArrayID);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
@@ -59,8 +62,8 @@ public class VertexArray
                 ++nextAttribIndex;
             }
             vertexAmount += vertexBuffer.getVertexAmount();
-            glBindVertexArray(0);
         }
+        glBindVertexArray(0);
     }
 
     public void bind()
@@ -83,9 +86,15 @@ public class VertexArray
         glDrawElements(GL_TRIANGLES, indexAmount, GL_UNSIGNED_INT, 0);
     }
 
-    public void drawElements(int drawMode)
+    /*public void drawElements(int drawMode)
     {
         glDrawElements(drawMode, indexAmount, GL_UNSIGNED_INT, 0);
+    }*/
+
+    public void drawElements(int indexAmount)
+    {
+        glDrawElements(GL_TRIANGLES, indexAmount, GL_UNSIGNED_INT, 0);
+
     }
 
     public void drawElementsInstanced(int count)
@@ -117,6 +126,7 @@ public class VertexArray
     {
         unbind();
         glDeleteVertexArrays(vertexArrayID);
+        glDeleteBuffers(indexBufferID);
         vertexBuffers.forEach(VertexBuffer::delete);
     }
 }

@@ -39,7 +39,7 @@ public class Renderer2D
 
     public static void drawQuad(Vector3f position, Vector4f color)
     {
-        Texture.DEFAULT_TEXTURE.bind(0);
+        Texture.DEFAULT_WHITE.bind(0);
         Shader.DEFAULT2D.setMatrix4f(Matrix4f.translate(position), "model");
         Shader.DEFAULT2D.setMatrix4f(sceneData.getViewMatrix(), "view");
         Shader.DEFAULT2D.setMatrix4f(Matrix4f.orthographic, "projection");
@@ -57,7 +57,7 @@ public class Renderer2D
     public static void drawQuad(Vector3f position, @NotNull Shader shader, Vector4f color)
     {
         shader.bind();
-        Texture.DEFAULT_TEXTURE.bind(0);
+        Texture.DEFAULT_WHITE.bind(0);
         shader.setMatrix4f(Matrix4f.translate(position), "model");
         shader.setMatrix4f(sceneData.getViewMatrix(), "view");
         shader.setMatrix4f(Matrix4f.orthographic, "projection");

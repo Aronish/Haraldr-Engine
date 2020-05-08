@@ -21,7 +21,7 @@ public class RefractiveMaterial extends Material
 
     public RefractiveMaterial(CubeMap environmentMap, float refractiveRatio)
     {
-        this(environmentMap, refractiveRatio, Texture.DEFAULT_TEXTURE, Texture.DEFAULT_TEXTURE);
+        this(environmentMap, refractiveRatio, Texture.DEFAULT_WHITE, Texture.DEFAULT_WHITE);
     }
 
     public RefractiveMaterial(CubeMap environmentMap, String diffuseTexture, String refractionMap)

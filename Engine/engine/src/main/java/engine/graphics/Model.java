@@ -12,7 +12,7 @@ public class Model
 
     public Model(String modelPath, Material material)
     {
-        this(ResourceManager.getMesh(modelPath), material, new Matrix4f());
+        this(ResourceManager.getMesh(modelPath), material, Matrix4f.IDENTITY);
     }
 
     public Model(String modelPath, Material material, Matrix4f transformationMatrix)
@@ -22,7 +22,7 @@ public class Model
 
     public Model(VertexArray mesh, Material material)
     {
-        this(mesh, material, new Matrix4f());
+        this(mesh, material, Matrix4f.IDENTITY);
     }
 
     public Model(VertexArray mesh, Material material, Matrix4f transformationMatrix)
@@ -41,7 +41,7 @@ public class Model
     {
         material.bind();
         material.getShader().setMatrix4f(transformationMatrix, "model");
-        material.getShader().setVector3f(ForwardRenderer.getPerspectiveCamera().getPosition(), "viewPosition");
+        material.getShader().setVector3f(Renderer3D.getPerspectiveCamera().getPosition(), "viewPosition");
         mesh.bind();
         mesh.drawElements();
     }
@@ -50,7 +50,7 @@ public class Model
     {
         material.bind();
         material.getShader().setMatrix4f(transformationMatrix, "model");
-        material.getShader().setVector3f(ForwardRenderer.getPerspectiveCamera().getPosition(), "viewPosition");
+        material.getShader().setVector3f(Renderer3D.getPerspectiveCamera().getPosition(), "viewPosition");
         mesh.bind();
         mesh.drawElements();
     }

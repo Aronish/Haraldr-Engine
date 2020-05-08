@@ -1,11 +1,11 @@
 #shader vert
 #version 460 core
 
-layout(location = 0) in vec3 a_Position;
-layout(location = 1) in vec3 a_Normal;
-layout(location = 2) in vec2 a_TextureCoordinate;
+layout (location = 0) in vec3 a_Position;
+layout (location = 1) in vec3 a_Normal;
+layout (location = 3) in vec3 a_Tangent;
 
-uniform mat4 model;
+uniform mat4 model = mat4(1.0f);
 
 layout (std140, binding = 0) uniform matrices
 {
@@ -16,13 +16,15 @@ layout (std140, binding = 0) uniform matrices
 out GS_DATA
 {
     vec3 normal;
+    vec3 tangent;
 } gs_data;
 
 void main()
 {
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
-    mat3 normalMatrix = mat3(transpose(inverse(view * model)));
+    mat3 normalMatrix = mat3(view * model);
     gs_data.normal = normalize(vec3(projection * vec4(normalMatrix * a_Normal, 0.0f)));
+    //gs_data.tangent = normalize(vec3(projection * vec4(normalMatrix * a_Tangent, 0.0f)));
 }
 
 #shader geom
@@ -34,11 +36,12 @@ layout (line_strip, max_vertices = 6) out;
 in GS_DATA
 {
     vec3 normal;
+    vec3 tangent;
 } gs_data[];
 
-const float MAGNITUDE = 0.4f;
+const float MAGNITUDE = 1f;
 
-void generateLine(int index)
+void generateNormal(int index)
 {
     gl_Position = gl_in[index].gl_Position;
     EmitVertex();
@@ -47,11 +50,20 @@ void generateLine(int index)
     EndPrimitive();
 }
 
+void generateTangent(int index)
+{
+    gl_Position = gl_in[index].gl_Position;
+    EmitVertex();
+    gl_Position = gl_in[index].gl_Position + vec4(gs_data[index].tangent, 0.0f) * MAGNITUDE;
+    EmitVertex();
+    EndPrimitive();
+}
+
 void main()
 {
-    generateLine(0);
-    generateLine(1);
-    generateLine(2);
+    generateNormal(0);
+    generateNormal(1);
+    generateNormal(2);
 }
 
 #shader frag

@@ -32,5 +32,6 @@ layout (location = 0) out vec4 o_Color;
 void main()
 {
     vec3 envColor = texture(environmentMap, v_LocalPosition).rgb;
+    //vec3 envColor = textureLod(environmentMap, v_LocalPosition, 1.2f).rgb;
     o_Color = vec4(envColor, 1.f);
 }

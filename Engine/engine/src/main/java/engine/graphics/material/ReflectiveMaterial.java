@@ -12,7 +12,7 @@ public class ReflectiveMaterial extends Material
 
     public ReflectiveMaterial(CubeMap environmentMap)
     {
-        this(environmentMap, Texture.DEFAULT_TEXTURE, Texture.DEFAULT_TEXTURE);
+        this(environmentMap, Texture.DEFAULT_WHITE, Texture.DEFAULT_WHITE);
     }
 
     public ReflectiveMaterial(CubeMap environmentMap, String diffuseTexture, String reflectionMap)

@@ -20,14 +20,6 @@ public class LayerStack implements Iterable<Layer>
         layer.onAttach(window);
     }
 
-    public void pushLayers(@NotNull Layer... layers)
-    {
-        for (Layer layer : layers)
-        {
-            layerStack.push(layer);
-        }
-    }
-
     public Iterator<Layer> reverseIterator()
     {
         return layerStack.descendingIterator();

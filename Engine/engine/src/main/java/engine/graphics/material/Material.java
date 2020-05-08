@@ -24,7 +24,7 @@ public abstract class Material
     public void bind()
     {
         shader.bind();
-        shader.setFloat(diffuseStrength, "materialProperties.diffuseStrength");
+        //shader.setFloat(diffuseStrength, "materialProperties.diffuseStrength");
         shader.setFloat(specularStrength, "materialProperties.specularStrength");
         shader.setFloat(specularExponent, "materialProperties.specularExponent");
         shader.setFloat(opacity, "materialProperties.opacity");

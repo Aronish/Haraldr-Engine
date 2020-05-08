@@ -1,10 +1,45 @@
 #shader vert
 #version 460 core
 
+#define MAX_DIRECTIONAL_LIGHTS 1
+#define MAX_POINT_LIGHTS 15
+#define MAX_SPOTLIGHTS 5
+
+/////LIGHT TYPES//////////////////////////////
+//Squeezing allowed!
+struct PointLight
+{
+    vec4 position;
+    vec4 color;
+    float constant;
+    float linear;
+    float quadratic;
+    //std140: Total 40 Pad 8 Size 48
+};
+
+struct DirectionalLight
+{
+    vec4 direction;
+    vec4 color;
+    //std140: Total 32 Pad 0 Size 32
+};
+
+struct Spotlight
+{
+    vec4 position;
+    vec4 direction;
+    vec4 color;
+    float innerCutOff;
+    float outerCutOff;
+    //std140: Total 52 Pad 12 Size 64
+};
+
 layout (location = 0) in vec3 a_Position;
 layout (location = 1) in vec3 a_Normal;
 layout (location = 2) in vec2 a_TextureCoordinate;
+layout (location = 3) in vec3 a_Tangent;
 
+uniform vec3 viewPosition;
 uniform mat4 model = mat4(1.0f);
 
 layout (std140, binding = 0) uniform matrices
@@ -13,35 +48,121 @@ layout (std140, binding = 0) uniform matrices
     mat4 projection;
 };
 
+layout(std140, binding = 1) uniform lightSetup
+{
+    PointLight pointLights[MAX_POINT_LIGHTS];
+    Spotlight spotlights[MAX_SPOTLIGHTS];
+    DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
+    float numPointLights;
+    float numSpotlights;
+    float numDirectionalLights;
+};
+
+/////OUTPUT/////////////
+out tangentSpaceLighting
+{
+    vec3 pointLightPositions[MAX_POINT_LIGHTS];
+};
+
+out vec3 v_TNormal;
 out vec3 v_Normal;
+out vec3 v_ViewPosition;
 out vec3 v_WorldPosition;
 out vec2 v_TextureCoordinate;
 
 void main()
 {
-    v_TextureCoordinate = a_TextureCoordinate;
-    mat3 normalMatrix = mat3(model);
-    v_Normal = normalMatrix * a_Normal;
-    v_WorldPosition = (model * vec4(a_Position, 1.0f)).xyz;
+    mat3 normalMatrix   = mat3(model); // (Note: Tangent space vectors don't care about translation)
+    vec3 normal         = normalize(normalMatrix * a_Normal);
+    vec3 tangent        = normalize(normalMatrix * a_Tangent);
+    tangent             = normalize(tangent - dot(tangent, normal) * normal);       // Fixes potential weird edges
+    vec3 bitangent      = cross(normal, tangent);                                   // Is already in world space.
+    mat3 TBN            = transpose(mat3(tangent, bitangent, normal));
+
+    //Lights to tangent space
+    for (uint i = 0; i < numPointLights; ++i)
+    {
+        pointLightPositions[i] = TBN * pointLights[i].position.xyz;
+    }
+
+    v_TNormal           = TBN * normal;
+    v_Normal            = normal;
+    v_TextureCoordinate = a_TextureCoordinate;                          // Not important for lighting, don't put in tangent space.
+    v_WorldPosition     = TBN * vec3((model * vec4(a_Position, 1.0f))); // Need to be translated as well.
+    v_ViewPosition      = TBN * viewPosition;
+
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
 }
 
 #shader frag
 #version 460 core
 
+#define MAX_DIRECTIONAL_LIGHTS 1
+#define MAX_POINT_LIGHTS 15
+#define MAX_SPOTLIGHTS 5
+
+/////LIGHT TYPES//////////////////////////////
+//Squeezing allowed!
+struct PointLight
+{
+    vec4 position;
+    vec4 color;
+    float constant;
+    float linear;
+    float quadratic;
+//std140: Total 40 Pad 8 Size 48
+};
+
+struct DirectionalLight
+{
+    vec4 direction;
+    vec4 color;
+//std140: Total 32 Pad 0 Size 32
+};
+
+struct Spotlight
+{
+    vec4 position;
+    vec4 direction;
+    vec4 color;
+    float innerCutOff;
+    float outerCutOff;
+//std140: Total 52 Pad 12 Size 64
+};
+
+in vec3 v_TNormal;
 in vec3 v_Normal;
+in vec3 v_ViewPosition;
 in vec3 v_WorldPosition;
 in vec2 v_TextureCoordinate;
 
-uniform vec3 viewPosition;
+in tangentSpaceLighting
+{
+    vec3 pointLightPositions[MAX_POINT_LIGHTS];
+};
+
+layout(std140, binding = 1) uniform lightSetup
+{
+    PointLight pointLights[MAX_POINT_LIGHTS];
+    Spotlight spotlights[MAX_SPOTLIGHTS];
+    DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
+    float numPointLights;
+    float numSpotlights;
+    float numDirectionalLights;
+};
 
 uniform vec3 u_Albedo;
 uniform float u_Metallic;
 uniform float u_Roughness;
-//uniform float ao;
 
-uniform vec3 lightPosition;
-uniform vec3 lightColor;
+layout (binding = 0) uniform sampler2D albedoMap;
+layout (binding = 1) uniform sampler2D normalMap;
+layout (binding = 2) uniform sampler2D metallicMap;
+layout (binding = 3) uniform sampler2D roughnessMap;
+
+layout (binding = 4) uniform samplerCube diffuseIrradianceMap;
+layout (binding = 5) uniform samplerCube prefilteredMap;
+layout (binding = 6) uniform sampler2D brdfLUT;
 
 out vec4 o_Color;
 
@@ -50,6 +171,11 @@ const float PI = 3.14159265359f;
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
     return F0 + (1.0f - F0) * pow(1.0f - cosTheta, 5.0f);
+}
+
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0f - roughness), F0) - F0) * pow(1.0f - cosTheta, 5.0f);
 }
 
 float DistributionGGX(vec3 N, vec3 H, float roughness)
@@ -81,66 +207,69 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
     return ggx1 * ggx2;
 }
 
-layout (binding = 0) uniform sampler2D albedoMap;
-layout (binding = 1) uniform sampler2D normalMap;
-layout (binding = 2) uniform sampler2D metallicMap;
-layout (binding = 3) uniform sampler2D roughnessMap;
-
-//TODO: TEMP
-vec3 getNormalFromMap()
-{
-    vec3 tangentNormal = texture(normalMap, v_TextureCoordinate).xyz * 2.0f - 1.0f;
-
-    vec3 Q1  = dFdx(v_WorldPosition);
-    vec3 Q2  = dFdy(v_WorldPosition);
-    vec2 st1 = dFdx(v_TextureCoordinate);
-    vec2 st2 = dFdy(v_TextureCoordinate);
-
-    vec3 N   = normalize(v_Normal);
-    vec3 T  = normalize(Q1 * st2.t - Q2 * st1.t);
-    vec3 B  = -normalize(cross(N, T));
-    mat3 TBN = mat3(T, B, N);
-
-    return normalize(TBN * tangentNormal);
-}
+#define TEXTURED 1
 
 void main()
 {
+#if TEXTURED
     vec3 albedo = texture(albedoMap, v_TextureCoordinate).rgb;
-    vec3 N = getNormalFromMap();
+    vec3 tNormal = normalize(texture(normalMap, v_TextureCoordinate).rgb * 2.0f - 1.0f); // Read normals
     float metallic = texture(metallicMap, v_TextureCoordinate).r;
     float roughness = texture(roughnessMap, v_TextureCoordinate).r;
-    //vec3 N = normalize(v_Normal);
-    vec3 V = normalize(viewPosition - v_WorldPosition);
+#else
+    vec3 albedo = u_Albedo;
+    vec3 tNormal = normalize(v_TNormal);
+    float metallic = u_Metallic;
+    float roughness = u_Roughness;
+#endif
+    vec3 V = normalize(v_ViewPosition - v_WorldPosition);
+    vec3 normal = normalize(v_Normal);
 
     vec3 F0 = vec3(0.04f);
     F0 = mix(F0, albedo, metallic);
 
     vec3 Lo = vec3(0.0f);
-    /////Direct lighting TODO: LOOP PER LIGHT///////////
-        vec3 L = normalize(lightPosition - v_WorldPosition);
+    //////////Direct lighting////////////////
+    for (uint i = 0; i < numPointLights; ++i)
+    {
+        vec3 L = normalize(pointLightPositions[i] - v_WorldPosition);
         vec3 H = normalize(V + L);
-        float distance = length(lightPosition - v_WorldPosition);
+        float distance = length(pointLightPositions[i] - v_WorldPosition);
         float attenuation = 1.0f / (distance * distance);
-        vec3 radiance = lightColor * attenuation;
-        /////BRDF Components////////////
-        float NDF = DistributionGGX(N, H, roughness);
-        float G = GeometrySmith(N, V, L, roughness);
+        vec3 radiance = pointLights[i].color.rgb * attenuation;
+        /////BRDF Components///////////////////////////////
+        float NDF = DistributionGGX(tNormal, H, roughness);
+        float G = GeometrySmith(tNormal, V, L, roughness);
         vec3 F = fresnelSchlick(max(dot(H, V), 0.0f), F0);
-        /////Cook-Torrance/////////////////
+        /////Cook-Torrance///////////
         vec3 numerator = NDF * G * F;
-        float denominator = 4.0f * max(dot(N, V), 0.0f) * max(dot(N, L), 0.0f);
+        float denominator = 4.0f * max(dot(tNormal, V), 0.0f) * max(dot(tNormal, L), 0.0f);
         vec3 specular = numerator / max(denominator, 0.001f);
         /////Diffuse-Specular Fraction/////
         vec3 kS = F;
         vec3 kD = vec3(1.0f) - kS;
         kD *= 1.0f - metallic;
 
-        float NdotL = max(dot(N, L), 0.0f);
+        float NdotL = max(dot(tNormal, L), 0.0f);
         Lo += (kD * albedo / PI + specular) * radiance * NdotL;
+    }
+    //////////Indirect Lighting//////////////////////////////////////////////////
+    /////IBL Ambient/////////////////////////////////////////////////////////////
 
-    vec3 ambient = vec3(0.03) * albedo/* * ao*/;
-    vec3 color = ambient + Lo;
+    vec3 kS = fresnelSchlickRoughness(max(dot(tNormal, V), 0.0f), F0, roughness);
+    vec3 kD = (1.0f - kS) * (1.0f - metallic);
+    vec3 irradiance = texture(diffuseIrradianceMap, tNormal).rgb;
+    vec3 diffuse = irradiance * albedo;
+    /////IBL Specular/////////////////////
+    const float MAX_REFLECTION_LOD = 4.0f;
+    vec3 R = reflect(-V, tNormal);
+    vec3 prefilteredColor = textureLod(prefilteredMap, R, roughness * MAX_REFLECTION_LOD).rgb;
 
-    o_Color = vec4(color, 1.0f);
+    vec3 F = fresnelSchlickRoughness(max(dot(tNormal, V), 0.0f), F0, roughness);
+    vec2 envBRDF = texture(brdfLUT, vec2(max(dot(tNormal, V), 0.0f), roughness)).rg;
+    vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
+
+    vec3 ambient = kD * diffuse + specular; // All this * ao later
+
+    o_Color = vec4(ambient + Lo, 1.0f);
 }

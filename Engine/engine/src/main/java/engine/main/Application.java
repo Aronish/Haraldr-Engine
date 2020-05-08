@@ -9,7 +9,6 @@ import engine.event.MouseScrolledEvent;
 import engine.event.WindowResizedEvent;
 import engine.graphics.Renderer3D;
 import engine.graphics.Shader;
-import engine.graphics.pbr.PBRRenderer;
 import engine.input.Input;
 import engine.input.Key;
 import engine.layer.Layer;
@@ -32,6 +31,7 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
+import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_SEVERITY_NOTIFICATION;
 import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
@@ -65,8 +65,7 @@ public abstract class Application
         /////OPENGL CODE WON'T WORK BEFORE THIS///////////////////////////
         EventDispatcher.addCallback(new EventCallback());
         Matrix4f.init(window.getWidth(), window.getHeight());
-        //ForwardRenderer.init(window);
-        PBRRenderer.init(window);
+        Renderer3D.init(window);
 
         //glEnable(GL_FRAMEBUFFER_SRGB);
         if (ProgramArguments.isArgumentSet("MSAA"))
@@ -75,6 +74,7 @@ public abstract class Application
         }
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -144,11 +144,9 @@ public abstract class Application
 
     private void render()
     {
-        //ForwardRenderer.begin();
-        PBRRenderer.begin();
+        Renderer3D.begin();
         layerStack.reverseIterator().forEachRemaining(Layer::onRender);
-        //ForwardRenderer.end();
-        PBRRenderer.end();
+        Renderer3D.end();
         glfwSwapBuffers(window.getWindowHandle());
     }
 
@@ -190,6 +188,8 @@ public abstract class Application
 
     public void dispose()
     {
+        layerStack.forEach(Layer::onDispose);
+        Renderer3D.dispose();
         Shader.DEFAULT2D.delete();
         Shader.DIFFUSE.delete();
         Shader.NORMAL.delete();

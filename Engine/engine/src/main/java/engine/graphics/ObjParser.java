@@ -45,8 +45,8 @@ public class ObjParser
 
         Map<IndexSet, Integer> indexMap = new HashMap<>();
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(file));
-        try{
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file)))
+        {
             while (true)
             {
                 String line = reader.readLine();
@@ -72,17 +72,23 @@ public class ObjParser
                         {
                             String[] inputIndexSet = components[comp].split("/");
                             indexSets[comp - 1] = new IndexSet(Integer.parseInt(inputIndexSet[0]), Integer.parseInt(inputIndexSet[1]), Integer.parseInt(inputIndexSet[2]));
-                            insertVertex(vertices, indices, indexMap, inputPositions, inputTextureCoordinates, inputNormals, indexSets[comp - 1]);
                         }
-                        insertTangents(vertices, indexSets, inputPositions, inputTextureCoordinates);
+                        Vector3f tangent = createTangent(indexSets, inputPositions, inputTextureCoordinates);
+                        for (int comp = 1; comp < components.length; ++comp)
+                        {
+                            insertVertex(vertices, indices, indexMap, inputPositions, inputTextureCoordinates, inputNormals, tangent, indexSets[comp - 1]);
+                        }
                         break;
                 }
             }
-            reader.close();
         }catch (IOException e)
         {
             e.printStackTrace();
         }
+        /*for (int i = 0; i < vertices.size(); ++i)
+        {
+            System.out.print(String.format("%8s", vertices.get(i) + ((i + 1) % VERTEX_ELEMENT_COUNT == 0 ? "\n" : ", ")));
+        }*/
         VertexBufferLayout layout = new VertexBufferLayout(
                 new VertexBufferElement(ShaderDataType.FLOAT3), //Position
                 new VertexBufferElement(ShaderDataType.FLOAT3), //Normal
@@ -95,52 +101,14 @@ public class ObjParser
         vertexArray.setIndexBuffer(ArrayUtils.toPrimitiveArrayI(indices));
         return vertexArray;
     }
-/*
-    @NotNull
-    private static DiffuseMaterial loadMaterial(InputStream file)
-    {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(file));
-        DiffuseMaterial material = new DiffuseMaterial();
-        try{
-            while (true)
-            {
-                String line = reader.readLine();
-                if (line == null) break;
-                line = line.trim();
-                String[] split = line.split("\\s+");
 
-                switch (split[0])
-                {
-                    case "Ns":
-                        //material.setSpecularExponent(Float.parseFloat(split[1]));
-                        break;
-                    case "Ka":
-                        material.setAmbient(new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3])));
-                        break;
-                    case "Kd":
-                        material.setDiffuse(new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3])));
-                        break;
-                    case "Ks":
-                        material.setSpecularColor(new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3])));
-                        break;
-                    case "d":
-                        //material.setOpacity(Float.parseFloat(split[1]));
-                        break;
-                }
-            }
-        }catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        return material;
-    }
-*/
     private static void insertVertex(List<Float> vertices,
                                      List<Integer> indices,
                                      @NotNull Map<IndexSet, Integer> indexMap,
                                      List<Vector3f> inputPositions,
                                      List<Vector2f> inputTextureCoordinates,
                                      List<Vector3f> inputNormals,
+                                     Vector3f tangent,
                                      IndexSet indexSet)
     {
         if (indexMap.containsKey(indexSet))
@@ -149,8 +117,8 @@ public class ObjParser
         }
         else
         {
-            indexMap.put(indexSet, (vertices.size() + 9) / VERTEX_ELEMENT_COUNT); //Cheating a little by simulating the later-added tangent values.
-            indices.add((vertices.size() + 9) / VERTEX_ELEMENT_COUNT);
+            indexMap.put(indexSet, vertices.size() / VERTEX_ELEMENT_COUNT);
+            indices.add(vertices.size() / VERTEX_ELEMENT_COUNT);
             vertices.add(inputPositions.get(indexSet.position).getX());
             vertices.add(inputPositions.get(indexSet.position).getY());
             vertices.add(inputPositions.get(indexSet.position).getZ());
@@ -159,39 +127,25 @@ public class ObjParser
             vertices.add(inputNormals.get(indexSet.normal).getZ());
             vertices.add(inputTextureCoordinates.get(indexSet.textureCoordinate).getX());
             vertices.add(inputTextureCoordinates.get(indexSet.textureCoordinate).getY());
+            vertices.add(tangent.getX());
+            vertices.add(tangent.getY());
+            vertices.add(tangent.getZ());
         }
     }
 
-    private static void insertTangents(@NotNull List<Float> vertices,
-                                       @NotNull IndexSet[] indexSets,
-                                       @NotNull List<Vector3f> inputPositions,
-                                       @NotNull List<Vector2f> inputTextureCoordinates)
+    private static @NotNull Vector3f createTangent(@NotNull IndexSet[] indexSets, @NotNull List<Vector3f> inputPositions, @NotNull List<Vector2f> inputTextureCoordinates)
     {
         Vector3f edge1 = Vector3f.subtract(inputPositions.get(indexSets[1].position), inputPositions.get(indexSets[0].position));
         Vector3f edge2 = Vector3f.subtract(inputPositions.get(indexSets[2].position), inputPositions.get(indexSets[0].position));
         Vector2f duv1 = Vector2f.subtract(inputTextureCoordinates.get(indexSets[1].textureCoordinate), inputTextureCoordinates.get(indexSets[0].textureCoordinate));
         Vector2f duv2 = Vector2f.subtract(inputTextureCoordinates.get(indexSets[2].textureCoordinate), inputTextureCoordinates.get(indexSets[0].textureCoordinate));
         float determinant = 1.0f / (duv1.getX() * duv2.getY() - duv2.getX() * duv1.getY());
-        Vector3f tangent = new Vector3f(
+        return Vector3f.normalize(new Vector3f(
                 determinant * (duv2.getY() * edge1.getX() - duv1.getY() * edge2.getX()),
                 determinant * (duv2.getY() * edge1.getY() - duv1.getY() * edge2.getY()),
                 determinant * (duv2.getY() * edge1.getZ() - duv1.getY() * edge2.getZ())
-        );
-        vertices.add(vertices.size() - 16, tangent.getX());
-        vertices.add(vertices.size() - 16, tangent.getY());
-        vertices.add(vertices.size() - 16, tangent.getZ());
-
-        vertices.add(vertices.size() - 8, tangent.getX());
-        vertices.add(vertices.size() - 8, tangent.getY());
-        vertices.add(vertices.size() - 8, tangent.getZ());
-
-        vertices.add(vertices.size(), tangent.getX());
-        vertices.add(vertices.size(), tangent.getY());
-        vertices.add(vertices.size(), tangent.getZ());
+        ));
     }
-    
-    //x1, y1, z1, tx1, ty1, tz1, u1, v1,     x2, y2, z2, tx2, ty2, tz2, u2, v2,      x3, y3, z3, tx3, ty3, tz3, u3, v3
-    //-24                                   -16                                      -8
 
     private static class IndexSet
     {

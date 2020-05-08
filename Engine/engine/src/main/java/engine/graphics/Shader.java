@@ -59,6 +59,7 @@ public class Shader
     public static final Shader REFLECTIVE           = new Shader("default_shaders/reflective.glsl");
     public static final Shader REFRACTIVE           = new Shader("default_shaders/refractive.glsl");
     public static final Shader PBR                  = new Shader("default_shaders/pbr.glsl");
+    public static final Shader PBR_TEST             = new Shader("default_shaders/pbr_no_tangent.glsl");
 
     private int shaderProgram;
     private List<InternalShaderCombined> internalShaders = new ArrayList<>();

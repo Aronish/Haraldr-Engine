@@ -1,10 +1,14 @@
 package engine.graphics;
 
+import engine.graphics.lighting.SceneLights;
 import engine.main.PerspectiveCamera;
-import engine.math.Vector3f;
+import engine.main.Window;
+import engine.math.Matrix4f;
 import engine.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
 
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
@@ -32,11 +36,45 @@ public abstract class Renderer3D
     }
 
     protected static PerspectiveCamera perspectiveCamera = new PerspectiveCamera(); //TODO: Make camera base class.
-
     public static PerspectiveCamera getPerspectiveCamera()
     {
         return perspectiveCamera;
     }
+
+    private static final UniformBuffer matrixBuffer = new UniformBuffer(128);
+    private static SceneLights sceneLights = new SceneLights();
+    private static Framebuffer postProcessingFrameBuffer;
+    private static Shader postProcessingShader = new Shader("default_shaders/hdr_gamma_correct.glsl");
+    private static float exposure = 0.5f;
+
+    public static void addExposure(float pExposure)
+    {
+        if (exposure < 0.0001f) exposure = 0.0001f;
+        exposure += pExposure * exposure; // Makes it seem more linear towards the lower exposure levels.
+    }
+
+    public static void setSceneLights(SceneLights pSceneLights)
+    {
+        sceneLights = pSceneLights;
+    }
+
+    public static SceneLights getSceneLights()
+    {
+        return sceneLights;
+    }
+
+    public static void init(@NotNull Window window)
+    {
+        postProcessingFrameBuffer = new Framebuffer(window);
+    }
+
+    public static void dispose()
+    {
+        sceneLights.dispose();
+        matrixBuffer.delete();
+    }
+
+    /////RENDERING////////////////////
 
     public static void clear(int mask)
     {
@@ -46,6 +84,32 @@ public abstract class Renderer3D
     public static void setClearColor(@NotNull Vector4f color)
     {
         glClearColor(color.getX(), color.getY(), color.getZ(), color.getW());
+    }
+
+    public static void begin()
+    {
+        matrixBuffer.bind(0);
+        matrixBuffer.setDataUnsafe(perspectiveCamera.getViewMatrix().matrix, 0);
+        matrixBuffer.setDataUnsafe(Matrix4f.perspective.matrix, 64);
+        sceneLights.bind();
+        postProcessingFrameBuffer.bind();
+        clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    public static void end()
+    {
+        postProcessingFrameBuffer.unbind();
+        clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        postProcess();
+    }
+
+    private static void postProcess()
+    {
+        postProcessingShader.bind();
+        postProcessingShader.setFloat(exposure, "exposure");
+        postProcessingFrameBuffer.getColorAttachment().bind();
+        Renderer3D.SCREEN_QUAD.bind();
+        Renderer3D.SCREEN_QUAD.drawElements();
     }
 
     /////DEFAULT//////////

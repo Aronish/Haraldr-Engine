@@ -24,14 +24,14 @@ public class DiffuseMaterial extends Material
     {
         super(Shader.DIFFUSE);
         this.diffuseColor = diffuseColor;
-        this.diffuseTexture = Texture.DEFAULT_TEXTURE;
+        this.diffuseTexture = Texture.DEFAULT_WHITE;
     }
 
     public DiffuseMaterial(Vector3f diffuseColor, float diffuseStrength, float specularStrength, float specularExponent, float opacity)
     {
         super(Shader.DIFFUSE, diffuseStrength, specularStrength, specularExponent, opacity);
         this.diffuseColor = diffuseColor;
-        this.diffuseTexture = Texture.DEFAULT_TEXTURE;
+        this.diffuseTexture = Texture.DEFAULT_WHITE;
     }
 
     /////TEXTURED////////////////////////////////

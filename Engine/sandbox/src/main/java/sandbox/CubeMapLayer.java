@@ -4,6 +4,7 @@ import engine.event.Event;
 import engine.event.EventType;
 import engine.event.KeyPressedEvent;
 import engine.graphics.CubeMap;
+import engine.graphics.CubeMapOld;
 import engine.graphics.Model;
 import engine.graphics.Renderer3D;
 import engine.graphics.lighting.DirectionalLight;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CubeMapLayer extends Layer
 {
-    private CubeMap environmentMap = CubeMap.createEnvironmentMap("default_hdris/wooden_lounge_4k.hdr");
+    private CubeMapOld environmentMap = new CubeMapOld("default_hdris/wooden_lounge_4k.hdr");
 
     private Model model = new Model(
             "models/suzanne_smooth.obj",

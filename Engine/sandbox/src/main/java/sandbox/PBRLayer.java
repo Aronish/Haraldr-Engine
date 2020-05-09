@@ -5,7 +5,6 @@ import engine.event.EventType;
 import engine.event.KeyPressedEvent;
 import engine.graphics.CubeMap;
 import engine.graphics.DefaultModels;
-import engine.graphics.ObjParser;
 import engine.graphics.Renderer3D;
 import engine.graphics.ResourceManager;
 import engine.graphics.Shader;
@@ -37,15 +36,12 @@ public class PBRLayer extends Layer
     private PointLight l3 = new PointLight(new Vector3f(1.6f, 1.0f,3f), new Vector3f(10f, 10f, 5f));
     private PointLight l4 = new PointLight(new Vector3f(1.0f, 1.0f,3f), new Vector3f(10f, 10f, 5f));
 
-    //private Texture albedo      = new Texture("default_textures/MetalPanelRectangular001_COL_4K_METALNESS.jpg", true);
-    private Texture albedo = Texture.DEFAULT_WHITE;
-    private Texture normal      = new Texture("default_textures/MetalPanelRectangular001_NRM_4K_METALNESS.jpg", false);
-    //private Texture metallic    = new Texture("default_textures/MetalPanelRectangular001_METALNESS_4K_METALNESS.jpg", false);
-    //private Texture roughness   = new Texture("default_textures/MetalPanelRectangular001_ROUGHNESS_4K_METALNESS.jpg", false);
-    private Texture metallic = Texture.DEFAULT_WHITE;
-    private Texture roughness = Texture.DEFAULT_BLACK;
+    private Texture albedo      = new Texture("default_textures/MetalDesignerWeaveSteel002_COL_4K_METALNESS.jpg", true);
+    private Texture normal      = new Texture("default_textures/MetalDesignerWeaveSteel002_NRM_4K_METALNESS.jpg", false);
+    private Texture metallic    = new Texture("default_textures/MetalDesignerWeaveSteel002_METALNESS_4K_METALNESS.jpg", false);
+    private Texture roughness   = new Texture("default_textures/MetalDesignerWeaveSteel002_ROUGHNESS_4K_METALNESS.jpg", false);
 
-    private VertexArray mesh = ResourceManager.getMesh("models/suzanne_smooth.obj");
+    private VertexArray mesh = ResourceManager.getMesh("models/cylinder.obj");
 
     public PBRLayer(String name)
     {
@@ -79,8 +75,9 @@ public class PBRLayer extends Layer
         }
     }
 
-    private float sin, cos;
+    private float sin, cos, rotation;
     private int drawAmount = mesh.indexAmount;
+    private Matrix4f transformation = Matrix4f.IDENTITY;
 
     @Override
     public void onUpdate(Window window, float deltaTime)
@@ -101,6 +98,8 @@ public class PBRLayer extends Layer
         }
         sin = (float) Math.sin(Application.time / 3f);
         cos = (float) Math.cos(Application.time / 3f);
+        rotation += 10f * deltaTime;
+        transformation = Matrix4f.rotate(Vector3f.UP, rotation);
     }
 
     @Override
@@ -115,8 +114,9 @@ public class PBRLayer extends Layer
         prefilteredMap.bind(5);
         Texture.BRDF_LUT.bind(6);
         Shader.PBR.setVector3f(Renderer3D.getPerspectiveCamera().getPosition(), "viewPosition");
+        Shader.PBR.setMatrix4f(transformation, "model");
         mesh.bind();
-        mesh.drawElements(drawAmount);
+        mesh.drawElements();
         /*for (int y = 0; y < SPHERE_COUNT; ++y)
         {
             for (int x = 0; x < SPHERE_COUNT; ++x)
@@ -127,8 +127,6 @@ public class PBRLayer extends Layer
                 Shader.PBR.setMatrix4f(spherePositions[x][y], "model");
                 DefaultModels.SPHERE.bind();
                 DefaultModels.SPHERE.drawElements();
-                //mesh.bind();
-                //mesh.drawElements();
             }
         }*/
         l1.render();

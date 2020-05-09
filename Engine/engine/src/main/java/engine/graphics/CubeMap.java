@@ -44,7 +44,6 @@ import static org.lwjgl.opengl.GL12.GL_TEXTURE_WRAP_R;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT24;
-import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
@@ -54,6 +53,8 @@ import static org.lwjgl.opengl.GL30.GL_RGB16F;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 import static org.lwjgl.opengl.GL30.glBindRenderbuffer;
 import static org.lwjgl.opengl.GL30.glCheckFramebufferStatus;
+import static org.lwjgl.opengl.GL30.glDeleteFramebuffers;
+import static org.lwjgl.opengl.GL30.glDeleteRenderbuffers;
 import static org.lwjgl.opengl.GL30.glFramebufferRenderbuffer;
 import static org.lwjgl.opengl.GL30.glFramebufferTexture2D;
 import static org.lwjgl.opengl.GL30.glGenFramebuffers;
@@ -124,7 +125,6 @@ public class CubeMap
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
         STBImage.stbi_image_free(image);
 
         int environmentMap = mapToCubeMap(MAP_CUBEMAP, (mappingShader, framebuffer, depthRenderBuffer, colorAttachment, unused, mappingViews, unused2) ->
@@ -236,8 +236,8 @@ public class CubeMap
         mappingFunction.map(mappingShader, mappingFrameBuffer, depthRenderBuffer, cubemap, environmentMap, mappingViews, size);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glDeleteBuffers(mappingFrameBuffer);
-        glDeleteBuffers(depthRenderBuffer);
+        glDeleteFramebuffers(mappingFrameBuffer);
+        glDeleteRenderbuffers(depthRenderBuffer);
         glViewport(0, 0, Application.initWidth, Application.initHeight);
         glCullFace(GL_BACK);
         return cubemap;

@@ -68,7 +68,7 @@ public abstract class Application
         Renderer3D.init(window);
 
         //glEnable(GL_FRAMEBUFFER_SRGB);
-        if (ProgramArguments.isArgumentSet("MSAA"))
+        if (ProgramArguments.isArgumentSet("MSAA")) //TODO: Doesn't work with custom framebuffers
         {
             glEnable(GL_MULTISAMPLE); // Definitely has performance impact even if GLFW_SAMPLES is 0.
         }

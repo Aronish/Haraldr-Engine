@@ -108,8 +108,8 @@ public abstract class Renderer3D
         postProcessingShader.bind();
         postProcessingShader.setFloat(exposure, "exposure");
         postProcessingFrameBuffer.getColorAttachment().bind();
-        Renderer3D.SCREEN_QUAD.bind();
-        Renderer3D.SCREEN_QUAD.drawElements();
+        SCREEN_QUAD.bind();
+        SCREEN_QUAD.drawElements();
     }
 
     /////DEFAULT//////////

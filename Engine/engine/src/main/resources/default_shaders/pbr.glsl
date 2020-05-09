@@ -212,10 +212,15 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 void main()
 {
 #if TEXTURED
-    vec3 albedo = texture(albedoMap, v_TextureCoordinate).rgb;
-    vec3 tNormal = normalize(texture(normalMap, v_TextureCoordinate).rgb * 2.0f - 1.0f); // Read normals
-    float metallic = texture(metallicMap, v_TextureCoordinate).r;
-    float roughness = texture(roughnessMap, v_TextureCoordinate).r;
+    //vec3 albedo = texture(albedoMap, v_TextureCoordinate).rgb;
+    //vec3 tNormal = normalize(texture(normalMap, v_TextureCoordinate).rgb * 2.0f - 1.0f); // Read normals
+    //float metallic = texture(metallicMap, v_TextureCoordinate).r;
+    //float roughness = texture(roughnessMap, v_TextureCoordinate).r;
+    vec2 texcoord = v_TextureCoordinate * 2;
+    vec3 albedo = texture(albedoMap, texcoord).rgb;
+    vec3 tNormal = normalize(texture(normalMap, texcoord).rgb * 2.0f - 1.0f); // Read normals
+    float metallic = texture(metallicMap, texcoord).r;
+    float roughness = texture(roughnessMap, texcoord).r;
 #else
     vec3 albedo = u_Albedo;
     vec3 tNormal = normalize(v_TNormal);

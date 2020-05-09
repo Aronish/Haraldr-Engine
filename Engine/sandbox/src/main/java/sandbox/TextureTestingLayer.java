@@ -3,7 +3,7 @@ package sandbox;
 import engine.event.Event;
 import engine.event.EventType;
 import engine.event.KeyPressedEvent;
-import engine.graphics.DefaultModels;
+import engine.graphics.CubeMap;
 import engine.graphics.Model;
 import engine.graphics.Renderer3D;
 import engine.graphics.lighting.PointLight;
@@ -16,14 +16,17 @@ import engine.layer.Layer;
 import engine.main.Application;
 import engine.main.Window;
 import engine.math.Matrix4f;
-import engine.math.Vector2f;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
 public class TextureTestingLayer extends Layer
 {
+    private CubeMap environmentMap = CubeMap.createEnvironmentMap("default_hdris/wooden_lounge_4k.hdr");
+    private CubeMap diffuseIrradianceMap = CubeMap.createDiffuseIrradianceMap(environmentMap);
+    private CubeMap prefilteredMap = CubeMap.createPrefilteredEnvironmentMap(environmentMap);
+
     private final Model model = new Model(
-            "models/suzanne.obj",
+            "models/suzanne_smooth.obj",
             new NormalMaterial(
                     "default_textures/BricksPaintedWhite_COL_4K.jpg",
                     "default_textures/BricksPaintedWhite_NRM_4K.jpg"
@@ -94,11 +97,12 @@ public class TextureTestingLayer extends Layer
     {
         model.render();
         pointLight.render();
+        environmentMap.renderSkyBox();
     }
 
     @Override
     public void onDispose()
     {
-        //model.delete();
+        model.delete();
     }
 }

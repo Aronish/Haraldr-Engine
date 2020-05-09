@@ -2,6 +2,7 @@ package engine.graphics;
 
 import engine.physics.AABB;
 
+@Deprecated
 public class Sprite
 {
     //Winding order: Clockwise starting at top-left.

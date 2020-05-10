@@ -33,6 +33,8 @@ void main()
 #define MAX_SPOTLIGHTS 5
 #define MAX_DIRECTIONAL_LIGHTS 1
 
+const float AMBIENT_STRENGTH = 1.0f;
+
 struct MaterialProperties
 {
     vec3 diffuseColor;
@@ -84,7 +86,6 @@ layout(std140, binding = 1) uniform lightSetup
     float numPointLights;
     float numSpotlights;
     float numDirectionalLights;
-    float ambientStrength;
 };
 
 uniform vec3 viewPosition;
@@ -104,7 +105,7 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDirection)
     vec3 lightDirection = normalize(light.position.xyz - v_FragmentPosition);
     vec3 halfWayDirection = normalize(lightDirection + viewDirection);
     //Ambient
-    vec3 ambient = ambientStrength * light.color.rgb * materialProperties.diffuseColor * texture(diffuseTexture, v_TextureCoordinate).rgb;
+    vec3 ambient = AMBIENT_STRENGTH * light.color.rgb * materialProperties.diffuseColor * texture(diffuseTexture, v_TextureCoordinate).rgb;
     //Diffuse
     float diff = max(dot(normal, lightDirection), 0.0f);
     vec3 diffuse = materialProperties.diffuseStrength * light.color.rgb * diff * materialProperties.diffuseColor * texture(diffuseTexture, v_TextureCoordinate).rgb;
@@ -130,7 +131,7 @@ vec3 calculateSpotlight(Spotlight light, vec3 normal, vec3 viewDirection)
     float epsilon = light.innerCutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0f, 1.0f);
     //Ambient
-    vec3 ambient = ambientStrength * light.color.rgb * materialProperties.diffuseColor * texture(diffuseTexture, v_TextureCoordinate).rgb;
+    vec3 ambient = AMBIENT_STRENGTH * light.color.rgb * materialProperties.diffuseColor * texture(diffuseTexture, v_TextureCoordinate).rgb;
     //Diffuse
     float diff = max(dot(normal, lightDirection), 0.0f);
     vec3 diffuse = materialProperties.diffuseStrength * light.color.rgb * diff * materialProperties.diffuseColor * texture(diffuseTexture, v_TextureCoordinate).rgb;
@@ -149,7 +150,7 @@ vec3 calculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir
     vec3 lightDirection = normalize(-light.direction.xyz);
     vec3 halfWayDirection = normalize(lightDirection + viewDirection);
     //Ambient
-    vec3 ambient = ambientStrength * light.color.rgb * materialProperties.diffuseColor * texture(diffuseTexture, v_TextureCoordinate).rgb;
+    vec3 ambient = AMBIENT_STRENGTH * light.color.rgb * materialProperties.diffuseColor * texture(diffuseTexture, v_TextureCoordinate).rgb;
     //Diffuse
     float diff = max(dot(normal, lightDirection), 0.0f);
     vec3 diffuse = materialProperties.diffuseStrength * light.color.rgb * diff * materialProperties.diffuseColor * texture(diffuseTexture, v_TextureCoordinate).rgb;

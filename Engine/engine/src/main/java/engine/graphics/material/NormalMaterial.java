@@ -8,6 +8,7 @@ import engine.graphics.Texture;
 public class NormalMaterial extends Material
 {
     private Texture diffuseTexture, normalMap;
+    private float specularStrength = 0.5f, specularExponent = 32f, opacity = 1f;
 
     public NormalMaterial(String diffuseTexture, String normalMap)
     {
@@ -28,15 +29,21 @@ public class NormalMaterial extends Material
 
     public NormalMaterial(Texture diffuseTexture, Texture normalMap, float diffuseStrength, float specularStrength, float specularExponent, float opacity)
     {
-        super(Shader.NORMAL, diffuseStrength, specularStrength, specularExponent, opacity);
+        super(Shader.NORMAL);
         this.diffuseTexture = diffuseTexture;
         this.normalMap = normalMap;
+        this.specularStrength = specularStrength;
+        this.specularExponent = specularExponent;
+        this.opacity = opacity;
     }
 
     @Override
     public void bind()
     {
         super.bind();
+        shader.setFloat(specularStrength, "materialProperties.specularStrength");
+        shader.setFloat(specularExponent, "materialProperties.specularExponent");
+        shader.setFloat(opacity, "materialProperties.opacity");
         diffuseTexture.bind(0);
         normalMap.bind(1);
     }

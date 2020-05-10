@@ -4,6 +4,7 @@
 layout (location = 0) in vec3 a_Position;
 layout (location = 1) in vec3 a_Normal;
 layout (location = 2) in vec2 a_TextureCoordinate;
+layout (location = 3) in vec3 a_Tangent;
 
 uniform mat4 model = mat4(1.0f);
 
@@ -17,12 +18,15 @@ out vec3 v_Normal;
 out vec2 v_TextureCoordinate;
 out vec3 v_FragmentPosition;
 
+out mat3 v_TBN;
+
 void main()
 {
-    v_TextureCoordinate = a_TextureCoordinate;
     mat3 normalMatrix = mat3(model);
     v_Normal = normalMatrix * a_Normal;
+    v_TextureCoordinate = a_TextureCoordinate;
     v_FragmentPosition = (model * vec4(a_Position, 1.0f)).xyz;
+
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
 }
 
@@ -46,5 +50,5 @@ void main()
     vec3 R = reflect(I, normalize(v_Normal));
 
     vec3 color = texture(environmentMap, R).rgb * texture(reflectionMap, v_TextureCoordinate).rgb + texture(diffuseTexture, v_TextureCoordinate).rgb;
-    o_Color = vec4(color, 1.f);
+    o_Color = vec4(color, 1.0f);
 }

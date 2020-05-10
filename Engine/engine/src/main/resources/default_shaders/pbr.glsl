@@ -70,6 +70,8 @@ out vec3 v_ViewPosition;
 out vec3 v_WorldPosition;
 out vec2 v_TextureCoordinate;
 
+out mat3 v_TanToWorld;
+
 void main()
 {
     mat3 normalMatrix   = mat3(model); // (Note: Tangent space vectors don't care about translation)
@@ -90,6 +92,7 @@ void main()
     v_TextureCoordinate = a_TextureCoordinate;                          // Not important for lighting, don't put in tangent space.
     v_WorldPosition     = TBN * vec3((model * vec4(a_Position, 1.0f))); // Need to be translated as well.
     v_ViewPosition      = TBN * viewPosition;
+    v_TanToWorld = transpose(TBN);
 
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
 }
@@ -136,6 +139,8 @@ in vec3 v_ViewPosition;
 in vec3 v_WorldPosition;
 in vec2 v_TextureCoordinate;
 
+in mat3 v_TanToWorld;
+
 in tangentSpaceLighting
 {
     vec3 pointLightPositions[MAX_POINT_LIGHTS];
@@ -159,10 +164,12 @@ layout (binding = 0) uniform sampler2D albedoMap;
 layout (binding = 1) uniform sampler2D normalMap;
 layout (binding = 2) uniform sampler2D metallicMap;
 layout (binding = 3) uniform sampler2D roughnessMap;
+layout (binding = 4) uniform sampler2D displacementMap;
+uniform float u_UseParallaxMapping;
 
-layout (binding = 4) uniform samplerCube diffuseIrradianceMap;
-layout (binding = 5) uniform samplerCube prefilteredMap;
-layout (binding = 6) uniform sampler2D brdfLUT;
+layout (binding = 5) uniform samplerCube diffuseIrradianceMap;
+layout (binding = 6) uniform samplerCube prefilteredMap;
+layout (binding = 7) uniform sampler2D brdfLUT;
 
 out vec4 o_Color;
 
@@ -207,28 +214,49 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
     return ggx1 * ggx2;
 }
 
-#define TEXTURED 1
+vec2 ParallaxMapping(vec2 textureCoordinate, vec3 viewDirection)
+{
+    const float heightScale = 0.05f;
+    const float minLayers = 8.0f;
+    const float maxLayers = 32.0f;
+    float numLayers = mix(maxLayers, minLayers, max(dot(vec3(0.0f, 0.0f, 1.0f), viewDirection), 0.0f));
+    float layerDepth = 1.0f / numLayers;
+    float currentLayerDepth = 0.0f;
+
+    vec2 P = viewDirection.xy * heightScale;
+    vec2 deltaTextureCoordinate = P / numLayers;
+
+    vec2 currentTextureCoordinate = textureCoordinate;
+    float currentDisplacementMapValue = 1.0f - texture(displacementMap, currentTextureCoordinate).r;
+
+    while (currentLayerDepth < currentDisplacementMapValue)
+    {
+        currentTextureCoordinate -= deltaTextureCoordinate;
+        currentDisplacementMapValue = 1.0f - texture(displacementMap, currentTextureCoordinate).r;
+        currentLayerDepth += layerDepth;
+    }
+
+    vec2 prevTextureCoordinate = currentTextureCoordinate + deltaTextureCoordinate;
+    float displacementAfter = currentDisplacementMapValue - currentLayerDepth;
+    float displacementBefore = 1.0f - texture(displacementMap, prevTextureCoordinate).r - currentLayerDepth + layerDepth;
+    float weight = displacementAfter / (displacementAfter - displacementBefore);
+    vec2 finalTextureCoordinate = prevTextureCoordinate * weight + currentTextureCoordinate * (1.0f - weight);
+
+    return finalTextureCoordinate;
+}
 
 void main()
 {
-#if TEXTURED
-    //vec3 albedo = texture(albedoMap, v_TextureCoordinate).rgb;
-    //vec3 tNormal = normalize(texture(normalMap, v_TextureCoordinate).rgb * 2.0f - 1.0f); // Read normals
-    //float metallic = texture(metallicMap, v_TextureCoordinate).r;
-    //float roughness = texture(roughnessMap, v_TextureCoordinate).r;
-    vec2 texcoord = v_TextureCoordinate * 2;
-    vec3 albedo = texture(albedoMap, texcoord).rgb;
-    vec3 tNormal = normalize(texture(normalMap, texcoord).rgb * 2.0f - 1.0f); // Read normals
-    float metallic = texture(metallicMap, texcoord).r;
-    float roughness = texture(roughnessMap, texcoord).r;
-#else
-    vec3 albedo = u_Albedo;
-    vec3 tNormal = normalize(v_TNormal);
-    float metallic = u_Metallic;
-    float roughness = u_Roughness;
-#endif
+    float tilingFactor = 1.0f; //TODO: Make uniform
     vec3 V = normalize(v_ViewPosition - v_WorldPosition);
-    vec3 normal = normalize(v_Normal);
+
+    vec2 textureCoordinate = u_UseParallaxMapping == 1f ? ParallaxMapping(v_TextureCoordinate * tilingFactor, V) : v_TextureCoordinate * tilingFactor;
+    if(u_UseParallaxMapping == 1f && (textureCoordinate.x > tilingFactor || textureCoordinate.y > tilingFactor || textureCoordinate.x < 0.0f || textureCoordinate.y < 0.0f)) discard;
+
+    vec3 albedo = texture(albedoMap, textureCoordinate).rgb * u_Albedo;
+    vec3 tNormal = normalize(texture(normalMap, textureCoordinate).rgb * 2.0f - 1.0f) * v_TNormal; // Read normals
+    float metallic = texture(metallicMap, textureCoordinate).r * u_Metallic;
+    float roughness = texture(roughnessMap, textureCoordinate).r * u_Roughness;
 
     vec3 F0 = vec3(0.04f);
     F0 = mix(F0, albedo, metallic);
@@ -261,17 +289,20 @@ void main()
     //////////Indirect Lighting//////////////////////////////////////////////////
     /////IBL Ambient/////////////////////////////////////////////////////////////
 
-    vec3 kS = fresnelSchlickRoughness(max(dot(tNormal, V), 0.0f), F0, roughness);
+    vec3 sampleVector = normalize(v_Normal);
+    vec3 V_World = v_TanToWorld * V;
+
+    vec3 kS = fresnelSchlickRoughness(max(dot(sampleVector, V_World), 0.0f), F0, roughness);
     vec3 kD = (1.0f - kS) * (1.0f - metallic);
-    vec3 irradiance = texture(diffuseIrradianceMap, tNormal).rgb;
+    vec3 irradiance = texture(diffuseIrradianceMap, sampleVector).rgb;
     vec3 diffuse = irradiance * albedo;
     /////IBL Specular/////////////////////
     const float MAX_REFLECTION_LOD = 4.0f;
-    vec3 R = reflect(-V, tNormal);
+    vec3 R = reflect(-V_World, sampleVector);
     vec3 prefilteredColor = textureLod(prefilteredMap, R, roughness * MAX_REFLECTION_LOD).rgb;
 
-    vec3 F = fresnelSchlickRoughness(max(dot(tNormal, V), 0.0f), F0, roughness);
-    vec2 envBRDF = texture(brdfLUT, vec2(max(dot(tNormal, V), 0.0f), roughness)).rg;
+    vec3 F = fresnelSchlickRoughness(max(dot(sampleVector, V_World), 0.0f), F0, roughness);
+    vec2 envBRDF = texture(brdfLUT, vec2(max(dot(sampleVector, V_World), 0.0f), roughness)).rg;
     vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
 
     vec3 ambient = kD * diffuse + specular; // All this * ao later

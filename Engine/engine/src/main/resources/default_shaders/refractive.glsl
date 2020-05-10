@@ -1,8 +1,6 @@
 #shader vert
 #version 460 core
 
-#define INSTANCED 0
-
 layout (location = 0) in vec3 a_Position;
 layout (location = 1) in vec3 a_Normal;
 layout (location = 2) in vec2 a_TextureCoordinate;
@@ -14,31 +12,19 @@ layout (std140, binding = 0) uniform matrices
     mat4 view;
     mat4 projection;
 };
-#if INSTANCED
-layout (std140, binding = 1) uniform instancedMatrices
-{
-    mat4 modelMatrices[400];
-};
-#endif
+
 out vec3 v_Normal;
 out vec2 v_TextureCoordinate;
 out vec3 v_FragmentPosition;
 
 void main()
 {
-#if INSTANCED
-    v_TextureCoordinate = a_TextureCoordinate;
-    mat3 normalMatrix = mat3(modelMatrices[gl_InstanceID]);
-    v_Normal = normalMatrix * a_Normal;
-    v_FragmentPosition = (modelMatrices[gl_InstanceID] * vec4(a_Position, 1.0f)).xyz;
-    gl_Position = projection * view * modelMatrices[gl_InstanceID] * vec4(a_Position, 1.0f);
-#else
-    v_TextureCoordinate = a_TextureCoordinate;
     mat3 normalMatrix = mat3(model);
     v_Normal = normalMatrix * a_Normal;
+    v_TextureCoordinate = a_TextureCoordinate;
     v_FragmentPosition = (model * vec4(a_Position, 1.0f)).xyz;
+
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
-#endif
 }
 
 #shader frag

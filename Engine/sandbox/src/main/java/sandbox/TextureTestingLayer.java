@@ -22,16 +22,13 @@ import org.jetbrains.annotations.NotNull;
 public class TextureTestingLayer extends Layer
 {
     private CubeMap environmentMap = CubeMap.createEnvironmentMap("default_hdris/wooden_lounge_4k.hdr");
-    private CubeMap diffuseIrradianceMap = CubeMap.createDiffuseIrradianceMap(environmentMap);
-    private CubeMap prefilteredMap = CubeMap.createPrefilteredEnvironmentMap(environmentMap);
 
     private final Model model = new Model(
-            "models/suzanne_smooth.obj",
+            "models/cylinder.obj",
             new NormalMaterial(
-                    "default_textures/BricksPaintedWhite_COL_4K.jpg",
-                    "default_textures/BricksPaintedWhite_NRM_4K.jpg"
-            ),
-            Matrix4f.translate(new Vector3f(0f, 4f, 0f)).multiply(Matrix4f.scale(new Vector3f(1f)))
+                    "default_textures/MetalDesignerWeaveSteel002_COL_4K_METALNESS.jpg",
+                    "default_textures/MetalDesignerWeaveSteel002_NRM_4K_METALNESS.jpg"
+            )
     );
 
     private final Spotlight flashLight = new Spotlight(Vector3f.IDENTITY, Vector3f.IDENTITY, new Vector3f(1f), 20f, 25f);
@@ -80,6 +77,7 @@ public class TextureTestingLayer extends Layer
 
     private final Vector3f rotationAxis = new Vector3f(0f, 1f, 0f);
     private float rotation;
+    private Matrix4f transformation = Matrix4f.IDENTITY;
 
     @Override
     public void onUpdate(@NotNull Window window, float deltaTime)
@@ -89,13 +87,14 @@ public class TextureTestingLayer extends Layer
         rotation += 10f * deltaTime;
         flashLight.setDirection(Renderer3D.getPerspectiveCamera().getDirection());
         flashLight.setPosition(Renderer3D.getPerspectiveCamera().getPosition());
-        pointLight.setPosition(new Vector3f(cos * 2f + 2f, sin * 2f + 2f, -2f));
+        pointLight.setPosition(new Vector3f(cos * 2f, 0f, sin * 2f));
+        transformation = Matrix4f.rotate(Vector3f.UP, rotation);
     }
 
     @Override
     public void onRender()
     {
-        model.render();
+        model.renderTransformed(transformation);
         pointLight.render();
         environmentMap.renderSkyBox();
     }

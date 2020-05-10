@@ -52,6 +52,8 @@ import static org.lwjgl.opengl.GL30.GL_RG16F;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 import static org.lwjgl.opengl.GL30.glBindRenderbuffer;
 import static org.lwjgl.opengl.GL30.glCheckFramebufferStatus;
+import static org.lwjgl.opengl.GL30.glDeleteFramebuffers;
+import static org.lwjgl.opengl.GL30.glDeleteRenderbuffers;
 import static org.lwjgl.opengl.GL30.glFramebufferRenderbuffer;
 import static org.lwjgl.opengl.GL30.glFramebufferTexture2D;
 import static org.lwjgl.opengl.GL30.glGenFramebuffers;
@@ -64,26 +66,6 @@ import static org.lwjgl.opengl.GL45.glCreateTextures;
 @SuppressWarnings("unused")
 public class Texture
 {
-    private static final VertexArray SCREEN_QUAD = new VertexArray(); // Static initialization order messed this up.
-
-    static
-    {
-        float[] quadVertexData =
-                {
-                        -1f,  1f,   0f, 1f,
-                        1f,  1f,   1f, 1f,
-                        1f, -1f,   1f, 0f,
-                        -1f, -1f,   0f, 0f
-                };
-        VertexBuffer quadVertices = new VertexBuffer(
-                quadVertexData,
-                new VertexBufferLayout(new VertexBufferElement(ShaderDataType.FLOAT2), new VertexBufferElement(ShaderDataType.FLOAT2)),
-                false
-        );
-        SCREEN_QUAD.setVertexBuffers(quadVertices);
-        SCREEN_QUAD.setIndexBuffer(new int[] { 0, 3, 2, 0, 2, 1 });
-    }
-
     private static final Shader BRDF_CONVOLUTION = new Shader("default_shaders/brdf_convolution.glsl");
 
     public static final Texture DEFAULT_WHITE = new Texture(1, 1, new int[] { -1 });
@@ -107,6 +89,7 @@ public class Texture
         textureId = createTextureFromPixelData(pixelData);
     }
 
+    //DO NOT LOAD .tif!
     public Texture(String path, boolean isColorData)
     {
         textureId = load(path, isColorData);
@@ -215,12 +198,12 @@ public class Texture
         BRDF_CONVOLUTION.bind();
         glClearColor(1f, 1f, 1f, 1f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        SCREEN_QUAD.bind();
-        SCREEN_QUAD.drawElements();
+        Renderer3D.SCREEN_QUAD.bind();
+        Renderer3D.SCREEN_QUAD.drawElements();
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glDeleteBuffers(mappingFrameBuffer);
-        glDeleteBuffers(depthRenderBuffer);
+        glDeleteFramebuffers(mappingFrameBuffer);
+        glDeleteRenderbuffers(depthRenderBuffer);
         glViewport(0, 0, Application.initWidth, Application.initHeight);
         return new Texture(brdf, size, size);
     }

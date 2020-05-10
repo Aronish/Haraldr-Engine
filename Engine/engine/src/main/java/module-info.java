@@ -41,5 +41,4 @@ module Engine.engine
     opens default_shaders;
     opens models;
     opens default_textures;
-    exports engine.graphics.pbr;
 }

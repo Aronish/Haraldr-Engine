@@ -5,6 +5,7 @@ import engine.graphics.ResourceManager;
 import engine.graphics.Shader;
 import engine.graphics.Texture;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class ReflectiveMaterial extends Material
 {
     private CubeMap environmentMap;

@@ -57,7 +57,6 @@ layout(std140, binding = 1) uniform lightSetup
     float numPointLights;
     float numSpotlights;
     float numDirectionalLights;
-    float ambientStrength;
 };
 
 /////OUTPUT//////////////////
@@ -112,8 +111,8 @@ void main()
 #define MAX_SPOTLIGHTS 5
 #define MAX_DIRECTIONAL_LIGHTS 1
 
-const float DIFFUSE_STRENGTH = 1f;      //Just 1f I guess
-const float OPACITY = 1.0f;
+const float AMBIENT_STRENGTH = 0.1f;
+const float DIFFUSE_STRENGTH = 1.0f;      //Just 1f I guess
 
 struct MaterialProperties
 {
@@ -171,7 +170,6 @@ layout(std140, binding = 1) uniform lightSetup
     float numPointLights;
     float numSpotlights;
     float numDirectionalLights;
-    float ambientStrength;
 };
 
 /////MATERIAL////////////////////////////////////////
@@ -186,15 +184,15 @@ float when_gt(float x, float y)
     return max(sign(x - y), 0.0);
 }
 
-vec3 calculatePointLight(PointLight light, vec3 position, vec3 normal, vec3 viewDirection)
+vec3 calculatePointLight(PointLight light, vec3 position, vec3 normal, vec3 viewDirection, vec3 diffuseColor)
 {
     vec3 lightDirection = normalize(position - v_FragmentPosition);
     vec3 halfWayDirection = normalize(lightDirection + viewDirection);
     //Ambient
-    vec3 ambient = ambientStrength * light.color.rgb * texture(diffuseTexture, v_TextureCoordinate).rgb;
+    vec3 ambient = AMBIENT_STRENGTH * light.color.rgb * diffuseColor;
     //Diffuse
     float diff = max(dot(normal, lightDirection), 0.0f);
-    vec3 diffuse = DIFFUSE_STRENGTH * light.color.rgb * diff * texture(diffuseTexture, v_TextureCoordinate).rgb;
+    vec3 diffuse = light.color.rgb * diff * diffuseColor;
     //Specular
     float specularFactor = max(dot(normal, halfWayDirection), 0.0f);
     float spec = pow(specularFactor, materialProperties.specularExponent) * when_gt(diff, 0.0f); //Fixes some leaking
@@ -209,7 +207,7 @@ vec3 calculatePointLight(PointLight light, vec3 position, vec3 normal, vec3 view
     return (ambient + diffuse + specular);
 }
 
-vec3 calculateSpotlight(Spotlight light, vec3 position, vec3 direction, vec3 normal, vec3 viewDirection)
+vec3 calculateSpotlight(Spotlight light, vec3 position, vec3 direction, vec3 normal, vec3 viewDirection, vec3 diffuseColor)
 {
     vec3 lightDirection = normalize(position - v_FragmentPosition);
     vec3 halfWayDirection = normalize(lightDirection + viewDirection);
@@ -217,10 +215,10 @@ vec3 calculateSpotlight(Spotlight light, vec3 position, vec3 direction, vec3 nor
     float epsilon = light.innerCutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0f, 1.0f);
     //Ambient
-    vec3 ambient = ambientStrength * light.color.rgb * texture(diffuseTexture, v_TextureCoordinate).rgb;
+    vec3 ambient = AMBIENT_STRENGTH * light.color.rgb * diffuseColor;
     //Diffuse
     float diff = max(dot(normal, lightDirection), 0.0f);
-    vec3 diffuse = DIFFUSE_STRENGTH * light.color.rgb * diff * texture(diffuseTexture, v_TextureCoordinate).rgb;
+    vec3 diffuse = light.color.rgb * diff * diffuseColor;
     //Specular
     float specularFactor = max(dot(normal, halfWayDirection), 0.0f);
     float spec = pow(specularFactor, materialProperties.specularExponent) * when_gt(diff, 0.0f); //Fixes some leaking
@@ -232,15 +230,15 @@ vec3 calculateSpotlight(Spotlight light, vec3 position, vec3 direction, vec3 nor
     return (diffuse + specular);
 }
 
-vec3 calculateDirectionalLight(DirectionalLight light, vec3 direction, vec3 normal, vec3 viewDirection)
+vec3 calculateDirectionalLight(DirectionalLight light, vec3 direction, vec3 normal, vec3 viewDirection, vec3 diffuseColor)
 {
     vec3 lightDirection = normalize(-direction);
     vec3 halfWayDirection = normalize(lightDirection + viewDirection);
     //Ambient
-    vec3 ambient = ambientStrength * light.color.rgb * texture(diffuseTexture, v_TextureCoordinate).rgb;
+    vec3 ambient = AMBIENT_STRENGTH * light.color.rgb * diffuseColor;
     //Diffuse
     float diff = max(dot(normal, lightDirection), 0.0f);
-    vec3 diffuse = DIFFUSE_STRENGTH * light.color.rgb * diff * texture(diffuseTexture, v_TextureCoordinate).rgb;
+    vec3 diffuse = light.color.rgb * diff * diffuseColor;
     //Specular
     float specularFactor = max(dot(normal, halfWayDirection), 0.0f);
     float spec = pow(specularFactor, materialProperties.specularExponent) * when_gt(diff, 0.0f); //Fixes some leaking
@@ -255,20 +253,22 @@ void main()
     vec3 viewDirection = normalize(v_ViewPosition - v_FragmentPosition);
     vec3 result = vec3(0.0f);
 
+    vec3 diffuseColor = DIFFUSE_STRENGTH * texture(diffuseTexture, v_TextureCoordinate).rgb;
+
     //Calculate light contribution
     for (uint i = 0; i < numPointLights; ++i)
     {
-        result += calculatePointLight(pointLights[i], pointLightPositions[i], normal, viewDirection);
+        result += calculatePointLight(pointLights[i], pointLightPositions[i], normal, viewDirection, diffuseColor);
     }
 
     for (uint i = 0; i < numSpotlights; ++i)
     {
-        result += calculateSpotlight(spotlights[i], spotlightPositions[i], spotlightDirections[i], normal, viewDirection);
+        result += calculateSpotlight(spotlights[i], spotlightPositions[i], spotlightDirections[i], normal, viewDirection, diffuseColor);
     }
 
     for (uint i = 0; i < numDirectionalLights; ++i)
     {
-        result += calculateDirectionalLight(directionalLights[i], directionalLightDirections[i], normal, viewDirection);
+        result += calculateDirectionalLight(directionalLights[i], directionalLightDirections[i], normal, viewDirection, diffuseColor);
     }
 
     o_Color = vec4(result, materialProperties.opacity);

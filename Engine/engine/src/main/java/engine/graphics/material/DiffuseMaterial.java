@@ -10,28 +10,32 @@ public class DiffuseMaterial extends Material
 {
     public static final Material DEFAULT = new DiffuseMaterial();
 
-    private Vector3f diffuseColor;
+    private Vector3f diffuseColor = new Vector3f(1f);
+    private float diffuseStrength = 1f, specularStrength = 0.5f, specularExponent = 32f, opacity = 1f;
     private Texture diffuseTexture;
 
     /////FLAT COLOR/////////
 
     public DiffuseMaterial()
     {
-        this(new Vector3f(1f));
+        super(Shader.DIFFUSE);
     }
 
     public DiffuseMaterial(Vector3f diffuseColor)
     {
         super(Shader.DIFFUSE);
         this.diffuseColor = diffuseColor;
-        this.diffuseTexture = Texture.DEFAULT_WHITE;
     }
 
     public DiffuseMaterial(Vector3f diffuseColor, float diffuseStrength, float specularStrength, float specularExponent, float opacity)
     {
-        super(Shader.DIFFUSE, diffuseStrength, specularStrength, specularExponent, opacity);
+        super(Shader.DIFFUSE);
         this.diffuseColor = diffuseColor;
         this.diffuseTexture = Texture.DEFAULT_WHITE;
+        this.diffuseStrength = diffuseStrength;
+        this.specularStrength = specularStrength;
+        this.specularExponent = specularExponent;
+        this.opacity = opacity;
     }
 
     /////TEXTURED////////////////////////////////
@@ -44,7 +48,6 @@ public class DiffuseMaterial extends Material
     public DiffuseMaterial(Texture diffuseTexture)
     {
         super(Shader.DIFFUSE);
-        this.diffuseColor = new Vector3f(1f);
         this.diffuseTexture = diffuseTexture;
     }
 
@@ -55,9 +58,12 @@ public class DiffuseMaterial extends Material
 
     public DiffuseMaterial(Texture diffuseTexture, float diffuseStrength, float specularStrength, float specularExponent, float opacity)
     {
-        super(Shader.DIFFUSE, diffuseStrength, specularStrength, specularExponent, opacity);
-        this.diffuseColor = new Vector3f(1f);
+        super(Shader.DIFFUSE);
         this.diffuseTexture = diffuseTexture;
+        this.diffuseStrength = diffuseStrength;
+        this.specularStrength = specularStrength;
+        this.specularExponent = specularExponent;
+        this.opacity = opacity;
     }
 
     @Override
@@ -65,6 +71,10 @@ public class DiffuseMaterial extends Material
     {
         super.bind();
         shader.setVector3f(diffuseColor, "materialProperties.diffuseColor");
+        shader.setFloat(diffuseStrength, "materialProperties.diffuseStrength");
+        shader.setFloat(specularStrength, "materialProperties.specularStrength");
+        shader.setFloat(specularExponent, "materialProperties.specularExponent");
+        shader.setFloat(opacity, "materialProperties.opacity");
         diffuseTexture.bind(0);
     }
 

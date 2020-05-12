@@ -68,7 +68,6 @@ public abstract class Application
         /////OPENGL CODE WON'T WORK BEFORE THIS///////////////////////////
         EventDispatcher.addCallback(new EventCallback());
         Matrix4f.init(window.getWidth(), window.getHeight());
-        Renderer3D.init(window);
 
         //glEnable(GL_FRAMEBUFFER_SRGB);
         if (ProgramArguments.isArgumentSet("MSAA")) //TODO: Doesn't work with custom framebuffers
@@ -147,9 +146,9 @@ public abstract class Application
 
     private void render()
     {
-        Renderer3D.begin();
+        Renderer3D.begin(window);
         layerStack.reverseIterator().forEachRemaining(Layer::onRender);
-        Renderer3D.end();
+        Renderer3D.end(window);
         glfwSwapBuffers(window.getWindowHandle());
     }
 
@@ -191,6 +190,7 @@ public abstract class Application
 
     public void dispose()
     {
+        window.delete();
         layerStack.forEach(Layer::onDispose);
         Renderer3D.dispose();
         ResourceManager.dispose();

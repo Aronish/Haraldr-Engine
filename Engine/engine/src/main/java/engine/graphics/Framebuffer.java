@@ -1,7 +1,5 @@
 package engine.graphics;
 
-import engine.main.EntryPoint;
-import engine.main.Window;
 import org.jetbrains.annotations.NotNull;
 
 import static engine.main.Application.MAIN_LOGGER;
@@ -19,18 +17,15 @@ import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
-import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT24;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
-import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_COMPLETE;
 import static org.lwjgl.opengl.GL30.GL_RENDERBUFFER;
 import static org.lwjgl.opengl.GL30.GL_RGB16F;
 import static org.lwjgl.opengl.GL30.GL_RGBA16F;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 import static org.lwjgl.opengl.GL30.glBindRenderbuffer;
-import static org.lwjgl.opengl.GL30.glCheckFramebufferStatus;
 import static org.lwjgl.opengl.GL30.glDeleteFramebuffers;
 import static org.lwjgl.opengl.GL30.glDeleteRenderbuffers;
 import static org.lwjgl.opengl.GL30.glFramebufferRenderbuffer;
@@ -47,32 +42,28 @@ public class Framebuffer
     private ColorAttachment colorAttachment;
     private RenderBuffer depthBuffer;
 
-    public Framebuffer(Window window)
+    public Framebuffer()
     {
         frameBufferId = glCreateFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, frameBufferId);
-        setColorAttachment(new ColorAttachment(window, GL_RGB16F));
-        setDepthBuffer(new RenderBuffer(window, GL_DEPTH_COMPONENT24));
-
-        int[] drawBuffers = new int[] { GL_COLOR_ATTACHMENT0 };
-        glDrawBuffers(drawBuffers);
+        glDrawBuffers(new int[] { GL_COLOR_ATTACHMENT0 });
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        if (EntryPoint.DEBUG)
-        {
-            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) MAIN_LOGGER.error("Framebuffer INCOMPLETE!");
-        }
     }
 
     public void setColorAttachment(@NotNull ColorAttachment colorAttachment)
     {
         this.colorAttachment = colorAttachment;
+        glBindFramebuffer(GL_FRAMEBUFFER, frameBufferId);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorAttachment.textureId, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     public void setDepthBuffer(@NotNull RenderBuffer depthBuffer)
     {
         this.depthBuffer = depthBuffer;
+        glBindFramebuffer(GL_FRAMEBUFFER, frameBufferId);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer.renderBufferId);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     public void bind()
@@ -90,6 +81,11 @@ public class Framebuffer
         return colorAttachment;
     }
 
+    public RenderBuffer getDepthAttachment()
+    {
+        return depthBuffer;
+    }
+
     public void delete()
     {
         glDeleteFramebuffers(frameBufferId);
@@ -97,11 +93,11 @@ public class Framebuffer
         depthBuffer.delete();
     }
 
-    public class ColorAttachment
+    public static class ColorAttachment
     {
-        private int textureId, width, height, internalFormat, format, type;
+        private int textureId, internalFormat, format, type;
 
-        public ColorAttachment(@NotNull Window window, int internalFormat)
+        public ColorAttachment(int width, int height, int internalFormat)
         {
             this.internalFormat = internalFormat;
             switch (internalFormat)
@@ -126,13 +122,17 @@ public class Framebuffer
                     MAIN_LOGGER.error("Unsupported format for color attachment!");
                     break;
             }
-            width = window.getInitWidth();
-            height = window.getInitHeight();
             textureId = glCreateTextures(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, textureId);
             glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, 0);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        }
+
+        public void resize(int width, int height)
+        {
+            glBindTexture(GL_TEXTURE_2D, textureId);
+            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, 0);
         }
 
         public void bind()
@@ -146,16 +146,24 @@ public class Framebuffer
         }
     }
 
-    public class RenderBuffer
+    public static class RenderBuffer
     {
         private int renderBufferId, internalFormat;
 
-        public RenderBuffer(@NotNull Window window, int internalFormat)
+        public RenderBuffer(int width, int height, int internalFormat)
         {
             this.internalFormat = internalFormat;
             renderBufferId = glCreateRenderbuffers();
             glBindRenderbuffer(GL_RENDERBUFFER, renderBufferId);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, window.getInitWidth(), window.getInitHeight());
+            glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height);
+            glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        }
+
+        public void resize(int width, int height)
+        {
+            glBindRenderbuffer(GL_RENDERBUFFER, renderBufferId);
+            glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height);
+            glBindRenderbuffer(GL_RENDERBUFFER, 0);
         }
 
         public void delete()

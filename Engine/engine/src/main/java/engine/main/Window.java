@@ -1,6 +1,5 @@
 package engine.main;
 
-import engine.event.EventCallback;
 import engine.event.EventDispatcher;
 import engine.event.EventObserver;
 import engine.event.KeyPressedEvent;
@@ -12,6 +11,7 @@ import engine.event.MouseScrolledEvent;
 import engine.event.WindowClosedEvent;
 import engine.event.WindowFocusEvent;
 import engine.event.WindowResizedEvent;
+import engine.graphics.Framebuffer;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -57,6 +57,8 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT24;
+import static org.lwjgl.opengl.GL30.GL_RGB16F;
 import static org.lwjgl.opengl.GL46.GL_TRUE;
 import static org.lwjgl.opengl.GL46.glViewport;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -75,6 +77,8 @@ public class Window
     private int windowWidth, windowHeight, initWidth, initHeight;
 
     private List<EventObserver<WindowResizedEvent>> observers = new ArrayList<>();
+
+    private Framebuffer framebuffer;
 
     Window(@NotNull WindowProperties windowProperties)
     {
@@ -121,6 +125,11 @@ public class Window
         setCursorVisible(true);
         setFocus(true);
         setVSync(windowProperties.vsync);
+        ///// FRAMEBUFFER ///////////////
+        framebuffer = new Framebuffer();
+        framebuffer.setColorAttachment(new Framebuffer.ColorAttachment(initWidth, initHeight, GL_RGB16F));
+        framebuffer.setDepthBuffer(new Framebuffer.RenderBuffer(initWidth, initHeight, GL_DEPTH_COMPONENT24));
+
         ///// CALLBACKS ///////////////////////////////////////////////////////////
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
             if (action == GLFW_PRESS){
@@ -151,8 +160,10 @@ public class Window
             {
                 observer.onEvent(new WindowResizedEvent(newWidth, newHeight));
             }
-            EventDispatcher.dispatch(new WindowResizedEvent(newWidth, newHeight), this);
             setViewPortSize(newWidth, newHeight);
+            framebuffer.getColorAttachment().resize(newWidth, newHeight);
+            framebuffer.getDepthAttachment().resize(newWidth, newHeight);
+            EventDispatcher.dispatch(new WindowResizedEvent(newWidth, newHeight), this);
         });
 
         glfwSetWindowFocusCallback(windowHandle, (window, focused) -> {
@@ -214,14 +225,14 @@ public class Window
         glfwSetWindowTitle(windowHandle, title);
     }
 
-    public boolean vSyncOn()
-    {
-        return vSyncOn;
-    }
-
     public long getWindowHandle()
     {
         return windowHandle;
+    }
+
+    public Framebuffer getFramebuffer()
+    {
+        return framebuffer;
     }
 
     public int getWidth()
@@ -249,8 +260,19 @@ public class Window
         return focused;
     }
 
+    public boolean vSyncOn()
+    {
+        return vSyncOn;
+    }
+
+    public void delete()
+    {
+        framebuffer.delete();
+    }
+
     public static class WindowProperties
     {
+
         public final int width, height, samples;
         public final boolean maximized, fullscreen, vsync;
 

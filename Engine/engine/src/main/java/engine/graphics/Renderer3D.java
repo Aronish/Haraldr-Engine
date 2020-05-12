@@ -43,7 +43,6 @@ public abstract class Renderer3D
 
     private static final UniformBuffer matrixBuffer = new UniformBuffer(128);
     private static SceneLights sceneLights = new SceneLights();
-    private static Framebuffer postProcessingFrameBuffer;
     private static Shader postProcessingShader = Shader.create("default_shaders/hdr_gamma_correct.glsl");
     private static float exposure = 0.5f;
 
@@ -63,15 +62,9 @@ public abstract class Renderer3D
         return sceneLights;
     }
 
-    public static void init(@NotNull Window window)
-    {
-        postProcessingFrameBuffer = new Framebuffer(window);
-    }
-
     public static void dispose()
     {
         SCREEN_QUAD.delete();
-        postProcessingFrameBuffer.delete();
         sceneLights.dispose();
         matrixBuffer.delete();
     }
@@ -88,28 +81,28 @@ public abstract class Renderer3D
         glClearColor(color.getX(), color.getY(), color.getZ(), color.getW());
     }
 
-    public static void begin()
+    public static void begin(@NotNull Window window)
     {
         matrixBuffer.bind(0);
         matrixBuffer.setDataUnsafe(perspectiveCamera.getViewMatrix().matrix, 0);
         matrixBuffer.setDataUnsafe(Matrix4f.perspective.matrix, 64);
         sceneLights.bind();
-        postProcessingFrameBuffer.bind();
+        window.getFramebuffer().bind();
         clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public static void end()
+    public static void end(@NotNull Window window)
     {
-        postProcessingFrameBuffer.unbind();
+        window.getFramebuffer().unbind();
         clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        postProcess();
+        postProcess(window);
     }
 
-    private static void postProcess()
+    private static void postProcess(@NotNull Window window)
     {
         postProcessingShader.bind();
         postProcessingShader.setFloat(exposure, "exposure");
-        postProcessingFrameBuffer.getColorAttachment().bind();
+        window.getFramebuffer().getColorAttachment().bind();
         SCREEN_QUAD.bind();
         SCREEN_QUAD.drawElements();
     }

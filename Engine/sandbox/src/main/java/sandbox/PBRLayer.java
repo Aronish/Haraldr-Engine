@@ -5,11 +5,7 @@ import engine.event.EventType;
 import engine.event.KeyPressedEvent;
 import engine.graphics.CubeMap;
 import engine.graphics.Model;
-import engine.graphics.ObjParser;
 import engine.graphics.Renderer3D;
-import engine.graphics.ResourceManager;
-import engine.graphics.Texture;
-import engine.graphics.VertexArray;
 import engine.graphics.lighting.PointLight;
 import engine.graphics.lighting.SceneLights;
 import engine.graphics.material.PBRMaterial;
@@ -18,7 +14,6 @@ import engine.input.Key;
 import engine.layer.Layer;
 import engine.main.Application;
 import engine.main.Window;
-import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +21,7 @@ public class PBRLayer extends Layer
 {
     private CubeMap environmentMap = CubeMap.createEnvironmentMap("default_hdris/wooden_lounge_4k.hdr");
 
-    private PointLight l1 = new PointLight(new Vector3f(0f, 1f, 0f), new Vector3f(5f, 5f, 3f));
+    private PointLight l1 = new PointLight(new Vector3f(0f, 1f, 0f), new Vector3f(15f, 15f, 10f));
 
     private Model model = new Model(
             "models/cerberus.obj",

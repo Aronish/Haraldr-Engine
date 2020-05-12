@@ -17,8 +17,8 @@ import static engine.input.Key.KEY_W;
 
 public class PerspectiveCameraController
 {
-    private static final float CAMERA_SPEED = 1f;
-    private static final float MOVEMENT_SENSITIVITY = 0.1f;
+    private static final float CAMERA_SPEED = 0.5f;
+    private static final float MOUSE_SENSITIVITY = 0.1f;
     private static final float ZOOM_SENSITIVITY = 2f;
 
     private PerspectiveCamera reference;
@@ -31,8 +31,8 @@ public class PerspectiveCameraController
 
     public void handleRotation(@NotNull MouseMovedEvent event)
     {
-        reference.addYaw(((float) event.xPos - lastX) * MOVEMENT_SENSITIVITY);
-        reference.addPitch((lastY - (float) event.yPos) * MOVEMENT_SENSITIVITY);
+        reference.addYaw(((float) event.xPos - lastX) * MOUSE_SENSITIVITY);
+        reference.addPitch((lastY - (float) event.yPos) * MOUSE_SENSITIVITY);
         lastX = (float) event.xPos;
         lastY = (float) event.yPos;
     }

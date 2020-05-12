@@ -65,10 +65,10 @@ import static org.lwjgl.opengl.GL45.glBindTextureUnit;
 
 public class CubeMap
 {
-    private static final Shader MAP_DIFFUSE_IRRADIANCE = new Shader("default_shaders/map_diffuse_irradiance.glsl");
-    private static final Shader PREFILTER_CONVOLUTION = new Shader("default_shaders/prefilter_convolution.glsl");
-    private static final Shader MAP_CUBEMAP = new Shader("default_shaders/map_cubemap.glsl");
-    private static final Shader CUBEMAP = new Shader("default_shaders/cubemap.glsl");
+    private static final Shader MAP_DIFFUSE_IRRADIANCE  = Shader.create("default_shaders/map_diffuse_irradiance.glsl");
+    private static final Shader PREFILTER_CONVOLUTION   = Shader.create("default_shaders/prefilter_convolution.glsl");
+    private static final Shader MAP_CUBEMAP             = Shader.create("default_shaders/map_cubemap.glsl");
+    private static final Shader CUBEMAP                 = Shader.create("default_shaders/cubemap.glsl");
     private int cubemap;
 
     private CubeMap(int cubemap)

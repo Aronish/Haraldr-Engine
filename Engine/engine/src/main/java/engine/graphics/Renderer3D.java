@@ -44,7 +44,7 @@ public abstract class Renderer3D
     private static final UniformBuffer matrixBuffer = new UniformBuffer(128);
     private static SceneLights sceneLights = new SceneLights();
     private static Framebuffer postProcessingFrameBuffer;
-    private static Shader postProcessingShader = new Shader("default_shaders/hdr_gamma_correct.glsl");
+    private static Shader postProcessingShader = Shader.create("default_shaders/hdr_gamma_correct.glsl");
     private static float exposure = 0.5f;
 
     public static void addExposure(float pExposure)
@@ -70,6 +70,8 @@ public abstract class Renderer3D
 
     public static void dispose()
     {
+        SCREEN_QUAD.delete();
+        postProcessingFrameBuffer.delete();
         sceneLights.dispose();
         matrixBuffer.delete();
     }

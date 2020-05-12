@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,9 +28,17 @@ public class ObjParser
     @Nullable
     public static VertexArray loadMesh(String path)
     {
-        VertexArray mesh = IOUtils.readResource(path, ObjParser::loadMesh);
-        if (EntryPoint.DEBUG) MAIN_LOGGER.info("Loaded mesh " + path);
-        return mesh;
+        if (ResourceManager.isMeshLoaded(path))
+        {
+            return ResourceManager.getLoadedMesh(path);
+        }
+        else
+        {
+            VertexArray mesh = IOUtils.readResource(path, ObjParser::loadMesh);
+            if (EntryPoint.DEBUG) MAIN_LOGGER.info("Loaded mesh " + path);
+            ResourceManager.addMesh(path, mesh);
+            return mesh;
+        }
     }
 
     @NotNull

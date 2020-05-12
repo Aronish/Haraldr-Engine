@@ -7,8 +7,11 @@ import engine.event.EventType;
 import engine.event.MouseMovedEvent;
 import engine.event.MouseScrolledEvent;
 import engine.event.WindowResizedEvent;
+import engine.graphics.DefaultModels;
 import engine.graphics.Renderer3D;
+import engine.graphics.ResourceManager;
 import engine.graphics.Shader;
+import engine.graphics.Texture;
 import engine.input.Input;
 import engine.input.Key;
 import engine.layer.Layer;
@@ -190,13 +193,7 @@ public abstract class Application
     {
         layerStack.forEach(Layer::onDispose);
         Renderer3D.dispose();
-        Shader.DEFAULT2D.delete();
-        Shader.DIFFUSE.delete();
-        Shader.NORMAL.delete();
-        Shader.LIGHT_SHADER.delete();
-        Shader.VISIBLE_NORMALS.delete();
-        Shader.REFLECTIVE.delete();
-        Shader.REFRACTIVE.delete();
+        ResourceManager.dispose();
         glfwTerminate();
     }
 }

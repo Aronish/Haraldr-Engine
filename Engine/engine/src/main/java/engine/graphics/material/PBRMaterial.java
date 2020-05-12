@@ -64,6 +64,7 @@ public class PBRMaterial extends Material
         );
     }
 
+    //TODO: Good idea to allow custom texture objects in the end?
     public PBRMaterial(Texture albedo, Texture normalMap, Texture metallicMap, Texture roughnessMap, Texture displacementMap, CubeMap environmentMap)
     {
         super(Shader.PBR);

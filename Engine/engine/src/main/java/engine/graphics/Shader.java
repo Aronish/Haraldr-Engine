@@ -51,20 +51,34 @@ public class Shader
     private static final String SPLIT_TOKEN = "#shader ";
     private static final int TYPE_SPECIFIER_LENGTH = 4;
 
-    public static final Shader DEFAULT2D            = new Shader("default_shaders/default2D.glsl");
-    public static final Shader DIFFUSE              = new Shader("default_shaders/diffuse.glsl");
-    public static final Shader NORMAL               = new Shader("default_shaders/normal.glsl");
-    public static final Shader LIGHT_SHADER         = new Shader("default_shaders/simple_color.glsl");
-    public static final Shader VISIBLE_NORMALS      = new Shader("default_shaders/visible_normals.glsl");
-    public static final Shader REFLECTIVE           = new Shader("default_shaders/reflective.glsl");
-    public static final Shader REFRACTIVE           = new Shader("default_shaders/refractive.glsl");
-    public static final Shader PBR                  = new Shader("default_shaders/pbr.glsl");
+    public static final Shader DEFAULT2D            = create("default_shaders/default2D.glsl");
+    public static final Shader DIFFUSE              = create("default_shaders/diffuse.glsl");
+    public static final Shader NORMAL               = create("default_shaders/normal.glsl");
+    public static final Shader LIGHT_SHADER         = create("default_shaders/simple_color.glsl");
+    public static final Shader VISIBLE_NORMALS      = create("default_shaders/visible_normals.glsl");
+    public static final Shader REFLECTIVE           = create("default_shaders/reflective.glsl");
+    public static final Shader REFRACTIVE           = create("default_shaders/refractive.glsl");
+    public static final Shader PBR                  = create("default_shaders/pbr.glsl");
 
     private int shaderProgram;
     private List<InternalShaderCombined> internalShaders = new ArrayList<>();
     private Map<String, Integer> uniformLocations = new HashMap<>();
 
-    public Shader(String path)
+    public static Shader create(String path)
+    {
+        if (ResourceManager.isShaderLoaded(path))
+        {
+            return ResourceManager.getLoadedShader(path);
+        }
+        else
+        {
+            Shader shader = new Shader(path);
+            ResourceManager.addShader(path, shader);
+            return shader;
+        }
+    }
+
+    private Shader(String path)
     {
         String fullSource = IOUtils.readResource(path, IOUtils::resourceToString);
         assert fullSource != null : "Shader#Shader(String)#fullSource should never be null!";

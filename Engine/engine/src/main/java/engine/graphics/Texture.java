@@ -39,7 +39,6 @@ import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT24;
-import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL21.GL_SRGB8;
 import static org.lwjgl.opengl.GL21.GL_SRGB8_ALPHA8;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
@@ -66,7 +65,7 @@ import static org.lwjgl.opengl.GL45.glCreateTextures;
 @SuppressWarnings("unused")
 public class Texture
 {
-    private static final Shader BRDF_CONVOLUTION = new Shader("default_shaders/brdf_convolution.glsl");
+    private static final Shader BRDF_CONVOLUTION = Shader.create("default_shaders/brdf_convolution.glsl");
 
     public static final Texture DEFAULT_WHITE = new Texture(1, 1, new int[] { -1 });
     public static final Texture DEFAULT_BLACK = new Texture(1, 1, new int[] { 0 });
@@ -75,28 +74,35 @@ public class Texture
     private int width, height;
     private int textureId;
 
-    public Texture(int textureId, int width, int height)
+    static
     {
-        this.textureId = textureId;
-        this.width = width;
-        this.height = height;
+        ResourceManager.addTexture("DEFAULT_BLACK", DEFAULT_BLACK);
+        ResourceManager.addTexture("DEFAULT_WHITE", DEFAULT_WHITE);
+        ResourceManager.addTexture("BRDF_LUT", BRDF_LUT);
     }
 
-    private Texture(int width, int height, int[] pixelData)
+    private Texture()
     {
-        this.width = width;
-        this.height = height;
-        textureId = createTextureFromPixelData(pixelData);
     }
 
-    //DO NOT LOAD .tif!
-    public Texture(String path, boolean isColorData)
+    public static Texture create(String path, boolean isColorData)
     {
-        textureId = load(path, isColorData);
+        if (ResourceManager.isTextureLoaded(path))
+        {
+            return ResourceManager.getLoadedTexture(path);
+        }
+        else
+        {
+            Texture texture = loadTest(path, isColorData);
+            ResourceManager.addTexture(path, texture);
+            return texture;
+        }
     }
 
-    private int load(String path, boolean isColorData)
+    private static @NotNull Texture loadTest(String path, boolean isColorData)
     {
+        Texture result = new Texture();
+
         ByteBuffer image;
         STBImage.stbi_set_flip_vertically_on_load(true);
         int internalFormat, format;
@@ -109,10 +115,10 @@ public class Texture
             if (data != null) image = STBImage.stbi_load_from_memory(data, width, height, comps, 0);
             else throw new NullPointerException("Image at " + path + " not found!");
 
-            this.width = width.get();
-            this.height = height.get();
+            result.width = width.get();
+            result.height = height.get();
             int components = comps.get();
-            if (EntryPoint.DEBUG) MAIN_LOGGER.info(String.format("Loaded texture %s | Width: %d, Height: %d, Components: %d", path, this.width, this.height, components));
+            if (EntryPoint.DEBUG) MAIN_LOGGER.info(String.format("Loaded texture %s | Width: %d, Height: %d, Components: %d", path, result.width, result.height, components));
             switch (components)
             {
                 case 1:
@@ -141,11 +147,27 @@ public class Texture
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, image);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, result.width, result.height, 0, format, GL_UNSIGNED_BYTE, image);
         glGenerateMipmap(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, 0);
         STBImage.stbi_image_free(image);
-        return texture;
+
+        result.textureId = texture;
+        return result;
+    }
+
+    private Texture(int textureId, int width, int height)
+    {
+        this.textureId = textureId;
+        this.width = width;
+        this.height = height;
+    }
+
+    private Texture(int width, int height, int[] pixelData)
+    {
+        this.width = width;
+        this.height = height;
+        textureId = createTextureFromPixelData(pixelData);
     }
 
     private int createTextureFromPixelData(int[] data)

@@ -91,6 +91,11 @@ public class PerspectiveCamera
         calculateViewMatrix();
     }
 
+    public float getYaw()
+    {
+        return yaw;
+    }
+
     public Matrix4f getViewMatrix()
     {
         return viewMatrix;

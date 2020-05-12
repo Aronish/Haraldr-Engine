@@ -22,4 +22,9 @@ public enum DefaultModels
     {
         mesh.drawElements();
     }
+
+    public void delete()
+    {
+        mesh.delete();
+    }
 }

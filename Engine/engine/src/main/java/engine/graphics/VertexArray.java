@@ -9,7 +9,6 @@ import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
@@ -30,7 +29,7 @@ public class VertexArray
     private final int vertexArrayID;
     private final List<VertexBuffer> vertexBuffers = new ArrayList<>();
     private int nextAttribIndex;
-    public int vertexAmount, indexAmount;
+    private int vertexAmount, indexAmount;
     private int indexBufferID;
 
     public VertexArray()

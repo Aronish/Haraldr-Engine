@@ -32,6 +32,7 @@ import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 import static org.lwjgl.opengl.GL30.glBindRenderbuffer;
 import static org.lwjgl.opengl.GL30.glCheckFramebufferStatus;
 import static org.lwjgl.opengl.GL30.glDeleteFramebuffers;
+import static org.lwjgl.opengl.GL30.glDeleteRenderbuffers;
 import static org.lwjgl.opengl.GL30.glFramebufferRenderbuffer;
 import static org.lwjgl.opengl.GL30.glFramebufferTexture2D;
 import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
@@ -93,6 +94,7 @@ public class Framebuffer
     {
         glDeleteFramebuffers(frameBufferId);
         colorAttachment.delete();
+        depthBuffer.delete();
     }
 
     public class ColorAttachment
@@ -154,6 +156,11 @@ public class Framebuffer
             renderBufferId = glCreateRenderbuffers();
             glBindRenderbuffer(GL_RENDERBUFFER, renderBufferId);
             glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, window.getInitWidth(), window.getInitHeight());
+        }
+
+        public void delete()
+        {
+            glDeleteRenderbuffers(renderBufferId);
         }
     }
 }

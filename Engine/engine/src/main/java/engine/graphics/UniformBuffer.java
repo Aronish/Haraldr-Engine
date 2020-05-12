@@ -5,9 +5,9 @@ import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glBufferSubData;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL30.glBindBufferBase;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
+import static org.lwjgl.opengl.GL45.glCreateBuffers;
 
 public class UniformBuffer
 {
@@ -15,7 +15,7 @@ public class UniformBuffer
 
     public UniformBuffer(int size)
     {
-        uniformBufferId = glGenBuffers();
+        uniformBufferId = glCreateBuffers();
         glBindBuffer(GL_UNIFORM_BUFFER, uniformBufferId);
         glBufferData(GL_UNIFORM_BUFFER, size, GL_DYNAMIC_DRAW);
         glBindBuffer(GL_UNIFORM_BUFFER, 0);

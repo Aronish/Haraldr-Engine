@@ -12,6 +12,7 @@ import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
+@Deprecated
 public class Renderer2D
 {
     public static SceneData2D sceneData = new SceneData2D();

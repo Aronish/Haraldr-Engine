@@ -20,11 +20,6 @@ public class Model
         this(ResourceManager.getMesh(modelPath), material, transformationMatrix);
     }
 
-    public Model(VertexArray mesh, Material material)
-    {
-        this(mesh, material, Matrix4f.IDENTITY);
-    }
-
     public Model(VertexArray mesh, Material material, Matrix4f transformationMatrix)
     {
         this.mesh = mesh;

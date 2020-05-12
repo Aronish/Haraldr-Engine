@@ -2,13 +2,15 @@ package engine.graphics;
 
 import engine.math.Matrix4f;
 
+@Deprecated
 public class SceneData2D
 {
     /////RENDERER////////////////////////
-    public static final VertexArray QUAD;
+    public static VertexArray QUAD;
 
     static
     {
+        /*
         float[] quadVertices = {
                 0.0f,    0.0f,      0.0f, 0.0f,
                 1.0f,    0.0f,      1.0f, 0.0f,
@@ -29,6 +31,8 @@ public class SceneData2D
         QUAD = new VertexArray();
         QUAD.setVertexBuffers(quadBuffer);
         QUAD.setIndexBuffer(quadIndices);
+        System.out.println("WIIT");
+        */
     }
 
     /////SCENE///////////////////////////////////

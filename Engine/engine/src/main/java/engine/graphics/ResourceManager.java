@@ -8,6 +8,7 @@ public class ResourceManager
     private static final Map<String, Texture> TEXTURES      = new HashMap<>();
     private static final Map<String, VertexArray> MESHES    = new HashMap<>();
     private static final Map<String, Shader> SHADERS        = new HashMap<>();
+    private static final Map<String, CubeMap> CUBEMAPS      = new HashMap<>();
 
     public static Texture getTexture(String path, boolean isColorData)
     {
@@ -90,10 +91,26 @@ public class ResourceManager
         return SHADERS.containsKey(path);
     }
 
+    public static void addCubeMap(String path, CubeMap cubeMap)
+    {
+        CUBEMAPS.put(path, cubeMap);
+    }
+
+    public static CubeMap getLoadedCubeMap(String path)
+    {
+        return CUBEMAPS.get(path);
+    }
+
+    public static boolean isCubeMapLoaded(String path)
+    {
+        return CUBEMAPS.containsKey(path);
+    }
+
     public static void dispose()
     {
         TEXTURES.forEach((key, texture) -> texture.delete());
         MESHES.forEach((key, mesh) -> mesh.delete());
         SHADERS.forEach((key, shader) -> shader.delete());
+        CUBEMAPS.forEach((key, cubeMap) -> cubeMap.delete());
     }
 }

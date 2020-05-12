@@ -69,16 +69,16 @@ public class CubeMap
     private static final Shader PREFILTER_CONVOLUTION   = Shader.create("default_shaders/prefilter_convolution.glsl");
     private static final Shader MAP_CUBEMAP             = Shader.create("default_shaders/map_cubemap.glsl");
     private static final Shader CUBEMAP                 = Shader.create("default_shaders/cubemap.glsl");
-    private int cubemap;
+    private int cubeMapId;
 
-    private CubeMap(int cubemap)
+    private CubeMap(int cubeMapId)
     {
-        this.cubemap = cubemap;
+        this.cubeMapId = cubeMapId;
     }
 
     public void bind(int unit)
     {
-        glBindTextureUnit(unit, cubemap);
+        glBindTextureUnit(unit, cubeMapId);
     }
 
     public void unbind(int unit)
@@ -91,7 +91,7 @@ public class CubeMap
         glDepthFunc(GL_LEQUAL);
         glCullFace(GL_FRONT);
         CUBEMAP.bind();
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapId);
         DefaultModels.CUBE.bind();
         DefaultModels.CUBE.drawElements();
         glDepthFunc(GL_LESS);
@@ -100,92 +100,120 @@ public class CubeMap
 
     public static @NotNull CubeMap createEnvironmentMap(String path)
     {
-        //Read equirectangular HDR image
-        FloatBuffer image;
-        STBImage.stbi_set_flip_vertically_on_load(true);
-        int width1, size;
-        try (MemoryStack stack = MemoryStack.stackPush())
+        if (ResourceManager.isCubeMapLoaded(path))
         {
-            IntBuffer width = stack.mallocInt(1);
-            IntBuffer height = stack.mallocInt(1);
-            IntBuffer comps = stack.mallocInt(1);
-            ByteBuffer data = IOUtils.readResource(path, (stream) -> IOUtils.resourceToByteBuffer(stream, 4 * 4096)); //Assuming hdr format as 4 8bit channels
-            if (data != null) image = STBImage.stbi_loadf_from_memory(data, width, height, comps, 0);
-            else throw new NullPointerException("Resource at " + path + " not found!");
-
-            width1 = width.get();
-            size = height.get();
-            if (EntryPoint.DEBUG) MAIN_LOGGER.info(String.format("Loaded HDR %s | Width: %d, Height: %d, Components: %d", path, width1, size, comps.get()));
+            return ResourceManager.getLoadedCubeMap(path);
         }
-        assert image != null : "Image was somehow null here!";
-        int texture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width1, size, 0, GL_RGB, GL_FLOAT, image);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        STBImage.stbi_image_free(image);
-
-        int environmentMap = mapToCubeMap(MAP_CUBEMAP, (mappingShader, framebuffer, depthRenderBuffer, colorAttachment, unused, mappingViews, unused2) ->
+        else
         {
-            for (int i = 0; i < 6; ++i)
+            //Read equirectangular HDR image
+            FloatBuffer image;
+            STBImage.stbi_set_flip_vertically_on_load(true);
+            int width1, size;
+            try (MemoryStack stack = MemoryStack.stackPush())
             {
-                mappingShader.setMatrix4f(mappingViews[i], "mappingView");
-                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, colorAttachment, 0);
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                DefaultModels.CUBE.bind();
-                DefaultModels.CUBE.drawElements();
-            }
-        }, texture, size, true);
-        glGenerateMipmap(GL_TEXTURE_CUBE_MAP); // Do this after having set the textures. Used by other pbr maps.
+                IntBuffer width = stack.mallocInt(1);
+                IntBuffer height = stack.mallocInt(1);
+                IntBuffer comps = stack.mallocInt(1);
+                ByteBuffer data = IOUtils.readResource(path, (stream) -> IOUtils.resourceToByteBuffer(stream, 4 * 4096)); //Assuming hdr format as 4 8bit channels
+                if (data != null) image = STBImage.stbi_loadf_from_memory(data, width, height, comps, 0);
+                else throw new NullPointerException("Resource at " + path + " not found!");
 
-        return new CubeMap(environmentMap);
+                width1 = width.get();
+                size = height.get();
+                if (EntryPoint.DEBUG)
+                    MAIN_LOGGER.info(String.format("Loaded HDR %s | Width: %d, Height: %d, Components: %d", path, width1, size, comps.get()));
+            }
+            assert image != null : "Image was somehow null here!";
+            int texture = glGenTextures();
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width1, size, 0, GL_RGB, GL_FLOAT, image);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            STBImage.stbi_image_free(image);
+
+            int environmentMap = mapToCubeMap(MAP_CUBEMAP, (mappingShader, framebuffer, depthRenderBuffer, colorAttachment, unused, mappingViews, unused2) ->
+            {
+                for (int i = 0; i < 6; ++i)
+                {
+                    mappingShader.setMatrix4f(mappingViews[i], "mappingView");
+                    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, colorAttachment, 0);
+                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                    DefaultModels.CUBE.bind();
+                    DefaultModels.CUBE.drawElements();
+                }
+            }, texture, size, true);
+            glGenerateMipmap(GL_TEXTURE_CUBE_MAP); // Do this after having set the textures. Used by other pbr maps.
+
+            CubeMap cubeMap = new CubeMap(environmentMap);
+            ResourceManager.addCubeMap(path, cubeMap);
+            return cubeMap;
+        }
     }
 
     //TODO: Render offline later
     public static @NotNull CubeMap createDiffuseIrradianceMap(@NotNull CubeMap environmentMap)
     {
-        return new CubeMap(mapToCubeMap(MAP_DIFFUSE_IRRADIANCE, (mappingShader, framebuffer, depthRenderBuffer, colorAttachment, unused, mappingViews, unused2) ->
+        if (ResourceManager.isCubeMapLoaded("DIF_IRR_" + environmentMap.cubeMapId))
         {
-            for (int i = 0; i < 6; ++i)
-            {
-                mappingShader.setMatrix4f(mappingViews[i], "mappingView");
-                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, colorAttachment, 0);
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                DefaultModels.CUBE.bind();
-                DefaultModels.CUBE.drawElements();
-            }
-        }, environmentMap.cubemap, 32, false));
-    }
-
-    public static @NotNull CubeMap createPrefilteredEnvironmentMap(@NotNull CubeMap environmentMap)
-    {
-        return new CubeMap(mapToCubeMap(PREFILTER_CONVOLUTION, (mappingShader, framebuffer, depthRenderBuffer, colorAttachment, originalEnvironmentMap, mappingViews, cubeFaceSize) ->
+            return ResourceManager.getLoadedCubeMap("DIF_IRR_" + environmentMap.cubeMapId);
+        }
+        else
         {
-            glBindTexture(GL_TEXTURE_CUBE_MAP, colorAttachment);
-            glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-            glBindTextureUnit(0, originalEnvironmentMap);
-            int maxMipLevels = 5;
-            for (int mip = 0; mip < maxMipLevels; ++mip)
+            CubeMap cubeMap = new CubeMap(mapToCubeMap(MAP_DIFFUSE_IRRADIANCE, (mappingShader, framebuffer, depthRenderBuffer, colorAttachment, unused, mappingViews, unused2) ->
             {
-                int mipSize = (int) (cubeFaceSize * Math.pow(0.5f, mip));
-                glBindRenderbuffer(GL_RENDERBUFFER, depthRenderBuffer);
-                glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipSize, mipSize);
-                glViewport(0, 0, mipSize, mipSize);
-
-                float roughness = (float) mip / (maxMipLevels - 1);
-                mappingShader.setFloat(roughness, "roughness");
                 for (int i = 0; i < 6; ++i)
                 {
                     mappingShader.setMatrix4f(mappingViews[i], "mappingView");
-                    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, colorAttachment, mip);
+                    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, colorAttachment, 0);
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                     DefaultModels.CUBE.bind();
                     DefaultModels.CUBE.drawElements();
                 }
-            }
-        }, environmentMap.cubemap, 256, true));
+            }, environmentMap.cubeMapId, 32, false));
+            ResourceManager.addCubeMap("DIF_IRR_" + environmentMap.cubeMapId, cubeMap);
+            return cubeMap;
+        }
+    }
+
+    public static @NotNull CubeMap createPrefilteredEnvironmentMap(@NotNull CubeMap environmentMap)
+    {
+        if (ResourceManager.isCubeMapLoaded("PREF_" + environmentMap.cubeMapId))
+        {
+            return ResourceManager.getLoadedCubeMap("PREF_" + environmentMap.cubeMapId);
+        }
+        else
+        {
+            CubeMap cubeMap = new CubeMap(mapToCubeMap(PREFILTER_CONVOLUTION, (mappingShader, framebuffer, depthRenderBuffer, colorAttachment, originalEnvironmentMap, mappingViews, cubeFaceSize) ->
+            {
+                glBindTexture(GL_TEXTURE_CUBE_MAP, colorAttachment);
+                glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+                glBindTextureUnit(0, originalEnvironmentMap);
+                int maxMipLevels = 5;
+                for (int mip = 0; mip < maxMipLevels; ++mip)
+                {
+                    int mipSize = (int) (cubeFaceSize * Math.pow(0.5f, mip));
+                    glBindRenderbuffer(GL_RENDERBUFFER, depthRenderBuffer);
+                    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipSize, mipSize);
+                    glViewport(0, 0, mipSize, mipSize);
+
+                    float roughness = (float) mip / (maxMipLevels - 1);
+                    mappingShader.setFloat(roughness, "roughness");
+                    for (int i = 0; i < 6; ++i)
+                    {
+                        mappingShader.setMatrix4f(mappingViews[i], "mappingView");
+                        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, colorAttachment, mip);
+                        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                        DefaultModels.CUBE.bind();
+                        DefaultModels.CUBE.drawElements();
+                    }
+                }
+            }, environmentMap.cubeMapId, 256, true));
+            ResourceManager.addCubeMap("PREF_" + environmentMap.cubeMapId, cubeMap);
+            return cubeMap;
+        }
     }
 
     private static int mapToCubeMap(Shader mappingShader, MappingFunction mappingFunction, int environmentMap, int size, boolean mipmaps)
@@ -245,7 +273,7 @@ public class CubeMap
 
     public void delete()
     {
-        glDeleteTextures(cubemap);
+        glDeleteTextures(cubeMapId);
     }
 
     @FunctionalInterface

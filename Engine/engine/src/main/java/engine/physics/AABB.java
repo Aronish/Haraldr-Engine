@@ -2,9 +2,7 @@ package engine.physics;
 
 import engine.math.Vector3f;
 
-/**
- * Class that represents an axis-aligned bounding box.
- */
+@Deprecated
 public class AABB
 {
     private float width = 1.0f, height = 1.0f;

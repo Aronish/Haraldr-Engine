@@ -34,6 +34,17 @@ public class PBRLayer extends Layer
             )
     );
 
+    private Model model2 = new Model(
+            "models/cerberus.obj",
+            new PBRMaterial(
+                    "default_textures/Cerberus_A.png",
+                    "default_textures/Cerberus_N.png",
+                    "default_textures/Cerberus_M.png",
+                    "default_textures/Cerberus_R.png",
+                    environmentMap
+            )
+    );
+
     public PBRLayer(String name)
     {
         super(name);
@@ -80,7 +91,5 @@ public class PBRLayer extends Layer
     @Override
     public void onDispose()
     {
-        model.delete();
-        environmentMap.delete();
     }
 }

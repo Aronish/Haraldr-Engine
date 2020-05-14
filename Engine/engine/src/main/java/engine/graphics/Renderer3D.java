@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
@@ -93,18 +95,18 @@ public abstract class Renderer3D
 
     public static void end(@NotNull Window window)
     {
+        glBindTexture(GL_TEXTURE_2D, window.getFramebuffer().getColorAttachmentTexture());
         window.getFramebuffer().unbind();
         clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        postProcess(window);
+        ///// POST PROCESSING //////
+        postProcessingShader.bind();
+        postProcessingShader.setFloat(exposure, "exposure");
+        SCREEN_QUAD.bind();
+        SCREEN_QUAD.drawElements();
     }
 
     private static void postProcess(@NotNull Window window)
     {
-        postProcessingShader.bind();
-        postProcessingShader.setFloat(exposure, "exposure");
-        window.getFramebuffer().getColorAttachment().bind();
-        SCREEN_QUAD.bind();
-        SCREEN_QUAD.drawElements();
     }
 
     /////DEFAULT//////////

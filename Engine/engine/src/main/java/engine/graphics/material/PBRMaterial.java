@@ -121,4 +121,14 @@ public class PBRMaterial extends Material
         prefilteredMap.bind(6);
         Texture.BRDF_LUT.bind(7);
     }
+
+    public void setMetallic(float metallic)
+    {
+        this.metallic = metallic;
+    }
+
+    public void setRoughness(float roughness)
+    {
+        this.roughness = roughness;
+    }
 }

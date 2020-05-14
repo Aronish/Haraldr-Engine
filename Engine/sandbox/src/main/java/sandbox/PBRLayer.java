@@ -14,35 +14,28 @@ import engine.input.Key;
 import engine.layer.Layer;
 import engine.main.Application;
 import engine.main.Window;
+import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
 public class PBRLayer extends Layer
 {
-    private CubeMap environmentMap = CubeMap.createEnvironmentMap("default_hdris/wooden_lounge_4k.hdr");
+    private CubeMap environmentMap = CubeMap.createEnvironmentMap("default_hdris/TexturesCom_NorwayForest_4K_hdri_sphere.hdr");
 
     private PointLight l1 = new PointLight(new Vector3f(0f, 1f, 0f), new Vector3f(15f, 15f, 10f));
 
-    private Model model = new Model(
-            "models/cerberus.obj",
-            new PBRMaterial(
-                    "default_textures/Cerberus_A.png",
-                    "default_textures/Cerberus_N.png",
-                    "default_textures/Cerberus_M.png",
-                    "default_textures/Cerberus_R.png",
-                    environmentMap
-            )
+    private PBRMaterial material = new PBRMaterial(
+            "default_textures/Cerberus_A.png",
+            "default_textures/Cerberus_N.png",
+            "default_textures/Cerberus_M.png",
+            "default_textures/Cerberus_R.png",
+            environmentMap
     );
 
-    private Model model2 = new Model(
+    private Model model = new Model(
             "models/cerberus.obj",
-            new PBRMaterial(
-                    "default_textures/Cerberus_A.png",
-                    "default_textures/Cerberus_N.png",
-                    "default_textures/Cerberus_M.png",
-                    "default_textures/Cerberus_R.png",
-                    environmentMap
-            )
+            material,
+            Matrix4f.rotate(Vector3f.UP, 180f)
     );
 
     public PBRLayer(String name)

@@ -69,11 +69,6 @@ public abstract class Application
         EventDispatcher.addCallback(new EventCallback());
         Matrix4f.init(window.getWidth(), window.getHeight());
 
-        //glEnable(GL_FRAMEBUFFER_SRGB);
-        if (ProgramArguments.isArgumentSet("MSAA")) //TODO: Doesn't work with custom framebuffers
-        {
-            glEnable(GL_MULTISAMPLE); // Definitely has performance impact even if GLFW_SAMPLES is 0.
-        }
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);

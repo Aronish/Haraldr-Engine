@@ -102,11 +102,7 @@ public class Window
         glfwWindowHint(GLFW_SAMPLES, windowProperties.samples);
 
         vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        if (vidmode == null)
-        {
-            throw new IllegalStateException("Vidmode was not found!");
-        }
-
+        if (vidmode == null) throw new IllegalStateException("Vidmode was not found!");
         initWidth       = windowProperties.fullscreen ? vidmode.width()  : (windowProperties.maximized ? vidmode.width() : windowProperties.width);
         initHeight      = windowProperties.fullscreen ? vidmode.height() : (windowProperties.maximized ? vidmode.height() - 63 : windowProperties.height); // -63 for window borders
         windowWidth     = windowProperties.fullscreen ? vidmode.width()  : (windowProperties.maximized ? vidmode.width() : windowProperties.width);
@@ -126,10 +122,19 @@ public class Window
         setCursorVisible(true);
         setFocus(true);
         setVSync(windowProperties.vsync);
-        ///// FRAMEBUFFER ///////////////
+        ///// FRAMEBUFFER //////////////
         framebuffer = new Framebuffer();
-        framebuffer.setColorAttachment(new Framebuffer.ColorAttachment(initWidth, initHeight, GL_RGB16F));
-        framebuffer.setDepthBuffer(new Framebuffer.RenderBuffer(initWidth, initHeight, GL_DEPTH_COMPONENT24));
+        if (windowProperties.samples > 0)
+        {
+            framebuffer.setColorAttachment(new Framebuffer.MultisampledColorAttachment(initWidth, initHeight, GL_RGB16F, windowProperties.samples));
+            framebuffer.setDepthBuffer(new Framebuffer.MultisampledRenderBuffer(initWidth, initHeight, GL_DEPTH_COMPONENT24, windowProperties.samples));
+        }
+        else if (windowProperties.samples == 0)
+        {
+            framebuffer.setColorAttachment(new Framebuffer.ColorAttachment(initWidth, initHeight, GL_RGB16F));
+            framebuffer.setDepthBuffer(new Framebuffer.RenderBuffer(initWidth, initHeight, GL_DEPTH_COMPONENT24));
+        }
+        else throw new IllegalArgumentException("Multisample sample count cannot be below 0");
 
         ///// CALLBACKS ///////////////////////////////////////////////////////////
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {

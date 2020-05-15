@@ -17,16 +17,6 @@ public class Renderer2D
 {
     public static SceneData2D sceneData = new SceneData2D();
 
-    public static void clear()
-    {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-
-    public static void setClearColor(@NotNull Vector4f clearColor)
-    {
-        glClearColor(clearColor.getX(), clearColor.getY(), clearColor.getZ(), clearColor.getW());
-    }
-
     public static void beginScene(@NotNull OrthographicCamera camera)
     {
         sceneData.setViewMatrix(camera.getViewMatrix());
@@ -41,7 +31,7 @@ public class Renderer2D
     public static void drawQuad(Vector3f position, Vector4f color)
     {
         Texture.DEFAULT_WHITE.bind(0);
-        Shader.DEFAULT2D.setMatrix4f(Matrix4f.translate(position), "model");
+        Shader.DEFAULT2D.setMatrix4f(Matrix4f.createTranslate(position), "model");
         Shader.DEFAULT2D.setMatrix4f(sceneData.getViewMatrix(), "view");
         Shader.DEFAULT2D.setMatrix4f(Matrix4f.orthographic, "projection");
         Shader.DEFAULT2D.setVector4f(color, "color");
@@ -59,7 +49,7 @@ public class Renderer2D
     {
         shader.bind();
         Texture.DEFAULT_WHITE.bind(0);
-        shader.setMatrix4f(Matrix4f.translate(position), "model");
+        shader.setMatrix4f(Matrix4f.createTranslate(position), "model");
         shader.setMatrix4f(sceneData.getViewMatrix(), "view");
         shader.setMatrix4f(Matrix4f.orthographic, "projection");
         shader.setVector4f(color, "color");
@@ -76,7 +66,7 @@ public class Renderer2D
     public static void drawQuad(Vector3f position, @NotNull Texture texture, Vector4f tintColor)
     {
         texture.bind(0);
-        Shader.DEFAULT2D.setMatrix4f(Matrix4f.translate(position), "model");
+        Shader.DEFAULT2D.setMatrix4f(Matrix4f.createTranslate(position), "model");
         Shader.DEFAULT2D.setMatrix4f(sceneData.getViewMatrix(), "view");
         Shader.DEFAULT2D.setMatrix4f(Matrix4f.orthographic, "projection");
         Shader.DEFAULT2D.setVector4f(tintColor, "color");
@@ -94,7 +84,7 @@ public class Renderer2D
     {
         shader.bind();
         texture.bind(0);
-        shader.setMatrix4f(Matrix4f.translate(position), "model");
+        shader.setMatrix4f(Matrix4f.createTranslate(position), "model");
         shader.setMatrix4f(sceneData.getViewMatrix(), "view");
         shader.setMatrix4f(Matrix4f.orthographic, "projection");
         shader.setVector4f(tintColor, "color");

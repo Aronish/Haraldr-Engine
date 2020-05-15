@@ -9,4 +9,10 @@ public class WindowFocusEvent extends Event
         super(EventType.WINDOW_FOCUS, EventCategory.CATEGORY_WINDOW);
         this.focused = focused;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Focused: " + focused;
+    }
 }

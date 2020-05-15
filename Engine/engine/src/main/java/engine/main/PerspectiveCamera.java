@@ -1,55 +1,37 @@
 package engine.main;
 
+import engine.event.MouseMovedEvent;
+import engine.event.MouseScrolledEvent;
+import engine.event.WindowFocusEvent;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
-import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class PerspectiveCamera
+public class PerspectiveCamera extends Camera
 {
-    private Matrix4f viewMatrix;
-    private Matrix4f lookAt;
-    private Vector3f position;
-
     private float pitch = 0f, yaw = 0f;
     private Vector3f direction = new Vector3f(
             (float) Math.cos(Math.toRadians(yaw) * Math.cos(Math.toRadians(pitch))),
             (float) Math.sin(Math.toRadians(pitch)),
             (float) Math.sin(Math.toRadians(yaw) * Math.cos(Math.toRadians(pitch)))
     );
+    private Matrix4f lookAt;
 
     private PerspectiveCameraController controller;
 
     public PerspectiveCamera()
     {
-        this(new Vector3f());
+        this(Vector3f.IDENTITY);
     }
 
     public PerspectiveCamera(Vector3f position)
     {
         this.position = position;
-        this.controller = new PerspectiveCameraController(this);
-        calculateViewMatrix();
+        controller = new PerspectiveCameraController(this);
     }
 
-    public PerspectiveCamera(PerspectiveCameraController controller)
-    {
-        this(new Vector3f(), controller);
-    }
-
-    public PerspectiveCamera(Vector3f position, PerspectiveCameraController controller)
-    {
-        this.position = position;
-        this.controller = controller;
-        calculateViewMatrix();
-    }
-
+    @Override
     public void calculateViewMatrix()
-    {
-        viewMatrix = lookAt(position, direction);
-    }
-
-    public Matrix4f lookAt(Vector3f position, Vector3f target)
     {
         direction = new Vector3f(
                 (float) Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)),
@@ -57,19 +39,31 @@ public class PerspectiveCamera
                 (float) Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch))
         );
         direction.normalize();
-        return Matrix4f.lookAt(position, Vector3f.add(position, direction), Vector3f.UP);
+        viewMatrix = Matrix4f.lookAt(position, Vector3f.add(position, direction), Vector3f.UP);
     }
 
-    public void setPosition(@NotNull Vector3f position)
+    @Override
+    public void handleMovement(Window window, float deltaTime)
     {
-        this.position = position;
-        calculateViewMatrix();
+        controller.handleMovement(window, deltaTime);
     }
 
-    public void addPosition(Vector3f position)
+    @Override
+    public void handleRotation(MouseMovedEvent event)
     {
-        this.position.add(position);
-        calculateViewMatrix();
+        controller.handleRotation(event);
+    }
+
+    @Override
+    public void handleScroll(MouseScrolledEvent event)
+    {
+        controller.handleScroll(event);
+    }
+
+    @Override
+    public void onFocus(WindowFocusEvent event)
+    {
+        controller.onFocus(event);
     }
 
     public void setDirection(Vector3f direction)
@@ -91,28 +85,17 @@ public class PerspectiveCamera
         calculateViewMatrix();
     }
 
-    public float getYaw()
+    public void rotate(float yaw, float pitch)
     {
-        return yaw;
-    }
-
-    public Matrix4f getViewMatrix()
-    {
-        return viewMatrix;
-    }
-
-    public Vector3f getPosition()
-    {
-        return position;
+        this.yaw += yaw;
+        this.pitch += pitch;
+        if (this.pitch > 89f) this.pitch = 89f;
+        if (this.pitch < -89f) this.pitch = -89f;
+        calculateViewMatrix();
     }
 
     public Vector3f getDirection()
     {
         return this.direction;
-    }
-
-    public PerspectiveCameraController getController()
-    {
-        return controller;
     }
 }

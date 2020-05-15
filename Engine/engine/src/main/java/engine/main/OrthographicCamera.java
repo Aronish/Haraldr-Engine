@@ -6,6 +6,7 @@ import engine.math.Vector3f;
 
 import org.jetbrains.annotations.NotNull;
 
+@Deprecated
 @SuppressWarnings("unused")
 public class OrthographicCamera
 {

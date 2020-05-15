@@ -6,12 +6,10 @@ import engine.event.EventDispatcher;
 import engine.event.EventType;
 import engine.event.MouseMovedEvent;
 import engine.event.MouseScrolledEvent;
+import engine.event.WindowFocusEvent;
 import engine.event.WindowResizedEvent;
-import engine.graphics.DefaultModels;
 import engine.graphics.Renderer3D;
 import engine.graphics.ResourceManager;
-import engine.graphics.Shader;
-import engine.graphics.Texture;
 import engine.input.Input;
 import engine.input.Key;
 import engine.layer.Layer;
@@ -33,7 +31,6 @@ import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_SEVERITY_NOTIFICATION;
@@ -105,17 +102,23 @@ public abstract class Application
             {
                 if (Input.isKeyPressed(window, Key.KEY_ESCAPE)) stop(event);
                 if (Input.isKeyPressed(window, Key.KEY_F)) window.changeFullscreen();
+                if (Input.isKeyPressed(window, Key.KEY_E))
+                {
+                    window.setFocus(!window.isFocused());
+                    Renderer3D.getCamera().onFocus(new WindowFocusEvent(window.isFocused()));
+                }
             }
             if (event.eventType == EventType.MOUSE_MOVED)
             {
-                if (window.isFocused())
-                {
-                    Renderer3D.getPerspectiveCamera().getController().handleRotation((MouseMovedEvent) event);
-                }
+                Renderer3D.getCamera().handleRotation((MouseMovedEvent) event);
             }
             if (event.eventType == EventType.MOUSE_SCROLLED)
             {
-                Renderer3D.getPerspectiveCamera().getController().handleScroll((MouseScrolledEvent) event);
+                Renderer3D.getCamera().handleScroll((MouseScrolledEvent) event);
+            }
+            if (event.eventType == EventType.WINDOW_FOCUS)
+            {
+                Renderer3D.getCamera().onFocus((WindowFocusEvent) event);
             }
             for (Layer layer : layerStack)
             {
@@ -130,7 +133,7 @@ public abstract class Application
         time = glfwGetTime();
         if (window.isFocused())
         {
-            Renderer3D.getPerspectiveCamera().getController().handleMovement(window, deltaTime);
+            Renderer3D.getCamera().handleMovement(window, deltaTime);
         }
         for (Layer layer : layerStack)
         {

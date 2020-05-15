@@ -253,7 +253,7 @@ public class CubeMap
         };
         //Render textured cube faces to cubemap color attachment texture
         mappingShader.bind();
-        mappingShader.setMatrix4f(Matrix4f.scale(new Vector3f(0.5f)), "model"); //(Cube .obj is two units in size)
+        mappingShader.setMatrix4f(Matrix4f.createScale(new Vector3f(0.5f)), "model"); //(Cube .obj is two units in size)
         mappingShader.setMatrix4f(mappingProjection, "mappingProjection");
 
         glBindTextureUnit(0, environmentMap);

@@ -1,8 +1,6 @@
 package sandbox;
 
 import engine.event.Event;
-import engine.event.EventType;
-import engine.event.KeyPressedEvent;
 import engine.graphics.CubeMap;
 import engine.graphics.Model;
 import engine.graphics.Renderer3D;
@@ -25,17 +23,16 @@ public class PBRLayer extends Layer
     private PointLight l1 = new PointLight(new Vector3f(0f, 1f, 0f), new Vector3f(15f, 15f, 10f));
 
     private PBRMaterial material = new PBRMaterial(
-            "default_textures/Cerberus_A.png",
-            "default_textures/Cerberus_N.png",
-            "default_textures/Cerberus_M.png",
-            "default_textures/Cerberus_R.png",
+            new Vector3f(0f, 0f, 1f),
+            1f,
+            0.4f,
             environmentMap
     );
 
     private Model model = new Model(
-            "models/cerberus.obj",
+            "models/cube.obj",
             material,
-            Matrix4f.rotate(Vector3f.UP, 180f)
+            Matrix4f.createRotate(Vector3f.UP, 180f).scale(new Vector3f(0.3f))
     );
 
     public PBRLayer(String name)
@@ -54,10 +51,6 @@ public class PBRLayer extends Layer
     @Override
     public void onEvent(Window window, @NotNull Event event)
     {
-        if (event.eventType == EventType.KEY_PRESSED)
-        {
-            EventHandler.onKeyPress((KeyPressedEvent) event, window);
-        }
     }
 
     private float sin, cos, rotation;

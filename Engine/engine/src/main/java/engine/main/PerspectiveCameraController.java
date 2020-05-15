@@ -2,6 +2,7 @@ package engine.main;
 
 import engine.event.MouseMovedEvent;
 import engine.event.MouseScrolledEvent;
+import engine.event.WindowFocusEvent;
 import engine.input.Input;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
@@ -14,6 +15,7 @@ import static engine.input.Key.KEY_R;
 import static engine.input.Key.KEY_S;
 import static engine.input.Key.KEY_SPACE;
 import static engine.input.Key.KEY_W;
+import static engine.main.Application.MAIN_LOGGER;
 
 public class PerspectiveCameraController
 {
@@ -23,16 +25,24 @@ public class PerspectiveCameraController
 
     private PerspectiveCamera reference;
     private float lastX, lastY;
+    private boolean focused = true;
 
     public PerspectiveCameraController(PerspectiveCamera reference)
     {
         this.reference = reference;
     }
 
+    public void onFocus(@NotNull WindowFocusEvent event)
+    {
+        focused = event.focused;
+    }
+
     public void handleRotation(@NotNull MouseMovedEvent event)
     {
-        reference.addYaw(((float) event.xPos - lastX) * MOUSE_SENSITIVITY);
-        reference.addPitch((lastY - (float) event.yPos) * MOUSE_SENSITIVITY);
+        if (focused)
+        {
+            reference.rotate(((float) event.xPos - lastX) * MOUSE_SENSITIVITY, (lastY - (float) event.yPos) * MOUSE_SENSITIVITY);
+        }
         lastX = (float) event.xPos;
         lastY = (float) event.yPos;
     }

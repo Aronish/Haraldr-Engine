@@ -4,7 +4,7 @@ import engine.event.WindowResizedEvent;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class Matrix4f
+public class Matrix4f //TODO: can be improved
 {
     public static final Matrix4f IDENTITY = identity();
     /////ORTHOGRAPHIC///////////////////////////
@@ -130,17 +130,16 @@ public class Matrix4f
         recalculatePerspective(aspectRatio);
     }
 
-    @NotNull
-    public static Matrix4f transform(Vector3f position, float angle, @NotNull Vector2f scale)
+    @Deprecated
+    public static @NotNull Matrix4f transform(Vector3f position, float angle, @NotNull Vector2f scale)
     {
-        return translate(scale.getX() == -1 ? Vector3f.add(position, new Vector3f(1.0f, 0.0f)) : position).multiply(scale(scale));
+        return createTranslate(scale.getX() == -1 ? Vector3f.add(position, new Vector3f(1.0f, 0.0f)) : position).multiply(createScale(scale));
     }
 
     /////UNUSED WITH PIXELORTHOGRAPHIC////////////////////////////////////////////////////////////////////////
-        @NotNull
-        private static Matrix4f transformPixelSpace(Vector3f pixelPosition, Vector2f scale, int width, int height)
+        private static @NotNull Matrix4f transformPixelSpace(Vector3f pixelPosition, Vector2f scale, int width, int height)
         {
-            return translate(clampToUnitSpace(pixelPosition, width, height)).multiply(scale(scale));
+            return createTranslate(clampToUnitSpace(pixelPosition, width, height)).multiply(createScale(scale));
         }
 
         @NotNull
@@ -153,8 +152,7 @@ public class Matrix4f
         }
     /////UNUSED WITH PIXELORTHOGRAPHIC/////////////////////////////////////////////////////////////////////////
 
-    @NotNull
-    public static Matrix4f scale(@NotNull Vector2f scale)
+    public static @NotNull Matrix4f createScale(@NotNull Vector2f scale)
     {
         Matrix4f result = new Matrix4f();
         result.matrix[0] = scale.getX();
@@ -164,8 +162,7 @@ public class Matrix4f
         return result;
     }
 
-    @NotNull
-    public static Matrix4f scale(@NotNull Vector3f scale)
+    public static @NotNull Matrix4f createScale(@NotNull Vector3f scale)
     {
         Matrix4f result = new Matrix4f();
         result.matrix[0] = scale.getX();
@@ -175,8 +172,17 @@ public class Matrix4f
         return result;
     }
 
-    @NotNull
-    public static Matrix4f translate(@NotNull Vector3f vector)
+    public Matrix4f scale(Vector3f scale)
+    {
+        return multiply(createScale(scale));
+    }
+
+    public Matrix4f scale(Vector2f scale)
+    {
+        return multiply(createScale(scale));
+    }
+
+    public static @NotNull Matrix4f createTranslate(@NotNull Vector3f vector)
     {
         Matrix4f result = identity();
         result.matrix[12] = vector.getX();
@@ -185,14 +191,22 @@ public class Matrix4f
         return result;
     }
 
-    @NotNull
-    public static Matrix4f rotate(@NotNull Vector3f rotation)
+    public Matrix4f translate(Vector3f vector)
     {
-        return rotateX(rotation.getX()).multiply(rotateY(rotation.getY()).multiply(rotateZ(rotation.getZ())));
+        return multiply(createTranslate(vector));
     }
 
-    @NotNull
-    public static Matrix4f rotateX(float angle)
+    public static @NotNull Matrix4f createRotate(@NotNull Vector3f rotation)
+    {
+        return createRotateX(rotation.getX()).multiply(createRotateY(rotation.getY()).multiply(createRotateZ(rotation.getZ())));
+    }
+
+    public Matrix4f rotate(Vector3f rotation)
+    {
+        return multiply(createRotate(rotation));
+    }
+
+    public static @NotNull Matrix4f createRotateX(float angle)
     {
         Matrix4f result = identity();
         float radians = (float) Math.toRadians(angle);
@@ -205,8 +219,12 @@ public class Matrix4f
         return result;
     }
 
-    @NotNull
-    public static Matrix4f rotateY(float angle)
+    public Matrix4f rotateX(float angle)
+    {
+        return multiply(createRotateX(angle));
+    }
+
+    public static @NotNull Matrix4f createRotateY(float angle)
     {
         Matrix4f result = identity();
         float radians = (float) Math.toRadians(angle);
@@ -219,8 +237,12 @@ public class Matrix4f
         return result;
     }
 
-    @NotNull
-    public static Matrix4f rotateZ(float angle)
+    public Matrix4f rotateY(float angle)
+    {
+        return multiply(createRotateY(angle));
+    }
+
+    public static @NotNull Matrix4f createRotateZ(float angle)
     {
         Matrix4f result = identity();
         float radians = (float) Math.toRadians(angle);
@@ -233,8 +255,12 @@ public class Matrix4f
         return result;
     }
 
-    @NotNull
-    public static Matrix4f rotate(Vector3f axis, float angle)
+    public Matrix4f rotateZ(float angle)
+    {
+        return multiply(createRotateZ(angle));
+    }
+
+    public static @NotNull Matrix4f createRotate(Vector3f axis, float angle)
     {
         Matrix4f result = new Matrix4f();
         Quaternion quaternion = Quaternion.fromAxis(axis, angle);
@@ -252,8 +278,12 @@ public class Matrix4f
         return result;
     }
 
-    @NotNull
-    private static Matrix4f orthographic(float right, float left, float top, float bottom, float far, float near)
+    public Matrix4f rotate(Vector3f axis, float angle)
+    {
+        return multiply(createRotate(axis, angle));
+    }
+
+    private static @NotNull Matrix4f orthographic(float right, float left, float top, float bottom, float far, float near)
     {
         Matrix4f result = identity();
         result.matrix[0] = 2.0f / (right - left);
@@ -299,8 +329,7 @@ public class Matrix4f
         perspective = perspective(fov, aspectRatio, near, far);
     }
 
-    @NotNull
-    public static Matrix4f perspective(float fov, float aspectRatio, float near, float far)
+    public static @NotNull Matrix4f perspective(float fov, float aspectRatio, float near, float far)
     {
         //Camera looks towards positive z to begin with.
         Matrix4f result = new Matrix4f();
@@ -315,8 +344,7 @@ public class Matrix4f
         return result;
     }
 
-    @NotNull
-    public static Matrix4f lookAt(@NotNull Vector3f position, @NotNull Vector3f target, @NotNull Vector3f up)
+    public static @NotNull Matrix4f lookAt(@NotNull Vector3f position, @NotNull Vector3f target, @NotNull Vector3f up)
     {
         Matrix4f result = identity();
         Vector3f direction = Vector3f.normalize(Vector3f.subtract(position, target));
@@ -331,7 +359,7 @@ public class Matrix4f
         result.matrix[2] = direction.getX();
         result.matrix[6] = direction.getY();
         result.matrix[10] = direction.getZ();
-        return result.multiply(translate(Vector3f.negate(position)));
+        return result.multiply(createTranslate(Vector3f.negate(position)));
     }
 
     public void print()

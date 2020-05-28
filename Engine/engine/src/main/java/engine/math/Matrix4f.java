@@ -69,6 +69,24 @@ public class Matrix4f //TODO: can be improved
         return result;
     }
 
+    public void multiplyThis(Matrix4f multiplicand)
+    {
+        Matrix4f result = identity();
+        for (int y = 0; y < 4; y++)
+        {
+            for (int x = 0; x < 4; x++)
+            {
+                float sum = 0.0f;
+                for (int e = 0; e < 4; e++)
+                {
+                    sum += matrix[x + e * 4] * multiplicand.matrix[e + y * 4];
+                }
+                result.matrix[x + y * 4] = sum;
+            }
+        }
+        this.matrix = result.matrix;
+    }
+
     @NotNull
     public Vector3f multiply(@NotNull Vector3f multiplicand)
     {
@@ -268,10 +286,9 @@ public class Matrix4f //TODO: can be improved
         return multiply(createRotateZ(angle));
     }
 
-    public static @NotNull Matrix4f createRotate(Vector3f axis, float angle)
+    public static @NotNull Matrix4f createRotate(@NotNull Quaternion quaternion)
     {
         Matrix4f result = new Matrix4f();
-        Quaternion quaternion = Quaternion.fromAxis(axis, angle);
         quaternion.normalize();
         result.matrix[0] = 1 - 2 * (quaternion.getY() * quaternion.getY() + quaternion.getZ() * quaternion.getZ());
         result.matrix[1] = 2 * (quaternion.getX() * quaternion.getY() + quaternion.getZ() * quaternion.getW());
@@ -284,6 +301,16 @@ public class Matrix4f //TODO: can be improved
         result.matrix[10] = 1 - 2 * (quaternion.getX() * quaternion.getX() + quaternion.getY() * quaternion.getY());
         result.matrix[15] = 1;
         return result;
+    }
+
+    public static @NotNull Matrix4f createRotate(Vector3f axis, float angle)
+    {
+        return createRotate(Quaternion.fromAxis(axis, angle));
+    }
+
+    public Matrix4f rotate(Quaternion quaternion)
+    {
+        return multiply(createRotate(quaternion));
     }
 
     public Matrix4f rotate(Vector3f axis, float angle)

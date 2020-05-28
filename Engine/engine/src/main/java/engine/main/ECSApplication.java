@@ -1,7 +1,7 @@
 package engine.main;
 
-import engine.debug.Logger;
-import engine.event.DebugScreenUpdatedEvent;
+import engine.component.MeshComponent;
+import engine.component.TransformComponent;
 import engine.event.Event;
 import engine.event.EventDispatcher;
 import engine.event.EventType;
@@ -9,22 +9,25 @@ import engine.event.MouseMovedEvent;
 import engine.event.MouseScrolledEvent;
 import engine.event.WindowFocusEvent;
 import engine.event.WindowResizedEvent;
+import engine.graphics.CubeMap;
 import engine.graphics.Renderer3D;
-import engine.graphics.ResourceManager;
+import engine.graphics.lighting.PointLight;
+import engine.graphics.lighting.SceneLights;
+import engine.graphics.material.DiffuseMaterial;
+import engine.graphics.material.PBRMaterial;
 import engine.input.Input;
 import engine.input.Key;
-import engine.layer.Layer;
-import engine.layer.LayerStack;
 import engine.math.Matrix4f;
+import engine.math.Vector3f;
+import engine.scenegraph.Scene;
+import engine.scenegraph.SceneObject;
+import engine.system.RenderSystem;
 import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
-import static org.lwjgl.glfw.GLFW.glfwTerminate;
-import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
@@ -38,25 +41,14 @@ import static org.lwjgl.opengl.GL43.GL_DEBUG_SEVERITY_NOTIFICATION;
 import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
 import static org.lwjgl.system.MemoryUtil.memUTF8;
 
-public abstract class Application
+public abstract class ECSApplication extends Application
 {
-    public static final Logger MAIN_LOGGER = new Logger("Main");
+    private RenderSystem renderSystem = new RenderSystem();
+    private Scene scene = new Scene();
+    private TransformComponent transformComponent;
+    private CubeMap envMap;
 
-    protected boolean initialized = false;
-    protected LayerStack layerStack = new LayerStack();
-    protected Window window;
-
-    public static double time;
-    public static int initWidth, initHeight;
-
-    public abstract void start();
-
-    protected void stop(@NotNull Event event)
-    {
-        glfwSetWindowShouldClose(window.getWindowHandle(), true);
-        event.setHandled(true);
-    }
-
+    @Override
     protected void init(Window.WindowProperties windowProperties)
     {
         /////WINDOW///////////////////////////////////////////////////////
@@ -87,6 +79,30 @@ public abstract class Application
                 //if (type == GL_DEBUG_TYPE_ERROR || type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR) stop(new WindowClosedEvent());
             }, 0);
         }
+
+        envMap = CubeMap.createEnvironmentMap("default_hdris/TexturesCom_NorwayForest_4K_hdri_sphere.hdr");
+        MeshComponent meshComponent = new MeshComponent("models/cube.obj",
+                new PBRMaterial(
+                        "default_textures/Tiles_Glass_1K_albedo.png",
+                        "default_textures/Tiles_Glass_1K_normal.png",
+                        "default_textures/Tiles_Glass_1K_metallic.png",
+                        "default_textures/Tiles_Glass_1K_roughness.png",
+                        envMap
+                ));
+        transformComponent = new TransformComponent().setRotation(new Vector3f(1f, 0f, 0f), 35f);
+
+        SceneObject obj1 = new SceneObject(scene);
+        obj1.setMeshComponent(renderSystem, meshComponent);
+        obj1.setTransformComponent(renderSystem, transformComponent);
+
+        SceneObject obj2 = new SceneObject(scene, obj1);
+        obj2.setMeshComponent(renderSystem, new MeshComponent("models/sphere.obj", new DiffuseMaterial("default_textures/brickwall.jpg")));
+        obj2.setTransformComponent(renderSystem, new TransformComponent().setPosition(new Vector3f(0f, 0.3f, 0f)));
+
+        PointLight pl = new PointLight(new Vector3f(3f), new Vector3f(1f));
+        SceneLights sl = new SceneLights();
+        sl.addLight(pl);
+        Renderer3D.setSceneLights(sl);
 
         glfwShowWindow(window.getWindowHandle());
         initialized = true;
@@ -121,96 +137,33 @@ public abstract class Application
             {
                 Renderer3D.getCamera().onFocus((WindowFocusEvent) event);
             }
-            for (Layer layer : layerStack.getLayerStack())
-            {
-                if (event.isHandled()) break;
-                layer.onEvent(window, event);
-            }
-            for (Layer layer : layerStack.getOverlayStack())
-            {
-                if (event.isHandled()) break;
-                layer.onEvent(window, event);
-            }
         }
     }
 
+    private float rotation;
+
+    @Override
     protected void update(float deltaTime)
     {
         time = glfwGetTime();
+        rotation += 10f * deltaTime;
         if (window.isFocused())
         {
             Renderer3D.getCamera().handleMovement(window, deltaTime);
+            if (Input.isKeyPressed(window, Key.KEY_UP))     Renderer3D.addExposure(1f * deltaTime);
+            if (Input.isKeyPressed(window, Key.KEY_DOWN))   Renderer3D.addExposure(-1f * deltaTime);
         }
-        for (Layer layer : layerStack.getLayerStack())
-        {
-            if (layer.isActive()) layer.onUpdate(window, deltaTime);
-        }
-        for (Layer layer : layerStack.getOverlayStack())
-        {
-            if (layer.isActive()) layer.onUpdate(window, deltaTime);
-        }
+        transformComponent.setRotation(new Vector3f(1f, 0f, 0f), rotation);
         glfwPollEvents();
     }
 
+    @Override
     protected void render()
     {
         Renderer3D.begin(window);
-        for (Layer layer : layerStack.getLayerStack())
-        {
-            if (layer.isActive()) layer.onRender();
-        }
+        renderSystem.render();
+        envMap.renderSkyBox();
         Renderer3D.end(window);
-        for (Layer layer : layerStack.getOverlayStack())
-        {
-            if (layer.isActive()) layer.onRender();
-        }
         glfwSwapBuffers(window.getWindowHandle());
-    }
-
-    protected void loop()
-    {
-        if (!initialized) throw new IllegalStateException("Application was not initialized correctly before main loop start!");
-        double frameRate = 60d;
-        double updatePeriod = 1d / frameRate;
-        double currentTime = glfwGetTime();
-        double timer = 0d;
-        int frames = 0;
-        int updates = 0;
-
-        while (!glfwWindowShouldClose(window.getWindowHandle()))
-        {
-            double newTime = glfwGetTime();
-            double frameTime = newTime - currentTime;
-            currentTime = newTime;
-            timer += frameTime;
-            if (timer >= 1d)
-            {
-                int fps = (int) (frames / timer), ups = (int) (updates / timer);
-                window.setTitle(String.format("FPS: %d UPS: %d Frametime: %f ms", fps, ups, frameTime * 1000d));
-                EventDispatcher.dispatch(new DebugScreenUpdatedEvent(fps, ups), window);
-                timer = 0.0d;
-                frames = 0;
-                updates = 0;
-            }
-            while (frameTime > 0d)
-            {
-                double deltaTime = Math.min(frameTime, updatePeriod);
-                update((float) deltaTime);
-                ++updates;
-                frameTime -= deltaTime;
-            }
-            render();
-            ++frames;
-        }
-    }
-
-    public void dispose()
-    {
-        window.delete();
-        layerStack.getLayerStack().forEach(Layer::onDispose);
-        layerStack.getOverlayStack().forEach(Layer::onDispose);
-        Renderer3D.dispose();
-        ResourceManager.dispose();
-        glfwTerminate();
     }
 }

@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Quaternion
 {
+    public static final Quaternion IDENTITY = fromAxis(Vector3f.UP, 0f);
+
     private float w, x, y, z;
 
     public Quaternion(float w, float x, float y, float z)

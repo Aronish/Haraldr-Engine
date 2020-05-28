@@ -41,7 +41,7 @@ public class MultiDrawIndirectRenderer implements RenderSystem
             indirectIndices.add(4 * i + 3);
         }
         vao = new VertexArray();
-        vao.setIndexBuffer(ArrayUtils.toPrimitiveArrayI(indirectIndices));
+        vao.setIndexBufferData(ArrayUtils.toPrimitiveArrayI(indirectIndices));
         /////MODEL DATA STORE///////////////////////////////////
         List<Float> modelVertexData = new ArrayList<>();
         for (GameObject gameObject : GameObject.instancedObjects)

@@ -29,7 +29,7 @@ public class InstancedRenderer implements RenderSystem
                 new VertexBufferElement(ShaderDataType.MAT4),
                 new VertexBufferElement(ShaderDataType.MAT4)
         );
-        instancedMatrixBuffer = new VertexBuffer(2500000, layout, true);
+        instancedMatrixBuffer = new VertexBuffer(2500000, layout, VertexBuffer.Usage.DYNAMIC_DRAW);
         /////SETUP ATTRIBUTES//////////////////////////
         for (GameObject gameObject : GameObject.instancedObjects)
         {
@@ -63,7 +63,7 @@ public class InstancedRenderer implements RenderSystem
             }
             if (matrices.size() != 0)
             {
-                instancedMatrixBuffer.setData(ArrayUtils.toPrimitiveArrayF(matrices));
+                instancedMatrixBuffer.setSubDataUnsafe(ArrayUtils.toPrimitiveArrayF(matrices));
                 gameObject.getModel().getVertexArray().bind();
                 gameObject.getModel().getVertexArray().drawElementsInstanced(matrices.size() / 16);
             }

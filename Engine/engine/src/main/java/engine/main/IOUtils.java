@@ -15,7 +15,7 @@ import static org.lwjgl.BufferUtils.createByteBuffer;
 
 public class IOUtils
 {
-    public static <R> @Nullable R readResource(String path, Function<InputStream, R> function)
+    public static <R> R readResource(String path, Function<InputStream, R> function)
     {
         try (InputStream inputStream = IOUtils.class.getModule().getResourceAsStream(path))
         {
@@ -42,7 +42,7 @@ public class IOUtils
         {
             e.printStackTrace();
         }
-        return null;
+        throw new NullPointerException("Couldn't read resource at " + path + "!");
     }
 
     public static @NotNull String resourceToString(@NotNull InputStream file)

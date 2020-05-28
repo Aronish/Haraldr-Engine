@@ -11,7 +11,7 @@ class ExampleApplication extends Application
     public void start()
     {
         int samples = ProgramArguments.isArgumentSet("MSAA") ? Integer.parseInt(ProgramArguments.getStringValue("MSAA")) : 0;
-        Window.WindowProperties windowProperties = new Window.WindowProperties(1820, 720, samples, true, false, false);
+        Window.WindowProperties windowProperties = new Window.WindowProperties(1280, 720, samples, true, false, false);
         init(windowProperties);
         loop();
     }
@@ -21,6 +21,7 @@ class ExampleApplication extends Application
     {
         super.init(windowProperties);
         Renderer.setClearColor(0.1f, 0.1f, 0.2f, 1f);
-        layerStack.pushLayer(new PBRLayer("PBR!"), window);
+        layerStack.pushLayer(new GraphLayer("Graph"));
+        if (EntryPoint.DEBUG) layerStack.pushOverlay(new DebugLayer("UI"));
     }
 }

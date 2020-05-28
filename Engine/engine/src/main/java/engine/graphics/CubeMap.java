@@ -63,6 +63,7 @@ import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
 import static org.lwjgl.opengl.GL45.glBindTextureUnit;
 
+//TODO: Maybe clean up.
 public class CubeMap
 {
     private static final Shader MAP_DIFFUSE_IRRADIANCE  = Shader.create("default_shaders/map_diffuse_irradiance.glsl");
@@ -134,7 +135,7 @@ public class CubeMap
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             STBImage.stbi_image_free(image);
 
-            int environmentMap = mapToCubeMap(MAP_CUBEMAP, (mappingShader, framebuffer, depthRenderBuffer, colorAttachment, unused, mappingViews, unused2) ->
+            int environmentMap = mapToCubeMap(MAP_CUBEMAP, (Shader mappingShader, int framebuffer, int depthRenderBuffer, int colorAttachment, int unused, Matrix4f[] mappingViews, int unused2) ->
             {
                 for (int i = 0; i < 6; ++i)
                 {
@@ -162,7 +163,7 @@ public class CubeMap
         }
         else
         {
-            CubeMap cubeMap = new CubeMap(mapToCubeMap(MAP_DIFFUSE_IRRADIANCE, (mappingShader, framebuffer, depthRenderBuffer, colorAttachment, unused, mappingViews, unused2) ->
+            CubeMap cubeMap = new CubeMap(mapToCubeMap(MAP_DIFFUSE_IRRADIANCE, (Shader mappingShader, int framebuffer, int depthRenderBuffer, int colorAttachment, int unused, Matrix4f[] mappingViews, int unused2) ->
             {
                 for (int i = 0; i < 6; ++i)
                 {
@@ -186,7 +187,7 @@ public class CubeMap
         }
         else
         {
-            CubeMap cubeMap = new CubeMap(mapToCubeMap(PREFILTER_CONVOLUTION, (mappingShader, framebuffer, depthRenderBuffer, colorAttachment, originalEnvironmentMap, mappingViews, cubeFaceSize) ->
+            CubeMap cubeMap = new CubeMap(mapToCubeMap(PREFILTER_CONVOLUTION, (Shader mappingShader, int framebuffer, int depthRenderBuffer, int colorAttachment, int originalEnvironmentMap, Matrix4f[] mappingViews, int cubeFaceSize) ->
             {
                 glBindTexture(GL_TEXTURE_CUBE_MAP, colorAttachment);
                 glGenerateMipmap(GL_TEXTURE_CUBE_MAP);

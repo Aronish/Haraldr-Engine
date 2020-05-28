@@ -94,20 +94,16 @@ public class ObjParser
         {
             e.printStackTrace();
         }
-        /*for (int i = 0; i < vertices.size(); ++i)
-        {
-            System.out.print(String.format("%8s", vertices.get(i) + ((i + 1) % VERTEX_ELEMENT_COUNT == 0 ? "\n" : ", ")));
-        }*/
         VertexBufferLayout layout = new VertexBufferLayout(
                 new VertexBufferElement(ShaderDataType.FLOAT3), //Position
                 new VertexBufferElement(ShaderDataType.FLOAT3), //Normal
                 new VertexBufferElement(ShaderDataType.FLOAT2), //UV
                 new VertexBufferElement(ShaderDataType.FLOAT3)  //Tangent
         );
-        VertexBuffer vertexBuffer = new VertexBuffer(ArrayUtils.toPrimitiveArrayF(vertices), layout, false);
+        VertexBuffer vertexBuffer = new VertexBuffer(ArrayUtils.toPrimitiveArrayF(vertices), layout, VertexBuffer.Usage.STATIC_DRAW);
         VertexArray vertexArray = new VertexArray();
         vertexArray.setVertexBuffers(vertexBuffer);
-        vertexArray.setIndexBuffer(ArrayUtils.toPrimitiveArrayI(indices));
+        vertexArray.setIndexBufferData(ArrayUtils.toPrimitiveArrayI(indices));
         return vertexArray;
     }
 

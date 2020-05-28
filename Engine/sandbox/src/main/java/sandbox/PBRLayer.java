@@ -20,19 +20,20 @@ public class PBRLayer extends Layer
 {
     private CubeMap environmentMap = CubeMap.createEnvironmentMap("default_hdris/TexturesCom_NorwayForest_4K_hdri_sphere.hdr");
 
-    private PointLight l1 = new PointLight(new Vector3f(0f, 1f, 0f), new Vector3f(15f, 15f, 10f));
+    private PointLight l1 = new PointLight(new Vector3f(0f, 1f, 0f), new Vector3f(2f));
 
     private PBRMaterial material = new PBRMaterial(
-            new Vector3f(0f, 0f, 1f),
-            1f,
-            0.4f,
+            "default_textures/Tiles_Glass_1K_albedo.png",
+            "default_textures/Tiles_Glass_1K_normal.png",
+            "default_textures/Tiles_Glass_1K_metallic.png",
+            "default_textures/Tiles_Glass_1K_roughness.png",
             environmentMap
     );
 
     private Model model = new Model(
-            "models/cube.obj",
+            "models/plane.obj",
             material,
-            Matrix4f.createRotate(Vector3f.UP, 180f).scale(new Vector3f(0.3f))
+            Matrix4f.createRotate(Vector3f.UP, 180f).scale(new Vector3f(0.8f))
     );
 
     public PBRLayer(String name)
@@ -44,12 +45,7 @@ public class PBRLayer extends Layer
     }
 
     @Override
-    public void onAttach(Window window)
-    {
-    }
-
-    @Override
-    public void onEvent(Window window, @NotNull Event event)
+    public void onEvent(@NotNull Window window, @NotNull Event event)
     {
     }
 
@@ -63,7 +59,7 @@ public class PBRLayer extends Layer
         sin = (float) Math.sin(Application.time / 3f);
         cos = (float) Math.cos(Application.time / 3f);
         //rotation += 10f * deltaTime;
-        l1.setPosition(new Vector3f(sin, 0.3f, cos * 1.5f));
+        l1.setPosition(new Vector3f(sin, 0.3f, cos));
     }
 
     @Override

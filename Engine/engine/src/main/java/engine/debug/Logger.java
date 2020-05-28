@@ -96,7 +96,7 @@ public class Logger
 
     private <T> void log(T message)
     {
-        System.out.println(String.format("%s [%s] [%s]: %s", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss:n")).substring(0, 15), prefix, logLevel, message));
+        System.out.println(String.format("%s [%s] [%s]: %s", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), prefix, logLevel, message));
     }
 
     private enum LogLevel

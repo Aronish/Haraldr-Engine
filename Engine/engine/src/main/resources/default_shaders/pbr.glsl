@@ -64,13 +64,13 @@ out tangentSpaceLighting
     vec3 pointLightPositions[MAX_POINT_LIGHTS];
 };
 
-out vec3 v_TNormal;
+out vec3 v_Normal_Tangent;
 out vec3 v_Normal;
 out vec3 v_ViewPosition;
 out vec3 v_WorldPosition;
 out vec2 v_TextureCoordinate;
 
-out mat3 v_TanToWorld;
+out mat3 v_TangentToWorld;
 
 void main()
 {
@@ -87,12 +87,12 @@ void main()
         pointLightPositions[i] = TBN * pointLights[i].position.xyz;
     }
 
-    v_TNormal           = TBN * normal;
+    v_Normal_Tangent    = TBN * normal;
     v_Normal            = normal;
-    v_TextureCoordinate = a_TextureCoordinate;                          // Not important for lighting, don't put in tangent space.
-    v_WorldPosition     = TBN * vec3((model * vec4(a_Position, 1.0f))); // Need to be translated as well.
     v_ViewPosition      = TBN * viewPosition;
-    v_TanToWorld = transpose(TBN);
+    v_WorldPosition     = TBN * vec3((model * vec4(a_Position, 1.0f))); // Need to be translated as well.
+    v_TextureCoordinate = a_TextureCoordinate;                          // Not important for lighting, don't put in tangent space.
+    v_TangentToWorld = transpose(TBN);
 
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
 }
@@ -133,13 +133,13 @@ struct Spotlight
 //std140: Total 52 Pad 12 Size 64
 };
 
-in vec3 v_TNormal;
+in vec3 v_Normal_Tangent;
 in vec3 v_Normal;
 in vec3 v_ViewPosition;
 in vec3 v_WorldPosition;
 in vec2 v_TextureCoordinate;
 
-in mat3 v_TanToWorld;
+in mat3 v_TangentToWorld;
 
 in tangentSpaceLighting
 {
@@ -250,11 +250,11 @@ void main()
     float tilingFactor = 1.0f; //TODO: Make uniform
     vec3 V = normalize(v_ViewPosition - v_WorldPosition);
 
-    vec2 textureCoordinate = u_UseParallaxMapping == 1f ? ParallaxMapping(v_TextureCoordinate * tilingFactor, V) : v_TextureCoordinate * tilingFactor;
-    if(u_UseParallaxMapping == 1f && (textureCoordinate.x > tilingFactor || textureCoordinate.y > tilingFactor || textureCoordinate.x < 0.0f || textureCoordinate.y < 0.0f)) discard;
+    vec2 textureCoordinate = u_UseParallaxMapping == 1.0f ? ParallaxMapping(v_TextureCoordinate * tilingFactor, V) : v_TextureCoordinate * tilingFactor;
+    if(u_UseParallaxMapping == 1.0f && (textureCoordinate.x > tilingFactor || textureCoordinate.y > tilingFactor || textureCoordinate.x < 0.0f || textureCoordinate.y < 0.0f)) discard;
 
     vec3 albedo = texture(albedoMap, textureCoordinate).rgb * u_Albedo;
-    vec3 tNormal = normalize(texture(normalMap, textureCoordinate).rgb * 2.0f - 1.0f) * v_TNormal; // Read normals
+    vec3 tNormal = normalize(texture(normalMap, textureCoordinate).rgb * 2.0f - 1.0f);// * v_Normal_Tangent; // Read normals //TODO: WRONG
     float metallic = texture(metallicMap, textureCoordinate).r * u_Metallic;
     float roughness = texture(roughnessMap, textureCoordinate).r * u_Roughness;
 
@@ -279,8 +279,7 @@ void main()
         float denominator = 4.0f * max(dot(tNormal, V), 0.0f) * max(dot(tNormal, L), 0.0f);
         vec3 specular = numerator / max(denominator, 0.001f);
         /////Diffuse-Specular Fraction/////
-        vec3 kS = F;
-        vec3 kD = vec3(1.0f) - kS;
+        vec3 kD = vec3(1.0f) - F; //(F = kS)
         kD *= 1.0f - metallic;
 
         float NdotL = max(dot(tNormal, L), 0.0f);
@@ -290,7 +289,7 @@ void main()
     /////IBL Ambient/////////////////////////////////////////////////////////////
 
     vec3 sampleVector = normalize(v_Normal);
-    vec3 V_World = v_TanToWorld * V;
+    vec3 V_World = v_TangentToWorld * V;
 
     vec3 kS = fresnelSchlickRoughness(max(dot(sampleVector, V_World), 0.0f), F0, roughness);
     vec3 kD = (1.0f - kS) * (1.0f - metallic);

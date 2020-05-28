@@ -1,34 +1,30 @@
 package engine.layer;
 
-import engine.main.Window;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Iterator;
 
-/**
- * Last pushed Layer will receive events first and be rendered last. Usually what you want for GUI and such.
- */
-public class LayerStack implements Iterable<Layer>
+public class LayerStack
 {
     private final Deque<Layer> layerStack = new ArrayDeque<>();
+    private final Deque<Layer> overlayStack = new ArrayDeque<>();
 
-    public void pushLayer(Layer layer, Window window)
+    public void pushLayer(Layer layer)
     {
         layerStack.push(layer);
-        layer.onAttach(window);
     }
 
-    public Iterator<Layer> reverseIterator()
+    public void pushOverlay(Layer layer)
     {
-        return layerStack.descendingIterator();
+        overlayStack.push(layer);
     }
 
-    @NotNull
-    @Override
-    public Iterator<Layer> iterator()
+    public Deque<Layer> getLayerStack()
     {
-        return layerStack.iterator();
+        return layerStack;
+    }
+
+    public Deque<Layer> getOverlayStack()
+    {
+        return overlayStack;
     }
 }

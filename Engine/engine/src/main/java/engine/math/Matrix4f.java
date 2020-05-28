@@ -182,6 +182,14 @@ public class Matrix4f //TODO: can be improved
         return multiply(createScale(scale));
     }
 
+    public static @NotNull Matrix4f createTranslate(@NotNull Vector2f vector)
+    {
+        Matrix4f result = identity();
+        result.matrix[12] = vector.getX();
+        result.matrix[13] = vector.getY();
+        return result;
+    }
+
     public static @NotNull Matrix4f createTranslate(@NotNull Vector3f vector)
     {
         Matrix4f result = identity();

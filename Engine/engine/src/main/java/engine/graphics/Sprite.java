@@ -22,10 +22,10 @@ public class Sprite
 
     private void setVertexArray(float[] data, VertexBufferLayout layout)
     {
-        VertexBuffer vertexBuffer = new VertexBuffer(data, layout, false);
+        VertexBuffer vertexBuffer = new VertexBuffer(data, layout, VertexBuffer.Usage.STATIC_DRAW);
         vertexArray = new VertexArray();
         vertexArray.setVertexBuffers(vertexBuffer);
-        vertexArray.setIndexBuffer(quadIndices);
+        vertexArray.setIndexBufferData(quadIndices);
     }
 
     public VertexArray getVertexArray()

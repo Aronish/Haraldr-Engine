@@ -1,6 +1,7 @@
 package engine.main;
 
 import engine.debug.Logger;
+import engine.event.DebugScreenUpdatedEvent;
 import engine.event.Event;
 import engine.event.EventDispatcher;
 import engine.event.EventType;
@@ -120,7 +121,12 @@ public abstract class Application
             {
                 Renderer3D.getCamera().onFocus((WindowFocusEvent) event);
             }
-            for (Layer layer : layerStack)
+            for (Layer layer : layerStack.getLayerStack())
+            {
+                if (event.isHandled()) break;
+                layer.onEvent(window, event);
+            }
+            for (Layer layer : layerStack.getOverlayStack())
             {
                 if (event.isHandled()) break;
                 layer.onEvent(window, event);
@@ -135,9 +141,13 @@ public abstract class Application
         {
             Renderer3D.getCamera().handleMovement(window, deltaTime);
         }
-        for (Layer layer : layerStack)
+        for (Layer layer : layerStack.getLayerStack())
         {
-            layer.onUpdate(window, deltaTime);
+            if (layer.isActive()) layer.onUpdate(window, deltaTime);
+        }
+        for (Layer layer : layerStack.getOverlayStack())
+        {
+            if (layer.isActive()) layer.onUpdate(window, deltaTime);
         }
         glfwPollEvents();
     }
@@ -145,8 +155,15 @@ public abstract class Application
     private void render()
     {
         Renderer3D.begin(window);
-        layerStack.reverseIterator().forEachRemaining(Layer::onRender);
+        for (Layer layer : layerStack.getLayerStack())
+        {
+            if (layer.isActive()) layer.onRender();
+        }
         Renderer3D.end(window);
+        for (Layer layer : layerStack.getOverlayStack())
+        {
+            if (layer.isActive()) layer.onRender();
+        }
         glfwSwapBuffers(window.getWindowHandle());
     }
 
@@ -170,6 +187,7 @@ public abstract class Application
             {
                 int fps = (int) (frames / timer), ups = (int) (updates / timer);
                 window.setTitle(String.format("FPS: %d UPS: %d Frametime: %f ms", fps, ups, frameTime * 1000d));
+                EventDispatcher.dispatch(new DebugScreenUpdatedEvent(fps, ups), window);
                 timer = 0.0d;
                 frames = 0;
                 updates = 0;
@@ -189,7 +207,8 @@ public abstract class Application
     public void dispose()
     {
         window.delete();
-        layerStack.forEach(Layer::onDispose);
+        layerStack.getLayerStack().forEach(Layer::onDispose);
+        layerStack.getOverlayStack().forEach(Layer::onDispose);
         Renderer3D.dispose();
         ResourceManager.dispose();
         glfwTerminate();

@@ -55,7 +55,7 @@ public class MultiDrawIndirectRenderer implements RenderSystem
                         new VertexBufferElement(ShaderDataType.FLOAT2),
                         new VertexBufferElement(ShaderDataType.FLOAT2)
                 );
-        VertexBuffer modelVertexBuffer = new VertexBuffer(ArrayUtils.toPrimitiveArrayF(modelVertexData), modelLayout, false);
+        VertexBuffer modelVertexBuffer = new VertexBuffer(ArrayUtils.toPrimitiveArrayF(modelVertexData), modelLayout, VertexBuffer.Usage.STATIC_DRAW);
         vao.setVertexBuffers(modelVertexBuffer);
 
         /////MATRICES/////////////////////////////////////
@@ -66,7 +66,7 @@ public class MultiDrawIndirectRenderer implements RenderSystem
                         new VertexBufferElement(ShaderDataType.MAT4),
                         new VertexBufferElement(ShaderDataType.MAT4)
                 );
-        instancedMatrixBuffer = new VertexBuffer(2500000, layout, true);
+        instancedMatrixBuffer = new VertexBuffer(2500000, layout, VertexBuffer.Usage.DYNAMIC_DRAW);
 
         vao.bind();
         instancedMatrixBuffer.bind();
@@ -81,7 +81,7 @@ public class MultiDrawIndirectRenderer implements RenderSystem
         vao.setNextAttribIndex(nextAttribIndex);
         vao.unbind();
 
-        indirectBuffer = new VertexBuffer(Wrapper.GL_DRAW_INDIRECT_BUFFER, 1000, true);
+        indirectBuffer = new VertexBuffer(Wrapper.GL_DRAW_INDIRECT_BUFFER, 1000, VertexBuffer.Usage.DYNAMIC_DRAW);
     }
 
     @Override
@@ -119,10 +119,10 @@ public class MultiDrawIndirectRenderer implements RenderSystem
         }
 
         instancedMatrixBuffer.bind();
-        instancedMatrixBuffer.setData(ArrayUtils.toPrimitiveArrayF(matrices));
+        instancedMatrixBuffer.setSubDataUnsafe(ArrayUtils.toPrimitiveArrayF(matrices));
 
         indirectBuffer.bind();
-        indirectBuffer.setData(ArrayUtils.toPrimitiveArrayI(indirectData));
+        indirectBuffer.setSubDataUnsafe(ArrayUtils.toPrimitiveArrayI(indirectData));
 
         vao.bind();
         vao.multiDrawIndirect(indirectData.size() / 5);

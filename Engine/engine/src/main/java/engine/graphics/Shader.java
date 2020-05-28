@@ -59,6 +59,8 @@ public class Shader
     public static final Shader REFLECTIVE           = create("default_shaders/reflective.glsl");
     public static final Shader REFRACTIVE           = create("default_shaders/refractive.glsl");
     public static final Shader PBR                  = create("default_shaders/pbr.glsl");
+    public static final Shader UI                   = create("default_shaders/ui.glsl");
+    public static final Shader TEXT                 = create("default_shaders/text.glsl");
 
     private int shaderProgram;
     private List<InternalShaderCombined> internalShaders = new ArrayList<>();

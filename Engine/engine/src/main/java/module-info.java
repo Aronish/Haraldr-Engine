@@ -12,7 +12,6 @@
 module Engine.engine
 {
     requires org.jetbrains.annotations;
-
     //LWJGL
     requires org.lwjgl.natives;
     //GLFW
@@ -32,13 +31,15 @@ module Engine.engine
     exports engine.graphics;
     exports engine.graphics.material;
     exports engine.graphics.lighting;
+    exports engine.graphics.ui;
     exports engine.input;
     exports engine.layer;
     exports engine.main;
     exports engine.math;
     exports engine.physics;
+    exports engine.scenegraph;
 
     opens default_shaders;
-    opens models;
     opens default_textures;
+    opens models;
 }

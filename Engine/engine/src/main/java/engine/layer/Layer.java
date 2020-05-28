@@ -10,13 +10,13 @@ public abstract class Layer
     private final String name;
     protected final Logger LOGGER;
 
+    protected boolean isActive = true;
+
     public Layer(String name)
     {
         this.name = name;
         LOGGER = new Logger(name);
     }
-
-    public abstract void onAttach(Window window);
 
     public abstract void onEvent(Window window, Event event);
 
@@ -25,6 +25,16 @@ public abstract class Layer
     public abstract void onRender();
 
     public abstract void onDispose();
+
+    public void setActive(boolean active)
+    {
+        isActive = active;
+    }
+
+    public boolean isActive()
+    {
+        return isActive;
+    }
 
     public String getName()
     {

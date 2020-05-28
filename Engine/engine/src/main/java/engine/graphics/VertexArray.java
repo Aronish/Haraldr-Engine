@@ -9,6 +9,7 @@ import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
@@ -35,16 +36,18 @@ public class VertexArray
     public VertexArray()
     {
         vertexArrayID = glCreateVertexArrays();
-    }
-
-    public void setIndexBuffer(@NotNull int[] indices)
-    {
-        indexAmount = indices.length;
         indexBufferID = glCreateBuffers();
         glBindVertexArray(vertexArrayID);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 1, GL_DYNAMIC_DRAW);
         glBindVertexArray(0);
+    }
+
+    public void setIndexBufferData(@NotNull int[] indices)
+    {
+        indexAmount = indices.length;
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_DYNAMIC_DRAW);
     }
 
     public void setVertexBuffers(@NotNull VertexBuffer... vertexBuffers)

@@ -16,30 +16,30 @@ public class RefractiveMaterial extends Material
 
     public RefractiveMaterial(CubeMap environmentMap)
     {
-        this(environmentMap, 1f / 1.52f); // Default: Air to Glass
+        this(1f / 1.52f, environmentMap); // Default: Air to Glass
     }
 
-    public RefractiveMaterial(CubeMap environmentMap, float refractiveRatio)
+    public RefractiveMaterial(float refractiveRatio, CubeMap environmentMap)
     {
-        this(environmentMap, refractiveRatio, Texture.DEFAULT_WHITE, Texture.DEFAULT_WHITE);
+        this(Texture.DEFAULT_WHITE, Texture.DEFAULT_WHITE, refractiveRatio, environmentMap);
     }
 
-    public RefractiveMaterial(CubeMap environmentMap, String diffuseTexture, String refractionMap)
+    public RefractiveMaterial(String diffuseTexture, String refractionMap, CubeMap environmentMap)
     {
-        this(environmentMap, 1f / 1.52f, ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(refractionMap, false));
+        this(ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(refractionMap, false), 1f / 1.52f, environmentMap);
     }
 
-    public RefractiveMaterial(CubeMap environmentMap, Texture diffuseTexture, Texture refractionMap)
+    public RefractiveMaterial(Texture diffuseTexture, Texture refractionMap, CubeMap environmentMap)
     {
-        this(environmentMap, 1f / 1.52f, diffuseTexture, refractionMap);
+        this(diffuseTexture, refractionMap, 1f / 1.52f, environmentMap);
     }
 
-    public RefractiveMaterial(CubeMap environmentMap, float refractiveRatio, String diffuseTexture, String refractionMap)
+    public RefractiveMaterial(String diffuseTexture, String refractionMap, CubeMap environmentMap, float refractiveRatio)
     {
-        this(environmentMap, refractiveRatio, ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(refractionMap, false));
+        this(ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(refractionMap, false), refractiveRatio, environmentMap);
     }
 
-    public RefractiveMaterial(CubeMap environmentMap, float refractiveRatio, Texture diffuseTexture, Texture refractionMap)
+    public RefractiveMaterial(Texture diffuseTexture, Texture refractionMap, float refractiveRatio, CubeMap environmentMap)
     {
         super(Shader.REFRACTIVE);
         this.environmentMap = environmentMap;
@@ -57,7 +57,7 @@ public class RefractiveMaterial extends Material
     public void bind()
     {
         shader.bind();
-        shader.setFloat(refractiveRatio, "refractiveRatio");
+        shader.setFloat("refractiveRatio", refractiveRatio);
         environmentMap.bind(0);
         diffuseTexture.bind(1);
         refractionMap.bind(2);
@@ -70,23 +70,5 @@ public class RefractiveMaterial extends Material
         environmentMap.unbind(0);
         diffuseTexture.unbind(1);
         refractionMap.unbind(2);
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RefractiveMaterial that = (RefractiveMaterial) o;
-        return Float.compare(that.refractiveRatio, refractiveRatio) == 0 &&
-                environmentMap.equals(that.environmentMap) &&
-                diffuseTexture.equals(that.diffuseTexture) &&
-                refractionMap.equals(that.refractionMap);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(environmentMap, refractiveRatio, diffuseTexture, refractionMap);
     }
 }

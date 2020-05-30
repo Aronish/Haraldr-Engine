@@ -2,7 +2,6 @@ package engine.graphics;
 
 import engine.main.ArrayUtils;
 import engine.main.EntryPoint;
-import engine.main.IOUtils;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import engine.math.Vector4f;
@@ -10,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +30,6 @@ import static org.lwjgl.opengl.GL20.glUniform1i;
 import static org.lwjgl.opengl.GL20.glUniform3f;
 import static org.lwjgl.opengl.GL20.glUniform4f;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
-import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
-import static org.lwjgl.opengl.GL46.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL46.GL_VERTEX_SHADER;
 import static org.lwjgl.opengl.GL46.glAttachShader;
 import static org.lwjgl.opengl.GL46.glCompileShader;
 import static org.lwjgl.opengl.GL46.glCreateProgram;
@@ -62,8 +57,9 @@ public class Shader
     public static final Shader UI                   = create("default_shaders/ui.glsl");
     public static final Shader TEXT                 = create("default_shaders/text.glsl");
 
+    private String path;
     private int shaderProgram;
-    private List<InternalShaderCombined> internalShaders = new ArrayList<>();
+    private List<InternalShader> internalShaders;
     private Map<String, Integer> uniformLocations = new HashMap<>();
 
     public static Shader create(String path)
@@ -82,30 +78,9 @@ public class Shader
 
     private Shader(String path)
     {
-        String fullSource = IOUtils.readResource(path, IOUtils::resourceToString);
-        assert fullSource != null : "Shader#Shader(String)#fullSource should never be null!";
-        String[] splitSource = fullSource.split(SPLIT_TOKEN);
-        for (int string = 1; string < splitSource.length; ++string)
-        {
-            String type = splitSource[string].substring(0, TYPE_SPECIFIER_LENGTH);
-            String source = splitSource[string].substring(TYPE_SPECIFIER_LENGTH);
-            switch (type)
-            {
-                case "vert":
-                    internalShaders.add(new InternalShaderCombined(GL_VERTEX_SHADER, source));
-                    break;
-                case "frag":
-                    internalShaders.add(new InternalShaderCombined(GL_FRAGMENT_SHADER, source));
-                    break;
-                case "geom":
-                    internalShaders.add(new InternalShaderCombined(GL_GEOMETRY_SHADER, source));
-                    break;
-                default:
-                    MAIN_LOGGER.error("Unknown shader type " + type + "!");
-                    break;
-            }
-        }
+        this.path = path;
         compile();
+        if (EntryPoint.DEBUG) MAIN_LOGGER.info("Compiled shader " + path);
     }
 
     private int createProgram(@NotNull int... shaders)
@@ -140,12 +115,22 @@ public class Shader
 
     private void compile()
     {
-        internalShaders.forEach(InternalShaderCombined::compile);
-        List<Integer> internalShaderIds = internalShaders.stream().map(InternalShaderCombined::getShaderId).collect(Collectors.toList());
+        internalShaders = ShaderParser.parseShader(path);
+        internalShaders.forEach(InternalShader::compile);
+        List<Integer> internalShaderIds = internalShaders.stream().map(InternalShader::getShaderId).collect(Collectors.toList());
         shaderProgram = createProgram(ArrayUtils.toPrimitiveArrayI(internalShaderIds));
     }
 
-    public void setInteger(int value, String name)
+    public void setBoolean(String name, boolean value)
+    {
+        if (!uniformLocations.containsKey(name))
+        {
+            uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
+        }
+        glUniform1f(uniformLocations.get(name), value ? 1f : 0f);
+    }
+
+    public void setInteger(String name, int value)
     {
         if (!uniformLocations.containsKey(name))
         {
@@ -154,7 +139,7 @@ public class Shader
         glUniform1i(uniformLocations.get(name), value);
     }
 
-    public void setFloat(float value, String name)
+    public void setFloat(String name, float value)
     {
         if (!uniformLocations.containsKey(name))
         {
@@ -163,7 +148,7 @@ public class Shader
         glUniform1f(uniformLocations.get(name), value);
     }
 
-    public void setMatrix4f(Matrix4f matrix, String name)
+    public void setMatrix4f(String name, Matrix4f matrix)
     {
         if (!uniformLocations.containsKey(name))
         {
@@ -172,22 +157,22 @@ public class Shader
         glUniformMatrix4fv(uniformLocations.get(name), false, matrix.matrix);
     }
 
-    public void setVector3f(Vector3f vector3f, String name)
+    public void setVector3f(String name, Vector3f vector)
     {
         if (!uniformLocations.containsKey(name))
         {
             uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
         }
-        glUniform3f(uniformLocations.get(name), vector3f.getX(), vector3f.getY(), vector3f.getZ());
+        glUniform3f(uniformLocations.get(name), vector.getX(), vector.getY(), vector.getZ());
     }
 
-    public void setVector4f(Vector4f vector4f, String name)
+    public void setVector4f(String name, Vector4f vector)
     {
         if (!uniformLocations.containsKey(name))
         {
             uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
         }
-        glUniform4f(uniformLocations.get(name), vector4f.getX(), vector4f.getY(), vector4f.getZ(), vector4f.getW());
+        glUniform4f(uniformLocations.get(name), vector.getX(), vector.getY(), vector.getZ(), vector.getW());
     }
 
     public void bind()
@@ -214,12 +199,12 @@ public class Shader
         uniformLocations.clear();
     }
 
-    private static class InternalShaderCombined
+    static class InternalShader
     {
         private String source;
         private int shaderType, shaderId;
 
-        private InternalShaderCombined(int shaderType, String source)
+        InternalShader(int shaderType, String source)
         {
             this.source = source;
             this.shaderType = shaderType;

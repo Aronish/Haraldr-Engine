@@ -42,7 +42,7 @@ public class WorldLayer extends Layer
     @Override
     public void onUpdate(Window window, float deltaTime)
     {
-        eventHandler.processInput(camera, window.getWindowHandle(), player, world);
+        eventHandler.processInput(camera, window, player, world);
         player.update(camera, deltaTime);
         checkVisibleGridCells();
         doCollisions();

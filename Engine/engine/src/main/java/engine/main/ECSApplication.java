@@ -1,7 +1,7 @@
 package engine.main;
 
-import engine.component.MeshComponent;
-import engine.component.TransformComponent;
+import engine.ecs.component.MeshComponent;
+import engine.ecs.component.TransformComponent;
 import engine.event.Event;
 import engine.event.EventDispatcher;
 import engine.event.EventType;
@@ -21,7 +21,7 @@ import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import engine.scenegraph.Scene;
 import engine.scenegraph.SceneObject;
-import engine.system.RenderSystem;
+import engine.ecs.system.RenderSystem;
 import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
@@ -43,7 +43,7 @@ import static org.lwjgl.system.MemoryUtil.memUTF8;
 
 public abstract class ECSApplication extends Application
 {
-    private RenderSystem renderSystem = new RenderSystem();
+    private static RenderSystem renderSystem = new RenderSystem();
     private Scene scene = new Scene();
     private TransformComponent transformComponent;
     private CubeMap envMap;
@@ -91,13 +91,7 @@ public abstract class ECSApplication extends Application
                 ));
         transformComponent = new TransformComponent().setRotation(new Vector3f(1f, 0f, 0f), 35f);
 
-        SceneObject obj1 = new SceneObject(scene);
-        obj1.setMeshComponent(renderSystem, meshComponent);
-        obj1.setTransformComponent(renderSystem, transformComponent);
 
-        SceneObject obj2 = new SceneObject(scene, obj1);
-        obj2.setMeshComponent(renderSystem, new MeshComponent("models/sphere.obj", new DiffuseMaterial("default_textures/brickwall.jpg")));
-        obj2.setTransformComponent(renderSystem, new TransformComponent().setPosition(new Vector3f(0f, 0.3f, 0f)));
 
         PointLight pl = new PointLight(new Vector3f(3f), new Vector3f(1f));
         SceneLights sl = new SceneLights();
@@ -153,7 +147,7 @@ public abstract class ECSApplication extends Application
             if (Input.isKeyPressed(window, Key.KEY_UP))     Renderer3D.addExposure(1f * deltaTime);
             if (Input.isKeyPressed(window, Key.KEY_DOWN))   Renderer3D.addExposure(-1f * deltaTime);
         }
-        transformComponent.setRotation(new Vector3f(1f, 0f, 0f), rotation);
+        //transformComponent.setRotation(new Vector3f(1f, 0f, 0f), rotation);
         glfwPollEvents();
     }
 

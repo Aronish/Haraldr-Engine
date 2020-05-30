@@ -1,11 +1,11 @@
-package engine.component;
+package engine.ecs.component;
 
 import engine.graphics.ResourceManager;
 import engine.graphics.VertexArray;
 import engine.graphics.material.Material;
 import engine.math.Vector3f;
 
-public class MeshComponent
+public class MeshComponent implements Component
 {
     private VertexArray mesh;
     private Material material;
@@ -19,7 +19,7 @@ public class MeshComponent
     public void bind(Vector3f viewPosition)
     {
         material.bind();
-        material.getShader().setVector3f(viewPosition, "viewPosition");
+        material.getShader().setVector3f("viewPosition", viewPosition);
         mesh.bind();
     }
 

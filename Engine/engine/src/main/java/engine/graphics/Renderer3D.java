@@ -87,7 +87,7 @@ public abstract class Renderer3D
         Renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         ///// POST PROCESSING //////
         postProcessingShader.bind();
-        postProcessingShader.setFloat(exposure, "exposure");
+        postProcessingShader.setFloat("exposure", exposure);
         SCREEN_QUAD.bind();
         SCREEN_QUAD.drawElements();
     }

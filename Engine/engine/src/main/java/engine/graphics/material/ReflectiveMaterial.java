@@ -13,15 +13,15 @@ public class ReflectiveMaterial extends Material
 
     public ReflectiveMaterial(CubeMap environmentMap)
     {
-        this(environmentMap, Texture.DEFAULT_WHITE, Texture.DEFAULT_WHITE);
+        this(Texture.DEFAULT_WHITE, Texture.DEFAULT_WHITE, environmentMap);
     }
 
-    public ReflectiveMaterial(CubeMap environmentMap, String diffuseTexture, String reflectionMap)
+    public ReflectiveMaterial(String diffuseTexture, String reflectionMap, CubeMap environmentMap)
     {
-        this(environmentMap, ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(reflectionMap, false));
+        this(ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(reflectionMap, false), environmentMap);
     }
 
-    public ReflectiveMaterial(CubeMap environmentMap, Texture diffuseTexture, Texture reflectionMap)
+    public ReflectiveMaterial(Texture diffuseTexture, Texture reflectionMap, CubeMap environmentMap)
     {
         super(Shader.REFLECTIVE);
         this.environmentMap = environmentMap;

@@ -12,7 +12,6 @@ import engine.math.Vector2f;
 import engine.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
 
-import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
@@ -61,8 +60,8 @@ public class UIBox
     {
         glDisable(GL_DEPTH_TEST);
         Shader.UI.bind();
-        Shader.UI.setMatrix4f(Matrix4f.pixelOrthographic, "projection");
-        Shader.UI.setVector4f(color, "u_Color");
+        Shader.UI.setMatrix4f("projection", Matrix4f.pixelOrthographic);
+        Shader.UI.setVector4f("u_Color", color);
         boxMesh.bind();
         boxMesh.drawElements();
         glEnable(GL_DEPTH_TEST);

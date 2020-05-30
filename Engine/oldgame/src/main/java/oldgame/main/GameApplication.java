@@ -1,5 +1,6 @@
 package oldgame.main;
 
+import engine.graphics.Renderer;
 import engine.graphics.Renderer2D;
 import engine.main.Application;
 import engine.main.Window;
@@ -22,15 +23,14 @@ public class GameApplication extends Application
     protected void init(Window.WindowProperties windowProperties)
     {
         super.init(windowProperties);
-        layerStack.pushLayer(new WorldLayer("World"), window);
-        Renderer2D.setClearColor(new Vector4f(0.2f, 0.6f, 0.65f, 1.0f));
+        layerStack.pushLayer(new WorldLayer("World"));
+        Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
     }
 
     @Override
     public void dispose()
     {
         super.dispose();
-        Shaders.dispose();
         Models.dispose();
     }
 }

@@ -20,7 +20,7 @@ public class Model
         this(ResourceManager.getMesh(modelPath), material, transformationMatrix);
     }
 
-    public Model(VertexArray mesh, Material material, Matrix4f transformationMatrix)
+    private Model(VertexArray mesh, Material material, Matrix4f transformationMatrix)
     {
         this.mesh = mesh;
         this.material = material;
@@ -35,8 +35,8 @@ public class Model
     public void render()
     {
         material.bind();
-        material.getShader().setMatrix4f(transformationMatrix, "model");
-        material.getShader().setVector3f(Renderer3D.getCamera().getPosition(), "viewPosition");
+        material.getShader().setMatrix4f("model", transformationMatrix);
+        material.getShader().setVector3f("viewPosition", Renderer3D.getCamera().getPosition());
         mesh.bind();
         mesh.drawElements();
     }
@@ -44,8 +44,8 @@ public class Model
     public void renderTransformed(Matrix4f transformationMatrix)
     {
         material.bind();
-        material.getShader().setMatrix4f(transformationMatrix, "model");
-        material.getShader().setVector3f(Renderer3D.getCamera().getPosition(), "viewPosition");
+        material.getShader().setMatrix4f("model", transformationMatrix);
+        material.getShader().setVector3f("viewPosition", Renderer3D.getCamera().getPosition());
         mesh.bind();
         mesh.drawElements();
     }

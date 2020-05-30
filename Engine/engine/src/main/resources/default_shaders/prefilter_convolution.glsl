@@ -28,14 +28,14 @@ const float PI = 3.14159265359f;
 
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
-    float a = roughness * roughness;
-    float a2 = a * a;
-    float NdotH = max(dot(N, H), 0.0f);
-    float NdotH2 = NdotH * NdotH;
-    float nom   = a2;
-    float denom = (NdotH2 * (a2 - 1.0f) + 1.0f);
+    float a         = roughness * roughness;
+    float a2        = a * a;
+    float NdotH     = max(dot(N, H), 0.0f);
+    float NdotH2    = NdotH * NdotH;
+    float num       = a2;
+    float denom     = (NdotH2 * (a2 - 1.0f) + 1.0f);
     denom = PI * denom * denom;
-    return nom / denom;
+    return num / denom;
 }
 
 float RadicalInverse_VdC(uint bits)

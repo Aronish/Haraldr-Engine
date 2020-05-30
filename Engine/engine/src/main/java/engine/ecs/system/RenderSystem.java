@@ -1,7 +1,7 @@
-package engine.system;
+package engine.ecs.system;
 
-import engine.component.MeshComponent;
-import engine.component.TransformComponent;
+import engine.ecs.component.MeshComponent;
+import engine.ecs.component.TransformComponent;
 import engine.graphics.Renderer3D;
 
 import java.util.HashMap;
@@ -10,7 +10,7 @@ import java.util.Map;
 public class RenderSystem
 {
     private Map<Long, MeshComponent> activeMeshComponents = new HashMap<>();
-    private Map<Long, TransformComponent> activeTransformComponents = new HashMap<>();
+    private final Map<Long, TransformComponent> activeTransformComponents = new HashMap<>();
 
     public void render()
     {
@@ -20,7 +20,7 @@ public class RenderSystem
             meshComponent.bind(Renderer3D.getCamera().getPosition());
             if (activeTransformComponents.containsKey(id))
             {
-                meshComponent.getMaterial().getShader().setMatrix4f(activeTransformComponents.get(id).getTransformation(), "model");
+                meshComponent.getMaterial().getShader().setMatrix4f("model", activeTransformComponents.get(id).getTransformation());
             }
             meshComponent.render();
         }

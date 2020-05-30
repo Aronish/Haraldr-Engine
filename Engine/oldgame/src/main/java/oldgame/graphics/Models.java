@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Models
 {
-    public static final Texture SPRITE_SHEET = new Texture("textures/sprite_sheet_2.png", true);
+    public static final Texture SPRITE_SHEET = Texture.create("textures/sprite_sheet_2.png", true);
     private static final float SPRITE_SHEET_SIZE = SPRITE_SHEET.getWidth();
     private static final float SPRITE_SIZE = 16;
 
@@ -63,8 +63,6 @@ public class Models
 
     public static void dispose()
     {
-        SPRITE_SHEET.unbind(0);
-        SPRITE_SHEET.delete();
         for (GameObject gameObjectType : GameObject.values())
         {
             gameObjectType.getModel().dispose();

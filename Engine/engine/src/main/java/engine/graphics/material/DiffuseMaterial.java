@@ -70,11 +70,11 @@ public class DiffuseMaterial extends Material
     public void bind()
     {
         super.bind();
-        shader.setVector3f(diffuseColor, "materialProperties.diffuseColor");
-        shader.setFloat(diffuseStrength, "materialProperties.diffuseStrength");
-        shader.setFloat(specularStrength, "materialProperties.specularStrength");
-        shader.setFloat(specularExponent, "materialProperties.specularExponent");
-        shader.setFloat(opacity, "materialProperties.opacity");
+        shader.setVector3f("materialProperties.diffuseColor", diffuseColor);
+        shader.setFloat("materialProperties.diffuseStrength", diffuseStrength);
+        shader.setFloat("materialProperties.specularStrength", specularStrength);
+        shader.setFloat("materialProperties.specularExponent", specularExponent);
+        shader.setFloat("materialProperties.opacity", opacity);
         diffuseTexture.bind(0);
     }
 

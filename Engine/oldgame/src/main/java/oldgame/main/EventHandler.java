@@ -23,21 +23,11 @@ public class EventHandler
      * @param player the current player.
      * @param world the current world
      */
-    public void processInput(GameCamera camera, long window, @NotNull Player player, World world)
+    public void processInput(GameCamera camera, Window window, @NotNull Player player, World world)
     {
         player.setMovementType(PlayerMovementType.STAND);
-        if (Input.isKeyPressed(window, Key.KEY_LEFT_SHIFT))
-        {
-            player.setRunning(true);
-        }else{
-            player.setRunning(false);
-        }
-        if (Input.isKeyPressed(window, Key.KEY_LEFT_CONTROL))
-        {
-            player.setBoosting(true);
-        }else{
-            player.setBoosting(false);
-        }
+        player.setRunning(Input.isKeyPressed(window, Key.KEY_LEFT_SHIFT));
+        player.setBoosting(Input.isKeyPressed(window, Key.KEY_LEFT_CONTROL));
         if (Input.isKeyPressed(window, Key.KEY_A))
         {
             player.setMovementType(PlayerMovementType.LEFT);

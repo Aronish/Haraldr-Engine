@@ -47,7 +47,7 @@ public abstract class Entity
 
     public void updateMatrix()
     {
-        matrix = Matrix4f.transform(this.position, this.rotation, this.scale);
+        matrix = Matrix4f.createTranslate(scale.getX() == -1 ? Vector3f.add(position, new Vector3f(1.0f, 0.0f)) : position).multiply(Matrix4f.createScale(scale));
     }
 
     public float[] getMatrixArray()

@@ -22,12 +22,12 @@ public class NormalMaterial extends Material
         this.normalMap = normalMap;
     }
 
-    public NormalMaterial(String diffuseTexture, String normalMap, float diffuseStrength, float specularStrength, float specularExponent, float opacity)
+    public NormalMaterial(String diffuseTexture, String normalMap, float specularStrength, float specularExponent, float opacity)
     {
-        this(ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(normalMap, false), diffuseStrength, specularStrength, specularExponent, opacity);
+        this(ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(normalMap, false), specularStrength, specularExponent, opacity);
     }
 
-    public NormalMaterial(Texture diffuseTexture, Texture normalMap, float diffuseStrength, float specularStrength, float specularExponent, float opacity)
+    public NormalMaterial(Texture diffuseTexture, Texture normalMap, float specularStrength, float specularExponent, float opacity)
     {
         super(Shader.NORMAL);
         this.diffuseTexture = diffuseTexture;
@@ -41,9 +41,9 @@ public class NormalMaterial extends Material
     public void bind()
     {
         super.bind();
-        shader.setFloat(specularStrength, "materialProperties.specularStrength");
-        shader.setFloat(specularExponent, "materialProperties.specularExponent");
-        shader.setFloat(opacity, "materialProperties.opacity");
+        shader.setFloat("materialProperties.specularStrength", specularStrength);
+        shader.setFloat("materialProperties.specularExponent", specularExponent);
+        shader.setFloat("materialProperties.opacity", opacity);
         diffuseTexture.bind(0);
         normalMap.bind(1);
     }

@@ -1,38 +1,7 @@
 #shader vert
 #version 460 core
 
-#define MAX_DIRECTIONAL_LIGHTS 1
-#define MAX_POINT_LIGHTS 15
-#define MAX_SPOTLIGHTS 5
-
-/////LIGHT TYPES//////////////////////////////
-//Squeezing allowed!
-struct PointLight
-{
-    vec4 position;
-    vec4 color;
-    float constant;
-    float linear;
-    float quadratic;
-    //std140: Total 40 Pad 8 Size 48
-};
-
-struct DirectionalLight
-{
-    vec4 direction;
-    vec4 color;
-    //std140: Total 32 Pad 0 Size 32
-};
-
-struct Spotlight
-{
-    vec4 position;
-    vec4 direction;
-    vec4 color;
-    float innerCutOff;
-    float outerCutOff;
-    //std140: Total 52 Pad 12 Size 64
-};
+#include "light_setup.glsl"
 
 layout (location = 0) in vec3 a_Position;
 layout (location = 1) in vec3 a_Normal;
@@ -46,16 +15,6 @@ layout (std140, binding = 0) uniform matrices
 {
     mat4 view;
     mat4 projection;
-};
-
-layout(std140, binding = 1) uniform lightSetup
-{
-    PointLight pointLights[MAX_POINT_LIGHTS];
-    Spotlight spotlights[MAX_SPOTLIGHTS];
-    DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
-    float numPointLights;
-    float numSpotlights;
-    float numDirectionalLights;
 };
 
 /////OUTPUT/////////////
@@ -100,38 +59,7 @@ void main()
 #shader frag
 #version 460 core
 
-#define MAX_DIRECTIONAL_LIGHTS 1
-#define MAX_POINT_LIGHTS 15
-#define MAX_SPOTLIGHTS 5
-
-/////LIGHT TYPES//////////////////////////////
-//Squeezing allowed!
-struct PointLight
-{
-    vec4 position;
-    vec4 color;
-    float constant;
-    float linear;
-    float quadratic;
-//std140: Total 40 Pad 8 Size 48
-};
-
-struct DirectionalLight
-{
-    vec4 direction;
-    vec4 color;
-//std140: Total 32 Pad 0 Size 32
-};
-
-struct Spotlight
-{
-    vec4 position;
-    vec4 direction;
-    vec4 color;
-    float innerCutOff;
-    float outerCutOff;
-//std140: Total 52 Pad 12 Size 64
-};
+#include "light_setup.glsl"
 
 in vec3 v_Normal_Tangent;
 in vec3 v_Normal;
@@ -146,16 +74,6 @@ in tangentSpaceLighting
     vec3 pointLightPositions[MAX_POINT_LIGHTS];
 };
 
-layout(std140, binding = 1) uniform lightSetup
-{
-    PointLight pointLights[MAX_POINT_LIGHTS];
-    Spotlight spotlights[MAX_SPOTLIGHTS];
-    DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
-    float numPointLights;
-    float numSpotlights;
-    float numDirectionalLights;
-};
-
 uniform vec3 u_Albedo;
 uniform float u_Metallic;
 uniform float u_Roughness;
@@ -165,7 +83,8 @@ layout (binding = 1) uniform sampler2D normalMap;
 layout (binding = 2) uniform sampler2D metallicMap;
 layout (binding = 3) uniform sampler2D roughnessMap;
 layout (binding = 4) uniform sampler2D displacementMap;
-uniform float u_UseParallaxMapping;
+uniform bool u_UseNormalMapping;
+uniform bool u_UseParallaxMapping;
 
 layout (binding = 5) uniform samplerCube diffuseIrradianceMap;
 layout (binding = 6) uniform samplerCube prefilteredMap;
@@ -187,12 +106,12 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
-    float a      = roughness * roughness;
-    float a2     = a * a;
-    float NdotH  = max(dot(N, H), 0.0f);
-    float NdotH2 = NdotH * NdotH;
-    float num   = a2;
-    float denom = (NdotH2 * (a2 - 1.0f) + 1.0f);
+    float a         = roughness * roughness;
+    float a2        = a * a;
+    float NdotH     = max(dot(N, H), 0.0f);
+    float NdotH2    = NdotH * NdotH;
+    float num       = a2;
+    float denom     = (NdotH2 * (a2 - 1.0f) + 1.0f);
     denom = PI * denom * denom;
     return num / denom;
 }
@@ -250,11 +169,11 @@ void main()
     float tilingFactor = 1.0f; //TODO: Make uniform
     vec3 V = normalize(v_ViewPosition - v_WorldPosition);
 
-    vec2 textureCoordinate = u_UseParallaxMapping == 1.0f ? ParallaxMapping(v_TextureCoordinate * tilingFactor, V) : v_TextureCoordinate * tilingFactor;
-    if(u_UseParallaxMapping == 1.0f && (textureCoordinate.x > tilingFactor || textureCoordinate.y > tilingFactor || textureCoordinate.x < 0.0f || textureCoordinate.y < 0.0f)) discard;
+    vec2 textureCoordinate = u_UseParallaxMapping ? ParallaxMapping(v_TextureCoordinate * tilingFactor, V) : v_TextureCoordinate * tilingFactor;
+    if(u_UseParallaxMapping && (textureCoordinate.x > tilingFactor || textureCoordinate.y > tilingFactor || textureCoordinate.x < 0.0f || textureCoordinate.y < 0.0f)) discard;
 
     vec3 albedo = texture(albedoMap, textureCoordinate).rgb * u_Albedo;
-    vec3 tNormal = normalize(texture(normalMap, textureCoordinate).rgb * 2.0f - 1.0f);// * v_Normal_Tangent; // Read normals //TODO: WRONG
+    vec3 tNormal = (u_UseNormalMapping ? normalize(texture(normalMap, textureCoordinate).rgb * 2.0f - 1.0f) : normalize(v_Normal_Tangent));
     float metallic = texture(metallicMap, textureCoordinate).r * u_Metallic;
     float roughness = texture(roughnessMap, textureCoordinate).r * u_Roughness;
 

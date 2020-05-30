@@ -1,8 +1,8 @@
 package engine.scenegraph;
 
-import engine.component.MeshComponent;
-import engine.component.TransformComponent;
-import engine.system.RenderSystem;
+import engine.ecs.component.MeshComponent;
+import engine.ecs.component.TransformComponent;
+import engine.ecs.system.RenderSystem;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -47,6 +47,7 @@ public class SceneObject
     public void setTransformComponent(@NotNull RenderSystem renderSystem, TransformComponent transformComponent)
     {
         this.transformComponent = transformComponent;
+        this.transformComponent.setAttached(id);
         if (parent != null && parent.transformComponent != null)
         {
             transformComponent.setFromParent(parent.transformComponent);

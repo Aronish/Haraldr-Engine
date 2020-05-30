@@ -37,8 +37,8 @@ public abstract class Light
     {
         Texture.DEFAULT_WHITE.bind(0);
         Shader.LIGHT_SHADER.bind();
-        Shader.LIGHT_SHADER.setMatrix4f(Matrix4f.createTranslate(position).scale(new Vector3f(0.02f)), "model");
-        Shader.LIGHT_SHADER.setVector3f(color, "color");
+        Shader.LIGHT_SHADER.setMatrix4f("model", Matrix4f.createTranslate(position).scale(new Vector3f(0.02f)));
+        Shader.LIGHT_SHADER.setVector3f("color", color);
         DefaultModels.CUBE.bind();
         DefaultModels.CUBE.drawElements();
     }

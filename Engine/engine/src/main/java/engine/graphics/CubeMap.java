@@ -139,7 +139,7 @@ public class CubeMap
             {
                 for (int i = 0; i < 6; ++i)
                 {
-                    mappingShader.setMatrix4f(mappingViews[i], "mappingView");
+                    mappingShader.setMatrix4f("mappingView", mappingViews[i]);
                     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, colorAttachment, 0);
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                     DefaultModels.CUBE.bind();
@@ -167,7 +167,7 @@ public class CubeMap
             {
                 for (int i = 0; i < 6; ++i)
                 {
-                    mappingShader.setMatrix4f(mappingViews[i], "mappingView");
+                    mappingShader.setMatrix4f("mappingView", mappingViews[i]);
                     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, colorAttachment, 0);
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                     DefaultModels.CUBE.bind();
@@ -201,10 +201,10 @@ public class CubeMap
                     glViewport(0, 0, mipSize, mipSize);
 
                     float roughness = (float) mip / (maxMipLevels - 1);
-                    mappingShader.setFloat(roughness, "roughness");
+                    mappingShader.setFloat("roughness", roughness);
                     for (int i = 0; i < 6; ++i)
                     {
-                        mappingShader.setMatrix4f(mappingViews[i], "mappingView");
+                        mappingShader.setMatrix4f("mappingView", mappingViews[i]);
                         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, colorAttachment, mip);
                         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                         DefaultModels.CUBE.bind();
@@ -254,8 +254,8 @@ public class CubeMap
         };
         //Render textured cube faces to cubemap color attachment texture
         mappingShader.bind();
-        mappingShader.setMatrix4f(Matrix4f.createScale(new Vector3f(0.5f)), "model"); //(Cube .obj is two units in size)
-        mappingShader.setMatrix4f(mappingProjection, "mappingProjection");
+        mappingShader.setMatrix4f("model", Matrix4f.createScale(new Vector3f(0.5f))); //(Cube .obj is two units in size)
+        mappingShader.setMatrix4f("mappingProjection", mappingProjection);
 
         glBindTextureUnit(0, environmentMap);
         glViewport(0, 0, size, size);

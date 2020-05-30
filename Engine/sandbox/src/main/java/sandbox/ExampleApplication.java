@@ -21,7 +21,7 @@ class ExampleApplication extends Application
     {
         super.init(windowProperties);
         Renderer.setClearColor(0.1f, 0.1f, 0.2f, 1f);
-        layerStack.pushLayer(new GraphLayer("Graph"));
+        layerStack.pushLayer(new PBRLayer("PBR"));
         if (EntryPoint.DEBUG) layerStack.pushOverlay(new DebugLayer("UI"));
     }
 }

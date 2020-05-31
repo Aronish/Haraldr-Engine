@@ -13,16 +13,16 @@ layout (std140, binding = 0) uniform matrices
     mat4 projection;
 };
 
-out vec3 v_Normal;
+out vec3 v_Normal_W;
+out vec3 v_WorldPosition_W;
 out vec2 v_TextureCoordinate;
-out vec3 v_FragmentPosition;
 
 void main()
 {
     mat3 normalMatrix = mat3(model);
-    v_Normal = normalMatrix * a_Normal;
+    v_Normal_W = normalMatrix * a_Normal;
+    v_WorldPosition_W = (model * vec4(a_Position, 1.0f)).xyz;
     v_TextureCoordinate = a_TextureCoordinate;
-    v_FragmentPosition = (model * vec4(a_Position, 1.0f)).xyz;
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
 }
 
@@ -43,14 +43,14 @@ struct MaterialProperties
 };
 
 /////INPUT AND UNIFORMS/////
-in vec3 v_Normal;
+in vec3 v_Normal_W;
+in vec3 v_WorldPosition_W;
 in vec2 v_TextureCoordinate;
-in vec3 v_FragmentPosition;
 
-uniform vec3 viewPosition;
+uniform vec3 u_ViewPosition_W;
 /////MATERIAL/////////////////////////////////////////
 layout(location = 0) uniform sampler2D diffuseTexture;
-uniform MaterialProperties materialProperties;
+uniform MaterialProperties u_MaterialProperties;
 /////OUTPUT//////
 out vec4 o_Color;
 
@@ -58,21 +58,21 @@ out vec4 o_Color;
 
 void main()
 {
-    vec3 viewDirection = normalize(viewPosition - v_FragmentPosition);
-    vec3 normal = normalize(v_Normal);
+    vec3 viewDirection = normalize(u_ViewPosition_W - v_WorldPosition_W);
+    vec3 normal = normalize(v_Normal_W);
     vec3 result;
 
     vec3 diffuseTextureColor = texture(diffuseTexture, v_TextureCoordinate).rgb;
-    vec3 ambientColor = AMBIENT_STRENGTH * materialProperties.diffuseColor * diffuseTextureColor;
-    vec3 diffuseColor = materialProperties.diffuseStrength * materialProperties.diffuseColor * diffuseTextureColor;
+    vec3 ambientColor = AMBIENT_STRENGTH * u_MaterialProperties.diffuseColor * diffuseTextureColor;
+    vec3 diffuseColor = u_MaterialProperties.diffuseStrength * u_MaterialProperties.diffuseColor * diffuseTextureColor;
 
     for (uint i = 0; i < numPointLights; ++i)
     {
         result += calculatePointLight
         (
             pointLights[i].position.xyz, pointLights[i].color.rgb, pointLights[i].constant, pointLights[i].linear, pointLights[i].quadratic,
-            ambientColor, diffuseColor, materialProperties.specularStrength, materialProperties.specularExponent,
-            normal, viewDirection
+            ambientColor, diffuseColor, u_MaterialProperties.specularStrength, u_MaterialProperties.specularExponent,
+            normal, viewDirection, v_WorldPosition_W
         );
     }
 
@@ -81,8 +81,8 @@ void main()
         result += calculateSpotlight
         (
             spotlights[i].position.xyz, spotlights[i].direction.xyz, spotlights[i].color.rgb, spotlights[i].innerCutoff, spotlights[i].outerCutoff,
-            ambientColor, diffuseColor, materialProperties.specularStrength, materialProperties.specularExponent,
-            normal, viewDirection
+            ambientColor, diffuseColor, u_MaterialProperties.specularStrength, u_MaterialProperties.specularExponent,
+            normal, viewDirection, v_WorldPosition_W
         );
     }
 
@@ -91,10 +91,10 @@ void main()
         result += calculateDirectionalLight
         (
             directionalLights[i].direction.xyz, directionalLights[i].color.rgb,
-            ambientColor, diffuseColor, materialProperties.specularStrength, materialProperties.specularExponent,
-            normal, viewDirection
+            ambientColor, diffuseColor, u_MaterialProperties.specularStrength, u_MaterialProperties.specularExponent,
+            normal, viewDirection, v_WorldPosition_W
         );
     }
 
-    o_Color = vec4(result, materialProperties.opacity);
+    o_Color = vec4(result, u_MaterialProperties.opacity);
 }

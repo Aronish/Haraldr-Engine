@@ -18,7 +18,7 @@ void main()
 in vec2 v_TextureCoordinate;
 
 uniform sampler2D colorAttachment;
-uniform float exposure;
+uniform float u_Exposure;
 
 out vec4 o_Color;
 
@@ -28,7 +28,7 @@ void main()
     float gamma = 2.2f;
 
     vec3 hdrColor = texture(colorAttachment, v_TextureCoordinate).rgb;
-    vec3 toneMappedColor = vec3(1.0f) - exp(-hdrColor * exposure);
+    vec3 toneMappedColor = vec3(1.0f) - exp(-hdrColor * u_Exposure);
 
     toneMappedColor = pow(toneMappedColor, vec3(1.0f / gamma));
 

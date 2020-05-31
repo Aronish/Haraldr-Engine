@@ -21,6 +21,7 @@ void main()
 in vec2 v_TextureCoordinate;
 
 uniform vec4 u_Color;
+
 layout (binding = 0) uniform sampler2D fontAtlas;
 
 out vec4 o_Color;

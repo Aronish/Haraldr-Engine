@@ -21,14 +21,13 @@ public class PBRLayer extends Layer
 {
     private CubeMap environmentMap = CubeMap.createEnvironmentMap("default_hdris/TexturesCom_NorwayForest_4K_hdri_sphere.hdr");
 
-    private PointLight l1 = new PointLight(new Vector3f(0f, 1f, 0f), new Vector3f(7.5f, 7.5f, 4.5f));
-    private PointLight l2 = new PointLight(new Vector3f(0f, 1f, 0f), new Vector3f(5f, 5f, 3f));
+    private PointLight l1 = new PointLight(new Vector3f(0f, 1f, 0f), new Vector3f(7.5f, 2.5f, 2.5f));
+    private PointLight l2 = new PointLight(new Vector3f(0f, 1f, 0f), new Vector3f(5f, 1f, 1f));
 
     private Material pbr = new PBRMaterial(
-            "default_textures/Tiles_Glass_1K_albedo.png",
-            "default_textures/Tiles_Glass_1K_normal.png",
-            "default_textures/Tiles_Glass_1K_metallic.png",
-            "default_textures/Tiles_Glass_1K_roughness.png",
+            new Vector3f(0.8f, 0.2f, 0.3f),
+            0f,
+            0.4f,
             environmentMap
     );
 

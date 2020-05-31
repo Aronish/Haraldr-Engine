@@ -1,5 +1,6 @@
 #shader vert
 #version 460 core
+
 layout (location = 0) in vec3 a_Position;
 
 uniform mat4 model = mat4(1.0f);

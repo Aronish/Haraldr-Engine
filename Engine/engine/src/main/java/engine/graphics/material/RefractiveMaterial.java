@@ -57,7 +57,7 @@ public class RefractiveMaterial extends Material
     public void bind()
     {
         shader.bind();
-        shader.setFloat("refractiveRatio", refractiveRatio);
+        shader.setFloat("u_RefractiveRatio", refractiveRatio);
         environmentMap.bind(0);
         diffuseTexture.bind(1);
         refractionMap.bind(2);

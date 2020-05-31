@@ -16,15 +16,13 @@ layout (std140, binding = 0) uniform matrices
 out GS_DATA
 {
     vec3 normal;
-    vec3 tangent;
 } gs_data;
 
 void main()
 {
-    gl_Position = projection * view * model * vec4(a_Position, 1.0f);
     mat3 normalMatrix = mat3(view * model);
     gs_data.normal = normalize(vec3(projection * vec4(normalMatrix * a_Normal, 0.0f)));
-    //gs_data.tangent = normalize(vec3(projection * vec4(normalMatrix * a_Tangent, 0.0f)));
+    gl_Position = projection * view * model * vec4(a_Position, 1.0f);
 }
 
 #shader geom
@@ -36,25 +34,15 @@ layout (line_strip, max_vertices = 6) out;
 in GS_DATA
 {
     vec3 normal;
-    vec3 tangent;
 } gs_data[];
 
-const float MAGNITUDE = 1f;
+const float MAGNITUDE = 1.0f;
 
 void generateNormal(int index)
 {
     gl_Position = gl_in[index].gl_Position;
     EmitVertex();
     gl_Position = gl_in[index].gl_Position + vec4(gs_data[index].normal, 0.0f) * MAGNITUDE;
-    EmitVertex();
-    EndPrimitive();
-}
-
-void generateTangent(int index)
-{
-    gl_Position = gl_in[index].gl_Position;
-    EmitVertex();
-    gl_Position = gl_in[index].gl_Position + vec4(gs_data[index].tangent, 0.0f) * MAGNITUDE;
     EmitVertex();
     EndPrimitive();
 }

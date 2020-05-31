@@ -41,9 +41,9 @@ public class NormalMaterial extends Material
     public void bind()
     {
         super.bind();
-        shader.setFloat("materialProperties.specularStrength", specularStrength);
-        shader.setFloat("materialProperties.specularExponent", specularExponent);
-        shader.setFloat("materialProperties.opacity", opacity);
+        shader.setFloat("u_MaterialProperties.specularStrength", specularStrength);
+        shader.setFloat("u_MaterialProperties.specularExponent", specularExponent);
+        shader.setFloat("u_MaterialProperties.opacity", opacity);
         diffuseTexture.bind(0);
         normalMap.bind(1);
     }

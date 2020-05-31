@@ -39,7 +39,7 @@ public class ForwardRenderer extends Renderer3D
         for (Material material : materialBatches.keySet())
         {
             material.bind();
-            material.getShader().setVector3f("viewPosition", camera.getPosition());
+            material.getShader().setVector3f("u_ViewPosition_W", camera.getPosition());
             for (ModelData modelData : materialBatches.get(material))
             {
                 material.getShader().setMatrix4f("model", modelData.transformationMatrix);

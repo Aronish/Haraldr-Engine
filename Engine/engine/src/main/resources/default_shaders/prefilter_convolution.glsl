@@ -1,5 +1,6 @@
 #shader vert
 #version 460 core
+
 layout (location = 0) in vec3 a_Position;
 
 uniform mat4 model = mat4(1.0f);
@@ -20,7 +21,8 @@ void main()
 in vec3 v_LocalPosition;
 
 layout (binding = 0) uniform samplerCube environmentMap;
-uniform float roughness;
+
+uniform float u_Roughness;
 
 out vec4 o_Color;
 
@@ -86,14 +88,14 @@ void main()
     for(uint i = 0u; i < SAMPLE_COUNT; ++i)
     {
         vec2 Xi = Hammersley(i, SAMPLE_COUNT);
-        vec3 H  = ImportanceSampleGGX(Xi, N, roughness);
+        vec3 H  = ImportanceSampleGGX(Xi, N, u_Roughness);
         vec3 L  = normalize(2.0f * dot(N, H) * H - N);
 
         float NdotL = max(dot(N, L), 0.0f);
         if(NdotL > 0.0f)
         {
             // sample from the environment's mip level based on roughness/pdf
-            float D   = DistributionGGX(N, H, roughness);
+            float D   = DistributionGGX(N, H, u_Roughness);
             float NdotH = max(dot(N, H), 0.0f);
             float HdotV = max(dot(H, N), 0.0f);
             float pdf = D * NdotH / (4.0f * HdotV) + 0.0001f;
@@ -102,7 +104,7 @@ void main()
             float saTexel  = 4.0f * PI / (6.0f * resolution * resolution);
             float saSample = 1.0f / (float(SAMPLE_COUNT) * pdf + 0.0001f);
 
-            float mipLevel = roughness == 0.0f ? 0.0f : 0.5f * log2(saSample / saTexel);
+            float mipLevel = u_Roughness == 0.0f ? 0.0f : 0.5f * log2(saSample / saTexel);
 
             prefilteredColor += textureLod(environmentMap, L, mipLevel).rgb * NdotL;
             totalWeight      += NdotL;

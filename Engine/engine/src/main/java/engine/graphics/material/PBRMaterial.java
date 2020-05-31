@@ -19,11 +19,10 @@ public class PBRMaterial extends Material
     private Vector3f color = new Vector3f(1f);
     private float metallic = 1f, roughness = 1f;
     private boolean useParallaxMapping;
-    private boolean useNormalMapping;
 
     public PBRMaterial(Vector3f color, float metallic, float roughness, CubeMap environmentMap)
     {
-        super(Shader.PBR);
+        super(Shader.PBR_UNTEXTURED);
         this.color          = color;
         this.metallic       = metallic;
         this.roughness      = roughness;
@@ -45,14 +44,13 @@ public class PBRMaterial extends Material
 
     public PBRMaterial(Texture albedo, Texture normalMap, Texture metallicMap, Texture roughnessMap, CubeMap environmentMap)
     {
-        super(Shader.PBR);
+        super(Shader.PBR_TEXTURED);
         this.albedo                 = albedo;
         this.normalMap              = normalMap;
         this.metallicMap            = metallicMap;
         this.roughnessMap           = roughnessMap;
         this.diffuseIrradianceMap   = CubeMap.createDiffuseIrradianceMap(environmentMap);
         this.prefilteredMap         = CubeMap.createPrefilteredEnvironmentMap(environmentMap);
-        useNormalMapping       = true;
     }
 
     public PBRMaterial(String albedo, String normalMap, String metallicMap, String roughnessMap, String displacementMap, CubeMap environmentMap)
@@ -68,7 +66,7 @@ public class PBRMaterial extends Material
 
     public PBRMaterial(Texture albedo, Texture normalMap, Texture metallicMap, Texture roughnessMap, Texture displacementMap, CubeMap environmentMap)
     {
-        super(Shader.PBR);
+        super(Shader.PBR_TEXTURED);
         this.albedo                 = albedo;
         this.normalMap              = normalMap;
         this.metallicMap            = metallicMap;
@@ -76,7 +74,6 @@ public class PBRMaterial extends Material
         this.displacementMap        = displacementMap;
         this.diffuseIrradianceMap   = CubeMap.createDiffuseIrradianceMap(environmentMap);
         this.prefilteredMap         = CubeMap.createPrefilteredEnvironmentMap(environmentMap);
-        useNormalMapping            = true;
         useParallaxMapping          = true;
     }
 
@@ -93,7 +90,7 @@ public class PBRMaterial extends Material
 
     public PBRMaterial(Texture albedo, Texture normalMap, Texture metallicMap, Texture roughnessMap, Texture displacementMap, Vector3f color, float metallic, float roughness, CubeMap environmentMap)
     {
-        super(Shader.PBR);
+        super(Shader.PBR_TEXTURED);
         this.albedo                 = albedo;
         this.normalMap              = normalMap;
         this.metallicMap            = metallicMap;
@@ -104,7 +101,6 @@ public class PBRMaterial extends Material
         this.roughness              = roughness;
         this.diffuseIrradianceMap   = CubeMap.createDiffuseIrradianceMap(environmentMap);
         this.prefilteredMap         = CubeMap.createPrefilteredEnvironmentMap(environmentMap);
-        useNormalMapping            = true;
         useParallaxMapping          = true;
     }
 
@@ -119,7 +115,6 @@ public class PBRMaterial extends Material
         metallicMap.bind(2);
         roughnessMap.bind(3);
         displacementMap.bind(4);
-        shader.setBoolean("u_UseNormalMapping", useNormalMapping);
         shader.setBoolean("u_UseParallaxMapping", useParallaxMapping);
 
         diffuseIrradianceMap.bind(5);

@@ -53,7 +53,8 @@ public class Shader
     public static final Shader VISIBLE_NORMALS      = create("default_shaders/visible_normals.glsl");
     public static final Shader REFLECTIVE           = create("default_shaders/reflective.glsl");
     public static final Shader REFRACTIVE           = create("default_shaders/refractive.glsl");
-    public static final Shader PBR                  = create("default_shaders/pbr.glsl");
+    public static final Shader PBR_TEXTURED         = create("default_shaders/pbr_textured.glsl");
+    public static final Shader PBR_UNTEXTURED       = create("default_shaders/pbr_untextured.glsl");
     public static final Shader UI                   = create("default_shaders/ui.glsl");
     public static final Shader TEXT                 = create("default_shaders/text.glsl");
 
@@ -148,15 +149,6 @@ public class Shader
         glUniform1f(uniformLocations.get(name), value);
     }
 
-    public void setMatrix4f(String name, Matrix4f matrix)
-    {
-        if (!uniformLocations.containsKey(name))
-        {
-            uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
-        }
-        glUniformMatrix4fv(uniformLocations.get(name), false, matrix.matrix);
-    }
-
     public void setVector3f(String name, Vector3f vector)
     {
         if (!uniformLocations.containsKey(name))
@@ -173,6 +165,15 @@ public class Shader
             uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
         }
         glUniform4f(uniformLocations.get(name), vector.getX(), vector.getY(), vector.getZ(), vector.getW());
+    }
+
+    public void setMatrix4f(String name, Matrix4f matrix)
+    {
+        if (!uniformLocations.containsKey(name))
+        {
+            uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
+        }
+        glUniformMatrix4fv(uniformLocations.get(name), false, matrix.matrix);
     }
 
     public void bind()

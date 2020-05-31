@@ -36,7 +36,7 @@ public class Model
     {
         material.bind();
         material.getShader().setMatrix4f("model", transformationMatrix);
-        material.getShader().setVector3f("viewPosition", Renderer3D.getCamera().getPosition());
+        material.getShader().setVector3f("u_ViewPosition_W", Renderer3D.getCamera().getPosition());
         mesh.bind();
         mesh.drawElements();
     }
@@ -45,7 +45,7 @@ public class Model
     {
         material.bind();
         material.getShader().setMatrix4f("model", transformationMatrix);
-        material.getShader().setVector3f("viewPosition", Renderer3D.getCamera().getPosition());
+        material.getShader().setVector3f("u_ViewPosition_W", Renderer3D.getCamera().getPosition());
         mesh.bind();
         mesh.drawElements();
     }

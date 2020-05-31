@@ -13,7 +13,6 @@ out vec2 v_TextureCoordinates;
 void main()
 {
     v_TextureCoordinates = a_TextureCoordinates;
-    //v_TextureCoordinates = a_Position.xy;
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
 }
 
@@ -30,5 +29,4 @@ out vec4 o_Color;
 void main()
 {
     o_Color = texture(sampler, v_TextureCoordinates) * color;
-    //o_Color = vec4(v_TextureCoordinates, 0.0f, 1.0f);
 }

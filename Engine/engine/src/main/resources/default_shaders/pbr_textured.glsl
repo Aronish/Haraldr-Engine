@@ -8,7 +8,7 @@ layout (location = 1) in vec3 a_Normal;
 layout (location = 2) in vec2 a_TextureCoordinate;
 layout (location = 3) in vec3 a_Tangent;
 
-uniform vec3 viewPosition;
+uniform vec3 u_ViewPosition_W;
 uniform mat4 model = mat4(1.0f);
 
 layout (std140, binding = 0) uniform matrices
@@ -23,13 +23,12 @@ out tangentSpaceLighting
     vec3 pointLightPositions[MAX_POINT_LIGHTS];
 };
 
-out vec3 v_Normal_Tangent;
-out vec3 v_Normal;
-out vec3 v_ViewPosition;
-out vec3 v_WorldPosition;
+out vec3 v_Normal_W;
+out vec3 v_Normal_T;
+out vec3 v_ViewPosition_T;
+out vec3 v_WorldPosition_W;
+out vec3 v_WorldPosition_T;
 out vec2 v_TextureCoordinate;
-
-out mat3 v_TangentToWorld;
 
 void main()
 {
@@ -46,12 +45,12 @@ void main()
         pointLightPositions[i] = TBN * pointLights[i].position.xyz;
     }
 
-    v_Normal_Tangent    = TBN * normal;
-    v_Normal            = normal;
-    v_ViewPosition      = TBN * viewPosition;
-    v_WorldPosition     = TBN * vec3((model * vec4(a_Position, 1.0f))); // Need to be translated as well.
-    v_TextureCoordinate = a_TextureCoordinate;                          // Not important for lighting, don't put in tangent space.
-    v_TangentToWorld = transpose(TBN);
+    v_Normal_W              = normal;
+    v_Normal_T              = TBN * normal;
+    v_ViewPosition_T        = TBN * u_ViewPosition_W;
+    v_WorldPosition_W       = vec3((model * vec4(a_Position, 1.0f)));
+    v_WorldPosition_T       = TBN * vec3((model * vec4(a_Position, 1.0f))); // Need to be translated as well.
+    v_TextureCoordinate     = a_TextureCoordinate;                          // Not important for lighting, don't put in tangent space.
 
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
 }
@@ -61,29 +60,25 @@ void main()
 
 #include "light_setup.glsl"
 
-in vec3 v_Normal_Tangent;
-in vec3 v_Normal;
-in vec3 v_ViewPosition;
-in vec3 v_WorldPosition;
+in vec3 v_Normal_W;
+in vec3 v_Normal_T;
+in vec3 v_ViewPosition_T;
+in vec3 v_WorldPosition_W;
+in vec3 v_WorldPosition_T;
 in vec2 v_TextureCoordinate;
-
-in mat3 v_TangentToWorld;
 
 in tangentSpaceLighting
 {
     vec3 pointLightPositions[MAX_POINT_LIGHTS];
 };
 
-uniform vec3 u_Albedo;
-uniform float u_Metallic;
-uniform float u_Roughness;
+uniform vec3 u_ViewPosition_W;
 
 layout (binding = 0) uniform sampler2D albedoMap;
 layout (binding = 1) uniform sampler2D normalMap;
 layout (binding = 2) uniform sampler2D metallicMap;
 layout (binding = 3) uniform sampler2D roughnessMap;
 layout (binding = 4) uniform sampler2D displacementMap;
-uniform bool u_UseNormalMapping;
 uniform bool u_UseParallaxMapping;
 
 layout (binding = 5) uniform samplerCube diffuseIrradianceMap;
@@ -92,46 +87,7 @@ layout (binding = 7) uniform sampler2D brdfLUT;
 
 out vec4 o_Color;
 
-const float PI = 3.14159265359f;
-
-vec3 fresnelSchlick(float cosTheta, vec3 F0)
-{
-    return F0 + (1.0f - F0) * pow(1.0f - cosTheta, 5.0f);
-}
-
-vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
-{
-    return F0 + (max(vec3(1.0f - roughness), F0) - F0) * pow(1.0f - cosTheta, 5.0f);
-}
-
-float DistributionGGX(vec3 N, vec3 H, float roughness)
-{
-    float a         = roughness * roughness;
-    float a2        = a * a;
-    float NdotH     = max(dot(N, H), 0.0f);
-    float NdotH2    = NdotH * NdotH;
-    float num       = a2;
-    float denom     = (NdotH2 * (a2 - 1.0f) + 1.0f);
-    denom = PI * denom * denom;
-    return num / denom;
-}
-
-float GeometrySchlickGGX(float NdotV, float roughness)
-{
-    float r = (roughness + 1.0f);
-    float k = (r * r) / 8.0f;
-    float num   = NdotV;
-    float denom = NdotV * (1.0f - k) + k;
-    return num / denom;
-}
-float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
-{
-    float NdotV = max(dot(N, V), 0.0f);
-    float NdotL = max(dot(N, L), 0.0f);
-    float ggx2  = GeometrySchlickGGX(NdotV, roughness);
-    float ggx1  = GeometrySchlickGGX(NdotL, roughness);
-    return ggx1 * ggx2;
-}
+#include "cook_torrance.glsl"
 
 vec2 ParallaxMapping(vec2 textureCoordinate, vec3 viewDirection)
 {
@@ -167,15 +123,15 @@ vec2 ParallaxMapping(vec2 textureCoordinate, vec3 viewDirection)
 void main()
 {
     float tilingFactor = 1.0f; //TODO: Make uniform
-    vec3 V = normalize(v_ViewPosition - v_WorldPosition);
+    vec3 V = normalize(v_ViewPosition_T - v_WorldPosition_T);
 
     vec2 textureCoordinate = u_UseParallaxMapping ? ParallaxMapping(v_TextureCoordinate * tilingFactor, V) : v_TextureCoordinate * tilingFactor;
     if(u_UseParallaxMapping && (textureCoordinate.x > tilingFactor || textureCoordinate.y > tilingFactor || textureCoordinate.x < 0.0f || textureCoordinate.y < 0.0f)) discard;
 
-    vec3 albedo = texture(albedoMap, textureCoordinate).rgb * u_Albedo;
-    vec3 tNormal = (u_UseNormalMapping ? normalize(texture(normalMap, textureCoordinate).rgb * 2.0f - 1.0f) : normalize(v_Normal_Tangent));
-    float metallic = texture(metallicMap, textureCoordinate).r * u_Metallic;
-    float roughness = texture(roughnessMap, textureCoordinate).r * u_Roughness;
+    vec3 albedo = texture(albedoMap, textureCoordinate).rgb;
+    vec3 normal_T = normalize(texture(normalMap, textureCoordinate).rgb * 2.0f - 1.0f);
+    float metallic = texture(metallicMap, textureCoordinate).r;
+    float roughness = texture(roughnessMap, textureCoordinate).r;
 
     vec3 F0 = vec3(0.04f);
     F0 = mix(F0, albedo, metallic);
@@ -184,31 +140,31 @@ void main()
     //////////Direct lighting////////////////
     for (uint i = 0; i < numPointLights; ++i)
     {
-        vec3 L = normalize(pointLightPositions[i] - v_WorldPosition);
+        vec3 L = normalize(pointLightPositions[i] - v_WorldPosition_T);
         vec3 H = normalize(V + L);
-        float distance = length(pointLightPositions[i] - v_WorldPosition);
+        float distance = length(pointLightPositions[i] - v_WorldPosition_T);
         float attenuation = 1.0f / (distance * distance);
         vec3 radiance = pointLights[i].color.rgb * attenuation;
         /////BRDF Components///////////////////////////////
-        float NDF = DistributionGGX(tNormal, H, roughness);
-        float G = GeometrySmith(tNormal, V, L, roughness);
+        float NDF = DistributionGGX(normal_T, H, roughness);
+        float G = GeometrySmith(normal_T, V, L, roughness);
         vec3 F = fresnelSchlick(max(dot(H, V), 0.0f), F0);
         /////Cook-Torrance///////////
         vec3 numerator = NDF * G * F;
-        float denominator = 4.0f * max(dot(tNormal, V), 0.0f) * max(dot(tNormal, L), 0.0f);
+        float denominator = 4.0f * max(dot(normal_T, V), 0.0f) * max(dot(normal_T, L), 0.0f);
         vec3 specular = numerator / max(denominator, 0.001f);
         /////Diffuse-Specular Fraction/////
         vec3 kD = vec3(1.0f) - F; //(F = kS)
         kD *= 1.0f - metallic;
 
-        float NdotL = max(dot(tNormal, L), 0.0f);
+        float NdotL = max(dot(normal_T, L), 0.0f);
         Lo += (kD * albedo / PI + specular) * radiance * NdotL;
     }
     //////////Indirect Lighting//////////////////////////////////////////////////
     /////IBL Ambient/////////////////////////////////////////////////////////////
 
-    vec3 sampleVector = normalize(v_Normal);
-    vec3 V_World = v_TangentToWorld * V;
+    vec3 sampleVector = normalize(v_Normal_W);
+    vec3 V_World = normalize(u_ViewPosition_W - v_WorldPosition_W);
 
     vec3 kS = fresnelSchlickRoughness(max(dot(sampleVector, V_World), 0.0f), F0, roughness);
     vec3 kD = (1.0f - kS) * (1.0f - metallic);

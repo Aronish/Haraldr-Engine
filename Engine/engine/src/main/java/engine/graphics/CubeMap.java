@@ -201,7 +201,7 @@ public class CubeMap
                     glViewport(0, 0, mipSize, mipSize);
 
                     float roughness = (float) mip / (maxMipLevels - 1);
-                    mappingShader.setFloat("roughness", roughness);
+                    mappingShader.setFloat("u_Roughness", roughness);
                     for (int i = 0; i < 6; ++i)
                     {
                         mappingShader.setMatrix4f("mappingView", mappingViews[i]);

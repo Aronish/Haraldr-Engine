@@ -19,7 +19,7 @@ public class MeshComponent implements Component
     public void bind(Vector3f viewPosition)
     {
         material.bind();
-        material.getShader().setVector3f("viewPosition", viewPosition);
+        material.getShader().setVector3f("u_ViewPosition_W", viewPosition);
         mesh.bind();
     }
 

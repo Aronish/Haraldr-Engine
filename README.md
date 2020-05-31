@@ -21,4 +21,4 @@ To run a client, it has to subclass EntryPoint and that subclass has to be set a
 <br/>
 <b>(Jetbrains Annotations)</b>
 
-<p>Special thanks to Joey DeVries for creating <a href="learnopengl.com">LearnOpengl.com</a>!</p>
+<p>Special thanks to Joey de Vries for creating <a href="learnopengl.com">LearnOpenGL.com</a>!</p>

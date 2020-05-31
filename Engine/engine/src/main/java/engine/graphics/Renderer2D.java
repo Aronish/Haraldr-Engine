@@ -34,7 +34,7 @@ public class Renderer2D
         Shader.DEFAULT2D.setMatrix4f("model", Matrix4f.createTranslate(position));
         Shader.DEFAULT2D.setMatrix4f("view", sceneData.getViewMatrix());
         Shader.DEFAULT2D.setMatrix4f("projection", Matrix4f.orthographic);
-        Shader.DEFAULT2D.setVector4f("color", color);
+        Shader.DEFAULT2D.setVector4f("u_Color", color);
 
         SceneData2D.QUAD.bind();
         SceneData2D.QUAD.drawElements();
@@ -52,7 +52,7 @@ public class Renderer2D
         shader.setMatrix4f("model", Matrix4f.createTranslate(position));
         shader.setMatrix4f("view", sceneData.getViewMatrix());
         shader.setMatrix4f("projection", Matrix4f.orthographic);
-        shader.setVector4f("color", color);
+        shader.setVector4f("u_Color", color);
 
         SceneData2D.QUAD.bind();
         SceneData2D.QUAD.drawElements();
@@ -69,7 +69,7 @@ public class Renderer2D
         Shader.DEFAULT2D.setMatrix4f("model", Matrix4f.createTranslate(position));
         Shader.DEFAULT2D.setMatrix4f("view", sceneData.getViewMatrix());
         Shader.DEFAULT2D.setMatrix4f("projection", Matrix4f.orthographic);
-        Shader.DEFAULT2D.setVector4f("color", tintColor);
+        Shader.DEFAULT2D.setVector4f("u_Color", tintColor);
 
         SceneData2D.QUAD.bind();
         SceneData2D.QUAD.drawElements();
@@ -87,7 +87,7 @@ public class Renderer2D
         shader.setMatrix4f("model", Matrix4f.createTranslate(position));
         shader.setMatrix4f("view", sceneData.getViewMatrix());
         shader.setMatrix4f("projection", Matrix4f.orthographic);
-        shader.setVector4f("color", tintColor);
+        shader.setVector4f("u_Color", tintColor);
 
         SceneData2D.QUAD.bind();
         SceneData2D.QUAD.drawElements();

@@ -13,14 +13,12 @@ import engine.graphics.CubeMap;
 import engine.graphics.Renderer3D;
 import engine.graphics.lighting.PointLight;
 import engine.graphics.lighting.SceneLights;
-import engine.graphics.material.DiffuseMaterial;
 import engine.graphics.material.PBRMaterial;
 import engine.input.Input;
 import engine.input.Key;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import engine.scenegraph.Scene;
-import engine.scenegraph.SceneObject;
 import engine.ecs.system.RenderSystem;
 import org.jetbrains.annotations.NotNull;
 
@@ -81,7 +79,7 @@ public abstract class ECSApplication extends Application
         }
 
         envMap = CubeMap.createEnvironmentMap("default_hdris/TexturesCom_NorwayForest_4K_hdri_sphere.hdr");
-        MeshComponent meshComponent = new MeshComponent("models/cube.obj",
+        MeshComponent meshComponent = new MeshComponent("default_meshes/cube.obj",
                 new PBRMaterial(
                         "default_textures/Tiles_Glass_1K_albedo.png",
                         "default_textures/Tiles_Glass_1K_normal.png",

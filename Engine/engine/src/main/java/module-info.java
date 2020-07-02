@@ -11,6 +11,7 @@
  */
 module Engine.engine
 {
+    ///// REQUIRES ////////////////////
     requires org.jetbrains.annotations;
     //LWJGL
     requires org.lwjgl.natives;
@@ -25,7 +26,8 @@ module Engine.engine
     requires org.lwjgl.stb.natives;
     //Misc
     requires java.desktop;
-    ///// EXPORTS ///////////////////////
+    requires JsonParser;
+    ///// EXPORTS ///////
     exports engine.debug;
     exports engine.event;
     exports engine.graphics;
@@ -41,5 +43,5 @@ module Engine.engine
 
     opens default_shaders;
     opens default_textures;
-    opens models;
+    opens default_models;
 }

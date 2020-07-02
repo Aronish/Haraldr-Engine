@@ -1,5 +1,6 @@
 package engine.math;
 
+import main.JSONArray;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,6 +41,13 @@ public class Vector3f
         this.x = (float) x;
         this.y = (float) y;
         this.z = (float) z;
+    }
+
+    public Vector3f(@NotNull JSONArray jsonArray)
+    {
+        x = (float) jsonArray.getDouble(0);
+        y = (float) jsonArray.getDouble(1);
+        z = (float) jsonArray.getDouble(2);
     }
 
     public void set(float x, float y, float z)

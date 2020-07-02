@@ -78,10 +78,5 @@ public class PerspectiveCameraController
         {
             reference.addPosition(Vector3f.normalize(Vector3f.cross(Vector3f.normalize(Vector3f.cross(reference.getDirection(), Vector3f.UP)), reference.getDirection())).multiply(-CAMERA_SPEED * deltaTime));
         }
-        if (Input.isKeyPressed(window, KEY_R))
-        {
-            reference.setPosition(new Vector3f(0f, 0f, -5f));
-            Matrix4f.resetZoom();
-        }
     }
 }

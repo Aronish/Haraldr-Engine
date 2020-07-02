@@ -2,9 +2,9 @@ package engine.graphics;
 
 public enum DefaultModels
 {
-    SPHERE("models/sphere.obj"),
-    CUBE("models/cube.obj"),
-    PLANE("models/plane.obj");
+    SPHERE("default_meshes/sphere.obj"),
+    CUBE("default_meshes/cube.obj"),
+    PLANE("default_meshes/plane.obj");
 
     public final VertexArray mesh;
 

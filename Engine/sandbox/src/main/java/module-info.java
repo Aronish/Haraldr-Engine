@@ -1,6 +1,6 @@
 module Engine.sandbox
 {
-    requires org.jetbrains.annotations;
-
     requires Engine.engine;
+    requires JsonParser;
+    requires org.jetbrains.annotations;
 }

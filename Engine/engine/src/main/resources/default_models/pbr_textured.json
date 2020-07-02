@@ -1,0 +1,15 @@
+{
+  "model": "default_meshes/cerberus.obj",
+  "material":
+  {
+    "type": "PBR_TEXTURED",
+    "properties":
+    {
+      "albedo": "default_textures/Cerberus_A.png",
+      "normal": "default_textures/Cerberus_N.png",
+      "metalness": "default_textures/Cerberus_M.png",
+      "roughness": "default_textures/Cerberus_R.png",
+      "environment_map": "default_hdris/TexturesCom_NorwayForest_4K_hdri_sphere.hdr"
+    }
+  }
+}

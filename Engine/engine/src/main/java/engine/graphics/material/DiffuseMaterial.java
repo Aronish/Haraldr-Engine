@@ -21,6 +21,27 @@ public class DiffuseMaterial extends Material
         super(Shader.DIFFUSE);
     }
 
+    public DiffuseMaterial(Shader shader, Vector3f diffuseColor, float diffuseStrength, float specularStrength, float specularExponent, float opacity)
+    {
+        super(shader);
+        this.diffuseColor = diffuseColor;
+        this.diffuseTexture = Texture.DEFAULT_WHITE;
+        this.diffuseStrength = diffuseStrength;
+        this.specularStrength = specularStrength;
+        this.specularExponent = specularExponent;
+        this.opacity = opacity;
+    }
+
+    public DiffuseMaterial(Shader shader, Texture diffuseTexture, float diffuseStrength, float specularStrength, float specularExponent, float opacity)
+    {
+        super(shader);
+        this.diffuseTexture = diffuseTexture;
+        this.diffuseStrength = diffuseStrength;
+        this.specularStrength = specularStrength;
+        this.specularExponent = specularExponent;
+        this.opacity = opacity;
+    }
+
     public DiffuseMaterial(Vector3f diffuseColor)
     {
         super(Shader.DIFFUSE);

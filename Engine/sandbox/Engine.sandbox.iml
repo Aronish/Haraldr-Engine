@@ -21,6 +21,5 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="JsonParser" level="project" />
   </component>
 </module>

@@ -43,10 +43,10 @@ public class Matrix4f //TODO: can be improved
     public static Matrix4f identity()
     {
         Matrix4f identity = new Matrix4f();
-        identity.matrix[0] = 1.0f;
-        identity.matrix[5] = 1.0f;
-        identity.matrix[10] = 1.0f;
-        identity.matrix[15] = 1.0f;
+        identity.matrix[0] = 1f;
+        identity.matrix[5] = 1f;
+        identity.matrix[10] = 1f;
+        identity.matrix[15] = 1f;
         return identity;
     }
 
@@ -58,7 +58,7 @@ public class Matrix4f //TODO: can be improved
         {
             for (int x = 0; x < 4; x++)
             {
-                float sum = 0.0f;
+                float sum = 0f;
                 for (int e = 0; e < 4; e++)
                 {
                     sum += matrix[x + e * 4] * multiplicand.matrix[e + y * 4];
@@ -76,7 +76,7 @@ public class Matrix4f //TODO: can be improved
         {
             for (int x = 0; x < 4; x++)
             {
-                float sum = 0.0f;
+                float sum = 0f;
                 for (int e = 0; e < 4; e++)
                 {
                     sum += matrix[x + e * 4] * multiplicand.matrix[e + y * 4];
@@ -90,11 +90,11 @@ public class Matrix4f //TODO: can be improved
     @NotNull
     public Vector3f multiply(@NotNull Vector3f multiplicand)
     {
-        float[] start = { multiplicand.getX(), multiplicand.getY(), multiplicand.getZ(), 1.0f };
+        float[] start = { multiplicand.getX(), multiplicand.getY(), multiplicand.getZ(), 1f };
         float[] result = new float[4];
         for (int x = 0; x < 4; x++)
         {
-            float sum = 0.0f;
+            float sum = 0f;
             for (int e = 0; e < 4; e++)
             {
                 sum += matrix[x + e * 4] * start[e];
@@ -111,7 +111,7 @@ public class Matrix4f //TODO: can be improved
         float[] result = new float[4];
         for (int x = 0; x < 4; x++)
         {
-            float sum = 0.0f;
+            float sum = 0f;
             for (int e = 0; e < 4; e++)
             {
                 sum += matrix[x + e * 4] * start[e];
@@ -148,13 +148,7 @@ public class Matrix4f //TODO: can be improved
         recalculatePerspective(aspectRatio);
     }
 
-    @Deprecated
-    public static @NotNull Matrix4f transform(Vector3f position, float angle, @NotNull Vector2f scale)
-    {
-        return createTranslate(scale.getX() == -1 ? Vector3f.add(position, new Vector3f(1.0f, 0.0f)) : position).multiply(createScale(scale));
-    }
-
-    /////UNUSED WITH PIXELORTHOGRAPHIC////////////////////////////////////////////////////////////////////////
+    /*/////UNUSED WITH PIXELORTHOGRAPHIC//////////////////////////////////////////////////////////////////////
         private static @NotNull Matrix4f transformPixelSpace(Vector3f pixelPosition, Vector2f scale, int width, int height)
         {
             return createTranslate(clampToUnitSpace(pixelPosition, width, height)).multiply(createScale(scale));
@@ -168,25 +162,25 @@ public class Matrix4f //TODO: can be improved
                     (-pixelPosition.getY() / height) * (2 * (fixedWidth ? dynamicOrthographicAxis : FIXED_ORTHOGRAPHIC_AXIS)) + (fixedWidth ? dynamicOrthographicAxis : FIXED_ORTHOGRAPHIC_AXIS)
             );
         }
-    /////UNUSED WITH PIXELORTHOGRAPHIC/////////////////////////////////////////////////////////////////////////
+    *//////UNUSED WITH PIXELORTHOGRAPHIC/////////////////////////////////////////////////////////////////////////
 
-    public static @NotNull Matrix4f createScale(@NotNull Vector2f scale)
+    private static @NotNull Matrix4f createScale(@NotNull Vector2f scale)
     {
         Matrix4f result = new Matrix4f();
         result.matrix[0] = scale.getX();
         result.matrix[5] = scale.getY();
-        result.matrix[10] = 1.0f;
-        result.matrix[15] = 1.0f;
+        result.matrix[10] = 1f;
+        result.matrix[15] = 1f;
         return result;
     }
 
-    public static @NotNull Matrix4f createScale(@NotNull Vector3f scale)
+    private static @NotNull Matrix4f createScale(@NotNull Vector3f scale)
     {
         Matrix4f result = new Matrix4f();
         result.matrix[0] = scale.getX();
         result.matrix[5] = scale.getY();
         result.matrix[10] = scale.getZ();
-        result.matrix[15] = 1.0f;
+        result.matrix[15] = 1f;
         return result;
     }
 
@@ -200,7 +194,7 @@ public class Matrix4f //TODO: can be improved
         return multiply(createScale(scale));
     }
 
-    public static @NotNull Matrix4f createTranslate(@NotNull Vector2f vector)
+    private static @NotNull Matrix4f createTranslate(@NotNull Vector2f vector)
     {
         Matrix4f result = identity();
         result.matrix[12] = vector.getX();
@@ -208,7 +202,7 @@ public class Matrix4f //TODO: can be improved
         return result;
     }
 
-    public static @NotNull Matrix4f createTranslate(@NotNull Vector3f vector)
+    private static @NotNull Matrix4f createTranslate(@NotNull Vector3f vector)
     {
         Matrix4f result = identity();
         result.matrix[12] = vector.getX();
@@ -217,12 +211,17 @@ public class Matrix4f //TODO: can be improved
         return result;
     }
 
+    public Matrix4f translate(Vector2f vector)
+    {
+        return multiply(createTranslate(vector));
+    }
+
     public Matrix4f translate(Vector3f vector)
     {
         return multiply(createTranslate(vector));
     }
 
-    public static @NotNull Matrix4f createRotate(@NotNull Vector3f rotation)
+    private static @NotNull Matrix4f createRotate(@NotNull Vector3f rotation)
     {
         return createRotateX(rotation.getX()).multiply(createRotateY(rotation.getY()).multiply(createRotateZ(rotation.getZ())));
     }
@@ -232,7 +231,7 @@ public class Matrix4f //TODO: can be improved
         return multiply(createRotate(rotation));
     }
 
-    public static @NotNull Matrix4f createRotateX(float angle)
+    private static @NotNull Matrix4f createRotateX(float angle)
     {
         Matrix4f result = identity();
         float radians = (float) Math.toRadians(angle);
@@ -250,7 +249,7 @@ public class Matrix4f //TODO: can be improved
         return multiply(createRotateX(angle));
     }
 
-    public static @NotNull Matrix4f createRotateY(float angle)
+    private static @NotNull Matrix4f createRotateY(float angle)
     {
         Matrix4f result = identity();
         float radians = (float) Math.toRadians(angle);
@@ -268,7 +267,7 @@ public class Matrix4f //TODO: can be improved
         return multiply(createRotateY(angle));
     }
 
-    public static @NotNull Matrix4f createRotateZ(float angle)
+    private static @NotNull Matrix4f createRotateZ(float angle)
     {
         Matrix4f result = identity();
         float radians = (float) Math.toRadians(angle);
@@ -286,26 +285,21 @@ public class Matrix4f //TODO: can be improved
         return multiply(createRotateZ(angle));
     }
 
-    public static @NotNull Matrix4f createRotate(@NotNull Quaternion quaternion)
+    private static @NotNull Matrix4f createRotate(@NotNull Quaternion quaternion)
     {
         Matrix4f result = new Matrix4f();
         quaternion.normalize();
-        result.matrix[0] = 1 - 2 * (quaternion.getY() * quaternion.getY() + quaternion.getZ() * quaternion.getZ());
-        result.matrix[1] = 2 * (quaternion.getX() * quaternion.getY() + quaternion.getZ() * quaternion.getW());
-        result.matrix[2] = 2 * (quaternion.getX() * quaternion.getZ() - quaternion.getY() * quaternion.getW());
-        result.matrix[4] = 2 * (quaternion.getX() * quaternion.getY() - quaternion.getZ() * quaternion.getW());
-        result.matrix[5] = 1 - 2 * (quaternion.getX() * quaternion.getX() + quaternion.getZ() * quaternion.getZ());
-        result.matrix[6] = 2 * (quaternion.getY() * quaternion.getZ() + quaternion.getX() * quaternion.getW());
-        result.matrix[8] = 2 * (quaternion.getX() * quaternion.getZ() + quaternion.getY() * quaternion.getW());
-        result.matrix[9] = 2 * (quaternion.getY() * quaternion.getZ() - quaternion.getX() * quaternion.getW());
-        result.matrix[10] = 1 - 2 * (quaternion.getX() * quaternion.getX() + quaternion.getY() * quaternion.getY());
-        result.matrix[15] = 1;
+        result.matrix[0] = 1f - 2f * (quaternion.getY() * quaternion.getY() + quaternion.getZ() * quaternion.getZ());
+        result.matrix[1] = 2f * (quaternion.getX() * quaternion.getY() + quaternion.getZ() * quaternion.getW());
+        result.matrix[2] = 2f * (quaternion.getX() * quaternion.getZ() - quaternion.getY() * quaternion.getW());
+        result.matrix[4] = 2f * (quaternion.getX() * quaternion.getY() - quaternion.getZ() * quaternion.getW());
+        result.matrix[5] = 1f - 2f * (quaternion.getX() * quaternion.getX() + quaternion.getZ() * quaternion.getZ());
+        result.matrix[6] = 2f * (quaternion.getY() * quaternion.getZ() + quaternion.getX() * quaternion.getW());
+        result.matrix[8] = 2f * (quaternion.getX() * quaternion.getZ() + quaternion.getY() * quaternion.getW());
+        result.matrix[9] = 2f * (quaternion.getY() * quaternion.getZ() - quaternion.getX() * quaternion.getW());
+        result.matrix[10] = 1f - 2f * (quaternion.getX() * quaternion.getX() + quaternion.getY() * quaternion.getY());
+        result.matrix[15] = 1f;
         return result;
-    }
-
-    public static @NotNull Matrix4f createRotate(Vector3f axis, float angle)
-    {
-        return createRotate(Quaternion.fromAxis(axis, angle));
     }
 
     public Matrix4f rotate(Quaternion quaternion)
@@ -315,15 +309,15 @@ public class Matrix4f //TODO: can be improved
 
     public Matrix4f rotate(Vector3f axis, float angle)
     {
-        return multiply(createRotate(axis, angle));
+        return multiply(createRotate(Quaternion.fromAxis(axis, angle)));
     }
 
     private static @NotNull Matrix4f orthographic(float right, float left, float top, float bottom, float far, float near)
     {
         Matrix4f result = identity();
-        result.matrix[0] = 2.0f / (right - left);
-        result.matrix[5] = 2.0f / (top - bottom);
-        result.matrix[10] = -2.0f / (far - near);
+        result.matrix[0] = 2f / (right - left);
+        result.matrix[5] = 2f / (top - bottom);
+        result.matrix[10] = -2f / (far - near);
         result.matrix[12] = -((right + left) / (right - left));
         result.matrix[13] = -((top + bottom) / (top - bottom));
         result.matrix[14] = -((far + near) / (far - near));

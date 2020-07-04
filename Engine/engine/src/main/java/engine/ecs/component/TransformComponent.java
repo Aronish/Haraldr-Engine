@@ -62,7 +62,7 @@ public class TransformComponent implements Component
 
     private void calculateTransformationMatrix()
     {
-        transformation = Matrix4f.createTranslate(position).rotate(rotation).scale(scale);
+        transformation = Matrix4f.identity().translate(position).rotate(rotation).scale(scale);
     }
 
     public void updateRenderSystem(@NotNull RenderSystem renderSystem)

@@ -1,0 +1,15 @@
+{
+  "mesh": "default_meshes/plane.obj",
+  "material":
+  {
+    "type": "DIFFUSE_TEXTURED",
+    "properties":
+    {
+      "diffuse_texture": "default_textures/brickwall.jpg",
+      "diffuse_strength": 1.0,
+      "specular_strength": 1.0,
+      "specular_exponent": 128.0,
+      "opacity": 1.0
+    }
+  }
+}

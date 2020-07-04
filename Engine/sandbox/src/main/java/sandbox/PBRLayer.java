@@ -42,7 +42,7 @@ public class PBRLayer extends Layer
     private Model model = new Model(
             "default_meshes/cerberus.obj",
             pbr2,
-            Matrix4f.createRotate(Vector3f.UP, 180f).scale(new Vector3f(0.8f))
+            Matrix4f.identity().rotate(Vector3f.UP, 180f).scale(new Vector3f(0.8f))
     );
 
     public PBRLayer(String name)

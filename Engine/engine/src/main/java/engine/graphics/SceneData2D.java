@@ -36,7 +36,7 @@ public class SceneData2D
     }
 
     /////SCENE///////////////////////////////////
-    private Matrix4f viewMatrix = new Matrix4f();
+    private Matrix4f viewMatrix = Matrix4f.identity();
 
     public void setViewMatrix(Matrix4f viewMatrix)
     {

@@ -68,7 +68,7 @@ public abstract class MovableEntity extends Entity
 
     private void resetVelocity()
     {
-        velocity.reset();
+        velocity.set(0f);
     }
 
     public void resetGravityAcceleration()

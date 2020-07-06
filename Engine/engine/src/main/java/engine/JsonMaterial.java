@@ -7,7 +7,7 @@ import engine.graphics.Texture;
 import engine.math.Vector2f;
 import engine.math.Vector3f;
 import engine.math.Vector4f;
-import main.JSONObject;
+import jsonparser.JSONObject;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.system.MemoryStack;
 

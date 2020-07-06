@@ -89,7 +89,7 @@ public class Shader
     {
         this.internalShaders = internalShaders;
         List<Integer> internalShaderIds = internalShaders.stream().map(InternalShader::getShaderId).collect(Collectors.toList());
-        shaderProgram = createProgram(ArrayUtils.toPrimitiveArrayI(internalShaderIds));
+        programHandle = createProgram(ArrayUtils.toPrimitiveArrayI(internalShaderIds));
     }
 
     private int createProgram(@NotNull int... shaders)

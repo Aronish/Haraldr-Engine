@@ -6,7 +6,7 @@ import engine.graphics.Texture;
 import engine.graphics.VertexArray;
 import engine.main.IOUtils;
 import engine.math.Matrix4f;
-import main.JSONObject;
+import jsonparser.JSONObject;
 import org.jetbrains.annotations.NotNull;
 
 public class JsonModel

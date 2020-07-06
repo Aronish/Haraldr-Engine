@@ -76,20 +76,20 @@ public class CollisionDetector
                     player.resetGravityAcceleration();
                     player.setFalling(false);
                 }
-                player.addPosition(new Vector3f(0.0f, inside));
-                camera.addPosition(new Vector3f(0.0f, inside * camera.getScale()));
+                player.addPosition(new Vector3f(0.0f, inside, 0f));
+                camera.addPosition(new Vector3f(0.0f, inside * camera.getScale(), 0f));
                 break;
             case EAST:
-                player.addPosition(new Vector3f(inside, 0.0f));
-                camera.addPosition(new Vector3f(inside * camera.getScale(), 0.0f));
+                player.addPosition(new Vector3f(inside, 0.0f, 0f));
+                camera.addPosition(new Vector3f(inside * camera.getScale(), 0.0f, 0f));
                 break;
             case WEST:
-                player.addPosition(new Vector3f(-inside, 0.0f));
-                camera.addPosition(new Vector3f(-inside * camera.getScale(), 0.0f));
+                player.addPosition(new Vector3f(-inside, 0.0f, 0f));
+                camera.addPosition(new Vector3f(-inside * camera.getScale(), 0.0f, 0f));
                 break;
             case SOUTH:
-                player.addPosition(new Vector3f(0.0f, -inside));
-                camera.addPosition(new Vector3f(0.0f, -inside * camera.getScale()));
+                player.addPosition(new Vector3f(0.0f, -inside, 0f));
+                camera.addPosition(new Vector3f(0.0f, -inside * camera.getScale(), 0f));
                 break;
         }
     }

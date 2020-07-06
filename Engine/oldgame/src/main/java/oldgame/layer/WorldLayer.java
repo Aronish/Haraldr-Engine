@@ -27,7 +27,7 @@ import java.util.List;
 public class WorldLayer extends Layer
 {
     private World world = new World();
-    private Player player = new Player(new Vector3f(0.0f, 255.0f));
+    private Player player = new Player(new Vector3f(0.0f, 255.0f, 0f));
     private GameCamera camera = new GameCamera();
     private EventHandler eventHandler = new EventHandler();
 

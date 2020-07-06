@@ -1,6 +1,6 @@
 package engine.math;
 
-import main.JSONArray;
+import jsonparser.JSONArray;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

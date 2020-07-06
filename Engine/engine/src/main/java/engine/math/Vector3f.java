@@ -1,6 +1,6 @@
 package engine.math;
 
-import main.JSONArray;
+import jsonparser.JSONArray;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -121,9 +121,10 @@ public class Vector3f
         x += dx;
     }
 
-    public void addY(float dy)
+    public Vector3f addY(float dy)
     {
         y += dy;
+        return this;
     }
 
     public void addZ(float dz)

@@ -1,9 +1,7 @@
 package engine.graphics;
 
-import engine.graphics.material.*;
-import engine.main.IOUtils;
+import engine.graphics.material.Material;
 import engine.math.Matrix4f;
-import engine.math.Vector3f;
 
 @SuppressWarnings("unused")
 public class Model
@@ -28,25 +26,6 @@ public class Model
         this.mesh = mesh;
         this.material = material;
         this.transformationMatrix = transformationMatrix;
-    }
-
-    public Model(String path)
-    {
-        this.path = path;
-        load(path);
-    }
-
-    public void reload()
-    {
-        load(path);
-    }
-
-    private void load(String path)
-    {
-        JSONObject modelSource = new JSONObject(IOUtils.readResource(path, IOUtils::resourceToString));
-        mesh = ResourceManager.getMesh(modelSource.getString("mesh"));
-        material = Material.parseMaterial(path, modelSource.getJSONObject("material"));
-        transformationMatrix = Matrix4f.identity().rotate(Vector3f.UP, 180f).scale(new Vector3f(0.8f));
     }
 
     public void setTransformationMatrix(Matrix4f transformationMatrix)

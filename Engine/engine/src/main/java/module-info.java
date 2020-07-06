@@ -28,6 +28,7 @@ module Engine.engine
     requires java.desktop;
     requires JsonParser;
     ///// EXPORTS ///////
+    exports engine;
     exports engine.debug;
     exports engine.event;
     exports engine.graphics;
@@ -44,5 +45,4 @@ module Engine.engine
     opens default_shaders;
     opens default_textures;
     opens default_models;
-    exports engine;
 }

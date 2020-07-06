@@ -41,7 +41,7 @@ public class World
         for (int i = 0; i < WORLD_WIDTH; ++i)
         {
             int y = (int) ((SimplexNoise.noise(i * noiseScale, 0.0d, seed) + 1.0d) / 2.0d * 60.0d);
-            fillColumn(new Vector3f(i, y + WORLD_HEIGHT));
+            fillColumn(new Vector3f(i, y + WORLD_HEIGHT, 0f));
         }
         grid.populateGrid(tiles);
         tiles = null;
@@ -55,10 +55,10 @@ public class World
     {
         if (position.getY() < 58.0f + WORLD_HEIGHT && RANDOM.nextInt() % 3 == 0)
         {
-            tiles.add(new TileTree(Vector3f.add(position, new Vector3f(0.0f, 3.0f))));
+            tiles.add(new TileTree(Vector3f.add(position, new Vector3f(0.0f, 3.0f, 0f))));
         }else
         {
-            tiles.add(new TileGrassTuft(Vector3f.add(position, new Vector3f(0.0f, 0.25f))));
+            tiles.add(new TileGrassTuft(Vector3f.add(position, new Vector3f(0.0f, 0.25f, 0f))));
         }
         Tile topTile = TILE_FACTORY.createTile(position, position.getY() > 45.0f + WORLD_HEIGHT ? GameObject.GRASS_SNOW : GameObject.GRASS);
         if (RANDOM.nextBoolean())
@@ -68,9 +68,9 @@ public class World
         tiles.add(topTile);
         {
             int counter = 0;
-            for (float i = position.subtractY(1.0f).getY(); i >= 0.0f; --i, ++counter)
+            for (float i = position.addY(-1f).getY(); i >= 0.0f; --i, ++counter)
             {
-                tiles.add(TILE_FACTORY.createTile(new Vector3f(position.getX(), i), i < 40.0f + WORLD_HEIGHT ? (counter > 16 ? GameObject.STONE : GameObject.DIRT) : (counter > 24 ? GameObject.STONE : GameObject.DIRT)));
+                tiles.add(TILE_FACTORY.createTile(new Vector3f(position.getX(), i, 0f), i < 40.0f + WORLD_HEIGHT ? (counter > 16 ? GameObject.STONE : GameObject.DIRT) : (counter > 24 ? GameObject.STONE : GameObject.DIRT)));
             }
         }
     }

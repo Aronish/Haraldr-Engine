@@ -3,10 +3,10 @@
 
 #include "light_setup.glsl"
 
-layout(location = 0) in vec3 a_Position;
-layout(location = 1) in vec3 a_Normal;
-layout(location = 2) in vec2 a_TextureCoordinate;
-layout(location = 3) in vec3 a_Tangent;
+layout (location = 0) in vec3 a_Position;
+layout (location = 1) in vec3 a_Normal;
+layout (location = 2) in vec2 a_TextureCoordinate;
+layout (location = 3) in vec3 a_Tangent;
 
 uniform vec3 u_ViewPosition_W;
 uniform mat4 model = mat4(1.0f);

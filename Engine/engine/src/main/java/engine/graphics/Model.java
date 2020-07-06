@@ -1,11 +1,9 @@
 package engine.graphics;
 
-import engine.graphics.material.Material;
-import engine.graphics.material.PBRMaterial;
+import engine.graphics.material.*;
 import engine.main.IOUtils;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
-import main.JSONObject;
 
 @SuppressWarnings("unused")
 public class Model
@@ -47,29 +45,8 @@ public class Model
     {
         JSONObject modelSource = new JSONObject(IOUtils.readResource(path, IOUtils::resourceToString));
         mesh = ResourceManager.getMesh(modelSource.getString("mesh"));
-
-        JSONObject materialProperties = modelSource.getJSONObject("material").getJSONObject("properties");
-        switch (modelSource.getJSONObject("material").getString("type"))
-        {
-            case "PBR_UNTEXTURED" ->
-                    {
-                        Vector3f albedo = new Vector3f(materialProperties.getJSONArray("albedo"));
-                        float metalness = (float) materialProperties.getDouble("metalness");
-                        float roughness = (float) materialProperties.getDouble("roughness");
-                        CubeMap environmentMap = CubeMap.createEnvironmentMap(materialProperties.getString("environment_map"));
-                        material = new PBRMaterial(albedo, metalness, roughness, environmentMap);
-                    }
-            case "PBR_TEXTURED" ->
-                    {
-                        Texture albedo = ResourceManager.getTexture(materialProperties.getString("albedo"), true);
-                        Texture normal = ResourceManager.getTexture(materialProperties.getString("normal"), true);
-                        Texture metalness = ResourceManager.getTexture(materialProperties.getString("metalness"), true);
-                        Texture roughness = ResourceManager.getTexture(materialProperties.getString("roughness"), true);
-                        CubeMap environmentMap = CubeMap.createEnvironmentMap(materialProperties.getString("environment_map"));
-                        material = new PBRMaterial(albedo, normal, metalness, roughness, environmentMap);
-                    }
-        }
-        transformationMatrix = Matrix4f.createRotate(Vector3f.UP, 180f).scale(new Vector3f(0.3f));
+        material = Material.parseMaterial(path, modelSource.getJSONObject("material"));
+        transformationMatrix = Matrix4f.identity().rotate(Vector3f.UP, 180f).scale(new Vector3f(0.8f));
     }
 
     public void setTransformationMatrix(Matrix4f transformationMatrix)

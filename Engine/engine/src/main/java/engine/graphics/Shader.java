@@ -62,11 +62,34 @@ public class Shader
         }
     }
 
+    public static Shader createFromSource(String key, String source)
+    {
+        if (ResourceManager.isShaderLoaded(key))
+        {
+            return ResourceManager.getLoadedShader(key);
+        }
+        else
+        {
+            List<InternalShader> internalShaders = ShaderParser.parseShaderSource(source);
+            internalShaders.forEach(InternalShader::compile);
+            Shader shader = new Shader(internalShaders);
+            ResourceManager.addShader(key, shader);
+            return shader;
+        }
+    }
+
     private Shader(String path)
     {
         this.path = path;
         compile();
         if (EntryPoint.DEBUG) MAIN_LOGGER.info("Compiled shader " + path);
+    }
+
+    private Shader(@NotNull List<InternalShader> internalShaders)
+    {
+        this.internalShaders = internalShaders;
+        List<Integer> internalShaderIds = internalShaders.stream().map(InternalShader::getShaderId).collect(Collectors.toList());
+        shaderProgram = createProgram(ArrayUtils.toPrimitiveArrayI(internalShaderIds));
     }
 
     private int createProgram(@NotNull int... shaders)

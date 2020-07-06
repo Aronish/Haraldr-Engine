@@ -52,7 +52,7 @@ public class TextLabel
     {
         glDisable(GL_DEPTH_TEST);
         Shader.TEXT.bind();
-        Shader.TEXT.setMatrix4f("model", Matrix4f.createTranslate(position));
+        Shader.TEXT.setMatrix4f("model", Matrix4f.identity().translate(position));
         Shader.TEXT.setMatrix4f("projection", Matrix4f.pixelOrthographic);
         Shader.TEXT.setVector4f("u_Color", color);
         font.bind(0);

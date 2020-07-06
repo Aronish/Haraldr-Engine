@@ -148,13 +148,7 @@ public class Matrix4f //TODO: can be improved
         recalculatePerspective(aspectRatio);
     }
 
-    @Deprecated
-    public static @NotNull Matrix4f transform(Vector3f position, float angle, @NotNull Vector2f scale)
-    {
-        return createTranslate(scale.getX() == -1 ? Vector3f.add(position, new Vector3f(1f, 0f, 0f)) : position).multiply(createScale(scale));
-    }
-
-    public static @NotNull Matrix4f createScale(@NotNull Vector2f scale)
+    private static @NotNull Matrix4f createScale(@NotNull Vector2f scale)
     {
         Matrix4f result = new Matrix4f();
         result.matrix[0] = scale.getX();
@@ -164,7 +158,7 @@ public class Matrix4f //TODO: can be improved
         return result;
     }
 
-    public static @NotNull Matrix4f createScale(@NotNull Vector3f scale)
+    private static @NotNull Matrix4f createScale(@NotNull Vector3f scale)
     {
         Matrix4f result = new Matrix4f();
         result.matrix[0] = scale.getX();
@@ -184,7 +178,7 @@ public class Matrix4f //TODO: can be improved
         return multiply(createScale(scale));
     }
 
-    public static @NotNull Matrix4f createTranslate(@NotNull Vector2f vector)
+    private static @NotNull Matrix4f createTranslate(@NotNull Vector2f vector)
     {
         Matrix4f result = identity();
         result.matrix[12] = vector.getX();
@@ -192,7 +186,7 @@ public class Matrix4f //TODO: can be improved
         return result;
     }
 
-    public static @NotNull Matrix4f createTranslate(@NotNull Vector3f vector)
+    private static @NotNull Matrix4f createTranslate(@NotNull Vector3f vector)
     {
         Matrix4f result = identity();
         result.matrix[12] = vector.getX();
@@ -201,12 +195,17 @@ public class Matrix4f //TODO: can be improved
         return result;
     }
 
+    public Matrix4f translate(Vector2f vector)
+    {
+        return multiply(createTranslate(vector));
+    }
+
     public Matrix4f translate(Vector3f vector)
     {
         return multiply(createTranslate(vector));
     }
 
-    public static @NotNull Matrix4f createRotate(@NotNull Vector3f rotation)
+    private static @NotNull Matrix4f createRotate(@NotNull Vector3f rotation)
     {
         return createRotateX(rotation.getX()).multiply(createRotateY(rotation.getY()).multiply(createRotateZ(rotation.getZ())));
     }
@@ -216,7 +215,7 @@ public class Matrix4f //TODO: can be improved
         return multiply(createRotate(rotation));
     }
 
-    public static @NotNull Matrix4f createRotateX(float angle)
+    private static @NotNull Matrix4f createRotateX(float angle)
     {
         Matrix4f result = identity();
         float radians = (float) Math.toRadians(angle);
@@ -234,7 +233,7 @@ public class Matrix4f //TODO: can be improved
         return multiply(createRotateX(angle));
     }
 
-    public static @NotNull Matrix4f createRotateY(float angle)
+    private static @NotNull Matrix4f createRotateY(float angle)
     {
         Matrix4f result = identity();
         float radians = (float) Math.toRadians(angle);
@@ -252,7 +251,7 @@ public class Matrix4f //TODO: can be improved
         return multiply(createRotateY(angle));
     }
 
-    public static @NotNull Matrix4f createRotateZ(float angle)
+    private static @NotNull Matrix4f createRotateZ(float angle)
     {
         Matrix4f result = identity();
         float radians = (float) Math.toRadians(angle);
@@ -270,26 +269,21 @@ public class Matrix4f //TODO: can be improved
         return multiply(createRotateZ(angle));
     }
 
-    public static @NotNull Matrix4f createRotate(@NotNull Quaternion quaternion)
+    private static @NotNull Matrix4f createRotate(@NotNull Quaternion quaternion)
     {
         Matrix4f result = new Matrix4f();
         quaternion.normalize();
-        result.matrix[0] = 1 - 2 * (quaternion.getY() * quaternion.getY() + quaternion.getZ() * quaternion.getZ());
-        result.matrix[1] = 2 * (quaternion.getX() * quaternion.getY() + quaternion.getZ() * quaternion.getW());
-        result.matrix[2] = 2 * (quaternion.getX() * quaternion.getZ() - quaternion.getY() * quaternion.getW());
-        result.matrix[4] = 2 * (quaternion.getX() * quaternion.getY() - quaternion.getZ() * quaternion.getW());
-        result.matrix[5] = 1 - 2 * (quaternion.getX() * quaternion.getX() + quaternion.getZ() * quaternion.getZ());
-        result.matrix[6] = 2 * (quaternion.getY() * quaternion.getZ() + quaternion.getX() * quaternion.getW());
-        result.matrix[8] = 2 * (quaternion.getX() * quaternion.getZ() + quaternion.getY() * quaternion.getW());
-        result.matrix[9] = 2 * (quaternion.getY() * quaternion.getZ() - quaternion.getX() * quaternion.getW());
-        result.matrix[10] = 1 - 2 * (quaternion.getX() * quaternion.getX() + quaternion.getY() * quaternion.getY());
-        result.matrix[15] = 1;
+        result.matrix[0] = 1f - 2f * (quaternion.getY() * quaternion.getY() + quaternion.getZ() * quaternion.getZ());
+        result.matrix[1] = 2f * (quaternion.getX() * quaternion.getY() + quaternion.getZ() * quaternion.getW());
+        result.matrix[2] = 2f * (quaternion.getX() * quaternion.getZ() - quaternion.getY() * quaternion.getW());
+        result.matrix[4] = 2f * (quaternion.getX() * quaternion.getY() - quaternion.getZ() * quaternion.getW());
+        result.matrix[5] = 1f - 2f * (quaternion.getX() * quaternion.getX() + quaternion.getZ() * quaternion.getZ());
+        result.matrix[6] = 2f * (quaternion.getY() * quaternion.getZ() + quaternion.getX() * quaternion.getW());
+        result.matrix[8] = 2f * (quaternion.getX() * quaternion.getZ() + quaternion.getY() * quaternion.getW());
+        result.matrix[9] = 2f * (quaternion.getY() * quaternion.getZ() - quaternion.getX() * quaternion.getW());
+        result.matrix[10] = 1f - 2f * (quaternion.getX() * quaternion.getX() + quaternion.getY() * quaternion.getY());
+        result.matrix[15] = 1f;
         return result;
-    }
-
-    public static @NotNull Matrix4f createRotate(Vector3f axis, float angle)
-    {
-        return createRotate(Quaternion.fromAxis(axis, angle));
     }
 
     public Matrix4f rotate(Quaternion quaternion)
@@ -299,7 +293,7 @@ public class Matrix4f //TODO: can be improved
 
     public Matrix4f rotate(Vector3f axis, float angle)
     {
-        return multiply(createRotate(axis, angle));
+        return multiply(createRotate(Quaternion.fromAxis(axis, angle)));
     }
 
     private static @NotNull Matrix4f orthographic(float right, float left, float top, float bottom, float far, float near)

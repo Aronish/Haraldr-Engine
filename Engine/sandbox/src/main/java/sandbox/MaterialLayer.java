@@ -3,7 +3,6 @@ package sandbox;
 import engine.JsonModel;
 import engine.event.Event;
 import engine.graphics.CubeMap;
-import engine.graphics.Model;
 import engine.graphics.Renderer3D;
 import engine.graphics.lighting.PointLight;
 import engine.graphics.lighting.SceneLights;

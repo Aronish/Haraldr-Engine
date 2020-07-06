@@ -26,7 +26,7 @@ public class Renderer2D
     public static void drawQuad(Vector3f position, Vector4f color)
     {
         Texture.DEFAULT_WHITE.bind(0);
-        //Shader.DEFAULT2D.setMatrix4f("model", Matrix4f.createTranslate(position));
+        //Shader.DEFAULT2D.setMatrix4f("model", Matrix4f.identity().translate(position));
         //Shader.DEFAULT2D.setMatrix4f("view", sceneData.getViewMatrix());
         //Shader.DEFAULT2D.setMatrix4f("projection", Matrix4f.orthographic);
         //Shader.DEFAULT2D.setVector4f("u_Color", color);
@@ -44,7 +44,7 @@ public class Renderer2D
     {
         shader.bind();
         Texture.DEFAULT_WHITE.bind(0);
-        shader.setMatrix4f("model", Matrix4f.createTranslate(position));
+        shader.setMatrix4f("model", Matrix4f.identity().translate(position));
         shader.setMatrix4f("view", sceneData.getViewMatrix());
         shader.setMatrix4f("projection", Matrix4f.orthographic);
         shader.setVector4f("u_Color", color);
@@ -61,11 +61,10 @@ public class Renderer2D
     public static void drawQuad(Vector3f position, @NotNull Texture texture, Vector4f tintColor)
     {
         texture.bind(0);
-        //Shader.DEFAULT2D.setMatrix4f("model", Matrix4f.createTranslate(position));
+        //Shader.DEFAULT2D.setMatrix4f("model", Matrix4f.identity().translate(position));
         //Shader.DEFAULT2D.setMatrix4f("view", sceneData.getViewMatrix());
         //Shader.DEFAULT2D.setMatrix4f("projection", Matrix4f.orthographic);
         //Shader.DEFAULT2D.setVector4f("u_Color", tintColor);
-
         SceneData2D.QUAD.bind();
         SceneData2D.QUAD.drawElements();
     }
@@ -79,7 +78,7 @@ public class Renderer2D
     {
         shader.bind();
         texture.bind(0);
-        shader.setMatrix4f("model", Matrix4f.createTranslate(position));
+        shader.setMatrix4f("model", Matrix4f.identity().translate(position));
         shader.setMatrix4f("view", sceneData.getViewMatrix());
         shader.setMatrix4f("projection", Matrix4f.orthographic);
         shader.setVector4f("u_Color", tintColor);

@@ -40,7 +40,7 @@ public abstract class Renderer3D
         return camera;
     }
 
-    private static final UniformBuffer matrixBuffer = new UniformBuffer(128);
+    private static final UniformBuffer matrixBuffer = new UniformBuffer(140);
     private static SceneLights sceneLights = new SceneLights();
     private static Shader postProcessingShader = Shader.create("default_shaders/hdr_gamma_correct.glsl");
     private static float exposure = 0.5f;
@@ -75,6 +75,7 @@ public abstract class Renderer3D
         matrixBuffer.bind(0);
         matrixBuffer.setDataUnsafe(camera.getViewMatrix().matrix, 0);
         matrixBuffer.setDataUnsafe(Matrix4f.perspective.matrix, 64);
+        matrixBuffer.setDataUnsafe(camera.getRawPosition(), 128);
         sceneLights.bind();
         window.getFramebuffer().bind();
         Renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

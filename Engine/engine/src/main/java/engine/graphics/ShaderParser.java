@@ -26,18 +26,21 @@ public class ShaderParser
         String fullSource = IOUtils.readResource(path, IOUtils::resourceToString);
         assert fullSource != null : "Shader#Shader(String)#fullSource should never be null!";
         ///// Preprocess #include /////////////////////
-        Map<String, String> includes = new HashMap<>();
-        for (int index = fullSource.indexOf(INCLUDE_TOKEN); index != -1; index = fullSource.indexOf(INCLUDE_TOKEN, index + 1))
+        while (fullSource.contains(INCLUDE_TOKEN))
         {
-            int quoteStart = fullSource.indexOf("\"", index + INCLUDE_TOKEN.length());
-            int quoteEnd = fullSource.indexOf("\"", quoteStart + 1);
-            String replaceToken = fullSource.substring(index, quoteEnd + 1);
-            String includePath = fullSource.substring(quoteStart + 1, quoteEnd);
-            includes.put(replaceToken, IOUtils.readResource("default_shaders/include/" + includePath, IOUtils::resourceToString));
-        }
-        for (String replaceToken : includes.keySet())
-        {
-            fullSource = fullSource.replaceAll(replaceToken, includes.get(replaceToken));
+            Map<String, String> includes = new HashMap<>();
+            for (int index = fullSource.indexOf(INCLUDE_TOKEN); index != -1; index = fullSource.indexOf(INCLUDE_TOKEN, index + 1))
+            {
+                int quoteStart = fullSource.indexOf("\"", index + INCLUDE_TOKEN.length());
+                int quoteEnd = fullSource.indexOf("\"", quoteStart + 1);
+                String replaceToken = fullSource.substring(index, quoteEnd + 1);
+                String includePath = fullSource.substring(quoteStart + 1, quoteEnd);
+                includes.put(replaceToken, IOUtils.readResource("default_shaders/include/" + includePath, IOUtils::resourceToString));
+            }
+            for (String replaceToken : includes.keySet())
+            {
+                fullSource = fullSource.replaceAll(replaceToken, includes.get(replaceToken));
+            }
         }
         ///// Split into OpenGL shaders ////////////////////////////
         String[] splitSource = fullSource.split(SHADER_SPLIT_TOKEN);
@@ -47,18 +50,10 @@ public class ShaderParser
             String source = splitSource[string].substring(SHADER_TYPE_SPECIFIER_LENGTH);
             switch (type)
             {
-                case "vert":
-                    internalShaders.add(new Shader.InternalShader(GL_VERTEX_SHADER, source));
-                    break;
-                case "frag":
-                    internalShaders.add(new Shader.InternalShader(GL_FRAGMENT_SHADER, source));
-                    break;
-                case "geom":
-                    internalShaders.add(new Shader.InternalShader(GL_GEOMETRY_SHADER, source));
-                    break;
-                default:
-                    MAIN_LOGGER.error("Unknown shader type " + type + "!");
-                    break;
+                case "vert" -> internalShaders.add(new Shader.InternalShader(GL_VERTEX_SHADER, source));
+                case "frag" -> internalShaders.add(new Shader.InternalShader(GL_FRAGMENT_SHADER, source));
+                case "geom" -> internalShaders.add(new Shader.InternalShader(GL_GEOMETRY_SHADER, source));
+                default -> MAIN_LOGGER.error("Unknown shader type " + type + "!");
             }
         }
         return internalShaders;

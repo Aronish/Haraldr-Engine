@@ -24,11 +24,6 @@ public class Vector3f
         z = all;
     }
 
-    public Vector3f(float x, float y)
-    {
-        this(x, y, 0.0f);
-    }
-
     public Vector3f(float x, float y, float z)
     {
         this.x = x;
@@ -57,6 +52,27 @@ public class Vector3f
         this.z = z;
     }
 
+    public void set(double x, double y, double z)
+    {
+        this.x = (float) x;
+        this.y = (float) y;
+        this.z = (float) z;
+    }
+
+    public void set(float all)
+    {
+        x = all;
+        y = all;
+        z = all;
+    }
+
+    public void set(double all)
+    {
+        x = (float) all;
+        y = (float) all;
+        z = (float) all;
+    }
+
     public void set(@NotNull Vector3f other)
     {
         x = other.x;
@@ -77,6 +93,27 @@ public class Vector3f
     public void setZ(float z)
     {
         this.z = z;
+    }
+
+    public void add(float all)
+    {
+        x += all;
+        y += all;
+        z += all;
+    }
+
+    public void add(double all)
+    {
+        x += all;
+        y += all;
+        z += all;
+    }
+
+    public void add(@NotNull Vector3f other)
+    {
+        x += other.x;
+        y += other.y;
+        z += other.z;
     }
 
     public void addX(float dx)
@@ -109,6 +146,13 @@ public class Vector3f
         return z;
     }
 
+    public void multiply(float scalar)
+    {
+        x *= scalar;
+        y *= scalar;
+        z *= scalar;
+    }
+
     public void normalize()
     {
         x /= length();
@@ -121,37 +165,30 @@ public class Vector3f
         return (float) Math.sqrt(x * x + y * y + z * z);
     }
 
-    public Vector3f multiply(float scalar)
-    {
-        return new Vector3f(x * scalar, y * scalar, z * scalar);
-    }
-
-    public void add(@NotNull Vector3f other)
-    {
-        x += other.x;
-        y += other.y;
-        z += other.z;
-    }
-
-    public Vector3f subtractY(float dy)
-    {
-        return new Vector3f(x, y - dy);
-    }
-
     /////STATIC OPERATORS (These Don't modify this) /////////////////////////////
 
-    @NotNull
     @Contract("_, _ -> new")
-    public static Vector3f add(@NotNull Vector3f first, @NotNull Vector3f second)
+    public static @NotNull Vector3f add(@NotNull Vector3f first, @NotNull Vector3f second)
     {
         return new Vector3f(first.x + second.x, first.y + second.y, first.z + second.z);
     }
 
-    @NotNull
     @Contract("_, _ -> new")
-    public static Vector3f subtract(@NotNull Vector3f first, @NotNull Vector3f second)
+    public static @NotNull Vector3f subtract(@NotNull Vector3f first, @NotNull Vector3f second)
     {
         return new Vector3f(first.x - second.x, first.y - second.y, first.z - second.z);
+    }
+
+    @Contract("_, _ -> new")
+    public static @NotNull Vector3f multiply(@NotNull Vector3f first, float scalar)
+    {
+        return new Vector3f(first.x * scalar, first.y * scalar, first.z * scalar);
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull Vector3f negate(@NotNull Vector3f vector)
+    {
+        return new Vector3f(-vector.x, -vector.y, -vector.z);
     }
 
     @Contract(pure = true)
@@ -160,23 +197,20 @@ public class Vector3f
         return (second.y - first.y) / (second.x - first.x);
     }
 
-    @NotNull
     @Contract("_ -> new")
-    public static Vector3f normalize(@NotNull Vector3f vector)
+    public static @NotNull Vector3f normalize(@NotNull Vector3f vector)
     {
         return new Vector3f(vector.x / vector.length(), vector.y / vector.length(), vector.z / vector.length());
     }
 
-    @NotNull
-    @Contract("_ -> new")
-    public static Vector3f negate(@NotNull Vector3f vector3f)
+    @Contract(pure = true)
+    public static float dot(@NotNull Vector3f first, @NotNull Vector3f second)
     {
-        return new Vector3f(-vector3f.x, -vector3f.y, -vector3f.z);
+        return first.x * second.x + first.y * second.y + first.z * second.z;
     }
 
-    @NotNull
     @Contract(value = "_, _ -> new", pure = true)
-    public static Vector3f cross(@NotNull Vector3f a, @NotNull Vector3f b)
+    public static @NotNull Vector3f cross(@NotNull Vector3f a, @NotNull Vector3f b)
     {
         return new Vector3f(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
     }

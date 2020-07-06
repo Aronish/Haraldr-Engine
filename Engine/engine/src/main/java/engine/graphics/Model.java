@@ -46,7 +46,7 @@ public class Model
     private void load(String path)
     {
         JSONObject modelSource = new JSONObject(IOUtils.readResource(path, IOUtils::resourceToString));
-        mesh = ResourceManager.getMesh(modelSource.getString("model"));
+        mesh = ResourceManager.getMesh(modelSource.getString("mesh"));
 
         JSONObject materialProperties = modelSource.getJSONObject("material").getJSONObject("properties");
         switch (modelSource.getJSONObject("material").getString("type"))
@@ -69,7 +69,7 @@ public class Model
                         material = new PBRMaterial(albedo, normal, metalness, roughness, environmentMap);
                     }
         }
-        transformationMatrix = Matrix4f.createRotate(Vector3f.UP, 180f).scale(new Vector3f(0.8f));
+        transformationMatrix = Matrix4f.createRotate(Vector3f.UP, 180f).scale(new Vector3f(0.3f));
     }
 
     public void setTransformationMatrix(Matrix4f transformationMatrix)
@@ -81,7 +81,6 @@ public class Model
     {
         material.bind();
         material.getShader().setMatrix4f("model", transformationMatrix);
-        material.getShader().setVector3f("u_ViewPosition_W", Renderer3D.getCamera().getPosition());
         mesh.bind();
         mesh.drawElements();
     }
@@ -90,7 +89,6 @@ public class Model
     {
         material.bind();
         material.getShader().setMatrix4f("model", transformationMatrix);
-        material.getShader().setVector3f("u_ViewPosition_W", Renderer3D.getCamera().getPosition());
         mesh.bind();
         mesh.drawElements();
     }

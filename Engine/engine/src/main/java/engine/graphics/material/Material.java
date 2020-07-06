@@ -6,6 +6,10 @@ public abstract class Material
 {
     protected Shader shader;
 
+    public Material()
+    {
+    }
+
     public Material(Shader shader)
     {
         this.shader = shader;

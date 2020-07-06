@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PBRLayer extends Layer
 {
-    private CubeMap environmentMap = CubeMap.createEnvironmentMap("default_hdris/TexturesCom_NorwayForest_4K_hdri_sphere.hdr");
+    private CubeMap environmentMap = CubeMap.createEnvironmentMap("default_hdris/NorwayForest_4K_hdri_sphere.hdr");
 
     private PointLight l1 = new PointLight(new Vector3f(0f, 1f, 0f), new Vector3f(7.5f, 2.5f, 2.5f));
     private PointLight l2 = new PointLight(new Vector3f(0f, 1f, 0f), new Vector3f(5f, 1f, 1f));

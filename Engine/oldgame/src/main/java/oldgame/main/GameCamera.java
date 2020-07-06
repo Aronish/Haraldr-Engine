@@ -77,7 +77,7 @@ public class GameCamera extends OrthographicCamera
     public void setScale(float scale)
     {
         this.scale = scale;
-        scaleVector.setBoth(scale);
+        scaleVector.set(scale);
         calculateViewMatrix();
         calculateChunkRanges();
     }

@@ -23,7 +23,7 @@ public class ReflectiveMaterial extends Material
 
     public ReflectiveMaterial(Texture diffuseTexture, Texture reflectionMap, CubeMap environmentMap)
     {
-        super(Shader.REFLECTIVE);
+        //super(Shader.REFLECTIVE);
         this.environmentMap = environmentMap;
         this.diffuseTexture = diffuseTexture;
         this.reflectionMap = reflectionMap;

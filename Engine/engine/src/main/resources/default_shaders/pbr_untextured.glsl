@@ -10,18 +10,19 @@ layout (std140, binding = 0) uniform matrices
 {
     mat4 view;
     mat4 projection;
+    vec3 viewPosition_W;
 };
 
 out vec3 v_Normal_W;
-out vec3 v_WorldPosition_W;
+out vec3 v_Position_W;
 
 void main()
 {
     mat3 normalMatrix   = mat3(model);
     vec3 normal         = normalize(normalMatrix * a_Normal);
 
-    v_Normal_W              = normal;
-    v_WorldPosition_W       = vec3((model * vec4(a_Position, 1.0f)));
+    v_Normal_W          = normal;
+    v_Position_W        = vec3((model * vec4(a_Position, 1.0f)));
 
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
 }
@@ -32,17 +33,22 @@ void main()
 #include "light_setup.glsl"
 
 in vec3 v_Normal_W;
-in vec3 v_WorldPosition_W;
+in vec3 v_Position_W;
 
-uniform vec3 u_ViewPosition_W;
+layout (std140, binding = 0) uniform matrices
+{
+    mat4 view;
+    mat4 projection;
+    vec3 viewPosition_W;
+};
 
 uniform vec3 u_Albedo;
-uniform float u_Metallic;
+uniform float u_Metalness;
 uniform float u_Roughness;
 
-layout (binding = 5) uniform samplerCube diffuseIrradianceMap;
-layout (binding = 6) uniform samplerCube prefilteredMap;
-layout (binding = 7) uniform sampler2D brdfLUT;
+layout (binding = 0) uniform samplerCube c_DiffuseIrradianceMap;
+layout (binding = 1) uniform samplerCube c_PrefilteredMap;
+layout (binding = 2) uniform sampler2D BRDFLUT;
 
 out vec4 o_Color;
 
@@ -50,19 +56,19 @@ out vec4 o_Color;
 
 void main()
 {
-    vec3 V = normalize(u_ViewPosition_W - v_WorldPosition_W);
+    vec3 V = normalize(viewPosition_W - v_Position_W);
     vec3 normal = normalize(v_Normal_W);
 
     vec3 F0 = vec3(0.04f);
-    F0 = mix(F0, u_Albedo, u_Metallic);
+    F0 = mix(F0, u_Albedo, u_Metalness);
 
     vec3 Lo = vec3(0.0f);
     //////////Direct lighting////////////////
     for (uint i = 0; i < numPointLights; ++i)
     {
-        vec3 L = normalize(pointLights[i].position.xyz - v_WorldPosition_W);
+        vec3 L = normalize(pointLights[i].position.xyz - v_Position_W);
         vec3 H = normalize(V + L);
-        float distance = length(pointLights[i].position.xyz - v_WorldPosition_W);
+        float distance = length(pointLights[i].position.xyz - v_Position_W);
         float attenuation = 1.0f / (distance * distance);
         vec3 radiance = pointLights[i].color.rgb * attenuation;
         /////BRDF Components///////////////////////////////
@@ -75,7 +81,7 @@ void main()
         vec3 specular = numerator / max(denominator, 0.001f);
         /////Diffuse-Specular Fraction/////
         vec3 kD = vec3(1.0f) - F; //(F = kS)
-        kD *= 1.0f - u_Metallic;
+        kD *= 1.0f - u_Metalness;
 
         float NdotL = max(dot(normal, L), 0.0f);
         Lo += (kD * u_Albedo / PI + specular) * radiance * NdotL;
@@ -83,16 +89,16 @@ void main()
     //////////Indirect Lighting//////////////////////////////////////////////////
     /////IBL Ambient/////////////////////////////////////////////////////////////
     vec3 kS = fresnelSchlickRoughness(max(dot(normal, V), 0.0f), F0, u_Roughness);
-    vec3 kD = (1.0f - kS) * (1.0f - u_Metallic);
-    vec3 irradiance = texture(diffuseIrradianceMap, normal).rgb;
+    vec3 kD = (1.0f - kS) * (1.0f - u_Metalness);
+    vec3 irradiance = texture(c_DiffuseIrradianceMap, normal).rgb;
     vec3 diffuse = irradiance * u_Albedo;
     /////IBL Specular/////////////////////
     const float MAX_REFLECTION_LOD = 4.0f;
     vec3 R = reflect(-V, normal);
-    vec3 prefilteredColor = textureLod(prefilteredMap, R, u_Roughness * MAX_REFLECTION_LOD).rgb;
+    vec3 prefilteredColor = textureLod(c_PrefilteredMap, R, u_Roughness * MAX_REFLECTION_LOD).rgb;
 
     vec3 F = fresnelSchlickRoughness(max(dot(normal, V), 0.0f), F0, u_Roughness);
-    vec2 envBRDF = texture(brdfLUT, vec2(max(dot(normal, V), 0.0f), u_Roughness)).rg;
+    vec2 envBRDF = texture(BRDFLUT, vec2(max(dot(normal, V), 0.0f), u_Roughness)).rg;
     vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
 
     vec3 ambient = kD * diffuse + specular; // All this * ao later

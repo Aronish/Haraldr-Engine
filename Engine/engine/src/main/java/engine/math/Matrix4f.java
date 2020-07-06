@@ -43,10 +43,10 @@ public class Matrix4f //TODO: can be improved
     public static Matrix4f identity()
     {
         Matrix4f identity = new Matrix4f();
-        identity.matrix[0] = 1.0f;
-        identity.matrix[5] = 1.0f;
-        identity.matrix[10] = 1.0f;
-        identity.matrix[15] = 1.0f;
+        identity.matrix[0] = 1f;
+        identity.matrix[5] = 1f;
+        identity.matrix[10] = 1f;
+        identity.matrix[15] = 1f;
         return identity;
     }
 
@@ -58,7 +58,7 @@ public class Matrix4f //TODO: can be improved
         {
             for (int x = 0; x < 4; x++)
             {
-                float sum = 0.0f;
+                float sum = 0f;
                 for (int e = 0; e < 4; e++)
                 {
                     sum += matrix[x + e * 4] * multiplicand.matrix[e + y * 4];
@@ -76,7 +76,7 @@ public class Matrix4f //TODO: can be improved
         {
             for (int x = 0; x < 4; x++)
             {
-                float sum = 0.0f;
+                float sum = 0f;
                 for (int e = 0; e < 4; e++)
                 {
                     sum += matrix[x + e * 4] * multiplicand.matrix[e + y * 4];
@@ -90,11 +90,11 @@ public class Matrix4f //TODO: can be improved
     @NotNull
     public Vector3f multiply(@NotNull Vector3f multiplicand)
     {
-        float[] start = { multiplicand.getX(), multiplicand.getY(), multiplicand.getZ(), 1.0f };
+        float[] start = { multiplicand.getX(), multiplicand.getY(), multiplicand.getZ(), 1f };
         float[] result = new float[4];
         for (int x = 0; x < 4; x++)
         {
-            float sum = 0.0f;
+            float sum = 0f;
             for (int e = 0; e < 4; e++)
             {
                 sum += matrix[x + e * 4] * start[e];
@@ -111,7 +111,7 @@ public class Matrix4f //TODO: can be improved
         float[] result = new float[4];
         for (int x = 0; x < 4; x++)
         {
-            float sum = 0.0f;
+            float sum = 0f;
             for (int e = 0; e < 4; e++)
             {
                 sum += matrix[x + e * 4] * start[e];
@@ -151,32 +151,16 @@ public class Matrix4f //TODO: can be improved
     @Deprecated
     public static @NotNull Matrix4f transform(Vector3f position, float angle, @NotNull Vector2f scale)
     {
-        return createTranslate(scale.getX() == -1 ? Vector3f.add(position, new Vector3f(1.0f, 0.0f)) : position).multiply(createScale(scale));
+        return createTranslate(scale.getX() == -1 ? Vector3f.add(position, new Vector3f(1f, 0f, 0f)) : position).multiply(createScale(scale));
     }
-
-    /////UNUSED WITH PIXELORTHOGRAPHIC////////////////////////////////////////////////////////////////////////
-        private static @NotNull Matrix4f transformPixelSpace(Vector3f pixelPosition, Vector2f scale, int width, int height)
-        {
-            return createTranslate(clampToUnitSpace(pixelPosition, width, height)).multiply(createScale(scale));
-        }
-
-        @NotNull
-        private static Vector3f clampToUnitSpace(@NotNull Vector3f pixelPosition, int width, int height)
-        {
-            return new Vector3f(
-                    (pixelPosition.getX() / width) * (2 * (fixedWidth ? FIXED_ORTHOGRAPHIC_AXIS : dynamicOrthographicAxis)) - (fixedWidth ? FIXED_ORTHOGRAPHIC_AXIS : dynamicOrthographicAxis),
-                    (-pixelPosition.getY() / height) * (2 * (fixedWidth ? dynamicOrthographicAxis : FIXED_ORTHOGRAPHIC_AXIS)) + (fixedWidth ? dynamicOrthographicAxis : FIXED_ORTHOGRAPHIC_AXIS)
-            );
-        }
-    /////UNUSED WITH PIXELORTHOGRAPHIC/////////////////////////////////////////////////////////////////////////
 
     public static @NotNull Matrix4f createScale(@NotNull Vector2f scale)
     {
         Matrix4f result = new Matrix4f();
         result.matrix[0] = scale.getX();
         result.matrix[5] = scale.getY();
-        result.matrix[10] = 1.0f;
-        result.matrix[15] = 1.0f;
+        result.matrix[10] = 1f;
+        result.matrix[15] = 1f;
         return result;
     }
 
@@ -186,7 +170,7 @@ public class Matrix4f //TODO: can be improved
         result.matrix[0] = scale.getX();
         result.matrix[5] = scale.getY();
         result.matrix[10] = scale.getZ();
-        result.matrix[15] = 1.0f;
+        result.matrix[15] = 1f;
         return result;
     }
 
@@ -321,9 +305,9 @@ public class Matrix4f //TODO: can be improved
     private static @NotNull Matrix4f orthographic(float right, float left, float top, float bottom, float far, float near)
     {
         Matrix4f result = identity();
-        result.matrix[0] = 2.0f / (right - left);
-        result.matrix[5] = 2.0f / (top - bottom);
-        result.matrix[10] = -2.0f / (far - near);
+        result.matrix[0] = 2f / (right - left);
+        result.matrix[5] = 2f / (top - bottom);
+        result.matrix[10] = -2f / (far - near);
         result.matrix[12] = -((right + left) / (right - left));
         result.matrix[13] = -((top + bottom) / (top - bottom));
         result.matrix[14] = -((far + near) / (far - near));

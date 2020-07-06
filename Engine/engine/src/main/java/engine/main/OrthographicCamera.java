@@ -29,12 +29,12 @@ public class OrthographicCamera
 
     protected void calculateViewMatrix()
     {
-        viewMatrix = Matrix4f.transform(Vector3f.negate(position), 0.0f, scaleVector.setBoth(scale));
+        viewMatrix = Matrix4f.transform(Vector3f.negate(position), 0.0f, scaleVector.set(scale));
     }
 
     public void setPosition(@NotNull Vector3f position)
     {
-        this.position = position.multiply(scale);
+        this.position = Vector3f.multiply(position, scale);
         calculateViewMatrix();
     }
 

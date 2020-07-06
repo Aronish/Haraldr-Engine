@@ -3,6 +3,7 @@ package engine.graphics;
 import engine.main.ArrayUtils;
 import engine.main.EntryPoint;
 import engine.math.Matrix4f;
+import engine.math.Vector2f;
 import engine.math.Vector3f;
 import engine.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
@@ -16,20 +17,7 @@ import java.util.stream.Collectors;
 
 import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
-import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
-import static org.lwjgl.opengl.GL20.GL_VALIDATE_STATUS;
-import static org.lwjgl.opengl.GL20.glDeleteProgram;
-import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
-import static org.lwjgl.opengl.GL20.glGetProgramiv;
-import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
-import static org.lwjgl.opengl.GL20.glGetShaderiv;
-import static org.lwjgl.opengl.GL20.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20.glUniform1f;
-import static org.lwjgl.opengl.GL20.glUniform1i;
-import static org.lwjgl.opengl.GL20.glUniform3f;
-import static org.lwjgl.opengl.GL20.glUniform4f;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
+import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL46.glAttachShader;
 import static org.lwjgl.opengl.GL46.glCompileShader;
 import static org.lwjgl.opengl.GL46.glCreateProgram;
@@ -43,23 +31,20 @@ import static org.lwjgl.opengl.GL46.glValidateProgram;
 @SuppressWarnings("unused")
 public class Shader
 {
-    private static final String SPLIT_TOKEN = "#shader ";
-    private static final int TYPE_SPECIFIER_LENGTH = 4;
-
-    public static final Shader DEFAULT2D            = create("default_shaders/default2D.glsl");
-    public static final Shader DIFFUSE              = create("default_shaders/diffuse.glsl");
-    public static final Shader NORMAL               = create("default_shaders/normal.glsl");
+    //public static final Shader DEFAULT2D            = create("default_shaders/default2D.glsl");
+    //public static final Shader DIFFUSE              = create("default_shaders/diffuse.glsl");
+    //public static final Shader NORMAL               = create("default_shaders/normal.glsl");
     public static final Shader LIGHT_SHADER         = create("default_shaders/simple_color.glsl");
-    public static final Shader VISIBLE_NORMALS      = create("default_shaders/visible_normals.glsl");
-    public static final Shader REFLECTIVE           = create("default_shaders/reflective.glsl");
-    public static final Shader REFRACTIVE           = create("default_shaders/refractive.glsl");
-    public static final Shader PBR_TEXTURED         = create("default_shaders/pbr_textured.glsl");
-    public static final Shader PBR_UNTEXTURED       = create("default_shaders/pbr_untextured.glsl");
-    public static final Shader UI                   = create("default_shaders/ui.glsl");
+    //public static final Shader VISIBLE_NORMALS      = create("default_shaders/visible_normals.glsl");
+    //public static final Shader REFLECTIVE           = create("default_shaders/reflective.glsl");
+    //public static final Shader REFRACTIVE           = create("default_shaders/refractive.glsl");
+    //public static final Shader PBR_TEXTURED         = create("default_shaders/pbr_textured.glsl");
+    //public static final Shader PBR_UNTEXTURED       = create("default_shaders/pbr_untextured.glsl");
+    //public static final Shader UI                   = create("default_shaders/ui.glsl");
     public static final Shader TEXT                 = create("default_shaders/text.glsl");
 
     private String path;
-    private int shaderProgram;
+    private int programHandle;
     private List<InternalShader> internalShaders;
     private Map<String, Integer> uniformLocations = new HashMap<>();
 
@@ -119,14 +104,14 @@ public class Shader
         internalShaders = ShaderParser.parseShader(path);
         internalShaders.forEach(InternalShader::compile);
         List<Integer> internalShaderIds = internalShaders.stream().map(InternalShader::getShaderId).collect(Collectors.toList());
-        shaderProgram = createProgram(ArrayUtils.toPrimitiveArrayI(internalShaderIds));
+        programHandle = createProgram(ArrayUtils.toPrimitiveArrayI(internalShaderIds));
     }
 
     public void setBoolean(String name, boolean value)
     {
         if (!uniformLocations.containsKey(name))
         {
-            uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
+            uniformLocations.put(name, glGetUniformLocation(programHandle, name));
         }
         glUniform1f(uniformLocations.get(name), value ? 1f : 0f);
     }
@@ -135,7 +120,7 @@ public class Shader
     {
         if (!uniformLocations.containsKey(name))
         {
-            uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
+            uniformLocations.put(name, glGetUniformLocation(programHandle, name));
         }
         glUniform1i(uniformLocations.get(name), value);
     }
@@ -144,16 +129,25 @@ public class Shader
     {
         if (!uniformLocations.containsKey(name))
         {
-            uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
+            uniformLocations.put(name, glGetUniformLocation(programHandle, name));
         }
         glUniform1f(uniformLocations.get(name), value);
+    }
+
+    public void setVector2f(String name, Vector2f vector)
+    {
+        if (!uniformLocations.containsKey(name))
+        {
+            uniformLocations.put(name, glGetUniformLocation(programHandle, name));
+        }
+        glUniform2f(uniformLocations.get(name), vector.getX(), vector.getY());
     }
 
     public void setVector3f(String name, Vector3f vector)
     {
         if (!uniformLocations.containsKey(name))
         {
-            uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
+            uniformLocations.put(name, glGetUniformLocation(programHandle, name));
         }
         glUniform3f(uniformLocations.get(name), vector.getX(), vector.getY(), vector.getZ());
     }
@@ -162,7 +156,7 @@ public class Shader
     {
         if (!uniformLocations.containsKey(name))
         {
-            uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
+            uniformLocations.put(name, glGetUniformLocation(programHandle, name));
         }
         glUniform4f(uniformLocations.get(name), vector.getX(), vector.getY(), vector.getZ(), vector.getW());
     }
@@ -171,14 +165,14 @@ public class Shader
     {
         if (!uniformLocations.containsKey(name))
         {
-            uniformLocations.put(name, glGetUniformLocation(shaderProgram, name));
+            uniformLocations.put(name, glGetUniformLocation(programHandle, name));
         }
         glUniformMatrix4fv(uniformLocations.get(name), false, matrix.matrix);
     }
 
     public void bind()
     {
-        glUseProgram(shaderProgram);
+        glUseProgram(programHandle);
     }
 
     public void unbind()
@@ -195,9 +189,14 @@ public class Shader
     public void delete()
     {
         unbind();
-        glDeleteProgram(shaderProgram);
+        glDeleteProgram(programHandle);
         internalShaders.clear();
         uniformLocations.clear();
+    }
+
+    public int getProgramHandle()
+    {
+        return programHandle;
     }
 
     static class InternalShader

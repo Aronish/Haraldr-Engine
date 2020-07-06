@@ -5,10 +5,12 @@ import engine.event.MouseScrolledEvent;
 import engine.event.WindowFocusEvent;
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class Camera
 {
     protected Vector3f position = Vector3f.IDENTITY;
+    private float[] rawPosition = new float[3];
     protected Matrix4f viewMatrix;
 
     protected Camera()
@@ -26,21 +28,32 @@ public abstract class Camera
 
     public abstract void calculateViewMatrix();
 
-    public void setPosition(Vector3f position)
+    public void setPosition(@NotNull Vector3f position)
     {
         this.position = position;
+        rawPosition[0] = position.getX();
+        rawPosition[1] = position.getY();
+        rawPosition[2] = position.getZ();
         calculateViewMatrix();
     }
 
     public void addPosition(Vector3f position)
     {
         this.position.add(position);
+        rawPosition[0] += position.getX();
+        rawPosition[1] += position.getY();
+        rawPosition[2] += position.getZ();
         calculateViewMatrix();
     }
 
     public Vector3f getPosition()
     {
         return position;
+    }
+
+    public float[] getRawPosition()
+    {
+        return rawPosition;
     }
 
     public Matrix4f getViewMatrix()

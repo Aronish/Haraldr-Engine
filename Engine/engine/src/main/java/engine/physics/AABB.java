@@ -5,12 +5,12 @@ import engine.math.Vector3f;
 @Deprecated
 public class AABB
 {
-    private float width = 1.0f, height = 1.0f;
+    private float width = 1f, height = 1f;
     private Vector3f middle;
 
     public AABB()
     {
-        middle = new Vector3f(0.5f, -0.5f);
+        middle = new Vector3f(0.5f, -0.5f, 0f);
     }
 
     public AABB(float width, float height)
@@ -22,7 +22,7 @@ public class AABB
 
     private void calculateMiddle()
     {
-        middle = new Vector3f(width / 2.0f, -(height / 2.0f));
+        middle = new Vector3f(width / 2f, -(height / 2f), 0f);
     }
 
     public float getWidth()

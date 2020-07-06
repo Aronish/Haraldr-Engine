@@ -59,9 +59,9 @@ public class UIBox
     public void render()
     {
         glDisable(GL_DEPTH_TEST);
-        Shader.UI.bind();
-        Shader.UI.setMatrix4f("projection", Matrix4f.pixelOrthographic);
-        Shader.UI.setVector4f("u_Color", color);
+        //Shader.UI.bind();
+        //Shader.UI.setMatrix4f("projection", Matrix4f.pixelOrthographic);
+        //Shader.UI.setVector4f("u_Color", color);
         boxMesh.bind();
         boxMesh.drawElements();
         glEnable(GL_DEPTH_TEST);

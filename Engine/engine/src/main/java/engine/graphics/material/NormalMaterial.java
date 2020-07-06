@@ -17,7 +17,7 @@ public class NormalMaterial extends Material
 
     public NormalMaterial(Texture diffuseTexture, Texture normalMap)
     {
-        super(Shader.NORMAL);
+        //super(Shader.NORMAL);
         this.diffuseTexture = diffuseTexture;
         this.normalMap = normalMap;
     }
@@ -29,7 +29,7 @@ public class NormalMaterial extends Material
 
     public NormalMaterial(Texture diffuseTexture, Texture normalMap, float specularStrength, float specularExponent, float opacity)
     {
-        super(Shader.NORMAL);
+        //super(Shader.NORMAL);
         this.diffuseTexture = diffuseTexture;
         this.normalMap = normalMap;
         this.specularStrength = specularStrength;

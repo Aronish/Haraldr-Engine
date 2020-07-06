@@ -78,7 +78,7 @@ public abstract class ECSApplication extends Application
             }, 0);
         }
 
-        envMap = CubeMap.createEnvironmentMap("default_hdris/TexturesCom_NorwayForest_4K_hdri_sphere.hdr");
+        envMap = CubeMap.createEnvironmentMap("default_hdris/NorwayForest_4K_hdri_sphere.hdr");
         MeshComponent meshComponent = new MeshComponent("default_meshes/cube.obj",
                 new PBRMaterial(
                         "default_textures/Tiles_Glass_1K_albedo.png",

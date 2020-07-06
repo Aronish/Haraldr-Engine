@@ -41,7 +41,7 @@ public class RefractiveMaterial extends Material
 
     public RefractiveMaterial(Texture diffuseTexture, Texture refractionMap, float refractiveRatio, CubeMap environmentMap)
     {
-        super(Shader.REFRACTIVE);
+        //super(Shader.REFRACTIVE);
         this.environmentMap = environmentMap;
         this.refractiveRatio = refractiveRatio;
         this.diffuseTexture = diffuseTexture;

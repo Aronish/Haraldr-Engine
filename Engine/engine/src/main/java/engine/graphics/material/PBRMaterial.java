@@ -22,7 +22,7 @@ public class PBRMaterial extends Material
 
     public PBRMaterial(Vector3f color, float metallic, float roughness, CubeMap environmentMap)
     {
-        super(Shader.PBR_UNTEXTURED);
+        //super(Shader.PBR_UNTEXTURED);
         this.color          = color;
         this.metallic       = metallic;
         this.roughness      = roughness;
@@ -44,7 +44,7 @@ public class PBRMaterial extends Material
 
     public PBRMaterial(Texture albedo, Texture normalMap, Texture metallicMap, Texture roughnessMap, CubeMap environmentMap)
     {
-        super(Shader.PBR_TEXTURED);
+        //super(Shader.PBR_TEXTURED);
         this.albedo                 = albedo;
         this.normalMap              = normalMap;
         this.metallicMap            = metallicMap;
@@ -66,7 +66,7 @@ public class PBRMaterial extends Material
 
     public PBRMaterial(Texture albedo, Texture normalMap, Texture metallicMap, Texture roughnessMap, Texture displacementMap, CubeMap environmentMap)
     {
-        super(Shader.PBR_TEXTURED);
+        //super(Shader.PBR_TEXTURED);
         this.albedo                 = albedo;
         this.normalMap              = normalMap;
         this.metallicMap            = metallicMap;
@@ -90,7 +90,7 @@ public class PBRMaterial extends Material
 
     public PBRMaterial(Texture albedo, Texture normalMap, Texture metallicMap, Texture roughnessMap, Texture displacementMap, Vector3f color, float metallic, float roughness, CubeMap environmentMap)
     {
-        super(Shader.PBR_TEXTURED);
+        //super(Shader.PBR_TEXTURED);
         this.albedo                 = albedo;
         this.normalMap              = normalMap;
         this.metallicMap            = metallicMap;

@@ -1,0 +1,4 @@
+/*
+Will be used as a switchboard for compiling shaders on certain conditions.
+This file will be rewritten by the engine during runtime.
+*/

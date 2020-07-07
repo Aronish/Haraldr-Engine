@@ -15,7 +15,7 @@ To run a client, it has to subclass EntryPoint and that subclass has to be set a
 <b>main-&lt;name&gt;:</b> Branch for specified developer.
 <br/>
 <h3>Libraries:</h3>
-<b>Java:</b> JDK 13.0.1 (recommended) (Java 9+ required)
+<b>Java:</b> JDK 14.0.1 (recommended, required)
 <br/>
 <b>LWJGL: </b> 3.2.3_12
 <br/>

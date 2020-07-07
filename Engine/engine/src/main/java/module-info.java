@@ -39,7 +39,6 @@ module Engine.engine
     exports engine.main;
     exports engine.math;
     exports engine.physics;
-    exports engine.scenegraph;
 
     opens default_shaders;
     opens default_textures;

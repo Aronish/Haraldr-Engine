@@ -1,6 +1,5 @@
-package engine;
+package engine.graphics;
 
-import engine.graphics.Shader;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ShaderUniform

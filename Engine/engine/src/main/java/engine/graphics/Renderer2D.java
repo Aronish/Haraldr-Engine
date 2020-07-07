@@ -6,8 +6,8 @@ import engine.math.Vector3f;
 import engine.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
 @Deprecated
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class Renderer2D
 {
     public static SceneData2D sceneData = new SceneData2D();

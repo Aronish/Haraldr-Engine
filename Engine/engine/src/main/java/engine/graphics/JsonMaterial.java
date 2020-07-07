@@ -1,12 +1,10 @@
-package engine;
+package engine.graphics;
 
-import engine.graphics.CubeMap;
-import engine.graphics.ResourceManager;
-import engine.graphics.Shader;
-import engine.graphics.Texture;
+import engine.main.IOUtils;
 import engine.math.Vector2f;
 import engine.math.Vector3f;
 import engine.math.Vector4f;
+import jsonparser.JSONException;
 import jsonparser.JSONObject;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.system.MemoryStack;
@@ -29,7 +27,7 @@ public class JsonMaterial
     private List<ShaderUniform> uniforms;
     private List<ShaderSampler> samplers;
 
-    public JsonMaterial(@NotNull Shader shader, @NotNull List<ShaderUniform> uniforms, List<ShaderSampler> samplers)
+    private JsonMaterial(@NotNull Shader shader, @NotNull List<ShaderUniform> uniforms, List<ShaderSampler> samplers)
     {
         this.shader = shader;
         this.uniforms = uniforms;
@@ -59,23 +57,28 @@ public class JsonMaterial
         return shader;
     }
 
-    ///// PARSER ///////////////////////////////////////////////////////////////////////
+    ///// PARSER ////////////////////////////////////////////////////////////
 
-    public static JsonMaterial parseJsonMaterial(@NotNull JSONObject materialDefinition)
+    public static JsonMaterial create(@NotNull JSONObject materialDefinition) throws JSONException
     {
         return switch (materialDefinition.getJSONObject("shader").getString("type"))
         {
-            case "PBR" ->
-            {
+            case "PBR" -> {
                 JSONObject materialProperties = materialDefinition.getJSONObject("properties");
                 Shader shader;
 
                 if (materialDefinition.getJSONObject("shader").getJSONObject("properties").getBoolean("textured"))
                 {
-                    shader = ResourceManager.getShader("default_shaders/pbr_textured.glsl");//TODO: unfinished
-                }else
+                    if (materialDefinition.getJSONObject("shader").getJSONObject("properties").getBoolean("parallax_map"))
+                    {
+                        shader = createShaderWithSwitches("default_shaders/pbr_textured.glsl", "PARALLAX_MAP");
+                    } else
+                    {
+                        shader = Shader.create("default_shaders/pbr_textured.glsl");
+                    }
+                } else
                 {
-                    shader = ResourceManager.getShader("default_shaders/pbr_untextured.glsl");
+                    shader = Shader.create("default_shaders/pbr_untextured.glsl");
                 }
 
                 List<ShaderSampler> samplers = extractSamplers(shader.getProgramHandle(), materialProperties);
@@ -86,8 +89,69 @@ public class JsonMaterial
 
                 yield new JsonMaterial(shader, extractUniforms(shader.getProgramHandle(), materialProperties), samplers);
             }
-            default -> throw new IllegalArgumentException("Unknown shader type!");
+            case "REFLECTIVE" -> {
+                JSONObject materialProperties = materialDefinition.getJSONObject("properties");
+                Shader shader = Shader.create("default_shaders/reflective.glsl");
+
+                List<ShaderSampler> samplers = extractSamplers(shader.getProgramHandle(), materialProperties);
+                samplers.add(0, new ShaderSampler.CubeMap(CubeMap.createEnvironmentMap(materialProperties.getString("environment_map"))));
+
+                yield new JsonMaterial(shader, extractUniforms(shader.getProgramHandle(), materialProperties), samplers);
+            }
+            case "REFRACTIVE" -> {
+                JSONObject materialProperties = materialDefinition.getJSONObject("properties");
+                Shader shader = Shader.create("default_shaders/refractive.glsl");
+
+                List<ShaderSampler> samplers = extractSamplers(shader.getProgramHandle(), materialProperties);
+                samplers.add(0, new ShaderSampler.CubeMap(CubeMap.createEnvironmentMap(materialProperties.getString("environment_map"))));
+
+                yield new JsonMaterial(shader, extractUniforms(shader.getProgramHandle(), materialProperties), samplers);
+            }
+            case "SIMPLE" -> {
+                JSONObject materialProperties = materialDefinition.getJSONObject("properties");
+                JSONObject shaderProperties = materialDefinition.getJSONObject("shader").getJSONObject("properties");
+                Shader shader;
+
+                if (shaderProperties.getBoolean("textured"))
+                {
+                    if (shaderProperties.getBoolean("normal_map"))
+                    {
+                        shader = Shader.create("default_shaders/normal.glsl");
+                    } else
+                    {
+                        shader = createShaderWithSwitches("default_shaders/diffuse.glsl", "TEXTURED");
+                    }
+                    yield new JsonMaterial(shader, extractUniforms(shader.getProgramHandle(), materialProperties), extractSamplers(shader.getProgramHandle(), materialProperties));
+                } else
+                {
+                    shader = Shader.create("default_shaders/diffuse.glsl");
+                    yield new JsonMaterial(shader, extractUniforms(shader.getProgramHandle(), materialProperties), new ArrayList<>());
+                }
+            }
+            case "UNLIT" -> {
+                JSONObject materialProperties = materialDefinition.getJSONObject("properties");
+                JSONObject shaderProperties = materialDefinition.getJSONObject("shader").getJSONObject("properties");
+                Shader shader;
+
+                if (shaderProperties.getBoolean("textured"))
+                {
+                    shader = createShaderWithSwitches("default_shaders/unlit.glsl", "TEXTURED");
+                    yield new JsonMaterial(shader, extractUniforms(shader.getProgramHandle(), materialProperties), extractSamplers(shader.getProgramHandle(), materialProperties));
+                } else
+                {
+                    shader = Shader.create("default_shaders/unlit.glsl");
+                    yield new JsonMaterial(shader, extractUniforms(shader.getProgramHandle(), materialProperties), new ArrayList<>());
+                }
+            }
+            default -> throw new JSONException("Unknown shader type!");
         };
+    }
+
+    private static Shader createShaderWithSwitches(String path, @NotNull String... switches)
+    {
+        StringBuilder key = new StringBuilder(path);
+        for (String define : switches) key.append(define);
+        return Shader.createFromSource(key.toString(), IOUtils.readResource(path, IOUtils::resourceToString), switches);
     }
 
     private static @NotNull List<ShaderUniform> extractUniforms(int shaderHandle, JSONObject materialProperties)
@@ -138,7 +202,7 @@ public class JsonMaterial
                 if (name.contains("map_"))
                 {
                     String jsonName = name.substring(6).toLowerCase();
-                    samplers.add(new ShaderSampler.Texture2D(ResourceManager.getTexture(
+                    samplers.add(new ShaderSampler.Texture2D(Texture.create(
                             materialProperties.getJSONObject(jsonName).getString("path"),
                             materialProperties.getJSONObject(jsonName).getBoolean("color"))
                     ));

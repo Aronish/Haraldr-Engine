@@ -4,6 +4,7 @@ import engine.graphics.ResourceManager;
 import engine.graphics.Shader;
 import engine.graphics.Texture;
 
+@Deprecated
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class NormalMaterial extends Material
 {
@@ -12,7 +13,7 @@ public class NormalMaterial extends Material
 
     public NormalMaterial(String diffuseTexture, String normalMap)
     {
-        this(ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(normalMap, false));
+        this(Texture.create(diffuseTexture, true), Texture.create(normalMap, false));
     }
 
     public NormalMaterial(Texture diffuseTexture, Texture normalMap)
@@ -24,7 +25,7 @@ public class NormalMaterial extends Material
 
     public NormalMaterial(String diffuseTexture, String normalMap, float specularStrength, float specularExponent, float opacity)
     {
-        this(ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(normalMap, false), specularStrength, specularExponent, opacity);
+        this(Texture.create(diffuseTexture, true), Texture.create(normalMap, false), specularStrength, specularExponent, opacity);
     }
 
     public NormalMaterial(Texture diffuseTexture, Texture normalMap, float specularStrength, float specularExponent, float opacity)

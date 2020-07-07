@@ -11,11 +11,9 @@ import org.jetbrains.annotations.NotNull;
 import static engine.input.Key.KEY_A;
 import static engine.input.Key.KEY_C;
 import static engine.input.Key.KEY_D;
-import static engine.input.Key.KEY_R;
 import static engine.input.Key.KEY_S;
 import static engine.input.Key.KEY_SPACE;
 import static engine.input.Key.KEY_W;
-import static engine.main.Application.MAIN_LOGGER;
 
 public class PerspectiveCameraController
 {

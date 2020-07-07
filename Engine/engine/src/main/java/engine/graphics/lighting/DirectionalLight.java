@@ -26,9 +26,9 @@ public class DirectionalLight extends Light implements SceneLightCompat
     public void renderDirectionVector()
     {
         Texture.DEFAULT_WHITE.bind(0);
-        Shader.LIGHT_SHADER.bind();
-        Shader.LIGHT_SHADER.setMatrix4f("model", Matrix4f.identity().translate(Vector3f.add(position, Vector3f.multiply(direction, 0.25f))).scale(new Vector3f(0.015f)));
-        Shader.LIGHT_SHADER.setVector3f("u_Color", color);
+        LIGHT_SHADER.bind();
+        LIGHT_SHADER.setMatrix4f("model", Matrix4f.identity().translate(Vector3f.add(position, Vector3f.multiply(direction, 0.25f))).scale(new Vector3f(0.015f)));
+        LIGHT_SHADER.setVector3f("u_Color", color);
         DefaultModels.CUBE.bind();
         DefaultModels.CUBE.drawElements();
     }

@@ -34,11 +34,6 @@ public class WorldLayer extends Layer
     private List<Grid.GridCell> visibleGridCells = new ArrayList<>();
     private List<Tile> frustumCulledObjects = new ArrayList<>();
 
-    public WorldLayer(String name)
-    {
-        super(name);
-    }
-
     @Override
     public void onUpdate(Window window, float deltaTime)
     {

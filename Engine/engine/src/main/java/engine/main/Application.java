@@ -27,15 +27,12 @@ import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
-import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_SEVERITY_NOTIFICATION;
 import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
 import static org.lwjgl.system.MemoryUtil.memUTF8;
 
 public abstract class Application
 {
-    public static final Logger MAIN_LOGGER = new Logger("Main");
-
     protected boolean initialized = false;
     protected LayerStack layerStack = new LayerStack();
     protected Window window;
@@ -69,15 +66,15 @@ public abstract class Application
 
         if (EntryPoint.DEBUG)
         {
-            glEnable(GL_DEBUG_OUTPUT);
+            //glEnable(GL_DEBUG_OUTPUT);
             glDebugMessageCallback((source, type, id, severity, length, message, userparam) ->
             {
                 if (id == 131218) return;
                 if (severity != GL_DEBUG_SEVERITY_NOTIFICATION)
                 {
                     System.out.println();
-                    MAIN_LOGGER.info(String.format("[OPENGL] (Source: %s, Type: %s, ID: %s, Severity: %s):", Integer.toHexString(source), Integer.toHexString(type), Integer.toHexString(id), Integer.toHexString(severity)));
-                    MAIN_LOGGER.info(memUTF8(message) + "\n");
+                    Logger.info(String.format("[OPENGL] (Source: %s, Type: %s, ID: %s, Severity: %s):", Integer.toHexString(source), Integer.toHexString(type), Integer.toHexString(id), Integer.toHexString(severity)));
+                    Logger.info(memUTF8(message) + "\n");
                 }
                 //if (type == GL_DEBUG_TYPE_ERROR || type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR) stop(new WindowClosedEvent());
             }, 0);
@@ -144,7 +141,6 @@ public abstract class Application
         {
             if (layer.isActive()) layer.onUpdate(window, deltaTime);
         }
-        glfwPollEvents();
     }
 
     protected void render()
@@ -174,28 +170,32 @@ public abstract class Application
 
         while (!glfwWindowShouldClose(window.getWindowHandle()))
         {
-            double newTime = glfwGetTime();
-            double frameTime = newTime - currentTime;
-            currentTime = newTime;
-            timer += frameTime;
-            if (timer >= 1d)
+            if (!window.isMinimized())
             {
-                int fps = (int) (frames / timer), ups = (int) (updates / timer);
-                window.setTitle(String.format("FPS: %d UPS: %d Frametime: %f ms", fps, ups, frameTime * 1000d));
-                EventDispatcher.dispatch(new DebugScreenUpdatedEvent(fps, ups), window);
-                timer = 0.0d;
-                frames = 0;
-                updates = 0;
+                double newTime = glfwGetTime();
+                double frameTime = newTime - currentTime;
+                currentTime = newTime;
+                timer += frameTime;
+                if (timer >= 1d)
+                {
+                    int fps = (int) (frames / timer), ups = (int) (updates / timer);
+                    window.setTitle(String.format("FPS: %d UPS: %d Frametime: %f ms", fps, ups, frameTime * 1000d));
+                    EventDispatcher.dispatch(new DebugScreenUpdatedEvent(fps, ups), window);
+                    timer = 0.0d;
+                    frames = 0;
+                    updates = 0;
+                }
+                while (frameTime > 0d)
+                {
+                    double deltaTime = Math.min(frameTime, updatePeriod);
+                    update((float) deltaTime);
+                    ++updates;
+                    frameTime -= deltaTime;
+                }
+                render();
+                ++frames;
             }
-            while (frameTime > 0d)
-            {
-                double deltaTime = Math.min(frameTime, updatePeriod);
-                update((float) deltaTime);
-                ++updates;
-                frameTime -= deltaTime;
-            }
-            render();
-            ++frames;
+            glfwPollEvents();
         }
     }
 

@@ -1,10 +1,9 @@
 package engine.math;
 
+import engine.debug.Logger;
 import jsonparser.JSONArray;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
-import static engine.main.Application.MAIN_LOGGER;
 
 @SuppressWarnings("unused")
 public class Vector2f
@@ -175,6 +174,6 @@ public class Vector2f
 
     public void print()
     {
-        MAIN_LOGGER.info("X: " + x + " Y: " + y);
+        Logger.info("X: " + x + " Y: " + y);
     }
 }

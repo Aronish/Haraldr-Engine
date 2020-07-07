@@ -1,0 +1,15 @@
+{
+  "shader":
+  {
+    "type": "UNLIT",
+    "properties":
+    {
+      "textured": true
+    }
+  },
+  "properties":
+  {
+    "texture": { "path": "default_textures/error.png", "color": true },
+    "opacity": 1.0
+  }
+}

@@ -42,7 +42,7 @@ public abstract class Renderer3D
 
     private static final UniformBuffer matrixBuffer = new UniformBuffer(140);
     private static SceneLights sceneLights = new SceneLights();
-    private static Shader postProcessingShader = Shader.create("default_shaders/hdr_gamma_correct.glsl");
+    private static Shader postProcessingShader = Shader.create("internal_shaders/hdr_gamma_correct.glsl");
     private static float exposure = 0.5f;
 
     public static void addExposure(float pExposure)

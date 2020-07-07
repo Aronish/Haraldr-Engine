@@ -11,17 +11,18 @@ layout (std140, binding = 0) uniform matrices
 {
     mat4 view;
     mat4 projection;
+    vec3 viewPosition_W;
 };
 
 out vec3 v_Normal_W;
-out vec3 v_WorldPosition_W;
+out vec3 v_Position_W;
 out vec2 v_TextureCoordinate;
 
 void main()
 {
     mat3 normalMatrix = mat3(model);
     v_Normal_W = normalMatrix * a_Normal;
-    v_WorldPosition_W = (model * vec4(a_Position, 1.0f)).xyz;
+    v_Position_W = (model * vec4(a_Position, 1.0f)).xyz;
     v_TextureCoordinate = a_TextureCoordinate;
 
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
@@ -31,23 +32,31 @@ void main()
 #version 460 core
 
 in vec3 v_Normal_W;
-in vec3 v_WorldPosition_W;
+in vec3 v_Position_W;
 in vec2 v_TextureCoordinate;
 
-uniform vec3 u_ViewPosition_W;
-uniform float u_RefractiveRatio;
+layout (std140, binding = 0) uniform matrices
+{
+    mat4 view;
+    mat4 projection;
+    vec3 viewPosition_W;
+};
 
-layout (binding = 0) uniform samplerCube environmentMap;
-layout (binding = 1) uniform sampler2D diffuseTexture;
-layout (binding = 2) uniform sampler2D refractionMap;
+uniform float u_Begin_Medium;
+uniform float u_End_Medium;
+
+layout (binding = 0) uniform samplerCube c_EnvironmentMap;
+
+layout (binding = 1) uniform sampler2D map_1_Diffuse_Texture;
+layout (binding = 2) uniform sampler2D map_2_Refraction_Map;
 
 out vec4 o_Color;
 
 void main()
 {
-    vec3 I = normalize(v_WorldPosition_W - u_ViewPosition_W);
-    vec3 R = refract(I, normalize(v_Normal_W), u_RefractiveRatio);
+    vec3 I = normalize(v_Position_W - viewPosition_W);
+    vec3 R = refract(I, normalize(v_Normal_W), u_Begin_Medium / u_End_Medium);
 
-    vec3 color = texture(environmentMap, R).rgb * texture(refractionMap, v_TextureCoordinate).rgb + texture(diffuseTexture, v_TextureCoordinate).rgb;
+    vec3 color = texture(c_EnvironmentMap, R).rgb * texture(map_2_Refraction_Map, v_TextureCoordinate).rgb + texture(map_1_Diffuse_Texture, v_TextureCoordinate).rgb;
     o_Color = vec4(color, 1.f);
 }

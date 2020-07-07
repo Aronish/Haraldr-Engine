@@ -1,5 +1,6 @@
 package engine.graphics.ui;
 
+import engine.graphics.ResourceManager;
 import engine.graphics.Shader;
 import engine.graphics.ShaderDataType;
 import engine.graphics.VertexArray;
@@ -18,6 +19,8 @@ import static org.lwjgl.opengl.GL11.glEnable;
 @SuppressWarnings("unused")
 public class TextLabel
 {
+    private static final Shader TEXT = Shader.create("default_shaders/text.glsl");
+
     private Font font;
     private String text;
     private Vector4f color;
@@ -51,10 +54,10 @@ public class TextLabel
     public void render()
     {
         glDisable(GL_DEPTH_TEST);
-        Shader.TEXT.bind();
-        Shader.TEXT.setMatrix4f("model", Matrix4f.identity().translate(position));
-        Shader.TEXT.setMatrix4f("projection", Matrix4f.pixelOrthographic);
-        Shader.TEXT.setVector4f("u_Color", color);
+        TEXT.bind();
+        TEXT.setMatrix4f("model", Matrix4f.identity().translate(position));
+        TEXT.setMatrix4f("projection", Matrix4f.pixelOrthographic);
+        TEXT.setVector4f("u_Color", color);
         font.bind(0);
         textMesh.bind();
         textMesh.drawElements();

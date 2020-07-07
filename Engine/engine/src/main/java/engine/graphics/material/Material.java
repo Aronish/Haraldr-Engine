@@ -2,6 +2,7 @@ package engine.graphics.material;
 
 import engine.graphics.Shader;
 
+@Deprecated
 public abstract class Material
 {
     protected Shader shader;

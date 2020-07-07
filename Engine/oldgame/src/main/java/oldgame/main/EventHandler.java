@@ -1,11 +1,11 @@
 package oldgame.main;
 
+import engine.debug.Logger;
 import engine.event.EventType;
 import engine.event.KeyEvent;
 import engine.event.MouseScrolledEvent;
 import engine.input.Input;
 import engine.input.Key;
-import engine.main.Application;
 import engine.main.Window;
 import engine.math.Vector3f;
 import oldgame.gameobject.Player;
@@ -89,7 +89,7 @@ public class EventHandler
             if (event.keyCode == Key.KEY_B.keyCode)
             {
                 window.setVSync(!window.vSyncOn());
-                Application.MAIN_LOGGER.info("VSync: " + window.vSyncOn());
+                Logger.info("VSync: " + window.vSyncOn());
             }
         }
     }

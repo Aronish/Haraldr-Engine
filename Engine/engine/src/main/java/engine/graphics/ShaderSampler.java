@@ -1,6 +1,4 @@
-package engine;
-
-import engine.graphics.Texture;
+package engine.graphics;
 
 public abstract class ShaderSampler
 {

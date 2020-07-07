@@ -1,5 +1,6 @@
 package engine.main;
 
+import engine.debug.Logger;
 import engine.event.EventDispatcher;
 import engine.event.EventObserver;
 import engine.event.KeyPressedEvent;
@@ -19,7 +20,6 @@ import org.lwjgl.opengl.GL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
@@ -73,7 +73,7 @@ public class Window
     private long windowHandle;
     private GLFWVidMode vidmode;
     private boolean vSyncOn;
-    private boolean isFullscreen;
+    private boolean fullscreen, minimized;
     private boolean focused = true;
     private int windowWidth, windowHeight, initWidth, initHeight;
 
@@ -83,7 +83,7 @@ public class Window
 
     Window(@NotNull WindowProperties windowProperties)
     {
-        isFullscreen = windowProperties.fullscreen;
+        fullscreen = windowProperties.fullscreen;
         vSyncOn = windowProperties.vsync;
 
         if (!glfwInit())
@@ -160,6 +160,7 @@ public class Window
         glfwSetWindowCloseCallback(windowHandle, (window) -> EventDispatcher.dispatch(new WindowClosedEvent(), this));
 
         glfwSetWindowSizeCallback(windowHandle, (window, newWidth, newHeight) -> {
+            minimized = newWidth <= 0 || newHeight <= 0;
             windowWidth = newWidth;
             windowHeight = newHeight;
             for (EventObserver<WindowResizedEvent> observer : observers)
@@ -167,8 +168,7 @@ public class Window
                 observer.onEvent(new WindowResizedEvent(newWidth, newHeight));
             }
             setViewPortSize(newWidth, newHeight);
-            framebuffer.getColorAttachment().resize(newWidth, newHeight);
-            framebuffer.getDepthAttachment().resize(newWidth, newHeight);
+            framebuffer.resize(newWidth, newHeight);
             EventDispatcher.dispatch(new WindowResizedEvent(newWidth, newHeight), this);
         });
 
@@ -177,7 +177,7 @@ public class Window
             EventDispatcher.dispatch(new WindowFocusEvent(focused), this);
         });
 
-        glfwSetErrorCallback((error, description) -> MAIN_LOGGER.info(error, description));
+        glfwSetErrorCallback((error, description) -> Logger.info(error + " " + description));
     }
 
     public void addObserver(EventObserver<WindowResizedEvent> observer)
@@ -192,13 +192,13 @@ public class Window
 
     public void changeFullscreen()
     {
-        if (isFullscreen)
+        if (fullscreen)
         {
-            isFullscreen = false;
+            fullscreen = false;
             glfwSetWindowMonitor(windowHandle, 0, vidmode.width() / 2 - initWidth / 2, vidmode.height() / 2 - initHeight / 2, initWidth, initHeight, 60);
             setViewPortSize(initWidth, initHeight);
         }else{
-            isFullscreen = true;
+            fullscreen = true;
             glfwSetWindowMonitor(windowHandle, glfwGetPrimaryMonitor(), 0, 0, vidmode.width(), vidmode.height(), 60);
             setViewPortSize(vidmode.width(), vidmode.height());
         }
@@ -269,6 +269,11 @@ public class Window
     public boolean vSyncOn()
     {
         return vSyncOn;
+    }
+
+    public boolean isMinimized()
+    {
+        return minimized;
     }
 
     public void delete()

@@ -1,9 +1,8 @@
 package oldgame.gameobject.tile;
 
+import engine.debug.Logger;
 import oldgame.gameobject.GameObject;
 import engine.math.Vector3f;
-
-import static engine.main.Application.MAIN_LOGGER;
 
 public class TileFactory
 {
@@ -27,7 +26,7 @@ public class TileFactory
             case GRASS_SNOW:
                 return new TileGrassSnow(position);
             default:
-                MAIN_LOGGER.error("Invalid GameObject");
+                Logger.error("Invalid GameObject");
                 return null;
         }
     }

@@ -22,9 +22,8 @@ public class DebugLayer extends Layer
     private TextLabel debugModeEnabled = new TextLabel(new Vector2f(10f, 30f), font, new Vector4f(1f), "Debug Mode Enabled");
     private TextLabel frameTimeData = new TextLabel(new Vector2f(10f, 60f), font, new Vector4f(1f), "<frame data>");
 
-    public DebugLayer(String name)
+    public DebugLayer()
     {
-        super(name);
         textLabels.add(debugModeEnabled);
         textLabels.add(frameTimeData);
     }

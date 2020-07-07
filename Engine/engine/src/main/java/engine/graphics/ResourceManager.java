@@ -10,18 +10,6 @@ public class ResourceManager
     private static final Map<String, Shader> SHADERS        = new HashMap<>();
     private static final Map<String, CubeMap> CUBEMAPS      = new HashMap<>();
 
-    public static Texture getTexture(String path, boolean isColorData)
-    {
-        if (TEXTURES.containsKey(path))
-        {
-            return TEXTURES.get(path);
-        }
-        else
-        {
-            return Texture.create(path, isColorData);
-        }
-    }
-
     public static VertexArray getMesh(String path)
     {
         if (MESHES.containsKey(path))
@@ -31,18 +19,6 @@ public class ResourceManager
         else
         {
             return ObjParser.loadMesh(path);
-        }
-    }
-
-    public static Shader getShader(String path)
-    {
-        if (SHADERS.containsKey(path))
-        {
-            return SHADERS.get(path);
-        }
-        else
-        {
-            return Shader.create(path);
         }
     }
 

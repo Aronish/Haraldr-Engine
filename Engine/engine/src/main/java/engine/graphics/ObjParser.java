@@ -1,5 +1,6 @@
 package engine.graphics;
 
+import engine.debug.Logger;
 import engine.main.ArrayUtils;
 import engine.main.EntryPoint;
 import engine.main.IOUtils;
@@ -13,17 +14,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static engine.main.Application.MAIN_LOGGER;
-
 public class ObjParser
 {
-    public static final int VERTEX_ELEMENT_COUNT = 11;
+    private static final int VERTEX_ELEMENT_COUNT = 11;
 
     @Nullable
     public static VertexArray loadMesh(String path)
@@ -35,7 +33,7 @@ public class ObjParser
         else
         {
             VertexArray mesh = IOUtils.readResource(path, ObjParser::loadMesh);
-            if (EntryPoint.DEBUG) MAIN_LOGGER.info("Loaded mesh " + path);
+            if (EntryPoint.DEBUG) Logger.info("Loaded mesh " + path);
             ResourceManager.addMesh(path, mesh);
             return mesh;
         }
@@ -65,16 +63,10 @@ public class ObjParser
 
                 switch (split[0])
                 {
-                    case "v":
-                        inputPositions.add(new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3])));
-                        break;
-                    case "vt":
-                        inputTextureCoordinates.add(new Vector2f(Float.parseFloat(split[1]), Float.parseFloat(split[2])));
-                        break;
-                    case "vn":
-                        inputNormals.add(new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3])));
-                        break;
-                    case "f":
+                    case "v" -> inputPositions.add(new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3])));
+                    case "vt" -> inputTextureCoordinates.add(new Vector2f(Float.parseFloat(split[1]), Float.parseFloat(split[2])));
+                    case "vn" -> inputNormals.add(new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3])));
+                    case "f" -> {
                         String[] components = line.split("\\s+");
                         IndexSet[] indexSets = new IndexSet[3];
                         for (int comp = 1; comp < components.length; ++comp)
@@ -87,7 +79,7 @@ public class ObjParser
                         {
                             insertVertex(vertices, indices, indexMap, inputPositions, inputTextureCoordinates, inputNormals, tangent, indexSets[comp - 1]);
                         }
-                        break;
+                    }
                 }
             }
         }catch (IOException e)

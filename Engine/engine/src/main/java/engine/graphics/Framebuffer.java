@@ -1,8 +1,8 @@
 package engine.graphics;
 
+import engine.debug.Logger;
 import org.jetbrains.annotations.NotNull;
 
-import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
@@ -43,6 +43,7 @@ import static org.lwjgl.opengl.GL45.glCreateFramebuffers;
 import static org.lwjgl.opengl.GL45.glCreateRenderbuffers;
 import static org.lwjgl.opengl.GL45.glCreateTextures;
 
+@SuppressWarnings("unused")
 public class Framebuffer
 {
     private int frameBufferId;
@@ -69,6 +70,13 @@ public class Framebuffer
         this.depthBuffer = depthBuffer;
         depthBuffer.init();
         depthBuffer.attach(this);
+    }
+
+    public void resize(int width, int height)
+    {
+        if (width <= 0 || height <= 0) return;
+        colorAttachment.resize(width, height);
+        depthBuffer.resize(width, height);
     }
 
     public void bind()
@@ -114,25 +122,27 @@ public class Framebuffer
             this.height = height;
             switch (internalFormat)
             {
-                case GL_RGBA8:
+                case GL_RGBA8 ->
+                {
                     format = GL_RGBA;
                     type = GL_UNSIGNED_BYTE;
-                    break;
-                case GL_RGBA16F:
+                }
+                case GL_RGBA16F ->
+                {
                     format = GL_RGBA;
                     type = GL_FLOAT;
-                    break;
-                case GL_RGB8:
+                }
+                case GL_RGB8 ->
+                {
                     format = GL_RGB;
                     type = GL_UNSIGNED_BYTE;
-                    break;
-                case GL_RGB16F:
+                }
+                case GL_RGB16F ->
+                {
                     format = GL_RGB;
                     type = GL_FLOAT;
-                    break;
-                default:
-                    MAIN_LOGGER.error("Unsupported format for color attachment!");
-                    break;
+                }
+                default -> Logger.error("Unsupported format for color attachment!");
             }
         }
 
@@ -152,7 +162,7 @@ public class Framebuffer
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
 
-        public void resize(int width, int height)
+        protected void resize(int width, int height)
         {
             this.width = width;
             this.height = height;
@@ -213,7 +223,7 @@ public class Framebuffer
         }
 
         @Override
-        public void resize(int width, int height)
+        protected void resize(int width, int height)
         {
             this.width = width;
             this.height = height;
@@ -267,7 +277,7 @@ public class Framebuffer
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
 
-        public void resize(int width, int height)
+        protected void resize(int width, int height)
         {
             this.width = width;
             this.height = height;
@@ -302,7 +312,7 @@ public class Framebuffer
         }
 
         @Override
-        public void resize(int width, int height)
+        protected void resize(int width, int height)
         {
             this.width = width;
             this.height = height;

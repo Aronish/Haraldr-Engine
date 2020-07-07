@@ -1,0 +1,23 @@
+{
+  "mesh": "default_meshes/sphere.obj",
+  "material":
+  {
+    "shader":
+    {
+      "type": "PBR",
+      "properties":
+      {
+        "textured": true,
+        "parallax_map": false
+      }
+    },
+    "properties":
+    {
+      "albedo": { "path": "default_textures/MetalSpottyDiscoloration001_COL_4K_METALNESS.jpg", "color": true },
+      "normal": { "path": "default_textures/MetalSpottyDiscoloration001_NRM_4K_METALNESS.jpg", "color": false },
+      "metalness": { "path": "default_textures/MetalSpottyDiscoloration001_METALNESS_4K_METALNESS.jpg", "color": false },
+      "roughness": { "path": "default_textures/MetalSpottyDiscoloration001_ROUGHNESS_4K_METALNESS.jpg", "color": false },
+      "environment_map": "default_hdris/NorwayForest_4K_hdri_sphere.hdr"
+    }
+  }
+}

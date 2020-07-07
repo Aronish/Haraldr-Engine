@@ -8,13 +8,13 @@ layout (location = 1) in vec3 a_Normal;
 layout (location = 2) in vec2 a_TextureCoordinate;
 layout (location = 3) in vec3 a_Tangent;
 
-uniform vec3 u_ViewPosition_W;
 uniform mat4 model = mat4(1.0f);
 
 layout (std140, binding = 0) uniform matrices
 {
     mat4 view;
     mat4 projection;
+    vec3 viewPosition_W;
 };
 
 out tangentSpaceLighting
@@ -26,7 +26,7 @@ out tangentSpaceLighting
 };
 
 out vec3 v_ViewPosition_T;
-out vec3 v_WorldPosition_T;
+out vec3 v_Position_WT;
 out vec2 v_TextureCoordinate;
 
 void main()
@@ -55,8 +55,8 @@ void main()
         directionalLightDirections[i] = TBN * directionalLights[i].direction.xyz;
     }
 
-    v_ViewPosition_T    = TBN * u_ViewPosition_W;
-    v_WorldPosition_T   = TBN * vec3((model * vec4(a_Position, 1.0f))); // Need to be translated as well.
+    v_ViewPosition_T    = TBN * viewPosition_W;
+    v_Position_WT   = TBN * vec3((model * vec4(a_Position, 1.0f))); // Need to be translated as well.
     v_TextureCoordinate = a_TextureCoordinate;                          // Not important for lighting, don't put in tangent space.
 
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
@@ -70,14 +70,6 @@ void main()
 const float AMBIENT_STRENGTH = 0.01f;
 const float DIFFUSE_STRENGTH = 1.0f;      //Just 1f I guess
 
-struct MaterialProperties
-{
-    float specularStrength;
-    float specularExponent;
-    float opacity;
-};
-
-/////INPUT AND UNIFORMS//////////////
 in tangentSpaceLighting
 {
     vec3 pointLightPositions[MAX_POINT_LIGHTS];
@@ -87,25 +79,34 @@ in tangentSpaceLighting
 };
 
 in vec3 v_ViewPosition_T;
-in vec3 v_WorldPosition_T;
+in vec3 v_Position_WT;
 in vec2 v_TextureCoordinate;
 
-/////MATERIAL////////////////////////////////////////
-layout(binding = 0) uniform sampler2D diffuseTexture;
-layout(binding = 1) uniform sampler2D normalMap;
-uniform MaterialProperties u_MaterialProperties;
-/////OUTPUT//////
+layout (std140, binding = 0) uniform matrices
+{
+    mat4 view;
+    mat4 projection;
+    vec3 viewPosition_W;
+};
+
+layout(binding = 0) uniform sampler2D map_0_Diffuse_Texture;
+layout(binding = 1) uniform sampler2D map_1_Normal_Map;
+
+uniform float u_Specular_Strength;
+uniform float u_Specular_Exponent;
+uniform float u_Opacity;
+
 out vec4 o_Color;
 
 #include "basic_lighting.glsl"
 
 void main()
 {
-    vec3 normal = normalize(texture(normalMap, v_TextureCoordinate).rgb * 2.0f - 1.0f); // Read normals
-    vec3 viewDirection = normalize(v_ViewPosition_T - v_WorldPosition_T);
+    vec3 normal = normalize(texture(map_1_Normal_Map, v_TextureCoordinate).rgb * 2.0f - 1.0f); // Read normals
+    vec3 viewDirection = normalize(v_ViewPosition_T - v_Position_WT);
     vec3 result = vec3(0.0f);
 
-    vec3 diffuseTextureColor = texture(diffuseTexture, v_TextureCoordinate).rgb;
+    vec3 diffuseTextureColor = texture(map_0_Diffuse_Texture, v_TextureCoordinate).rgb;
     vec3 ambientColor = AMBIENT_STRENGTH * diffuseTextureColor;
     vec3 diffuseColor = DIFFUSE_STRENGTH * diffuseTextureColor;
 
@@ -115,8 +116,8 @@ void main()
         result += calculatePointLight
         (
             pointLightPositions[i], pointLights[i].color.rgb, pointLights[i].constant, pointLights[i].linear, pointLights[i].quadratic,
-            ambientColor, diffuseColor, u_MaterialProperties.specularStrength, u_MaterialProperties.specularExponent,
-            normal, viewDirection, v_WorldPosition_T
+            ambientColor, diffuseColor, u_Specular_Strength, u_Specular_Exponent,
+            normal, viewDirection, v_Position_WT
         );
     }
     for (uint i = 0; i < numSpotlights; ++i)
@@ -124,8 +125,8 @@ void main()
         result += calculateSpotlight
         (
             spotlightPositions[i], spotlightDirections[i], spotlights[i].color.rgb, spotlights[i].innerCutoff, spotlights[i].outerCutoff,
-            ambientColor, diffuseColor, u_MaterialProperties.specularStrength, u_MaterialProperties.specularExponent,
-            normal, viewDirection, v_WorldPosition_T
+            ambientColor, diffuseColor, u_Specular_Strength, u_Specular_Exponent,
+            normal, viewDirection, v_Position_WT
         );
     }
 
@@ -134,10 +135,10 @@ void main()
         result += calculateDirectionalLight
         (
             directionalLightDirections[i], directionalLights[i].color.rgb,
-            ambientColor, diffuseColor, u_MaterialProperties.specularStrength, u_MaterialProperties.specularExponent,
-            normal, viewDirection, v_WorldPosition_T
+            ambientColor, diffuseColor, u_Specular_Strength, u_Specular_Exponent,
+            normal, viewDirection, v_Position_WT
         );
     }
 
-    o_Color = vec4(result, u_MaterialProperties.opacity);
+    o_Color = vec4(result, u_Opacity);
 }

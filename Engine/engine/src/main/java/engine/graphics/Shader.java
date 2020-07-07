@@ -1,5 +1,6 @@
 package engine.graphics;
 
+import engine.debug.Logger;
 import engine.main.ArrayUtils;
 import engine.main.EntryPoint;
 import engine.math.Matrix4f;
@@ -15,9 +16,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
+import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
+import static org.lwjgl.opengl.GL20.GL_VALIDATE_STATUS;
+import static org.lwjgl.opengl.GL20.glDeleteProgram;
+import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
+import static org.lwjgl.opengl.GL20.glGetProgramiv;
+import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
+import static org.lwjgl.opengl.GL20.glGetShaderiv;
+import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glUniform1f;
+import static org.lwjgl.opengl.GL20.glUniform1i;
+import static org.lwjgl.opengl.GL20.glUniform2f;
+import static org.lwjgl.opengl.GL20.glUniform3f;
+import static org.lwjgl.opengl.GL20.glUniform4f;
+import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL46.glAttachShader;
 import static org.lwjgl.opengl.GL46.glCompileShader;
 import static org.lwjgl.opengl.GL46.glCreateProgram;
@@ -31,18 +45,6 @@ import static org.lwjgl.opengl.GL46.glValidateProgram;
 @SuppressWarnings("unused")
 public class Shader
 {
-    //public static final Shader DEFAULT2D            = create("default_shaders/default2D.glsl");
-    //public static final Shader DIFFUSE              = create("default_shaders/diffuse.glsl");
-    //public static final Shader NORMAL               = create("default_shaders/normal.glsl");
-    public static final Shader LIGHT_SHADER         = create("default_shaders/simple_color.glsl");
-    //public static final Shader VISIBLE_NORMALS      = create("default_shaders/visible_normals.glsl");
-    //public static final Shader REFLECTIVE           = create("default_shaders/reflective.glsl");
-    //public static final Shader REFRACTIVE           = create("default_shaders/refractive.glsl");
-    //public static final Shader PBR_TEXTURED         = create("default_shaders/pbr_textured.glsl");
-    //public static final Shader PBR_UNTEXTURED       = create("default_shaders/pbr_untextured.glsl");
-    //public static final Shader UI                   = create("default_shaders/ui.glsl");
-    public static final Shader TEXT                 = create("default_shaders/text.glsl");
-
     private String path;
     private int programHandle;
     private List<InternalShader> internalShaders;
@@ -62,18 +64,18 @@ public class Shader
         }
     }
 
-    public static Shader createFromSource(String key, String source)
+    public static Shader createFromSource(String uniqueKey, String source, String... switches)
     {
-        if (ResourceManager.isShaderLoaded(key))
+        if (ResourceManager.isShaderLoaded(uniqueKey))
         {
-            return ResourceManager.getLoadedShader(key);
+            return ResourceManager.getLoadedShader(uniqueKey);
         }
         else
         {
-            List<InternalShader> internalShaders = ShaderParser.parseShaderSource(source);
+            List<InternalShader> internalShaders = ShaderParser.parseShaderSource(source, switches);
             internalShaders.forEach(InternalShader::compile);
             Shader shader = new Shader(internalShaders);
-            ResourceManager.addShader(key, shader);
+            ResourceManager.addShader(uniqueKey, shader);
             return shader;
         }
     }
@@ -82,7 +84,7 @@ public class Shader
     {
         this.path = path;
         compile();
-        if (EntryPoint.DEBUG) MAIN_LOGGER.info("Compiled shader " + path);
+        if (EntryPoint.DEBUG) Logger.info("Compiled shader " + path);
     }
 
     private Shader(@NotNull List<InternalShader> internalShaders)
@@ -111,7 +113,7 @@ public class Shader
                 glGetProgramiv(shaderProgram, GL_VALIDATE_STATUS, validateStatus);
                 if (linkStatus.get() == GL_FALSE || validateStatus.get() == GL_FALSE)
                 {
-                    MAIN_LOGGER.info(String.format("Program %d Info Log: %s", shaderProgram, glGetProgramInfoLog(shaderProgram)));
+                    Logger.error(String.format("Program %d Info Log: %s", shaderProgram, glGetProgramInfoLog(shaderProgram)));
                 }
             }
         }
@@ -251,7 +253,7 @@ public class Shader
                     glGetShaderiv(shader, GL_COMPILE_STATUS, compileStatus);
                     if (compileStatus.get() == GL_FALSE)
                     {
-                        MAIN_LOGGER.error(String.format("Shader %d Info Log: %s", shader, glGetShaderInfoLog(shader)));
+                        Logger.error(String.format("Shader %d Info Log: %s", shader, glGetShaderInfoLog(shader)));
                     }
                 }
             }

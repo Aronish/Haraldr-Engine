@@ -6,6 +6,7 @@ import engine.graphics.Shader;
 import engine.graphics.Texture;
 import engine.math.Vector3f;
 
+@Deprecated
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class PBRMaterial extends Material
 {
@@ -34,10 +35,10 @@ public class PBRMaterial extends Material
 
     public PBRMaterial(String albedo, String normalMap, String metallicMap, String roughnessMap, CubeMap environmentMap)
     {
-        this(ResourceManager.getTexture(albedo, true),
-             ResourceManager.getTexture(normalMap, false),
-             ResourceManager.getTexture(metallicMap, false),
-             ResourceManager.getTexture(roughnessMap, false),
+        this(Texture.create(albedo, true),
+             Texture.create(normalMap, false),
+             Texture.create(metallicMap, false),
+             Texture.create(roughnessMap, false),
              environmentMap
         );
     }
@@ -55,11 +56,11 @@ public class PBRMaterial extends Material
 
     public PBRMaterial(String albedo, String normalMap, String metallicMap, String roughnessMap, String displacementMap, CubeMap environmentMap)
     {
-        this(ResourceManager.getTexture(albedo, true),
-             ResourceManager.getTexture(normalMap, false),
-             ResourceManager.getTexture(metallicMap, false),
-             ResourceManager.getTexture(roughnessMap, false),
-             ResourceManager.getTexture(displacementMap, false),
+        this(Texture.create(albedo, true),
+             Texture.create(normalMap, false),
+             Texture.create(metallicMap, false),
+             Texture.create(roughnessMap, false),
+             Texture.create(displacementMap, false),
              environmentMap
         );
     }
@@ -79,11 +80,11 @@ public class PBRMaterial extends Material
 
     public PBRMaterial(String albedo, String normalMap, String metallicMap, String roughnessMap, String displacementMap, Vector3f color, float metallic, float roughness, CubeMap environmentMap)
     {
-        this(ResourceManager.getTexture(albedo, true),
-             ResourceManager.getTexture(normalMap, false),
-             ResourceManager.getTexture(metallicMap, false),
-             ResourceManager.getTexture(roughnessMap, false),
-             ResourceManager.getTexture(displacementMap, false),
+        this(Texture.create(albedo, true),
+             Texture.create(normalMap, false),
+             Texture.create(metallicMap, false),
+             Texture.create(roughnessMap, false),
+             Texture.create(displacementMap, false),
              color, metallic, roughness, environmentMap
          );
     }

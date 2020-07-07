@@ -5,6 +5,7 @@ import engine.graphics.ResourceManager;
 import engine.graphics.Shader;
 import engine.graphics.Texture;
 
+@Deprecated
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class ReflectiveMaterial extends Material
 {
@@ -18,7 +19,7 @@ public class ReflectiveMaterial extends Material
 
     public ReflectiveMaterial(String diffuseTexture, String reflectionMap, CubeMap environmentMap)
     {
-        this(ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(reflectionMap, false), environmentMap);
+        this(Texture.create(diffuseTexture, true), Texture.create(reflectionMap, false), environmentMap);
     }
 
     public ReflectiveMaterial(Texture diffuseTexture, Texture reflectionMap, CubeMap environmentMap)

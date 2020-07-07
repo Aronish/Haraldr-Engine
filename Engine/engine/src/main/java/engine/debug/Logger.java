@@ -1,109 +1,36 @@
 package engine.debug;
 
-import engine.math.Vector3f;
-import org.jetbrains.annotations.NotNull;
-
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * Logger with different log levels. Much nicer than println.
- */
+@SuppressWarnings("unused")
 public class Logger
 {
-    private LogLevel logLevel = LogLevel.INFO;
-    private String prefix;
+    public static LogLevel logLevel = LogLevel.INFO;
 
-    public Logger(String prefix)
+    public static <T> void info(T message)
     {
-        this.prefix = prefix;
+        if (LogLevel.INFO.compareTo(logLevel) <= 0) log(message, LogLevel.INFO);
     }
 
-    private void setInfoLevel()
+    public static <T> void warn(T message)
     {
-        logLevel = LogLevel.INFO;
+        if (LogLevel.WARN.compareTo(logLevel) <= 0) log(message, LogLevel.WARN);
+    }
+    public static <T> void error(T message)
+    {
+        log(message, LogLevel.ERROR);
     }
 
-    private void setWarningLevel()
+    private static <T> void log(T message, LogLevel logLevel)
     {
-        logLevel = LogLevel.WARNING;
+        System.out.println(String.format("%s [%s]: %s", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), logLevel, message));
     }
 
-    private void setErrorLevel()
+    public enum LogLevel
     {
-        logLevel = LogLevel.ERROR;
-    }
-
-    private void setFatalLevel()
-    {
-        logLevel = LogLevel.FATAL;
-    }
-
-    /**
-     * Logs a message as info.
-     * @param message the message to log. Accepts any type.
-     * @param <T> the type of the message.
-     */
-    public <T> void info(T message)
-    {
-        setInfoLevel();
-        log(message);
-    }
-
-    public void info(@NotNull Vector3f message)
-    {
-        setInfoLevel();
-        message.print();
-    }
-
-    @SafeVarargs //TODO: Possibly risky
-    public final <T> void info(@NotNull T... messages)
-    {
-        setInfoLevel();
-        for (T message : messages)
-        {
-            log(message + ", ");
-        }
-    }
-
-    /**
-     * Logs a message as a warning.
-     * @param message the message to log. Accepts any type.
-     * @param <T> the type of the message.
-     */
-    public <T> void warn(T message)
-    {
-        setWarningLevel();
-        log(message);
-    }
-
-    /**
-     * Logs an error message.
-     * @param message the message to log. Accepts any type.
-     * @param <T> the type of the message.
-     */
-    public <T> void error(T message)
-    {
-        setErrorLevel();
-        log(message);
-    }
-
-    public void fatal(@NotNull Exception exception) throws Exception
-    {
-        setFatalLevel();
-        throw exception;
-    }
-
-    private <T> void log(T message)
-    {
-        System.out.println(String.format("%s [%s] [%s]: %s", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), prefix, logLevel, message));
-    }
-
-    private enum LogLevel
-    {
-        FATAL,
         ERROR,
-        WARNING,
+        WARN,
         INFO
     }
 }

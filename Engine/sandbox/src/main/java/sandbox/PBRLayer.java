@@ -45,9 +45,8 @@ public class PBRLayer extends Layer
             Matrix4f.identity().rotate(Vector3f.UP, 180f).scale(new Vector3f(0.8f))
     );
 
-    public PBRLayer(String name)
+    public PBRLayer()
     {
-        super(name);
         SceneLights sl = new SceneLights();
         sl.addLight(l1);
         sl.addLight(l2);

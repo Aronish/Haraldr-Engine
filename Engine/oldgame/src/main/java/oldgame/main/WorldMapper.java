@@ -1,6 +1,6 @@
 package oldgame.main;
 
-import engine.main.Application;
+import engine.debug.Logger;
 import engine.main.EntryPoint;
 import oldgame.gameobject.tile.Tile;
 import oldgame.gameobject.tile.TileTree;
@@ -78,6 +78,6 @@ class WorldMapper
         {
             e.printStackTrace();
         }
-        Application.MAIN_LOGGER.info("Map Complete!");
+        Logger.info("Map Complete!");
     }
 }

@@ -58,6 +58,7 @@ void main()
 #shader frag
 #version 460 core
 
+#switches
 #include "light_setup.glsl"
 
 in vec3 v_Normal_W;
@@ -87,13 +88,15 @@ layout (binding = 3) uniform sampler2D map_3_Albedo;
 layout (binding = 4) uniform sampler2D map_4_Normal;
 layout (binding = 5) uniform sampler2D map_5_Metalness;
 layout (binding = 6) uniform sampler2D map_6_Roughness;
-layout (binding = 7) uniform sampler2D masp_7_Displacement;
-uniform bool u_UseParallaxMapping = false;
+#ifdef PARALLAX_MAP
+layout (binding = 7) uniform sampler2D map_7_Displacement;
+#endif
 
 out vec4 o_Color;
 
 #include "cook_torrance.glsl"
 
+#ifdef PARALLAX_MAP
 vec2 ParallaxMapping(vec2 textureCoordinate, vec3 viewDirection)
 {
     const float heightScale = 0.05f;
@@ -107,31 +110,36 @@ vec2 ParallaxMapping(vec2 textureCoordinate, vec3 viewDirection)
     vec2 deltaTextureCoordinate = P / numLayers;
 
     vec2 currentTextureCoordinate = textureCoordinate;
-    float currentDisplacementMapValue = 1.0f - texture(masp_7_Displacement, currentTextureCoordinate).r;
+    float currentDisplacementMapValue = 1.0f - texture(map_7_Displacement, currentTextureCoordinate).r;
 
     while (currentLayerDepth < currentDisplacementMapValue)
     {
         currentTextureCoordinate -= deltaTextureCoordinate;
-        currentDisplacementMapValue = 1.0f - texture(masp_7_Displacement, currentTextureCoordinate).r;
+        currentDisplacementMapValue = 1.0f - texture(map_7_Displacement, currentTextureCoordinate).r;
         currentLayerDepth += layerDepth;
     }
 
     vec2 prevTextureCoordinate = currentTextureCoordinate + deltaTextureCoordinate;
     float displacementAfter = currentDisplacementMapValue - currentLayerDepth;
-    float displacementBefore = 1.0f - texture(masp_7_Displacement, prevTextureCoordinate).r - currentLayerDepth + layerDepth;
+    float displacementBefore = 1.0f - texture(map_7_Displacement, prevTextureCoordinate).r - currentLayerDepth + layerDepth;
     float weight = displacementAfter / (displacementAfter - displacementBefore);
     vec2 finalTextureCoordinate = prevTextureCoordinate * weight + currentTextureCoordinate * (1.0f - weight);
 
     return finalTextureCoordinate;
 }
+#endif
 
 void main()
 {
     float tilingFactor = 1.0f; //TODO: Make uniform
     vec3 V = normalize(v_ViewPosition_T - v_WorldPosition_T);
 
-    vec2 textureCoordinate = u_UseParallaxMapping ? ParallaxMapping(v_TextureCoordinate * tilingFactor, V) : v_TextureCoordinate * tilingFactor;
-    if(u_UseParallaxMapping && (textureCoordinate.x > tilingFactor || textureCoordinate.y > tilingFactor || textureCoordinate.x < 0.0f || textureCoordinate.y < 0.0f)) discard;
+#ifdef PARALLAX_MAP
+    vec2 textureCoordinate = ParallaxMapping(v_TextureCoordinate * tilingFactor, V);
+    if(textureCoordinate.x > tilingFactor || textureCoordinate.y > tilingFactor || textureCoordinate.x < 0.0f || textureCoordinate.y < 0.0f) discard;
+#else
+    vec2 textureCoordinate = v_TextureCoordinate * tilingFactor;
+#endif
 
     vec3 albedo = texture(map_3_Albedo, textureCoordinate).rgb;
     vec3 normal_T = normalize(texture(map_4_Normal, textureCoordinate).rgb * 2.0f - 1.0f);

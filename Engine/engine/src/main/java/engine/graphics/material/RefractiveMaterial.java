@@ -7,6 +7,7 @@ import engine.graphics.Texture;
 
 import java.util.Objects;
 
+@Deprecated
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class RefractiveMaterial extends Material
 {
@@ -26,7 +27,7 @@ public class RefractiveMaterial extends Material
 
     public RefractiveMaterial(String diffuseTexture, String refractionMap, CubeMap environmentMap)
     {
-        this(ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(refractionMap, false), 1f / 1.52f, environmentMap);
+        this(Texture.create(diffuseTexture, true), Texture.create(refractionMap, false), 1f / 1.52f, environmentMap);
     }
 
     public RefractiveMaterial(Texture diffuseTexture, Texture refractionMap, CubeMap environmentMap)
@@ -36,7 +37,7 @@ public class RefractiveMaterial extends Material
 
     public RefractiveMaterial(String diffuseTexture, String refractionMap, CubeMap environmentMap, float refractiveRatio)
     {
-        this(ResourceManager.getTexture(diffuseTexture, true), ResourceManager.getTexture(refractionMap, false), refractiveRatio, environmentMap);
+        this(Texture.create(diffuseTexture, true), Texture.create(refractionMap, false), refractiveRatio, environmentMap);
     }
 
     public RefractiveMaterial(Texture diffuseTexture, Texture refractionMap, float refractiveRatio, CubeMap environmentMap)

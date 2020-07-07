@@ -15,7 +15,8 @@ package engine.math;
  * Stefan Gustavson. You may use it as you see fit, but
  * attribution is appreciated.
  */
-public class SimplexNoise {// Simplex noise in 2D, 3D and 4D
+public class SimplexNoise
+{// Simplex noise in 2D, 3D and 4D
 
     private static Grad[] grad3 = {
             new Grad(1, 1, 0), new Grad(-1, 1, 0), new Grad(1, -1, 0), new Grad(-1, -1, 0),
@@ -53,8 +54,10 @@ public class SimplexNoise {// Simplex noise in 2D, 3D and 4D
     private static short[] perm = new short[512];
     private static short[] permMod12 = new short[512];
 
-    static {
-        for (int i = 0; i < 512; i++) {
+    static
+    {
+        for (int i = 0; i < 512; i++)
+        {
             perm[i] = p[i & 255];
             permMod12[i] = (short) (perm[i] % 12);
         }
@@ -69,25 +72,30 @@ public class SimplexNoise {// Simplex noise in 2D, 3D and 4D
     private static final double G4 = (5.0 - Math.sqrt(5.0)) / 20.0;
 
     // This method is a *lot* faster than using (int)Math.floor(x)
-    private static int fastFloor(double x) {
+    private static int fastFloor(double x)
+    {
         int xi = (int) x;
         return x < xi ? xi - 1 : xi;
     }
 
-    private static double dot(Grad g, double x, double y) {
+    private static double dot(Grad g, double x, double y)
+    {
         return g.x * x + g.y * y;
     }
 
-    private static double dot(Grad g, double x, double y, double z) {
+    private static double dot(Grad g, double x, double y, double z)
+    {
         return g.x * x + g.y * y + g.z * z;
     }
 
-    private static double dot(Grad g, double x, double y, double z, double w) {
+    private static double dot(Grad g, double x, double y, double z, double w)
+    {
         return g.x * x + g.y * y + g.z * z + g.w * w;
     }
 
     // 2D simplex noise
-    public static double noise(double xin, double yin) {
+    public static double noise(double xin, double yin)
+    {
         double n0, n1, n2; // Noise contributions from the three corners
         // Skew the input space to determine which simplex cell we're in
         double s = (xin + yin) * F2; // Hairy factor for 2D
@@ -101,11 +109,13 @@ public class SimplexNoise {// Simplex noise in 2D, 3D and 4D
         // For the 2D case, the simplex shape is an equilateral triangle.
         // Determine which simplex we are in.
         int i1, j1; // Offsets for second (middle) corner of simplex in (i,j) coords
-        if (x0 > y0) {
+        if (x0 > y0)
+        {
             i1 = 1;
             j1 = 0;
         } // lower triangle, XY order: (0,0)->(1,0)->(1,1)
-        else {
+        else
+        {
             i1 = 0;
             j1 = 1;
         }      // upper triangle, YX order: (0,0)->(0,1)->(1,1)
@@ -125,19 +135,22 @@ public class SimplexNoise {// Simplex noise in 2D, 3D and 4D
         // Calculate the contribution from the three corners
         double t0 = 0.5 - x0 * x0 - y0 * y0;
         if (t0 < 0) n0 = 0.0;
-        else {
+        else
+        {
             t0 *= t0;
             n0 = t0 * t0 * dot(grad3[gi0], x0, y0);  // (x,y) of grad3 used for 2D gradient
         }
         double t1 = 0.5 - x1 * x1 - y1 * y1;
         if (t1 < 0) n1 = 0.0;
-        else {
+        else
+        {
             t1 *= t1;
             n1 = t1 * t1 * dot(grad3[gi1], x1, y1);
         }
         double t2 = 0.5 - x2 * x2 - y2 * y2;
         if (t2 < 0) n2 = 0.0;
-        else {
+        else
+        {
             t2 *= t2;
             n2 = t2 * t2 * dot(grad3[gi2], x2, y2);
         }
@@ -148,7 +161,8 @@ public class SimplexNoise {// Simplex noise in 2D, 3D and 4D
 
 
     // 3D simplex noise
-    public static double noise(double xin, double yin, double zin) {
+    public static double noise(double xin, double yin, double zin)
+    {
         double n0, n1, n2, n3; // Noise contributions from the four corners
         // Skew the input space to determine which simplex cell we're in
         double s = (xin + yin + zin) * F3; // Very nice and simple skew factor for 3D
@@ -166,8 +180,10 @@ public class SimplexNoise {// Simplex noise in 2D, 3D and 4D
         // Determine which simplex we are in.
         int i1, j1, k1; // Offsets for second corner of simplex in (i,j,k) coords
         int i2, j2, k2; // Offsets for third corner of simplex in (i,j,k) coords
-        if (x0 >= y0) {
-            if (y0 >= z0) {
+        if (x0 >= y0)
+        {
+            if (y0 >= z0)
+            {
                 i1 = 1;
                 j1 = 0;
                 k1 = 0;
@@ -175,7 +191,8 @@ public class SimplexNoise {// Simplex noise in 2D, 3D and 4D
                 j2 = 1;
                 k2 = 0;
             } // X Y Z order
-            else if (x0 >= z0) {
+            else if (x0 >= z0)
+            {
                 i1 = 1;
                 j1 = 0;
                 k1 = 0;
@@ -183,7 +200,8 @@ public class SimplexNoise {// Simplex noise in 2D, 3D and 4D
                 j2 = 0;
                 k2 = 1;
             } // X Z Y order
-            else {
+            else
+            {
                 i1 = 0;
                 j1 = 0;
                 k1 = 1;
@@ -191,8 +209,10 @@ public class SimplexNoise {// Simplex noise in 2D, 3D and 4D
                 j2 = 0;
                 k2 = 1;
             } // Z X Y order
-        } else { // x0<y0
-            if (y0 < z0) {
+        } else
+        { // x0<y0
+            if (y0 < z0)
+            {
                 i1 = 0;
                 j1 = 0;
                 k1 = 1;
@@ -200,7 +220,8 @@ public class SimplexNoise {// Simplex noise in 2D, 3D and 4D
                 j2 = 1;
                 k2 = 1;
             } // Z Y X order
-            else if (x0 < z0) {
+            else if (x0 < z0)
+            {
                 i1 = 0;
                 j1 = 1;
                 k1 = 0;
@@ -208,7 +229,8 @@ public class SimplexNoise {// Simplex noise in 2D, 3D and 4D
                 j2 = 1;
                 k2 = 1;
             } // Y Z X order
-            else {
+            else
+            {
                 i1 = 0;
                 j1 = 1;
                 k1 = 0;
@@ -241,25 +263,29 @@ public class SimplexNoise {// Simplex noise in 2D, 3D and 4D
         // Calculate the contribution from the four corners
         double t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0;
         if (t0 < 0) n0 = 0.0;
-        else {
+        else
+        {
             t0 *= t0;
             n0 = t0 * t0 * dot(grad3[gi0], x0, y0, z0);
         }
         double t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1;
         if (t1 < 0) n1 = 0.0;
-        else {
+        else
+        {
             t1 *= t1;
             n1 = t1 * t1 * dot(grad3[gi1], x1, y1, z1);
         }
         double t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2;
         if (t2 < 0) n2 = 0.0;
-        else {
+        else
+        {
             t2 *= t2;
             n2 = t2 * t2 * dot(grad3[gi2], x2, y2, z2);
         }
         double t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3;
         if (t3 < 0) n3 = 0.0;
-        else {
+        else
+        {
             t3 *= t3;
             n3 = t3 * t3 * dot(grad3[gi3], x3, y3, z3);
         }
@@ -270,7 +296,8 @@ public class SimplexNoise {// Simplex noise in 2D, 3D and 4D
 
 
     // 4D simplex noise, better simplex rank ordering method 2012-03-09
-    public static double noise(double x, double y, double z, double w) {
+    public static double noise(double x, double y, double z, double w)
+    {
         double n0, n1, n2, n3, n4; // Noise contributions from the five corners
         // Skew the (x,y,z,w) space to determine which cell of 24 simplices we're in
         double s = (x + y + z + w) * F4; // Factor for 4D skewing
@@ -360,31 +387,36 @@ public class SimplexNoise {// Simplex noise in 2D, 3D and 4D
         // Calculate the contribution from the five corners
         double t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
         if (t0 < 0) n0 = 0.0;
-        else {
+        else
+        {
             t0 *= t0;
             n0 = t0 * t0 * dot(grad4[gi0], x0, y0, z0, w0);
         }
         double t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
         if (t1 < 0) n1 = 0.0;
-        else {
+        else
+        {
             t1 *= t1;
             n1 = t1 * t1 * dot(grad4[gi1], x1, y1, z1, w1);
         }
         double t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
         if (t2 < 0) n2 = 0.0;
-        else {
+        else
+        {
             t2 *= t2;
             n2 = t2 * t2 * dot(grad4[gi2], x2, y2, z2, w2);
         }
         double t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
         if (t3 < 0) n3 = 0.0;
-        else {
+        else
+        {
             t3 *= t3;
             n3 = t3 * t3 * dot(grad4[gi3], x3, y3, z3, w3);
         }
         double t4 = 0.6 - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
         if (t4 < 0) n4 = 0.0;
-        else {
+        else
+        {
             t4 *= t4;
             n4 = t4 * t4 * dot(grad4[gi4], x4, y4, z4, w4);
         }
@@ -394,16 +426,19 @@ public class SimplexNoise {// Simplex noise in 2D, 3D and 4D
 
     // Inner class to speed upp gradient computations
     // (array access is a lot slower than member access)
-    private static class Grad {
+    private static class Grad
+    {
         double x, y, z, w;
 
-        Grad(double x, double y, double z) {
+        Grad(double x, double y, double z)
+        {
             this.x = x;
             this.y = y;
             this.z = z;
         }
 
-        Grad(double x, double y, double z, double w) {
+        Grad(double x, double y, double z, double w)
+        {
             this.x = x;
             this.y = y;
             this.z = z;

@@ -3,6 +3,7 @@ package engine.graphics;
 import engine.graphics.material.Material;
 import engine.math.Matrix4f;
 
+@Deprecated
 @SuppressWarnings("unused")
 public class Model
 {

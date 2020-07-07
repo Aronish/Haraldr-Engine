@@ -1,5 +1,6 @@
 package engine.graphics;
 
+import engine.debug.Logger;
 import engine.main.Application;
 import engine.main.EntryPoint;
 import engine.main.IOUtils;
@@ -13,7 +14,6 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_BACK;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
@@ -66,10 +66,10 @@ import static org.lwjgl.opengl.GL45.glBindTextureUnit;
 //TODO: Maybe clean up.
 public class CubeMap
 {
-    private static final Shader MAP_DIFFUSE_IRRADIANCE  = Shader.create("default_shaders/map_diffuse_irradiance.glsl");
-    private static final Shader PREFILTER_CONVOLUTION   = Shader.create("default_shaders/prefilter_convolution.glsl");
-    private static final Shader MAP_CUBEMAP             = Shader.create("default_shaders/map_cubemap.glsl");
-    private static final Shader CUBEMAP                 = Shader.create("default_shaders/cubemap.glsl");
+    private static final Shader MAP_DIFFUSE_IRRADIANCE  = Shader.create("internal_shaders/map_diffuse_irradiance.glsl");
+    private static final Shader PREFILTER_CONVOLUTION   = Shader.create("internal_shaders/prefilter_convolution.glsl");
+    private static final Shader MAP_CUBEMAP             = Shader.create("internal_shaders/map_cubemap.glsl");
+    private static final Shader CUBEMAP                 = Shader.create("default_shaders/skybox.glsl");
     private int cubeMapId;
 
     private CubeMap(int cubeMapId)
@@ -123,7 +123,7 @@ public class CubeMap
                 width1 = width.get();
                 size = height.get();
                 if (EntryPoint.DEBUG)
-                    MAIN_LOGGER.info(String.format("Loaded HDR %s | Width: %d, Height: %d, Components: %d", path, width1, size, comps.get()));
+                    Logger.info(String.format("Loaded HDR %s | Width: %d, Height: %d, Components: %d", path, width1, size, comps.get()));
             }
             assert image != null : "Image was somehow null here!";
             int texture = glGenTextures();
@@ -227,7 +227,7 @@ public class CubeMap
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderBuffer);
         if (EntryPoint.DEBUG)
         {
-            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) MAIN_LOGGER.error("Cube map mapping framebuffer INCOMPLETE!");
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) Logger.error("Cube map mapping framebuffer INCOMPLETE!");
         }
 
         //Allocating memory for cubemap

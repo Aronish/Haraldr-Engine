@@ -1,5 +1,6 @@
 package engine.graphics;
 
+import engine.debug.Logger;
 import engine.main.Application;
 import engine.main.EntryPoint;
 import engine.main.IOUtils;
@@ -10,7 +11,6 @@ import org.lwjgl.system.MemoryStack;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import static engine.main.Application.MAIN_LOGGER;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
@@ -62,10 +62,10 @@ import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
 import static org.lwjgl.opengl.GL45.glBindTextureUnit;
 import static org.lwjgl.opengl.GL45.glCreateTextures;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class Texture
 {
-    private static final Shader BRDF_CONVOLUTION = Shader.create("default_shaders/brdf_convolution.glsl");
+    private static final Shader BRDF_CONVOLUTION = Shader.create("internal_shaders/brdf_convolution.glsl");
 
     public static final Texture DEFAULT_WHITE = new Texture(1, 1, new int[] { -1 });
     public static final Texture DEFAULT_BLACK = new Texture(1, 1, new int[] { 0 });
@@ -87,19 +87,20 @@ public class Texture
 
     public static Texture create(String path, boolean isColorData)
     {
-        if (ResourceManager.isTextureLoaded(path))
+        String key = path + isColorData;
+        if (ResourceManager.isTextureLoaded(key))
         {
-            return ResourceManager.getLoadedTexture(path);
+            return ResourceManager.getLoadedTexture(key);
         }
         else
         {
-            Texture texture = loadTest(path, isColorData);
-            ResourceManager.addTexture(path, texture);
+            Texture texture = load(path, isColorData);
+            ResourceManager.addTexture(key, texture);
             return texture;
         }
     }
 
-    private static @NotNull Texture loadTest(String path, boolean isColorData)
+    private static @NotNull Texture load(String path, boolean isColorData)
     {
         Texture result = new Texture();
 
@@ -118,26 +119,26 @@ public class Texture
             result.width = width.get();
             result.height = height.get();
             int components = comps.get();
-            if (EntryPoint.DEBUG) MAIN_LOGGER.info(String.format("Loaded texture %s | Width: %d, Height: %d, Components: %d", path, result.width, result.height, components));
+            if (EntryPoint.DEBUG) Logger.info(String.format("Loaded texture %s | Width: %d, Height: %d, Components: %d", path, result.width, result.height, components));
             switch (components)
             {
-                case 1:
+                case 1 -> {
                     internalFormat = GL_RED;
                     format = GL_RED;
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     internalFormat = isColorData ? GL_SRGB8 : GL_RGB8;
                     format = GL_RGB;
-                    break;
-                case 4:
+                }
+                case 4 -> {
                     internalFormat = isColorData ? GL_SRGB8_ALPHA8 : GL_RGBA8;
                     format = GL_RGBA;
-                    break;
-                default:
-                    MAIN_LOGGER.error("Image format not supported!");
+                }
+                default -> {
+                    Logger.error("Image format not supported!");
                     internalFormat = GL_SRGB8_ALPHA8;
                     format = GL_RGBA;
-                    break;
+                }
             }
         }
         assert image != null : "Image was somehow null here!";
@@ -204,7 +205,7 @@ public class Texture
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderBuffer);
         if (EntryPoint.DEBUG)
         {
-            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) MAIN_LOGGER.error("Cube map mapping framebuffer INCOMPLETE!");
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) Logger.error("Cube map mapping framebuffer INCOMPLETE!");
         }
 
         int brdf = glCreateTextures(GL_TEXTURE_2D);

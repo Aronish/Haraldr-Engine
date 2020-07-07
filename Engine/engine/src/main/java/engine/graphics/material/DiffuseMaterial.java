@@ -1,10 +1,10 @@
 package engine.graphics.material;
 
-import engine.graphics.ResourceManager;
 import engine.graphics.Shader;
 import engine.graphics.Texture;
 import engine.math.Vector3f;
 
+@Deprecated
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class DiffuseMaterial extends Material
 {
@@ -63,7 +63,7 @@ public class DiffuseMaterial extends Material
 
     public DiffuseMaterial(String diffuseTexture)
     {
-        this(ResourceManager.getTexture(diffuseTexture, true));
+        this(Texture.create(diffuseTexture, true));
     }
 
     public DiffuseMaterial(Texture diffuseTexture)
@@ -74,7 +74,7 @@ public class DiffuseMaterial extends Material
 
     public DiffuseMaterial(String diffuseTexture, float diffuseStrength, float specularStrength, float specularExponent, float opacity)
     {
-        this(ResourceManager.getTexture(diffuseTexture, true), diffuseStrength, specularStrength, specularExponent, opacity);
+        this(Texture.create(diffuseTexture, true), diffuseStrength, specularStrength, specularExponent, opacity);
     }
 
     public DiffuseMaterial(Texture diffuseTexture, float diffuseStrength, float specularStrength, float specularExponent, float opacity)

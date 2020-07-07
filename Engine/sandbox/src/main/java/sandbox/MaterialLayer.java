@@ -1,7 +1,8 @@
 package sandbox;
 
-import engine.JsonModel;
+import engine.graphics.JsonModel;
 import engine.event.Event;
+import engine.event.EventType;
 import engine.graphics.CubeMap;
 import engine.graphics.Renderer3D;
 import engine.graphics.lighting.PointLight;
@@ -20,15 +21,10 @@ public class MaterialLayer extends Layer
     private float interpolation;
 
     private CubeMap environmentMap = CubeMap.createEnvironmentMap("default_hdris/NorwayForest_4K_hdri_sphere.hdr");
-    private CubeMap diffIrr = CubeMap.createDiffuseIrradianceMap(environmentMap);
-    private CubeMap pref = CubeMap.createPrefilteredEnvironmentMap(environmentMap);
-    //private Model model2 = new Model("default_models/temp.json");
+    private JsonModel model = new JsonModel("default_models/test.json", Matrix4f.identity().rotate(new Vector3f(1f, 0f, 0f), 90f));
 
-    private JsonModel model = new JsonModel("default_models/textured.json", Matrix4f.identity().rotate(Vector3f.UP, 180f));
-
-    public MaterialLayer(String name)
+    public MaterialLayer()
     {
-        super(name);
         SceneLights sl = new SceneLights();
         sl.addLight(l1);
         Renderer3D.setSceneLights(sl);
@@ -37,25 +33,29 @@ public class MaterialLayer extends Layer
     @Override
     public void onEvent(Window window, @NotNull Event event)
     {
-        //if (event.eventType == EventType.KEY_PRESSED)
-        //{
-        //    if (Input.wasKey(event, Key.KEY_R)) model.reload();
-        //}
+        if (event.eventType == EventType.KEY_PRESSED)
+        {
+            if (Input.wasKey(event, Key.KEY_R))
+            {
+                model.refresh();
+            }
+        }
     }
 
     @Override
     public void onUpdate(Window window, float deltaTime)
     {
+        if (Input.isKeyPressed(window, Key.KEY_UP))     Renderer3D.addExposure(1f * deltaTime);
+        if (Input.isKeyPressed(window, Key.KEY_DOWN))   Renderer3D.addExposure(-1f * deltaTime);
         if (Input.isKeyPressed(window, Key.KEY_KP_7))   interpolation += 1f * deltaTime;
         if (Input.isKeyPressed(window, Key.KEY_KP_9))   interpolation -= 1f * deltaTime;
-        l1.setPosition(new Vector3f(Math.sin(interpolation) * 0.3f, 0f, Math.cos(interpolation)));
+        l1.setPosition(new Vector3f(Math.sin(interpolation) * 3, 0f, Math.cos(interpolation) * 1.5f));
     }
 
     @Override
     public void onRender()
     {
-        model.render(diffIrr, pref);
-        //model2.render();
+        model.render();
         l1.render();
         environmentMap.renderSkyBox();
     }

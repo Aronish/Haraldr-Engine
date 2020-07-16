@@ -27,7 +27,7 @@ void main()
 #switches
 
 #ifdef TEXTURED
-layout (binding = 0) uniform sampler2D map_0_Texture;
+layout (binding = 0) uniform sampler2D map_Texture;
 #else
 uniform vec3 u_Color;
 #endif
@@ -40,7 +40,7 @@ out vec4 o_Color;
 void main()
 {
 #ifdef TEXTURED
-    o_Color = vec4(texture(map_0_Texture, v_TextureCoordinate).rgb, u_Opacity);
+    o_Color = vec4(texture(map_Texture, v_TextureCoordinate).rgb, u_Opacity);
 #else
     o_Color = vec4(u_Color, u_Opacity);
 #endif

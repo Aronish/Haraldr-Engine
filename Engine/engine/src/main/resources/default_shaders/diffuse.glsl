@@ -48,7 +48,7 @@ layout (std140, binding = 0) uniform matrices
 };
 
 #ifdef TEXTURED
-layout(location = 0) uniform sampler2D map_0_Diffuse_Texture;
+layout(location = 0) uniform sampler2D map_Diffuse_Texture;
 #else
 uniform vec3 u_Diffuse_Color;
 #endif
@@ -68,7 +68,7 @@ void main()
     vec3 result;
 
 #ifdef TEXTURED
-    vec3 diffuseTextureColor = texture(map_0_Diffuse_Texture, v_TextureCoordinate).rgb;
+    vec3 diffuseTextureColor = texture(map_Diffuse_Texture, v_TextureCoordinate).rgb;
     vec3 ambientColor = AMBIENT_STRENGTH  * diffuseTextureColor;
     vec3 diffuseColor = u_Diffuse_Strength * diffuseTextureColor;
 #else

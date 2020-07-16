@@ -42,7 +42,7 @@ layout (std140, binding = 0) uniform matrices
     vec3 viewPosition_W;
 };
 
-uniform vec3 u_Albedo;
+uniform vec3 u_Color;
 uniform float u_Metalness;
 uniform float u_Roughness;
 
@@ -60,7 +60,7 @@ void main()
     vec3 normal = normalize(v_Normal_W);
 
     vec3 F0 = vec3(0.04f);
-    F0 = mix(F0, u_Albedo, u_Metalness);
+    F0 = mix(F0, u_Color, u_Metalness);
 
     vec3 Lo = vec3(0.0f);
     //////////Direct lighting////////////////
@@ -84,14 +84,14 @@ void main()
         kD *= 1.0f - u_Metalness;
 
         float NdotL = max(dot(normal, L), 0.0f);
-        Lo += (kD * u_Albedo / PI + specular) * radiance * NdotL;
+        Lo += (kD * u_Color / PI + specular) * radiance * NdotL;
     }
     //////////Indirect Lighting//////////////////////////////////////////////////
     /////IBL Ambient/////////////////////////////////////////////////////////////
     vec3 kS = fresnelSchlickRoughness(max(dot(normal, V), 0.0f), F0, u_Roughness);
     vec3 kD = (1.0f - kS) * (1.0f - u_Metalness);
     vec3 irradiance = texture(c_DiffuseIrradianceMap, normal).rgb;
-    vec3 diffuse = irradiance * u_Albedo;
+    vec3 diffuse = irradiance * u_Color;
     /////IBL Specular/////////////////////
     const float MAX_REFLECTION_LOD = 4.0f;
     vec3 R = reflect(-V, normal);

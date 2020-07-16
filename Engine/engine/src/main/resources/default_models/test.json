@@ -1,22 +1,15 @@
 {
-  "mesh": "default_meshes/sphere.obj",
+  "mesh": "default_meshes/suzanne.obj",
   "material":
   {
     "shader":
     {
-      "type": "PBR",
-      "properties":
-      {
-        "textured": false,
-        "parallax_map": false
-      }
+      "type": "UNLIT"
     },
     "properties":
     {
-      "albedo": [ 0.8, 0.8, 0.3 ],
-      "metalness": 1.0,
-      "roughness": 0.1,
-      "environment_map": "default_hdris/wooden_lounge_4k.hdr"
+      "color": [1.0, 0.0,0.0],
+      "opacity": 1.0
     }
   }
 }

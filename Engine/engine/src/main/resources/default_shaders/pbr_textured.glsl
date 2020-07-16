@@ -84,12 +84,12 @@ layout (binding = 0) uniform samplerCube c_DiffuseIrradianceMap;
 layout (binding = 1) uniform samplerCube c_PrefilteredMap;
 layout (binding = 2) uniform sampler2D BRDFLUT;
 
-layout (binding = 3) uniform sampler2D map_3_Albedo;
-layout (binding = 4) uniform sampler2D map_4_Normal;
-layout (binding = 5) uniform sampler2D map_5_Metalness;
-layout (binding = 6) uniform sampler2D map_6_Roughness;
+layout (binding = 3) uniform sampler2D map_Albedo;
+layout (binding = 4) uniform sampler2D map_Normal;
+layout (binding = 5) uniform sampler2D map_Metalness;
+layout (binding = 6) uniform sampler2D map_Roughness;
 #ifdef PARALLAX_MAP
-layout (binding = 7) uniform sampler2D map_7_Displacement;
+layout (binding = 7) uniform sampler2D map_Displacement;
 #endif
 
 out vec4 o_Color;
@@ -110,18 +110,18 @@ vec2 ParallaxMapping(vec2 textureCoordinate, vec3 viewDirection)
     vec2 deltaTextureCoordinate = P / numLayers;
 
     vec2 currentTextureCoordinate = textureCoordinate;
-    float currentDisplacementMapValue = 1.0f - texture(map_7_Displacement, currentTextureCoordinate).r;
+    float currentDisplacementMapValue = 1.0f - texture(map_Displacement, currentTextureCoordinate).r;
 
     while (currentLayerDepth < currentDisplacementMapValue)
     {
         currentTextureCoordinate -= deltaTextureCoordinate;
-        currentDisplacementMapValue = 1.0f - texture(map_7_Displacement, currentTextureCoordinate).r;
+        currentDisplacementMapValue = 1.0f - texture(map_Displacement, currentTextureCoordinate).r;
         currentLayerDepth += layerDepth;
     }
 
     vec2 prevTextureCoordinate = currentTextureCoordinate + deltaTextureCoordinate;
     float displacementAfter = currentDisplacementMapValue - currentLayerDepth;
-    float displacementBefore = 1.0f - texture(map_7_Displacement, prevTextureCoordinate).r - currentLayerDepth + layerDepth;
+    float displacementBefore = 1.0f - texture(map_Displacement, prevTextureCoordinate).r - currentLayerDepth + layerDepth;
     float weight = displacementAfter / (displacementAfter - displacementBefore);
     vec2 finalTextureCoordinate = prevTextureCoordinate * weight + currentTextureCoordinate * (1.0f - weight);
 
@@ -141,10 +141,10 @@ void main()
     vec2 textureCoordinate = v_TextureCoordinate * tilingFactor;
 #endif
 
-    vec3 albedo = texture(map_3_Albedo, textureCoordinate).rgb;
-    vec3 normal_T = normalize(texture(map_4_Normal, textureCoordinate).rgb * 2.0f - 1.0f);
-    float metallic = texture(map_5_Metalness, textureCoordinate).r;
-    float roughness = texture(map_6_Roughness, textureCoordinate).r;
+    vec3 albedo = texture(map_Albedo, textureCoordinate).rgb;
+    vec3 normal_T = normalize(texture(map_Normal, textureCoordinate).rgb * 2.0f - 1.0f);
+    float metallic = texture(map_Metalness, textureCoordinate).r;
+    float roughness = texture(map_Roughness, textureCoordinate).r;
 
     vec3 F0 = vec3(0.04f);
     F0 = mix(F0, albedo, metallic);

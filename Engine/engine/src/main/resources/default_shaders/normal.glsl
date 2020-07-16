@@ -89,8 +89,8 @@ layout (std140, binding = 0) uniform matrices
     vec3 viewPosition_W;
 };
 
-layout(binding = 0) uniform sampler2D map_0_Diffuse_Texture;
-layout(binding = 1) uniform sampler2D map_1_Normal_Map;
+layout(binding = 0) uniform sampler2D map_Diffuse_Texture;
+layout(binding = 1) uniform sampler2D map_Normal_Map;
 
 uniform float u_Specular_Strength;
 uniform float u_Specular_Exponent;
@@ -102,11 +102,11 @@ out vec4 o_Color;
 
 void main()
 {
-    vec3 normal = normalize(texture(map_1_Normal_Map, v_TextureCoordinate).rgb * 2.0f - 1.0f); // Read normals
+    vec3 normal = normalize(texture(map_Normal_Map, v_TextureCoordinate).rgb * 2.0f - 1.0f); // Read normals
     vec3 viewDirection = normalize(v_ViewPosition_T - v_Position_WT);
     vec3 result = vec3(0.0f);
 
-    vec3 diffuseTextureColor = texture(map_0_Diffuse_Texture, v_TextureCoordinate).rgb;
+    vec3 diffuseTextureColor = texture(map_Diffuse_Texture, v_TextureCoordinate).rgb;
     vec3 ambientColor = AMBIENT_STRENGTH * diffuseTextureColor;
     vec3 diffuseColor = DIFFUSE_STRENGTH * diffuseTextureColor;
 

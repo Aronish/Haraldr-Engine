@@ -2,19 +2,27 @@ package engine.graphics;
 
 public abstract class ShaderSampler
 {
-    public abstract void bind(int unit);
+    protected final int unit;
+
+    protected ShaderSampler(int unit)
+    {
+        this.unit = unit;
+    }
+
+    public abstract void bind();
 
     public static class Texture2D extends ShaderSampler
     {
         private Texture texture;
 
-        public Texture2D(Texture texture)
+        public Texture2D(Texture texture, int unit)
         {
+            super(unit);
             this.texture = texture;
         }
 
         @Override
-        public void bind(int unit)
+        public void bind()
         {
             texture.bind(unit);
         }
@@ -24,13 +32,14 @@ public abstract class ShaderSampler
     {
         private engine.graphics.CubeMap cubemap;
 
-        public CubeMap(engine.graphics.CubeMap cubemap)
+        public CubeMap(engine.graphics.CubeMap cubemap, int unit)
         {
+            super(unit);
             this.cubemap = cubemap;
         }
 
         @Override
-        public void bind(int unit)
+        public void bind()
         {
             cubemap.bind(unit);
         }

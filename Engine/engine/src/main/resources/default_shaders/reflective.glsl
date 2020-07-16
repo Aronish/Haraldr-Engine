@@ -45,8 +45,8 @@ layout (std140, binding = 0) uniform matrices
 
 layout (binding = 0) uniform samplerCube c_EnvironmentMap;
 
-layout (binding = 1) uniform sampler2D map_1_Diffuse_Texture;
-layout (binding = 2) uniform sampler2D map_2_Reflection_Map;
+layout (binding = 1) uniform sampler2D map_Diffuse_Texture;
+layout (binding = 2) uniform sampler2D map_Reflection_Map;
 
 out vec4 o_Color;
 
@@ -55,6 +55,6 @@ void main()
     vec3 I = normalize(v_Position_W - viewPosition_W);
     vec3 R = reflect(I, normalize(v_Normal_W));
 
-    vec3 color = texture(c_EnvironmentMap, R).rgb * texture(map_2_Reflection_Map, v_TextureCoordinate).rgb + texture(map_1_Diffuse_Texture, v_TextureCoordinate).rgb;
+    vec3 color = texture(c_EnvironmentMap, R).rgb * texture(map_Reflection_Map, v_TextureCoordinate).rgb + texture(map_Diffuse_Texture, v_TextureCoordinate).rgb;
     o_Color = vec4(color, 1.0f);
 }

@@ -1,0 +1,15 @@
+Shader types:
+    PBR (Untextured, based on "color"):
+        Properties: "color", "metalness", "roughness", "environment_map"
+    PBR (Textured, based on "albedo"):
+        Properties: "albedo", "normal", "metalness", "roughness", "environment_map", ["displacement", "ao"]
+    REFLECTIVE:
+        Properties: "diffuse_texture", "reflection_map", "environment_map"
+    REFRACTIVE:
+        Properties: "begin_medium", "end_medium", "diffuse_texture", "refraction_map", "environment_map"
+    SIMPLE Untextured (based on "diffuse_color"):
+        Properties: "diffuse_color", "diffuse_strength", "specular_strength", "specular_exponent", "opacity"
+    SIMPLE Textured, no normal map (based on "diffuse_texture"):
+        Properties: "diffuse_texture", "diffuse_strength" "specular_strength", "specular_exponent", "opacity"
+    SIMPLE Textured, normal mapped (based on "diffuse_texture", "normal_map"):
+        Properties: "diffuse_texture", "normal_map", "specular_strength", "specular_exponent", "opacity"

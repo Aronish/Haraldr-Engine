@@ -3,6 +3,7 @@ package engine.graphics;
 import engine.debug.Logger;
 import engine.main.ArrayUtils;
 import engine.main.EntryPoint;
+import engine.main.IOUtils;
 import engine.math.Matrix4f;
 import engine.math.Vector2f;
 import engine.math.Vector3f;
@@ -64,7 +65,14 @@ public class Shader
         }
     }
 
-    public static Shader createFromSource(String uniqueKey, String source, String... switches)
+    public static Shader createShaderWithSwitches(String path, @NotNull String... switches)
+    {
+        StringBuilder key = new StringBuilder(path);
+        for (String define : switches) key.append(define);
+        return Shader.createFromSource(key.toString(), IOUtils.readResource(path, IOUtils::resourceToString), switches);
+    }
+
+    private static Shader createFromSource(String uniqueKey, String source, String... switches)
     {
         if (ResourceManager.isShaderLoaded(uniqueKey))
         {

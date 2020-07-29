@@ -42,8 +42,8 @@ layout (std140, binding = 0) uniform matrices
     vec3 viewPosition_W;
 };
 
-uniform float u_Begin_Medium;
-uniform float u_End_Medium;
+uniform float u_Begin_Medium = 1.0;
+uniform float u_End_Medium = 1.52;
 
 layout (binding = 0) uniform samplerCube c_EnvironmentMap;
 

@@ -11,6 +11,7 @@ import engine.input.Input;
 import engine.input.Key;
 import engine.layer.Layer;
 import engine.main.Window;
+import engine.math.Matrix4f;
 import engine.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +21,7 @@ public class MaterialLayer extends Layer
     private float interpolation;
 
     private CubeMap environmentMap = CubeMap.createEnvironmentMap("default_hdris/NorwayForest_4K_hdri_sphere.hdr");
-    private JsonModel model = new JsonModel("default_models/test.json");
+    private JsonModel model = new JsonModel("default_models/test.json", Matrix4f.identity().translate(new Vector3f(0f, 0.5f, 0f)).scale(new Vector3f(0.5f)));
 
     public MaterialLayer()
     {

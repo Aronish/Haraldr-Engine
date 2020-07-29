@@ -28,6 +28,10 @@ public class JsonModel
     public void refresh()
     {
         JSONObject modelDefinition = new JSONObject(IOUtils.readResource(path, IOUtils::resourceToString));
+        if (material != null)
+        {
+            material.unbind();
+        }
         try
         {
             mesh = ResourceManager.getMesh(modelDefinition.getString("mesh"));

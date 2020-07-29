@@ -65,14 +65,14 @@ public class Shader
         }
     }
 
-    public static Shader createShaderWithSwitches(String path, @NotNull String... switches)
+    public static Shader createShaderWithSwitches(String path, List<String> switches)
     {
         StringBuilder key = new StringBuilder(path);
         for (String define : switches) key.append(define);
         return Shader.createFromSource(key.toString(), IOUtils.readResource(path, IOUtils::resourceToString), switches);
     }
 
-    private static Shader createFromSource(String uniqueKey, String source, String... switches)
+    private static Shader createFromSource(String uniqueKey, String source, List<String> switches)
     {
         if (ResourceManager.isShaderLoaded(uniqueKey))
         {

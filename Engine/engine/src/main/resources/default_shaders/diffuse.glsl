@@ -52,10 +52,10 @@ layout(location = 0) uniform sampler2D map_Diffuse_Texture;
 #else
 uniform vec3 u_Diffuse_Color;
 #endif
-uniform float u_Diffuse_Strength;
-uniform float u_Specular_Strength;
-uniform float u_Specular_Exponent;
-uniform float u_Opacity;
+uniform float u_Diffuse_Strength = 1.0f;
+uniform float u_Specular_Strength = 0.5f;
+uniform float u_Specular_Exponent = 64f;
+uniform float u_Opacity = 1.0f;
 
 out vec4 o_Color;
 

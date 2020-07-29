@@ -43,8 +43,8 @@ layout (std140, binding = 0) uniform matrices
 };
 
 uniform vec3 u_Color;
-uniform float u_Metalness;
-uniform float u_Roughness;
+uniform float u_Metalness = 0.0f;
+uniform float u_Roughness = 0.0f;
 
 layout (binding = 0) uniform samplerCube c_DiffuseIrradianceMap;
 layout (binding = 1) uniform samplerCube c_PrefilteredMap;

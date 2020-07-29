@@ -21,7 +21,7 @@ public class ShaderParser
     private static final String SHADER_SPLIT_TOKEN = "#shader ";
     private static final int SHADER_TYPE_SPECIFIER_LENGTH = 4;
 
-    public static @NotNull List<Shader.InternalShader> parseShaderSource(@NotNull String source, String... defines)
+    public static @NotNull List<Shader.InternalShader> parseShaderSource(@NotNull String source, List<String> defines)
     {
         ///// Preprocess #include /////////
         while (source.contains("#include"))
@@ -72,6 +72,6 @@ public class ShaderParser
     public static @NotNull List<Shader.InternalShader> parseShader(String path)
     {
         String fullSource = IOUtils.readResource(path, IOUtils::resourceToString);
-        return parseShaderSource(fullSource);
+        return parseShaderSource(fullSource, new ArrayList<>());
     }
 }

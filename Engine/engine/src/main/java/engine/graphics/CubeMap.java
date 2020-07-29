@@ -211,7 +211,7 @@ public class CubeMap
                         DefaultModels.CUBE.drawElements();
                     }
                 }
-            }, environmentMap.cubeMapId, 256, true));
+            }, environmentMap.cubeMapId, 512, true));
             ResourceManager.addCubeMap("PREF_" + environmentMap.cubeMapId, cubeMap);
             return cubeMap;
         }

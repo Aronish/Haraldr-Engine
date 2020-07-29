@@ -31,7 +31,7 @@ layout (binding = 0) uniform sampler2D map_Texture;
 #else
 uniform vec3 u_Color;
 #endif
-uniform float u_Opacity;
+uniform float u_Opacity = 1.0f;
 
 in vec2 v_TextureCoordinate;
 

@@ -1,6 +1,6 @@
 package oldgame.main;
 
-import engine.main.ArgumentValidator;
+import haraldr.main.ArgumentValidator;
 import oldgame.graphics.RenderSystemType;
 import org.jetbrains.annotations.NotNull;
 

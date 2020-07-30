@@ -5,9 +5,9 @@ import oldgame.gameobject.tile.Tile;
 import oldgame.gameobject.tile.TileFactory;
 import oldgame.gameobject.tile.TileGrassTuft;
 import oldgame.gameobject.tile.TileTree;
-import engine.math.SimplexNoise;
-import engine.math.Vector2f;
-import engine.math.Vector3f;
+import haraldr.math.SimplexNoise;
+import haraldr.math.Vector2f;
+import haraldr.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

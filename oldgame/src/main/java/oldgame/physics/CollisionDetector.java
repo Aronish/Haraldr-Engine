@@ -1,7 +1,7 @@
 package oldgame.physics;
 
-import engine.main.OrthographicCamera;
-import engine.math.Vector3f;
+import haraldr.main.OrthographicCamera;
+import haraldr.math.Vector3f;
 import oldgame.gameobject.Player;
 import oldgame.gameobject.tile.Tile;
 import org.jetbrains.annotations.Contract;

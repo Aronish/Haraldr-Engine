@@ -1,6 +1,6 @@
 package oldgame.graphics;
 
-import engine.graphics.Shader;
+import haraldr.graphics.Shader;
 
 public class Shaders
 {

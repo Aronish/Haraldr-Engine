@@ -10,8 +10,8 @@
       <excludeFolder url="file://$MODULE_DIR$/src/main/resources/single_textures" />
     </content>
     <orderEntry type="inheritedJdk" />
+    <orderEntry type="module" module-name="haraldr-engine" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="Engine.engine" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>

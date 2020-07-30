@@ -1,32 +1,35 @@
 package sandbox;
 
-import engine.event.Event;
-import engine.event.EventType;
-import engine.graphics.CubeMap;
-import engine.graphics.JsonModel;
-import engine.graphics.Renderer3D;
-import engine.graphics.lighting.PointLight;
-import engine.graphics.lighting.SceneLights;
-import engine.input.Input;
-import engine.input.Key;
-import engine.layer.Layer;
-import engine.main.Window;
-import engine.math.Matrix4f;
-import engine.math.Vector3f;
+import haraldr.event.Event;
+import haraldr.event.EventType;
+import haraldr.graphics.CubeMap;
+import haraldr.graphics.JsonModel;
+import haraldr.graphics.Renderer3D;
+import haraldr.graphics.lighting.PointLight;
+import haraldr.graphics.lighting.SceneLights;
+import haraldr.input.Input;
+import haraldr.input.Key;
+import haraldr.layer.Layer;
+import haraldr.main.Window;
+import haraldr.math.Matrix4f;
+import haraldr.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
 public class MaterialLayer extends Layer
 {
-    private PointLight l1 = new PointLight(new Vector3f(0f, 1f, 0f), new Vector3f(7.5f, 2.5f, 2.5f));
-    private float interpolation;
+    private PointLight l1 = new PointLight(new Vector3f(0f, 0.2f, 0f), new Vector3f(4.5f, 2.5f, 3f));
+    private PointLight l2 = new PointLight(new Vector3f(), new Vector3f(2.5f, 2.5f, 7.5f));
+    private float interpolation, interpolation2;
 
     private CubeMap environmentMap = CubeMap.createEnvironmentMap("default_hdris/NorwayForest_4K_hdri_sphere.hdr");
-    private JsonModel model = new JsonModel("default_models/test.json", Matrix4f.identity().translate(new Vector3f(0f, 0.5f, 0f)).scale(new Vector3f(0.5f)));
+    private JsonModel model = new JsonModel("default_models/test.json", Matrix4f.identity().rotate(Vector3f.UP, 180f));
+    private boolean renderLights = true;
 
     public MaterialLayer()
     {
         SceneLights sl = new SceneLights();
         sl.addLight(l1);
+        sl.addLight(l2);
         Renderer3D.setSceneLights(sl);
     }
 
@@ -39,6 +42,10 @@ public class MaterialLayer extends Layer
             {
                 model.refresh();
             }
+            if (Input.wasKey(event, Key.KEY_L))
+            {
+                renderLights = !renderLights;
+            }
         }
     }
 
@@ -49,14 +56,21 @@ public class MaterialLayer extends Layer
         if (Input.isKeyPressed(window, Key.KEY_DOWN))   Renderer3D.addExposure(-1f * deltaTime);
         if (Input.isKeyPressed(window, Key.KEY_KP_7))   interpolation += 1f * deltaTime;
         if (Input.isKeyPressed(window, Key.KEY_KP_9))   interpolation -= 1f * deltaTime;
-        l1.setPosition(new Vector3f(Math.sin(interpolation), 0.5f, Math.cos(interpolation)));
+        if (Input.isKeyPressed(window, Key.KEY_KP_1))   interpolation2 += 1f * deltaTime;
+        if (Input.isKeyPressed(window, Key.KEY_KP_3))   interpolation2 -= 1f * deltaTime;
+        l1.setPosition(new Vector3f(Math.sin(interpolation), 0.15f, Math.cos(interpolation)));
+        l2.setPosition(new Vector3f(Math.sin(interpolation2) * 0.6f, 0.3f, Math.cos(interpolation2)));
     }
 
     @Override
     public void onRender()
     {
         model.render();
-        l1.render();
+        if (renderLights)
+        {
+            l1.render();
+            l2.render();
+        }
         environmentMap.renderSkyBox();
     }
 

@@ -1,14 +1,14 @@
 package sandbox;
 
-import engine.event.DebugScreenUpdatedEvent;
-import engine.event.Event;
-import engine.event.EventType;
-import engine.graphics.ui.Font;
-import engine.graphics.ui.TextLabel;
-import engine.layer.Layer;
-import engine.main.Window;
-import engine.math.Vector2f;
-import engine.math.Vector4f;
+import haraldr.event.DebugScreenUpdatedEvent;
+import haraldr.event.Event;
+import haraldr.event.EventType;
+import haraldr.graphics.ui.Font;
+import haraldr.graphics.ui.TextLabel;
+import haraldr.layer.Layer;
+import haraldr.main.Window;
+import haraldr.math.Vector2f;
+import haraldr.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

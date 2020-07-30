@@ -1,8 +1,8 @@
 package oldgame.gameobject;
 
-import engine.main.OrthographicCamera;
-import engine.math.Vector2f;
-import engine.math.Vector3f;
+import haraldr.main.OrthographicCamera;
+import haraldr.math.Vector2f;
+import haraldr.math.Vector3f;
 
 /**
  * Extension of Entity that is able to move and be affected by gravity.

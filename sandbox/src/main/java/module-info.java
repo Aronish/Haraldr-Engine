@@ -1,5 +1,5 @@
-module Engine.sandbox
+module sandbox
 {
-    requires Engine.engine;
+    requires haraldr;
     requires org.jetbrains.annotations;
 }

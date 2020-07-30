@@ -1,14 +1,14 @@
 package oldgame.graphics;
 
-import engine.graphics.ShaderDataType;
-import engine.graphics.VertexArray;
-import engine.graphics.VertexBuffer;
-import engine.graphics.VertexBufferElement;
-import engine.graphics.VertexBufferLayout;
-import engine.graphics.Wrapper;
-import engine.main.ArrayUtils;
-import engine.main.OrthographicCamera;
-import engine.math.Matrix4f;
+import haraldr.graphics.ShaderDataType;
+import haraldr.graphics.VertexArray;
+import haraldr.graphics.VertexBuffer;
+import haraldr.graphics.VertexBufferElement;
+import haraldr.graphics.VertexBufferLayout;
+import haraldr.graphics.Wrapper;
+import haraldr.main.ArrayUtils;
+import haraldr.main.OrthographicCamera;
+import haraldr.math.Matrix4f;
 import oldgame.gameobject.GameObject;
 import oldgame.world.Grid;
 import org.jetbrains.annotations.NotNull;

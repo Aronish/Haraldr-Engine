@@ -1,8 +1,8 @@
 package oldgame.gameobject.tile;
 
-import engine.debug.Logger;
+import haraldr.debug.Logger;
 import oldgame.gameobject.GameObject;
-import engine.math.Vector3f;
+import haraldr.math.Vector3f;
 
 public class TileFactory
 {

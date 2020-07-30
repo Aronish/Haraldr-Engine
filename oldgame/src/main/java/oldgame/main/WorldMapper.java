@@ -1,7 +1,7 @@
 package oldgame.main;
 
-import engine.debug.Logger;
-import engine.main.EntryPoint;
+import haraldr.debug.Logger;
+import haraldr.main.EntryPoint;
 import oldgame.gameobject.tile.Tile;
 import oldgame.gameobject.tile.TileTree;
 import oldgame.world.Grid;

@@ -1,13 +1,13 @@
 package oldgame.main;
 
-import engine.debug.Logger;
-import engine.event.EventType;
-import engine.event.KeyEvent;
-import engine.event.MouseScrolledEvent;
-import engine.input.Input;
-import engine.input.Key;
-import engine.main.Window;
-import engine.math.Vector3f;
+import haraldr.debug.Logger;
+import haraldr.event.EventType;
+import haraldr.event.KeyEvent;
+import haraldr.event.MouseScrolledEvent;
+import haraldr.input.Input;
+import haraldr.input.Key;
+import haraldr.main.Window;
+import haraldr.math.Vector3f;
 import oldgame.gameobject.Player;
 import oldgame.physics.PlayerMovementType;
 import oldgame.world.World;

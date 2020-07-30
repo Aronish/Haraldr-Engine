@@ -1,7 +1,7 @@
 package oldgame.gameobject.tile;
 
 import oldgame.gameobject.GameObject;
-import engine.math.Vector3f;
+import haraldr.math.Vector3f;
 
 class TileDirt extends Tile {
 

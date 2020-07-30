@@ -2,7 +2,7 @@ package oldgame.gameobject.tile;
 
 import oldgame.gameobject.Entity;
 import oldgame.gameobject.GameObject;
-import engine.math.Vector3f;
+import haraldr.math.Vector3f;
 
 /**
  * Simple static entity.

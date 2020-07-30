@@ -1,10 +1,10 @@
 package oldgame.graphics;
 
-import engine.debug.Logger;
-import engine.graphics.Renderer2D;
-import engine.graphics.Shader;
-import engine.main.OrthographicCamera;
-import engine.math.Matrix4f;
+import haraldr.debug.Logger;
+import haraldr.graphics.Renderer2D;
+import haraldr.graphics.Shader;
+import haraldr.main.OrthographicCamera;
+import haraldr.math.Matrix4f;
 import oldgame.gameobject.Entity;
 import oldgame.main.EntryPoint;
 import org.jetbrains.annotations.NotNull;

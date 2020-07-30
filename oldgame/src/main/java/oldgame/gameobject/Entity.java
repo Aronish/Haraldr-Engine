@@ -1,8 +1,8 @@
 package oldgame.gameobject;
 
-import engine.math.Matrix4f;
-import engine.math.Vector2f;
-import engine.math.Vector3f;
+import haraldr.math.Matrix4f;
+import haraldr.math.Vector2f;
+import haraldr.math.Vector3f;
 
 /**
  * Class that represents a base game object. Contains common properties and a type that holds render data.

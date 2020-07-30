@@ -1,9 +1,9 @@
 package oldgame.main;
 
-import engine.main.OrthographicCamera;
-import engine.main.EntryPoint;
-import engine.math.Matrix4f;
-import engine.math.Vector3f;
+import haraldr.main.OrthographicCamera;
+import haraldr.main.EntryPoint;
+import haraldr.math.Matrix4f;
+import haraldr.math.Vector3f;
 import oldgame.gameobject.tile.Tile;
 import oldgame.world.Grid;
 import org.jetbrains.annotations.NotNull;

@@ -1,6 +1,6 @@
 package oldgame.gameobject;
 
-import engine.graphics.Sprite;
+import haraldr.graphics.Sprite;
 import oldgame.graphics.Models;
 
 import java.util.ArrayList;

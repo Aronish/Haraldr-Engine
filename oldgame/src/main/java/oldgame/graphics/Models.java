@@ -1,11 +1,11 @@
 package oldgame.graphics;
 
 import oldgame.gameobject.GameObject;
-import engine.graphics.Sprite;
-import engine.graphics.ShaderDataType;
-import engine.graphics.Texture;
-import engine.graphics.VertexBufferElement;
-import engine.graphics.VertexBufferLayout;
+import haraldr.graphics.Sprite;
+import haraldr.graphics.ShaderDataType;
+import haraldr.graphics.Texture;
+import haraldr.graphics.VertexBufferElement;
+import haraldr.graphics.VertexBufferLayout;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

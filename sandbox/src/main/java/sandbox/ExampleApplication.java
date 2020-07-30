@@ -1,9 +1,9 @@
 package sandbox;
 
-import engine.graphics.Renderer;
-import engine.main.Application;
-import engine.main.ProgramArguments;
-import engine.main.Window;
+import haraldr.graphics.Renderer;
+import haraldr.main.Application;
+import haraldr.main.ProgramArguments;
+import haraldr.main.Window;
 
 class ExampleApplication extends Application
 {

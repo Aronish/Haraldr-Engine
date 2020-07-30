@@ -1,10 +1,10 @@
 package oldgame.main;
 
-import engine.graphics.Renderer;
-import engine.graphics.Renderer2D;
-import engine.main.Application;
-import engine.main.Window;
-import engine.math.Vector4f;
+import haraldr.graphics.Renderer;
+import haraldr.graphics.Renderer2D;
+import haraldr.main.Application;
+import haraldr.main.Window;
+import haraldr.math.Vector4f;
 import oldgame.graphics.Models;
 import oldgame.graphics.Shaders;
 import oldgame.layer.WorldLayer;

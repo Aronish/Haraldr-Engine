@@ -1,0 +1,1 @@
+start cmd.exe /c C:\dev\Libraries\openjdk-13.0.1_windows-x64_bin\jdk-13.0.1\bin\java.exe -jar %*

@@ -1,0 +1,111 @@
+{
+  "PBR":
+  {
+    "variants":
+    {
+      "untextured":
+      {
+        "dependants": [ "color" ],
+        "shader": "default_shaders/pbr_untextured.glsl",
+        "optional": [ "metalness", "roughness" ],
+        "samplers":
+        {
+          "environment_map": { "extended": true, "unit": 0 }
+        }
+      },
+      "textured":
+      {
+        "dependants": [ "albedo" ],
+        "shader": "default_shaders/pbr_textured.glsl",
+        "samplers":
+        {
+          "environment_map": { "extended": true, "unit": 0 },
+          "albedo": { "color_data": true, "unit": 3 },
+          "normal": { "color_data": false, "unit": 4 },
+          "metalness": { "color_data": false, "unit": 5 },
+          "roughness": { "color_data": false, "unit": 6 },
+          "displacement": { "color_data": false, "unit": 7, "optional_switch": "PARALLAX_MAP" },
+          "ambient_occlusion": { "color_data": false, "unit": 8, "optional_switch": "AO_MAP" }
+        }
+      }
+    }
+  },
+  "REFLECTIVE":
+  {
+    "shader": "default_shaders/reflective.glsl",
+    "samplers":
+    {
+      "environment_map": { "extended": false, "unit": 0 },
+      "diffuse_texture": { "color_data": true, "unit": 1 },
+      "reflection_map": { "color_data": false, "unit": 2 }
+    }
+  },
+  "REFRACTIVE":
+  {
+    "shader": "default_shaders/refractive.glsl",
+    "optional": [ "begin_medium", "end_medium" ],
+    "samplers":
+    {
+      "environment_map": { "extended": false, "unit": 0 },
+      "diffuse_texture": { "color_data": true, "unit": 1 },
+      "refraction_map": { "color_data": false, "unit": 2 }
+    }
+  },
+  "SIMPLE":
+  {
+    "variants":
+    {
+      "untextured":
+      {
+        "dependants": [ "diffuse_color" ],
+        "shader": "default_shaders/diffuse.glsl",
+        "optional": [ "diffuse_strength", "specular_strength", "specular_exponent", "opacity" ]
+      },
+      "textured":
+      {
+        "dependants": [ "diffuse_texture" ],
+        "shader": "default_shaders/diffuse.glsl",
+        "switches": [ "TEXTURED" ],
+        "optional": [ "diffuse_strength", "specular_strength", "specular_exponent", "opacity" ],
+        "samplers":
+        {
+          "diffuse_texture": { "color_data": true, "unit": 0 }
+        }
+      },
+      "normal_mapped":
+      {
+        "dependants": [ "diffuse_texture", "normal_map" ],
+        "shader": "default_shaders/normal.glsl",
+        "optional": [ "specular_strength", "specular_exponent", "opacity" ],
+        "samplers":
+        {
+          "diffuse_texture": { "color_data": true, "unit": 0 },
+          "normal_map": { "color_data": false, "unit": 1 }
+        }
+      }
+    }
+  },
+  "UNLIT":
+  {
+    "variants":
+    {
+      "untextured":
+      {
+        "dependants": [ "color" ],
+        "shader": "default_shaders/unlit.glsl",
+        "optional": [ "opacity" ]
+      },
+      "textured":
+      {
+        "dependants": [ "texture" ],
+        "shader": "default_shaders/unlit.glsl",
+        "switches": [ "TEXTURED" ],
+        "optional": [ "opacity" ],
+        "samplers":
+        {
+          "texture": { "color_data": true, "unit": 0 }
+        }
+      }
+    }
+  }
+}

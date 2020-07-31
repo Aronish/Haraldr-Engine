@@ -37,10 +37,7 @@ public class PerspectiveCameraController
 
     public void handleRotation(@NotNull MouseMovedEvent event)
     {
-        if (focused)
-        {
-            reference.rotate(((float) event.xPos - lastX) * MOUSE_SENSITIVITY, (lastY - (float) event.yPos) * MOUSE_SENSITIVITY);
-        }
+        if (focused) reference.rotate(((float) event.xPos - lastX) * MOUSE_SENSITIVITY, (lastY - (float) event.yPos) * MOUSE_SENSITIVITY);
         lastX = (float) event.xPos;
         lastY = (float) event.yPos;
     }
@@ -54,7 +51,6 @@ public class PerspectiveCameraController
     {
         if (Input.isKeyPressed(window, KEY_W))
         {
-
             reference.addPosition(Vector3f.multiply(reference.getDirection(), CAMERA_SPEED * deltaTime));
         }
         if (Input.isKeyPressed(window, KEY_S))
@@ -63,19 +59,19 @@ public class PerspectiveCameraController
         }
         if (Input.isKeyPressed(window, KEY_D))
         {
-            reference.addPosition(Vector3f.multiply(Vector3f.normalize(Vector3f.cross(reference.getDirection(), Vector3f.UP)), CAMERA_SPEED * deltaTime));
+            reference.addPosition(Vector3f.multiply(reference.getRight(), CAMERA_SPEED * deltaTime));
         }
         if (Input.isKeyPressed(window, KEY_A))
         {
-            reference.addPosition(Vector3f.multiply(Vector3f.normalize(Vector3f.cross(reference.getDirection(), Vector3f.UP)), -CAMERA_SPEED * deltaTime));
+            reference.addPosition(Vector3f.multiply(reference.getRight(), -CAMERA_SPEED * deltaTime));
         }
         if (Input.isKeyPressed(window, KEY_SPACE))
         {
-            reference.addPosition(Vector3f.multiply(Vector3f.normalize(Vector3f.cross(Vector3f.normalize(Vector3f.cross(reference.getDirection(), Vector3f.UP)), reference.getDirection())), CAMERA_SPEED * deltaTime));
+            reference.addPosition(Vector3f.multiply(reference.getUp(), CAMERA_SPEED * deltaTime));
         }
         if (Input.isKeyPressed(window, KEY_C))
         {
-            reference.addPosition(Vector3f.multiply(Vector3f.normalize(Vector3f.cross(Vector3f.normalize(Vector3f.cross(reference.getDirection(), Vector3f.UP)), reference.getDirection())), -CAMERA_SPEED * deltaTime));
+            reference.addPosition(Vector3f.multiply(reference.getUp(), -CAMERA_SPEED * deltaTime));
         }
     }
 }

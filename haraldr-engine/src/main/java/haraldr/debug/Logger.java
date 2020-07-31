@@ -17,6 +17,7 @@ public class Logger
     {
         if (LogLevel.WARN.compareTo(logLevel) <= 0) log(message, LogLevel.WARN);
     }
+
     public static <T> void error(T message)
     {
         log(message, LogLevel.ERROR);
@@ -24,7 +25,7 @@ public class Logger
 
     private static <T> void log(T message, LogLevel logLevel)
     {
-        System.out.println(String.format("%s [%s]: %s", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), logLevel, message));
+        System.out.printf("%s [%s]: %s%n", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), logLevel, message);
     }
 
     public enum LogLevel

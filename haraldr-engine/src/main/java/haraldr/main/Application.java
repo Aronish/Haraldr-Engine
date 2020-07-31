@@ -9,12 +9,12 @@ import haraldr.event.MouseMovedEvent;
 import haraldr.event.MouseScrolledEvent;
 import haraldr.event.WindowFocusEvent;
 import haraldr.event.WindowResizedEvent;
+import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Renderer3D;
 import haraldr.graphics.ResourceManager;
+import haraldr.graphics.ui.TextManager;
 import haraldr.input.Input;
 import haraldr.input.Key;
-import haraldr.layer.Layer;
-import haraldr.layer.LayerStack;
 import haraldr.math.Matrix4f;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,23 +26,26 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_MAX_TEXTURE_UNITS;
+import static org.lwjgl.opengl.GL20C.GL_MAX_TEXTURE_IMAGE_UNITS;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
+import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_SEVERITY_NOTIFICATION;
 import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
 import static org.lwjgl.system.MemoryUtil.memUTF8;
 
 public abstract class Application
 {
-    protected boolean initialized = false;
-    protected LayerStack layerStack = new LayerStack();
+    private boolean initialized = false;
     protected Window window;
+    private Scene activeScene, activeOverlay;
 
     public static double time;
     public static int initWidth, initHeight;
 
     public abstract void start();
 
-    protected void stop(@NotNull Event event)
+    private void stop(@NotNull Event event)
     {
         glfwSetWindowShouldClose(window.getWindowHandle(), true);
         event.setHandled(true);
@@ -50,11 +53,11 @@ public abstract class Application
 
     protected void init(Window.WindowProperties windowProperties)
     {
-        /////WINDOW///////////////////////////////////////////////////////
+        /////WINDOW///////////////////////////
         window = new Window(windowProperties);
         initWidth = window.getInitWidth();
         initHeight = window.getInitHeight();
-        /////OPENGL CODE WON'T WORK BEFORE THIS///////////////////////////
+        /////OPENGL CODE WON'T WORK BEFORE THIS//////////
         EventDispatcher.addCallback(new EventCallback());
         Matrix4f.init(window.getWidth(), window.getHeight());
 
@@ -66,7 +69,7 @@ public abstract class Application
 
         if (EntryPoint.DEBUG)
         {
-            //glEnable(GL_DEBUG_OUTPUT);
+            glEnable(GL_DEBUG_OUTPUT);
             glDebugMessageCallback((source, type, id, severity, length, message, userparam) ->
             {
                 if (id == 131218) return;
@@ -79,9 +82,21 @@ public abstract class Application
                 //if (type == GL_DEBUG_TYPE_ERROR || type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR) stop(new WindowClosedEvent());
             }, 0);
         }
-        
+
         glfwShowWindow(window.getWindowHandle());
         initialized = true;
+    }
+
+    public void setActiveScene(Scene scene)
+    {
+        activeScene = scene;
+        activeScene.onActivate();
+    }
+
+    public void setActiveOverlay(Scene overlay)
+    {
+        activeOverlay = overlay;
+        activeOverlay.onActivate();
     }
 
     public class EventCallback implements haraldr.event.EventCallback
@@ -113,48 +128,34 @@ public abstract class Application
             {
                 Renderer3D.getCamera().onFocus((WindowFocusEvent) event);
             }
-            for (Layer layer : layerStack.getLayerStack())
-            {
-                if (event.isHandled()) break;
-                layer.onEvent(window, event);
-            }
-            for (Layer layer : layerStack.getOverlayStack())
-            {
-                if (event.isHandled()) break;
-                layer.onEvent(window, event);
-            }
+            if (activeOverlay != null) activeOverlay.onEvent(event);
+            if (!event.isHandled()) activeScene.onEvent(event);
         }
     }
 
-    protected void update(float deltaTime)
+    private void update(float deltaTime)
     {
         time = glfwGetTime();
         if (window.isFocused())
         {
             Renderer3D.getCamera().handleMovement(window, deltaTime);
         }
-        for (Layer layer : layerStack.getLayerStack())
-        {
-            if (layer.isActive()) layer.onUpdate(window, deltaTime);
-        }
-        for (Layer layer : layerStack.getOverlayStack())
-        {
-            if (layer.isActive()) layer.onUpdate(window, deltaTime);
-        }
+        activeScene.onUpdate(window, deltaTime);
+        activeOverlay.onUpdate(window, deltaTime);
     }
 
     protected void render()
     {
         Renderer3D.begin(window);
-        for (Layer layer : layerStack.getLayerStack())
-        {
-            if (layer.isActive()) layer.onRender();
-        }
+        activeScene.onRender();
         Renderer3D.end(window);
-        for (Layer layer : layerStack.getOverlayStack())
-        {
-            if (layer.isActive()) layer.onRender();
-        }
+
+        glDisable(GL_DEPTH_TEST);
+        Renderer2D.begin();
+        activeOverlay.onRender();
+        Renderer2D.end();
+        TextManager.render();
+        glEnable(GL_DEPTH_TEST);
         glfwSwapBuffers(window.getWindowHandle());
     }
 
@@ -202,9 +203,11 @@ public abstract class Application
     public void dispose()
     {
         window.delete();
-        layerStack.getLayerStack().forEach(Layer::onDispose);
-        layerStack.getOverlayStack().forEach(Layer::onDispose);
+        activeScene.onDispose();
+        activeOverlay.onDispose();
+        Renderer2D.dispose();
         Renderer3D.dispose();
+        TextManager.dispose();
         ResourceManager.dispose();
         glfwTerminate();
     }

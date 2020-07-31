@@ -4,7 +4,6 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.KeyEvent;
 import haraldr.event.MouseScrolledEvent;
-import haraldr.layer.Layer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector3f;
@@ -24,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldLayer extends Layer
+public class WorldLayer
 {
     private World world = new World();
     private Player player = new Player(new Vector3f(0.0f, 255.0f, 0f));
@@ -34,7 +33,6 @@ public class WorldLayer extends Layer
     private List<Grid.GridCell> visibleGridCells = new ArrayList<>();
     private List<Tile> frustumCulledObjects = new ArrayList<>();
 
-    @Override
     public void onUpdate(Window window, float deltaTime)
     {
         eventHandler.processInput(camera, window, player, world);
@@ -44,7 +42,6 @@ public class WorldLayer extends Layer
         player.updateMatrix();
     }
 
-    @Override
     public void onRender()
     {
         Models.SPRITE_SHEET.bind(0);
@@ -52,7 +49,6 @@ public class WorldLayer extends Layer
         GameRenderer2D.render(camera, Shaders.SHADER, player);
     }
 
-    @Override
     public void onEvent(Window window, @NotNull Event event)
     {
         //LOGGER.info(event.toString());
@@ -113,7 +109,6 @@ public class WorldLayer extends Layer
         }
     }
 
-    @Override
     public void onDispose()
     {
 

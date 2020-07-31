@@ -1,7 +1,9 @@
 package haraldr.graphics.ui;
 
-import haraldr.main.ArrayUtils;
+import haraldr.graphics.Texture;
 import haraldr.main.IOUtils;
+import haraldr.math.Vector2f;
+import haraldr.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTAlignedQuad;
@@ -23,10 +25,8 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
-import static org.lwjgl.opengl.GL45.glBindTextureUnit;
 import static org.lwjgl.opengl.GL45.glCreateTextures;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetCodepointKernAdvance;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetFontVMetrics;
@@ -40,11 +40,11 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Font
 {
-    private static final int WIDTH = 512, HEIGHT = 512;
+    public static final int WIDTH = 512, HEIGHT = 512;
 
     private float scaleFactor;
     private int ascent, descent, lineGap;
-    private int fontAtlas;
+    private Texture fontAtlas;
     private STBTTFontinfo fontinfo;
     private STBTTPackedchar.Buffer packedchars;
     @SuppressWarnings("FieldCanBeLocal")
@@ -77,15 +77,17 @@ public class Font
         stbtt_PackFontRange(packContext, fontData, 0, (float) size, 32, packedchars);
         stbtt_PackEnd(packContext);
 
-        fontAtlas = glCreateTextures(GL_TEXTURE_2D);
+        int fontAtlas = glCreateTextures(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, fontAtlas);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, WIDTH, HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, atlasData);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, 0);
+
+        this.fontAtlas = Texture.wrapFontBitmap(fontAtlas);
     }
 
-    public float[] createTextMesh(@NotNull String text)
+    public List<Float> createTextMesh(@NotNull String text, Vector2f position, Vector4f color)
     {
         List<Float> vertices = new ArrayList<>();
 
@@ -128,38 +130,54 @@ public class Font
                         y0 = scale(lineY, quad.y0(), factorY),
                         y1 = scale(lineY, quad.y1(), factorY);
 
-                vertices.add(x0);
-                vertices.add(y0);
+                vertices.add(x0 + position.getX());
+                vertices.add(y0 + position.getY());
                 vertices.add(quad.s0());
                 vertices.add(quad.t0());
+                vertices.add(color.getX());
+                vertices.add(color.getY());
+                vertices.add(color.getZ());
+                vertices.add(color.getW());
 
-                vertices.add(x1);
-                vertices.add(y0);
+                vertices.add(x1 + position.getX());
+                vertices.add(y0 + position.getY());
                 vertices.add(quad.s1());
                 vertices.add(quad.t0());
+                vertices.add(color.getX());
+                vertices.add(color.getY());
+                vertices.add(color.getZ());
+                vertices.add(color.getW());
 
-                vertices.add(x1);
-                vertices.add(y1);
+                vertices.add(x1 + position.getX());
+                vertices.add(y1 + position.getY());
                 vertices.add(quad.s1());
                 vertices.add(quad.t1());
+                vertices.add(color.getX());
+                vertices.add(color.getY());
+                vertices.add(color.getZ());
+                vertices.add(color.getW());
 
-                vertices.add(x0);
-                vertices.add(y1);
+                vertices.add(x0 + position.getX());
+                vertices.add(y1 + position.getY());
                 vertices.add(quad.s0());
                 vertices.add(quad.t1());
+                vertices.add(color.getX());
+                vertices.add(color.getY());
+                vertices.add(color.getZ());
+                vertices.add(color.getW());
             }
         }
-        return ArrayUtils.toPrimitiveArrayF(vertices);
+        return vertices;
+    }
+
+    public Texture getFontAtlas()
+    {
+        return fontAtlas;
     }
 
     public void bind(int unit)
     {
-        glBindTextureUnit(unit, fontAtlas);
-    }
-
-    public void delete()
-    {
-        glDeleteTextures(fontAtlas);
+        fontAtlas.bind(unit);
     }
 
     private static float scale(float center, float offset, float factor)

@@ -15,8 +15,10 @@ public class PerspectiveCamera extends Camera
             (float) Math.sin(Math.toRadians(pitch)),
             (float) Math.sin(Math.toRadians(yaw) * Math.cos(Math.toRadians(pitch)))
     );
-    private Matrix4f lookAt;
+    private Vector3f right = Vector3f.normalize(Vector3f.cross(direction, Vector3f.UP));
+    private Vector3f up = Vector3f.normalize(Vector3f.cross(right, direction));
 
+    private Matrix4f lookAt;
     private PerspectiveCameraController controller;
 
     public PerspectiveCamera()
@@ -37,8 +39,9 @@ public class PerspectiveCamera extends Camera
                 (float) Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)),
                 (float) Math.sin(Math.toRadians(pitch)),
                 (float) Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch))
-        );
-        direction.normalize();
+        ).normalize();
+        right = Vector3f.cross(direction, Vector3f.UP).normalize();
+        up = Vector3f.cross(right, direction).normalize();
         viewMatrix = Matrix4f.lookAt(position, Vector3f.add(position, direction), Vector3f.UP);
     }
 
@@ -97,5 +100,15 @@ public class PerspectiveCamera extends Camera
     public Vector3f getDirection()
     {
         return this.direction;
+    }
+
+    public Vector3f getRight()
+    {
+        return right;
+    }
+
+    public Vector3f getUp()
+    {
+        return up;
     }
 }

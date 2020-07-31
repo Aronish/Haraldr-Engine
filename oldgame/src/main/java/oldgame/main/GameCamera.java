@@ -34,7 +34,7 @@ public class GameCamera extends OrthographicCamera
      */
     private void calculateChunkRanges()
     {
-        chunkXRange = engine.main.EntryPoint.fastCeil((Matrix4f.FIXED_ORTHOGRAPHIC_AXIS / scale) / Grid.GRID_SIZE);
+        chunkXRange = haraldr.main.EntryPoint.fastCeil((Matrix4f.FIXED_ORTHOGRAPHIC_AXIS / scale) / Grid.GRID_SIZE);
         chunkYRange = EntryPoint.fastCeil((Matrix4f.dynamicOrthographicAxis / scale) / Grid.GRID_SIZE);
     }
 

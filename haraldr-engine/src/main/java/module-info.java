@@ -34,7 +34,6 @@ module haraldr
     exports haraldr.graphics.lighting;
     exports haraldr.graphics.ui;
     exports haraldr.input;
-    exports haraldr.layer;
     exports haraldr.main;
     exports haraldr.math;
     exports haraldr.physics;

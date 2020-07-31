@@ -9,13 +9,12 @@ import haraldr.graphics.lighting.PointLight;
 import haraldr.graphics.lighting.SceneLights;
 import haraldr.input.Input;
 import haraldr.input.Key;
-import haraldr.layer.Layer;
+import haraldr.main.Scene;
 import haraldr.main.Window;
 import haraldr.math.Matrix4f;
 import haraldr.math.Vector3f;
-import org.jetbrains.annotations.NotNull;
 
-public class MaterialLayer extends Layer
+public class TestScene implements Scene
 {
     private PointLight l1 = new PointLight(new Vector3f(0f, 0.2f, 0f), new Vector3f(4.5f, 2.5f, 3f));
     private PointLight l2 = new PointLight(new Vector3f(), new Vector3f(2.5f, 2.5f, 7.5f));
@@ -25,7 +24,8 @@ public class MaterialLayer extends Layer
     private JsonModel model = new JsonModel("default_models/test.json", Matrix4f.identity().rotate(Vector3f.UP, 180f));
     private boolean renderLights = true;
 
-    public MaterialLayer()
+    @Override
+    public void onActivate()
     {
         SceneLights sl = new SceneLights();
         sl.addLight(l1);
@@ -34,7 +34,7 @@ public class MaterialLayer extends Layer
     }
 
     @Override
-    public void onEvent(Window window, @NotNull Event event)
+    public void onEvent(Event event)
     {
         if (event.eventType == EventType.KEY_PRESSED)
         {

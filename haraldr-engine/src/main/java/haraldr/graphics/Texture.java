@@ -1,6 +1,7 @@
 package haraldr.graphics;
 
 import haraldr.debug.Logger;
+import haraldr.graphics.ui.Font;
 import haraldr.main.Application;
 import haraldr.main.EntryPoint;
 import haraldr.main.IOUtils;
@@ -72,7 +73,7 @@ public class Texture
     public static final Texture BRDF_LUT = createBRDFLUT();
 
     private int width, height;
-    private int textureId;
+    private int textureHandle;
 
     static
     {
@@ -85,9 +86,27 @@ public class Texture
     {
     }
 
+    public static Texture wrapFontBitmap(int fontAtlasHandle)
+    {
+        String key = "font_" + fontAtlasHandle;
+        if (ResourceManager.isTextureLoaded(key))
+        {
+            return ResourceManager.getLoadedTexture(key);
+        }
+        else
+        {
+            Texture texture = new Texture();
+            texture.textureHandle = fontAtlasHandle;
+            texture.width = Font.WIDTH;
+            texture.height = Font.HEIGHT;
+            ResourceManager.addTexture(key, texture);
+            return texture;
+        }
+    }
+
     public static Texture create(String path, boolean isColorData)
     {
-        String key = path + isColorData;
+        String key = path + "_" + isColorData;
         if (ResourceManager.isTextureLoaded(key))
         {
             return ResourceManager.getLoadedTexture(key);
@@ -153,13 +172,13 @@ public class Texture
         glBindTexture(GL_TEXTURE_2D, 0);
         STBImage.stbi_image_free(image);
 
-        result.textureId = texture;
+        result.textureHandle = texture;
         return result;
     }
 
-    private Texture(int textureId, int width, int height)
+    private Texture(int textureHandle, int width, int height)
     {
-        this.textureId = textureId;
+        this.textureHandle = textureHandle;
         this.width = width;
         this.height = height;
     }
@@ -168,7 +187,7 @@ public class Texture
     {
         this.width = width;
         this.height = height;
-        textureId = createTextureFromPixelData(pixelData);
+        textureHandle = createTextureFromPixelData(pixelData);
     }
 
     private int createTextureFromPixelData(int[] data)
@@ -238,7 +257,7 @@ public class Texture
 
     public void bind(int unit)
     {
-        glBindTextureUnit(unit, textureId);
+        glBindTextureUnit(unit, textureHandle);
     }
 
     public void unbind(int unit)
@@ -248,6 +267,6 @@ public class Texture
 
     public void delete()
     {
-        glDeleteTextures(textureId);
+        glDeleteTextures(textureHandle);
     }
 }

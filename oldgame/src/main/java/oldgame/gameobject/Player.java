@@ -5,7 +5,7 @@ import haraldr.math.Vector2f;
 import haraldr.math.Vector3f;
 import oldgame.physics.PlayerMovementType;
 
-import static engine.main.EntryPoint.fastFloor;
+import static haraldr.main.EntryPoint.fastFloor;
 import static oldgame.world.Grid.GRID_SIZE;
 
 public class Player extends MovableEntity

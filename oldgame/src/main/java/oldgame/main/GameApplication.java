@@ -23,7 +23,7 @@ public class GameApplication extends Application
     protected void init(Window.WindowProperties windowProperties)
     {
         super.init(windowProperties);
-        layerStack.pushLayer(new WorldLayer());
+        //layerStack.pushLayer(new WorldLayer());
         Renderer.setClearColor(0.2f, 0.6f, 0.65f, 1.0f);
     }
 

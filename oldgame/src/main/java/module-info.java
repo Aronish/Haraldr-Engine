@@ -1,7 +1,7 @@
 module oldgame
 {
     requires java.desktop;
-    requires Engine.engine;
+    requires haraldr;
     requires org.jetbrains.annotations;
 
     opens textures;

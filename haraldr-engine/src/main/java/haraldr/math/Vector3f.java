@@ -153,11 +153,12 @@ public class Vector3f
         z *= scalar;
     }
 
-    public void normalize()
+    public Vector3f normalize()
     {
         x /= length();
         y /= length();
         z /= length();
+        return this;
     }
 
     public float length()

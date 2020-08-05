@@ -29,6 +29,7 @@ module haraldr
     requires JsonParser;
     ///// EXPORTS ///////
     exports haraldr.debug;
+    exports haraldr.ecs;
     exports haraldr.event;
     exports haraldr.graphics;
     exports haraldr.graphics.lighting;
@@ -37,6 +38,7 @@ module haraldr
     exports haraldr.main;
     exports haraldr.math;
     exports haraldr.physics;
+    exports haraldr.scenegraph;
 
     opens default_shaders;
     opens default_textures;

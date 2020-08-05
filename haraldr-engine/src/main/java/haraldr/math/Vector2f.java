@@ -143,9 +143,15 @@ public class Vector2f
     }
 
     @Contract("_, _ -> new")
-    public static @NotNull Vector2f multiply(@NotNull Vector2f first, float scalar)
+    public static @NotNull Vector2f multiply(@NotNull Vector2f vector, float scalar)
     {
-        return new Vector2f(first.x * scalar, first.y * scalar);
+        return new Vector2f(vector.x * scalar, vector.y * scalar);
+    }
+
+    @Contract("_, _ -> new")
+    public static @NotNull Vector2f multiply(@NotNull Vector2f left, Vector2f right)
+    {
+        return new Vector2f(left.x * right.x, left.y * right.y);
     }
 
     @Contract("_ -> new")

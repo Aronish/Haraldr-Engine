@@ -3,12 +3,14 @@ package sandbox;
 import haraldr.graphics.Renderer;
 import haraldr.main.Application;
 import haraldr.main.ProgramArguments;
-import haraldr.main.Scene;
+import haraldr.scenegraph.Scene2D;
+import haraldr.scenegraph.Scene3D;
 import haraldr.main.Window;
 
 class ExampleApplication extends Application
 {
-    private Scene mainScene, debugOverlay;
+    private Scene3D mainScene;
+    private Scene2D debugOverlay;
 
     @Override
     public void start()

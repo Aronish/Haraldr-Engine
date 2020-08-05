@@ -15,6 +15,8 @@ import haraldr.graphics.ResourceManager;
 import haraldr.graphics.ui.TextManager;
 import haraldr.input.Input;
 import haraldr.input.Key;
+import haraldr.scenegraph.Scene2D;
+import haraldr.scenegraph.Scene3D;
 import haraldr.math.Matrix4f;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,9 +27,14 @@ import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.GL_MAX_TEXTURE_UNITS;
-import static org.lwjgl.opengl.GL20C.GL_MAX_TEXTURE_IMAGE_UNITS;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_SEVERITY_NOTIFICATION;
@@ -38,7 +45,8 @@ public abstract class Application
 {
     private boolean initialized = false;
     protected Window window;
-    private Scene activeScene, activeOverlay;
+    private Scene3D activeScene;
+    private Scene2D activeOverlay;
 
     public static double time;
     public static int initWidth, initHeight;
@@ -87,13 +95,13 @@ public abstract class Application
         initialized = true;
     }
 
-    public void setActiveScene(Scene scene)
+    public void setActiveScene(Scene3D scene)
     {
         activeScene = scene;
         activeScene.onActivate();
     }
 
-    public void setActiveOverlay(Scene overlay)
+    public void setActiveOverlay(Scene2D overlay)
     {
         activeOverlay = overlay;
         activeOverlay.onActivate();
@@ -128,8 +136,8 @@ public abstract class Application
             {
                 Renderer3D.getCamera().onFocus((WindowFocusEvent) event);
             }
-            if (activeOverlay != null) activeOverlay.onEvent(event);
-            if (!event.isHandled()) activeScene.onEvent(event);
+            if (activeOverlay != null) activeOverlay.onEvent(event, window);
+            if (!event.isHandled()) activeScene.onEvent(event, window);
         }
     }
 

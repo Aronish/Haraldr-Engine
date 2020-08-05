@@ -28,6 +28,14 @@ public class Vector4f
         this.w = w;
     }
 
+    public Vector4f(Vector3f vector)
+    {
+        x = vector.getX();
+        y = vector.getY();
+        z = vector.getZ();
+        w = 0f;
+    }
+
     public Vector4f(@NotNull JSONArray jsonArray)
     {
         x = (float) jsonArray.getDouble(0);
@@ -153,6 +161,14 @@ public class Vector4f
         w *= scalar;
     }
 
+    public void divide(float scalar)
+    {
+        x /= scalar;
+        y /= scalar;
+        z /= scalar;
+        w /= scalar;
+    }
+
     public void normalize()
     {
         x /= length();
@@ -172,6 +188,12 @@ public class Vector4f
     public static @NotNull Vector4f add(@NotNull Vector4f first, @NotNull Vector4f second)
     {
         return new Vector4f(first.x + second.x, first.y + second.y, first.z + second.z, first.w + second.w);
+    }
+
+    @Contract("_, _ -> new")
+    public static @NotNull Vector4f subtract(@NotNull Vector4f first, float scalar)
+    {
+        return new Vector4f(first.x - scalar, first.y - scalar, first.z - scalar, first.w - scalar);
     }
 
     @Contract("_, _ -> new")
@@ -206,6 +228,6 @@ public class Vector4f
 
     public void print()
     {
-        Logger.info("X: " + x + " Y: " + y + " Z: " + z);
+        Logger.info("X: " + x + " Y: " + y + " Z: " + z + " W: " + w);
     }
 }

@@ -1,6 +1,7 @@
 package haraldr.graphics;
 
 import haraldr.debug.Logger;
+import haraldr.ecs.TransformComponent;
 import haraldr.main.IOUtils;
 import haraldr.math.Matrix4f;
 import jsonparser.JSONException;
@@ -11,17 +12,10 @@ public class JsonModel
     private String path;
     private VertexArray mesh;
     private JsonMaterial material;
-    private Matrix4f transformationMatrix;
 
     public JsonModel(String path)
     {
-        this(path, Matrix4f.IDENTITY);
-    }
-
-    public JsonModel(String path, Matrix4f transformationMatrix)
-    {
         this.path = path;
-        this.transformationMatrix = transformationMatrix;
         refresh();
     }
 
@@ -44,16 +38,11 @@ public class JsonModel
         }
     }
 
-    public void render()
+    public void render(TransformComponent transform)
     {
         material.bind();
-        material.getShader().setMatrix4f("model", transformationMatrix);
+        material.getShader().setMatrix4f("model", Matrix4f.identity().translate(transform.position).scale(transform.scale));
         mesh.bind();
         mesh.drawElements();
-    }
-
-    public void delete()
-    {
-        mesh.delete();
     }
 }

@@ -9,8 +9,16 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_KEEP;
+import static org.lwjgl.opengl.GL11.GL_REPLACE;
+import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_STENCIL_TEST;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glClearStencil;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glStencilOp;
 
 @SuppressWarnings("unused")
 public abstract class Renderer3D
@@ -41,7 +49,6 @@ public abstract class Renderer3D
     }
 
     private static final UniformBuffer matrixBuffer = new UniformBuffer(140);
-    private static SceneLights sceneLights = new SceneLights();
     private static Shader postProcessingShader = Shader.create("internal_shaders/hdr_gamma_correct.glsl");
     private static float exposure = 0.5f;
 
@@ -51,20 +58,9 @@ public abstract class Renderer3D
         exposure += pExposure * exposure; // Makes it seem more linear towards the lower exposure levels.
     }
 
-    public static void setSceneLights(SceneLights pSceneLights)
-    {
-        sceneLights = pSceneLights;
-    }
-
-    public static SceneLights getSceneLights()
-    {
-        return sceneLights;
-    }
-
     public static void dispose()
     {
         SCREEN_QUAD.delete();
-        sceneLights.dispose();
         matrixBuffer.delete();
     }
 
@@ -76,7 +72,6 @@ public abstract class Renderer3D
         matrixBuffer.setDataUnsafe(camera.getViewMatrix().matrix, 0);
         matrixBuffer.setDataUnsafe(Matrix4f.perspective.matrix, 64);
         matrixBuffer.setDataUnsafe(camera.getRawPosition(), 128);
-        sceneLights.bind();
         window.getFramebuffer().bind();
         Renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }

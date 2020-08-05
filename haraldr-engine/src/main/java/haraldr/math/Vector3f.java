@@ -108,11 +108,12 @@ public class Vector3f
         z += all;
     }
 
-    public void add(@NotNull Vector3f other)
+    public Vector3f add(@NotNull Vector3f other)
     {
         x += other.x;
         y += other.y;
         z += other.z;
+        return this;
     }
 
     public void addX(float dx)

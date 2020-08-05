@@ -21,7 +21,7 @@ public class TextManager
     private static VertexBuffer textMeshes;
     private static int indexCount;
 
-    public static Font FONT = new Font("default_fonts/Roboto-Regular.ttf", 22);
+    public static Font FONT = new Font("default_fonts/Roboto-Regular.ttf", 30);
 
     private static List<TextLabel> textLabels = new ArrayList<>();
 

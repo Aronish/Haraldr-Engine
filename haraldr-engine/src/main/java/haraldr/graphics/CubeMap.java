@@ -14,6 +14,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+import static org.lwjgl.opengl.GL11.GL_ALWAYS;
 import static org.lwjgl.opengl.GL11.GL_BACK;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
@@ -36,6 +37,7 @@ import static org.lwjgl.opengl.GL11.glCullFace;
 import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL11.glDepthFunc;
 import static org.lwjgl.opengl.GL11.glGenTextures;
+import static org.lwjgl.opengl.GL11.glStencilFunc;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -91,6 +93,7 @@ public class CubeMap
     {
         glDepthFunc(GL_LEQUAL);
         glCullFace(GL_FRONT);
+        glStencilFunc(GL_ALWAYS, 0, -1);
         CUBEMAP.bind();
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapId);
         DefaultModels.CUBE.bind();

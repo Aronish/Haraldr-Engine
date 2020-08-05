@@ -1,5 +1,6 @@
 package haraldr.math;
 
+import haraldr.debug.Logger;
 import haraldr.event.WindowResizedEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +18,7 @@ public class Matrix4f //TODO: can be improved
     public static Matrix4f pixelOrthographic;
     /////PERSPECTIVE/////////////////////////////
     private static final float DEFAULT_FOV = 60f;
-    private static float fov = DEFAULT_FOV;
+    public static float fov = DEFAULT_FOV;
     private static float aspectRatio;
     public static Matrix4f perspective;
 
@@ -38,6 +39,35 @@ public class Matrix4f //TODO: can be improved
         recalculatePixelOrthographic(width, height);
         recalculatePerspective(aspectRatio);
     }
+
+    public static void setZoom(float zoom)
+    {
+        scale = zoom;
+        fov = zoom;
+        recalculateOrthographic(FIXED_ORTHOGRAPHIC_AXIS / dynamicOrthographicAxis);
+        recalculatePerspective(aspectRatio);
+    }
+
+    public static void addZoom(float zoom)
+    {
+        scale += zoom;
+        fov += zoom;
+        if (scale < 0f) scale = 0f;
+        if (fov < 10f) fov = 10f;
+        if (fov > 179f) fov = 179f;
+        recalculateOrthographic(FIXED_ORTHOGRAPHIC_AXIS / dynamicOrthographicAxis);
+        recalculatePerspective(aspectRatio);
+    }
+
+    public static void resetZoom()
+    {
+        scale = 1f;
+        fov = DEFAULT_FOV;
+        recalculateOrthographic(FIXED_ORTHOGRAPHIC_AXIS / dynamicOrthographicAxis);
+        recalculatePerspective(aspectRatio);
+    }
+
+    ///// Matrix Operations /////////
 
     @NotNull
     public static Matrix4f identity()
@@ -69,7 +99,7 @@ public class Matrix4f //TODO: can be improved
         return result;
     }
 
-    public void multiplyThis(Matrix4f multiplicand)
+    public static Matrix4f multiply(Matrix4f right, Matrix4f left)
     {
         Matrix4f result = identity();
         for (int y = 0; y < 4; y++)
@@ -79,12 +109,12 @@ public class Matrix4f //TODO: can be improved
                 float sum = 0f;
                 for (int e = 0; e < 4; e++)
                 {
-                    sum += matrix[x + e * 4] * multiplicand.matrix[e + y * 4];
+                    sum += right.matrix[x + e * 4] * left.matrix[e + y * 4];
                 }
                 result.matrix[x + y * 4] = sum;
             }
         }
-        this.matrix = result.matrix;
+        return result;
     }
 
     @NotNull
@@ -104,6 +134,22 @@ public class Matrix4f //TODO: can be improved
         return new Vector3f(result[0], result[1], result[2]);
     }
 
+    public static Vector4f multiply(Matrix4f matrix, Vector4f vector)
+    {
+        float[] start = { vector.getX(), vector.getY(), vector.getZ(), vector.getW() };
+        float[] result = new float[4];
+        for (int x = 0; x < 4; x++)
+        {
+            float sum = 0f;
+            for (int e = 0; e < 4; e++)
+            {
+                sum += matrix.matrix[x + e * 4] * start[e];
+            }
+            result[x] = sum;
+        }
+        return new Vector4f(result[0], result[1], result[2], result[3]);
+    }
+
     @NotNull
     public Vector4f multiply(@NotNull Vector4f multiplicand)
     {
@@ -121,31 +167,136 @@ public class Matrix4f //TODO: can be improved
         return new Vector4f(result[0], result[1], result[2], result[3]);
     }
 
-    public static void setZoom(float zoom)
+    public static Matrix4f invert(Matrix4f matrix)
     {
-        scale = zoom;
-        fov = zoom;
-        recalculateOrthographic(FIXED_ORTHOGRAPHIC_AXIS / dynamicOrthographicAxis);
-        recalculatePerspective(aspectRatio);
-    }
+        Matrix4f inverse = new Matrix4f();
+        float determinant;
+        int i;
 
-    public static void addZoom(float zoom)
-    {
-        scale += zoom;
-        fov += zoom;
-        if (scale < 0f) scale = 0f;
-        if (fov < 10f) fov = 10f;
-        if (fov > 179f) fov = 179f;
-        recalculateOrthographic(FIXED_ORTHOGRAPHIC_AXIS / dynamicOrthographicAxis);
-        recalculatePerspective(aspectRatio);
-    }
+        inverse.matrix[0] = matrix.matrix[5]  * matrix.matrix[10] * matrix.matrix[15] -
+                matrix.matrix[5]  * matrix.matrix[11] * matrix.matrix[14] -
+                matrix.matrix[9]  * matrix.matrix[6]  * matrix.matrix[15] +
+                matrix.matrix[9]  * matrix.matrix[7]  * matrix.matrix[14] +
+                matrix.matrix[13] * matrix.matrix[6]  * matrix.matrix[11] -
+                matrix.matrix[13] * matrix.matrix[7]  * matrix.matrix[10];
 
-    public static void resetZoom()
-    {
-        scale = 1f;
-        fov = DEFAULT_FOV;
-        recalculateOrthographic(FIXED_ORTHOGRAPHIC_AXIS / dynamicOrthographicAxis);
-        recalculatePerspective(aspectRatio);
+        inverse.matrix[4] = -matrix.matrix[4]  * matrix.matrix[10] * matrix.matrix[15] +
+                matrix.matrix[4]  * matrix.matrix[11] * matrix.matrix[14] +
+                matrix.matrix[8]  * matrix.matrix[6]  * matrix.matrix[15] -
+                matrix.matrix[8]  * matrix.matrix[7]  * matrix.matrix[14] -
+                matrix.matrix[12] * matrix.matrix[6]  * matrix.matrix[11] +
+                matrix.matrix[12] * matrix.matrix[7]  * matrix.matrix[10];
+
+        inverse.matrix[8] = matrix.matrix[4]  * matrix.matrix[9] * matrix.matrix[15] -
+                matrix.matrix[4]  * matrix.matrix[11] * matrix.matrix[13] -
+                matrix.matrix[8]  * matrix.matrix[5] * matrix.matrix[15] +
+                matrix.matrix[8]  * matrix.matrix[7] * matrix.matrix[13] +
+                matrix.matrix[12] * matrix.matrix[5] * matrix.matrix[11] -
+                matrix.matrix[12] * matrix.matrix[7] * matrix.matrix[9];
+
+        inverse.matrix[12] = -matrix.matrix[4]  * matrix.matrix[9] * matrix.matrix[14] +
+                matrix.matrix[4]  * matrix.matrix[10] * matrix.matrix[13] +
+                matrix.matrix[8]  * matrix.matrix[5] * matrix.matrix[14] -
+                matrix.matrix[8]  * matrix.matrix[6] * matrix.matrix[13] -
+                matrix.matrix[12] * matrix.matrix[5] * matrix.matrix[10] +
+                matrix.matrix[12] * matrix.matrix[6] * matrix.matrix[9];
+
+        inverse.matrix[1] = -matrix.matrix[1]  * matrix.matrix[10] * matrix.matrix[15] +
+                matrix.matrix[1]  * matrix.matrix[11] * matrix.matrix[14] +
+                matrix.matrix[9]  * matrix.matrix[2] * matrix.matrix[15] -
+                matrix.matrix[9]  * matrix.matrix[3] * matrix.matrix[14] -
+                matrix.matrix[13] * matrix.matrix[2] * matrix.matrix[11] +
+                matrix.matrix[13] * matrix.matrix[3] * matrix.matrix[10];
+
+        inverse.matrix[5] = matrix.matrix[0]  * matrix.matrix[10] * matrix.matrix[15] -
+                matrix.matrix[0]  * matrix.matrix[11] * matrix.matrix[14] -
+                matrix.matrix[8]  * matrix.matrix[2] * matrix.matrix[15] +
+                matrix.matrix[8]  * matrix.matrix[3] * matrix.matrix[14] +
+                matrix.matrix[12] * matrix.matrix[2] * matrix.matrix[11] -
+                matrix.matrix[12] * matrix.matrix[3] * matrix.matrix[10];
+
+        inverse.matrix[9] = -matrix.matrix[0]  * matrix.matrix[9] * matrix.matrix[15] +
+                matrix.matrix[0]  * matrix.matrix[11] * matrix.matrix[13] +
+                matrix.matrix[8]  * matrix.matrix[1] * matrix.matrix[15] -
+                matrix.matrix[8]  * matrix.matrix[3] * matrix.matrix[13] -
+                matrix.matrix[12] * matrix.matrix[1] * matrix.matrix[11] +
+                matrix.matrix[12] * matrix.matrix[3] * matrix.matrix[9];
+
+        inverse.matrix[13] = matrix.matrix[0]  * matrix.matrix[9] * matrix.matrix[14] -
+                matrix.matrix[0]  * matrix.matrix[10] * matrix.matrix[13] -
+                matrix.matrix[8]  * matrix.matrix[1] * matrix.matrix[14] +
+                matrix.matrix[8]  * matrix.matrix[2] * matrix.matrix[13] +
+                matrix.matrix[12] * matrix.matrix[1] * matrix.matrix[10] -
+                matrix.matrix[12] * matrix.matrix[2] * matrix.matrix[9];
+
+        inverse.matrix[2] = matrix.matrix[1]  * matrix.matrix[6] * matrix.matrix[15] -
+                matrix.matrix[1]  * matrix.matrix[7] * matrix.matrix[14] -
+                matrix.matrix[5]  * matrix.matrix[2] * matrix.matrix[15] +
+                matrix.matrix[5]  * matrix.matrix[3] * matrix.matrix[14] +
+                matrix.matrix[13] * matrix.matrix[2] * matrix.matrix[7] -
+                matrix.matrix[13] * matrix.matrix[3] * matrix.matrix[6];
+
+        inverse.matrix[6] = -matrix.matrix[0]  * matrix.matrix[6] * matrix.matrix[15] +
+                matrix.matrix[0]  * matrix.matrix[7] * matrix.matrix[14] +
+                matrix.matrix[4]  * matrix.matrix[2] * matrix.matrix[15] -
+                matrix.matrix[4]  * matrix.matrix[3] * matrix.matrix[14] -
+                matrix.matrix[12] * matrix.matrix[2] * matrix.matrix[7] +
+                matrix.matrix[12] * matrix.matrix[3] * matrix.matrix[6];
+
+        inverse.matrix[10] = matrix.matrix[0]  * matrix.matrix[5] * matrix.matrix[15] -
+                matrix.matrix[0]  * matrix.matrix[7] * matrix.matrix[13] -
+                matrix.matrix[4]  * matrix.matrix[1] * matrix.matrix[15] +
+                matrix.matrix[4]  * matrix.matrix[3] * matrix.matrix[13] +
+                matrix.matrix[12] * matrix.matrix[1] * matrix.matrix[7] -
+                matrix.matrix[12] * matrix.matrix[3] * matrix.matrix[5];
+
+        inverse.matrix[14] = -matrix.matrix[0]  * matrix.matrix[5] * matrix.matrix[14] +
+                matrix.matrix[0]  * matrix.matrix[6] * matrix.matrix[13] +
+                matrix.matrix[4]  * matrix.matrix[1] * matrix.matrix[14] -
+                matrix.matrix[4]  * matrix.matrix[2] * matrix.matrix[13] -
+                matrix.matrix[12] * matrix.matrix[1] * matrix.matrix[6] +
+                matrix.matrix[12] * matrix.matrix[2] * matrix.matrix[5];
+
+        inverse.matrix[3] = -matrix.matrix[1] * matrix.matrix[6] * matrix.matrix[11] +
+                matrix.matrix[1] * matrix.matrix[7] * matrix.matrix[10] +
+                matrix.matrix[5] * matrix.matrix[2] * matrix.matrix[11] -
+                matrix.matrix[5] * matrix.matrix[3] * matrix.matrix[10] -
+                matrix.matrix[9] * matrix.matrix[2] * matrix.matrix[7] +
+                matrix.matrix[9] * matrix.matrix[3] * matrix.matrix[6];
+
+        inverse.matrix[7] = matrix.matrix[0] * matrix.matrix[6] * matrix.matrix[11] -
+                matrix.matrix[0] * matrix.matrix[7] * matrix.matrix[10] -
+                matrix.matrix[4] * matrix.matrix[2] * matrix.matrix[11] +
+                matrix.matrix[4] * matrix.matrix[3] * matrix.matrix[10] +
+                matrix.matrix[8] * matrix.matrix[2] * matrix.matrix[7] -
+                matrix.matrix[8] * matrix.matrix[3] * matrix.matrix[6];
+
+        inverse.matrix[11] = -matrix.matrix[0] * matrix.matrix[5] * matrix.matrix[11] +
+                matrix.matrix[0] * matrix.matrix[7] * matrix.matrix[9] +
+                matrix.matrix[4] * matrix.matrix[1] * matrix.matrix[11] -
+                matrix.matrix[4] * matrix.matrix[3] * matrix.matrix[9] -
+                matrix.matrix[8] * matrix.matrix[1] * matrix.matrix[7] +
+                matrix.matrix[8] * matrix.matrix[3] * matrix.matrix[5];
+
+        inverse.matrix[15] = matrix.matrix[0] * matrix.matrix[5] * matrix.matrix[10] -
+                matrix.matrix[0] * matrix.matrix[6] * matrix.matrix[9] -
+                matrix.matrix[4] * matrix.matrix[1] * matrix.matrix[10] +
+                matrix.matrix[4] * matrix.matrix[2] * matrix.matrix[9] +
+                matrix.matrix[8] * matrix.matrix[1] * matrix.matrix[6] -
+                matrix.matrix[8] * matrix.matrix[2] * matrix.matrix[5];
+
+        determinant = matrix.matrix[0] * inverse.matrix[0] + matrix.matrix[1] * inverse.matrix[4] + matrix.matrix[2] * inverse.matrix[8] + matrix.matrix[3] * inverse.matrix[12];
+
+        if (determinant == 0) Logger.error("Matrix could not be inverted!");
+
+        determinant = 1.0f / determinant;
+
+        Matrix4f result = new Matrix4f();
+        for (i = 0; i < 16; i++)
+        {
+            result.matrix[i] = inverse.matrix[i] * determinant;
+        }
+        return result;
     }
 
     private static @NotNull Matrix4f createScale(@NotNull Vector2f scale)
@@ -355,6 +506,23 @@ public class Matrix4f //TODO: can be improved
         result.matrix[11] = -1f; // It is definitely this way for some reason. It has been wrong all the time lol.
         result.matrix[14] = -2f * far * near / range;
         return result;
+    }
+
+    public static Vector3f unproject(Vector3f position, Matrix4f model, Matrix4f projection, Vector4f viewPort) //Hmmmmmmm?
+    {
+        Matrix4f inverse = invert(Matrix4f.multiply(projection, model));
+        Vector4f tmp = new Vector4f(position.getX(), position.getY(), position.getZ(), 1);
+        tmp.setX((tmp.getX() - viewPort.getX()) / viewPort.getZ());
+        tmp.setY((tmp.getY() - viewPort.getY()) / viewPort.getW());
+        tmp = Vector4f.subtract(Vector4f.multiply(tmp, 2), 1);
+
+        tmp.print();
+
+        Vector4f obj = multiply(inverse, tmp);
+        obj.print();
+        obj.divide(obj.getW());
+        obj.print();
+        return new Vector3f(obj.getX(), obj.getY(), obj.getZ());
     }
 
     public static @NotNull Matrix4f lookAt(@NotNull Vector3f position, @NotNull Vector3f target, @NotNull Vector3f up)

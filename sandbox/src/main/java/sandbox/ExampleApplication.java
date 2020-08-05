@@ -9,9 +9,6 @@ import haraldr.main.Window;
 
 class ExampleApplication extends Application
 {
-    private Scene3D mainScene;
-    private Scene2D debugOverlay;
-
     @Override
     public void start()
     {
@@ -26,9 +23,7 @@ class ExampleApplication extends Application
     {
         super.init(windowProperties);
         Renderer.setClearColor(0.1f, 0.1f, 0.1f, 1f);
-        mainScene = new TestScene();
-        debugOverlay = new DebugOverlay();
-        setActiveScene(mainScene);
-        setActiveOverlay(debugOverlay);
+        setActiveScene(new TestScene());
+        setActiveOverlay(new DebugOverlay());
     }
 }

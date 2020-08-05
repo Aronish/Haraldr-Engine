@@ -8,7 +8,7 @@ import haraldr.math.Matrix4f;
 import haraldr.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
-public class DirectionalLight extends Light implements SceneLightCompat
+public class DirectionalLight extends Light
 {
     protected Vector3f direction;
 
@@ -21,6 +21,7 @@ public class DirectionalLight extends Light implements SceneLightCompat
     public void setDirection(Vector3f direction)
     {
         this.direction = direction;
+        updateBufferData(sceneLightsBuffer, bufferOffset);
     }
 
     public void renderDirectionVector()
@@ -34,7 +35,7 @@ public class DirectionalLight extends Light implements SceneLightCompat
     }
 
     @Override
-    public void updateBufferData(@NotNull UniformBuffer lightSetup, int offset)
+    protected void updateBufferData(@NotNull UniformBuffer lightSetup, int offset)
     {
         lightSetup.setData(new float[] {
                 direction.getX(), direction.getY(), direction.getZ(),   0f,
@@ -43,7 +44,7 @@ public class DirectionalLight extends Light implements SceneLightCompat
     }
 
     @Override
-    public void updateBufferDataUnsafe(@NotNull UniformBuffer lightSetup, int offset)
+    protected void updateBufferDataUnsafe(@NotNull UniformBuffer lightSetup, int offset)
     {
         lightSetup.setDataUnsafe(new float[] {
                 direction.getX(), direction.getY(), direction.getZ(),   0f,

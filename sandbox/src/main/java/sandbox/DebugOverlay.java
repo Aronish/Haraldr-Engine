@@ -31,7 +31,7 @@ public class DebugOverlay extends Scene2D
     }
 
     @Override
-    public void onClientEvent(Window window, Event event)
+    protected void onClientEvent(Event event, Window window)
     {
         if (event.eventType == EventType.DEBUG_SCREEN_UPDATED)
         {
@@ -40,7 +40,7 @@ public class DebugOverlay extends Scene2D
     }
 
     @Override
-    public void onClientUpdate(Window window, float deltaTime)
+    protected void onClientUpdate(float deltaTime, Window window)
     {
     }
 

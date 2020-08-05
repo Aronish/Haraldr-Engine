@@ -4,7 +4,7 @@ import haraldr.graphics.UniformBuffer;
 import haraldr.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
-public class Spotlight extends DirectionalLight implements SceneLightCompat
+public class Spotlight extends DirectionalLight
 {
     private float innerCutOff, outerCutOff;
 
@@ -16,7 +16,7 @@ public class Spotlight extends DirectionalLight implements SceneLightCompat
     }
 
     @Override
-    public void updateBufferData(@NotNull UniformBuffer lightSetup, int offset)
+    protected void updateBufferData(@NotNull UniformBuffer lightSetup, int offset)
     {
         lightSetup.setData(new float[] {
                 position.getX(), position.getY(), position.getZ(),      0f,
@@ -28,7 +28,7 @@ public class Spotlight extends DirectionalLight implements SceneLightCompat
     }
 
     @Override
-    public void updateBufferDataUnsafe(@NotNull UniformBuffer lightSetup, int offset)
+    protected void updateBufferDataUnsafe(@NotNull UniformBuffer lightSetup, int offset)
     {
         lightSetup.setDataUnsafe(new float[] {
                 position.getX(), position.getY(), position.getZ(),      0f,

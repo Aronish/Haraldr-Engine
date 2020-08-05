@@ -7,13 +7,13 @@ import haraldr.math.Matrix4f;
 import jsonparser.JSONException;
 import jsonparser.JSONObject;
 
-public class JsonModel
+public class Model
 {
     private String path;
     private VertexArray mesh;
-    private JsonMaterial material;
+    private Material material;
 
-    public JsonModel(String path)
+    public Model(String path)
     {
         this.path = path;
         refresh();
@@ -29,11 +29,11 @@ public class JsonModel
         try
         {
             mesh = ResourceManager.getMesh(modelDefinition.getString("mesh"));
-            material = JsonMaterial.create(modelDefinition.getJSONObject("material"));
+            material = Material.create(modelDefinition.getJSONObject("material"));
         } catch (JSONException e)
         {
             mesh = ResourceManager.getMesh("default_meshes/plane.obj");
-            material = JsonMaterial.create(new JSONObject(IOUtils.readResource("default_models/error.json", IOUtils::resourceToString)));
+            material = Material.create(new JSONObject(IOUtils.readResource("default_models/error.json", IOUtils::resourceToString)));
             Logger.error(e.getMessage());
         }
     }

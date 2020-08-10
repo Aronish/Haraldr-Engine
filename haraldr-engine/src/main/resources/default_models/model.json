@@ -1,0 +1,15 @@
+{
+  "mesh": "default_meshes/suzanne_smooth.obj",
+  "material":
+  {
+    "type": "PBR",
+    "properties":
+    {
+      "albedo": "default_textures/MetalSpottyDiscoloration001_COL_4K_METALNESS.jpg",
+      "normal": "default_textures/MetalSpottyDiscoloration001_NRM_4K_METALNESS.jpg",
+      "metalness": "default_textures/MetalSpottyDiscoloration001_METALNESS_4K_METALNESS.jpg",
+      "roughness": "default_textures/MetalSpottyDiscoloration001_ROUGHNESS_4K_METALNESS.jpg",
+      "environment_map": "default_hdris/NorwayForest_4K_hdri_sphere.hdr"
+    }
+  }
+}

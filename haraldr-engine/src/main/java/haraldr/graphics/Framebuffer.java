@@ -21,6 +21,7 @@ import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
+import static org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL_ATTACHMENT;
 import static org.lwjgl.opengl.GL30.GL_DRAW_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.GL_READ_FRAMEBUFFER;
@@ -273,7 +274,7 @@ public class Framebuffer
         private void attach(@NotNull Framebuffer framebuffer)
         {
             glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.frameBufferId);
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderBufferId);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderBufferId);
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
 

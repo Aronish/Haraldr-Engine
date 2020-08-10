@@ -40,7 +40,7 @@ public class MaterialParser
             variant = getBestVariantCandidate(materialProperties, specification.getJSONObject(type).getJSONObject("variants"));
         } else
         {
-            variant = specification.getJSONObject("materials").getJSONObject(type);
+            variant = specification.getJSONObject(type);
         }
 
         // Extract samplers and optional switches

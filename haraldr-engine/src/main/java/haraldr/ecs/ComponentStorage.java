@@ -24,6 +24,18 @@ public class ComponentStorage<T>
         return components.get(entity);
     }
 
+    public int getEntityKey(T component)
+    {
+        for (Map.Entry<Integer, T> entry : components.entrySet())
+        {
+            if (component.equals(entry.getValue()))
+            {
+                return entry.getKey();
+            }
+        }
+        return -1;
+    }
+
     public List<Integer> getEntities()
     {
         return new ArrayList<>(components.keySet());

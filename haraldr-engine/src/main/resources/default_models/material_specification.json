@@ -7,7 +7,7 @@
       {
         "dependants": [ "color" ],
         "shader": "default_shaders/pbr_untextured.glsl",
-        "optional": [ "metalness", "roughness" ],
+        "optional": [ "metalness", "roughness", "opacity"],
         "samplers":
         {
           "environment_map": { "extended": true, "unit": 0 }
@@ -17,6 +17,7 @@
       {
         "dependants": [ "albedo" ],
         "shader": "default_shaders/pbr_textured.glsl",
+        "optional": [ "opacity" ],
         "samplers":
         {
           "environment_map": { "extended": true, "unit": 0 },
@@ -32,18 +33,50 @@
   },
   "REFLECTIVE":
   {
-    "shader": "default_shaders/reflective.glsl",
-    "samplers":
+    "variants":
     {
-      "environment_map": { "extended": false, "unit": 0 },
-      "diffuse_texture": { "color_data": true, "unit": 1 },
-      "reflection_map": { "color_data": false, "unit": 2 }
+      "untextured":
+      {
+        "dependants": [ "color" ],
+        "shader": "default_shaders/reflective.glsl",
+        "optional": [ "opacity" ],
+        "samplers":
+        {
+          "environment_map": { "extended": false, "unit": 0 }
+        }
+      },
+      "textured":
+      {
+        "dependants": [ "diffuse_texture" ],
+        "shader": "default_shaders/reflective.glsl",
+        "switches": [ "TEXTURED" ],
+        "optional": [ "opacity" ],
+        "samplers":
+        {
+          "environment_map": { "extended": false, "unit": 0 },
+          "diffuse_texture": { "color_data": true, "unit": 1 },
+          "reflection_map": { "color_data": false, "unit": 2 }
+        }
+      },
+      "normal_mapped":
+      {
+        "dependants": [ "diffuse_texture", "normal_map" ],
+        "shader": "default_shaders/reflective_lit.glsl",
+        "optional": [ "specular_strength", "specular_exponent", "opacity" ],
+        "samplers":
+        {
+          "environment_map": { "extended": false, "unit": 0 },
+          "diffuse_texture": { "color_data": true, "unit": 1 },
+          "normal_map": { "color_data": false, "unit": 2 },
+          "reflection_map": { "color_data": false, "unit": 3 }
+        }
+      }
     }
   },
   "REFRACTIVE":
   {
     "shader": "default_shaders/refractive.glsl",
-    "optional": [ "begin_medium", "end_medium" ],
+    "optional": [ "begin_medium", "end_medium", "opacity" ],
     "samplers":
     {
       "environment_map": { "extended": false, "unit": 0 },

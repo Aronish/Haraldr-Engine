@@ -30,11 +30,16 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_KEEP;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_REPLACE;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_STENCIL_TEST;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glClearStencil;
 import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glStencilOp;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_SEVERITY_NOTIFICATION;
@@ -71,6 +76,8 @@ public abstract class Application
 
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_STENCIL_TEST);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

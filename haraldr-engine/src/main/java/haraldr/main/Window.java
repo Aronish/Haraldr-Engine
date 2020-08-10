@@ -58,15 +58,12 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
-import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT24;
+import static org.lwjgl.opengl.GL30.GL_DEPTH24_STENCIL8;
 import static org.lwjgl.opengl.GL30.GL_RGB16F;
 import static org.lwjgl.opengl.GL46.GL_TRUE;
 import static org.lwjgl.opengl.GL46.glViewport;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-/**
- * Represents a GLFW window.
- */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Window
 {
@@ -78,6 +75,7 @@ public class Window
     private int windowWidth, windowHeight, initWidth, initHeight;
 
     private List<EventObserver<WindowResizedEvent>> observers = new ArrayList<>();
+    private int mouseX, mouseY;
 
     private Framebuffer framebuffer;
 
@@ -127,12 +125,12 @@ public class Window
         if (windowProperties.samples > 0)
         {
             framebuffer.setColorAttachment(new Framebuffer.MultisampledColorAttachment(initWidth, initHeight, GL_RGB16F, windowProperties.samples));
-            framebuffer.setDepthBuffer(new Framebuffer.MultisampledRenderBuffer(initWidth, initHeight, GL_DEPTH_COMPONENT24, windowProperties.samples));
+            framebuffer.setDepthBuffer(new Framebuffer.MultisampledRenderBuffer(initWidth, initHeight, GL_DEPTH24_STENCIL8, windowProperties.samples));
         }
         else if (windowProperties.samples == 0)
         {
             framebuffer.setColorAttachment(new Framebuffer.ColorAttachment(initWidth, initHeight, GL_RGB16F));
-            framebuffer.setDepthBuffer(new Framebuffer.RenderBuffer(initWidth, initHeight, GL_DEPTH_COMPONENT24));
+            framebuffer.setDepthBuffer(new Framebuffer.RenderBuffer(initWidth, initHeight, GL_DEPTH24_STENCIL8));
         }
         else throw new IllegalArgumentException("Multisample sample count cannot be below 0");
 
@@ -147,15 +145,19 @@ public class Window
 
         glfwSetMouseButtonCallback(windowHandle, (window, button, action, mods) -> {
             if (action == GLFW_PRESS){
-                EventDispatcher.dispatch(new MousePressedEvent(button), this);
+                EventDispatcher.dispatch(new MousePressedEvent(button, mouseX, mouseY), this);
             }else if (action == GLFW_RELEASE){
-                EventDispatcher.dispatch(new MouseReleasedEvent(button), this);
+                EventDispatcher.dispatch(new MouseReleasedEvent(button, mouseX, mouseY), this);
             }
         });
 
         glfwSetScrollCallback(windowHandle, (window, xOffset, yOffset) -> EventDispatcher.dispatch(new MouseScrolledEvent(xOffset, yOffset), this));
 
-        glfwSetCursorPosCallback(windowHandle, (window, xPos, yPos) -> EventDispatcher.dispatch(new MouseMovedEvent(xPos, yPos), this));
+        glfwSetCursorPosCallback(windowHandle, (window, xPos, yPos) ->
+        {
+            setCurrentMousePosition((int) xPos, (int) yPos);
+            EventDispatcher.dispatch(new MouseMovedEvent(xPos, yPos), this);
+        });
 
         glfwSetWindowCloseCallback(windowHandle, (window) -> EventDispatcher.dispatch(new WindowClosedEvent(), this));
 
@@ -202,6 +204,12 @@ public class Window
             glfwSetWindowMonitor(windowHandle, glfwGetPrimaryMonitor(), 0, 0, vidmode.width(), vidmode.height(), 60);
             setViewPortSize(vidmode.width(), vidmode.height());
         }
+    }
+
+    public void setCurrentMousePosition(int mouseX, int mouseY)
+    {
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
     }
 
     public void setFocus(boolean focused)

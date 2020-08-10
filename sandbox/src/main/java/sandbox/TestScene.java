@@ -1,10 +1,10 @@
 package sandbox;
 
+import haraldr.ecs.BoundingSphereComponent;
 import haraldr.ecs.Entity;
 import haraldr.ecs.ModelComponent;
 import haraldr.ecs.TransformComponent;
 import haraldr.event.Event;
-import haraldr.event.EventType;
 import haraldr.graphics.CubeMap;
 import haraldr.graphics.Renderer3D;
 import haraldr.graphics.lighting.PointLight;
@@ -16,7 +16,9 @@ import haraldr.scenegraph.Scene3D;
 
 public class TestScene extends Scene3D
 {
-    private Entity model2 = registry.createEntity();
+    private Entity ape = registry.createEntity(new Vector3f(0f, 0f, 0f), new Vector3f(0.5f));
+    private Entity ape2 = registry.createEntity(new Vector3f(2f, 0f, 0f), new Vector3f(0.5f));
+    private Entity ape3 = registry.createEntity(new Vector3f(0f, 0f, 2f), new Vector3f(0.5f));
     private float interpolation;
 
     private PointLight pointLight = new PointLight(new Vector3f(), new Vector3f(2.5f, 2.5f, 7.5f));
@@ -30,8 +32,14 @@ public class TestScene extends Scene3D
                 pointLight2
         );
         setSkyBox(CubeMap.createEnvironmentMap("default_hdris/NorwayForest_4K_hdri_sphere.hdr"));
-        registry.addComponent(new ModelComponent("default_models/test2.json"), model2);
-        registry.addComponent(new TransformComponent(new Vector3f(0.4f, 0f, 0f), new Vector3f(0.5f)), model2);
+        registry.addComponent(new ModelComponent("default_models/model.json"), ape);
+        registry.addComponent(new BoundingSphereComponent(0.75f), ape);
+
+        registry.addComponent(new ModelComponent("default_models/model.json"), ape2);
+        registry.addComponent(new BoundingSphereComponent(0.75f), ape2);
+
+        registry.addComponent(new ModelComponent("default_models/model.json"), ape3);
+        registry.addComponent(new BoundingSphereComponent(0.75f), ape3);
     }
 
     @Override

@@ -2,8 +2,8 @@ package haraldr.event;
 
 public class MouseReleasedEvent extends MouseButtonEvent
 {
-    public MouseReleasedEvent(int button)
+    public MouseReleasedEvent(int button, int xPos, int yPos)
     {
-        super(button, EventType.MOUSE_RELEASED, EventCategory.CATEGORY_INPUT, EventCategory.CATEGORY_MOUSE);
+        super(button, xPos, yPos, EventType.MOUSE_RELEASED, EventCategory.CATEGORY_INPUT, EventCategory.CATEGORY_MOUSE);
     }
 }

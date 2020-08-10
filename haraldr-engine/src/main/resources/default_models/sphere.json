@@ -2,12 +2,11 @@
   "mesh": "default_meshes/sphere.obj",
   "material":
   {
-    "type": "PBR",
+    "type": "REFLECTIVE",
     "properties":
     {
-      "color": [ 0.8, 0.3, 0.8 ],
-      "metalness": 1.0,
-      "roughness": 0.3,
+      "color": [ 1.0, 1.0, 1.0 ],
+      "opacity": 0.15,
       "environment_map": "default_hdris/NorwayForest_4K_hdri_sphere.hdr"
     }
   }

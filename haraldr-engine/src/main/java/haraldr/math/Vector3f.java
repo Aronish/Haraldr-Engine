@@ -37,6 +37,13 @@ public class Vector3f
         this.z = (float) z;
     }
 
+    public Vector3f(Vector4f vector)
+    {
+        x = vector.getX();
+        y = vector.getY();
+        z = vector.getZ();
+    }
+
     public Vector3f(@NotNull JSONArray jsonArray)
     {
         x = (float) jsonArray.getDouble(0);
@@ -156,18 +163,25 @@ public class Vector3f
 
     public Vector3f normalize()
     {
-        x /= length();
-        y /= length();
-        z /= length();
+        double length = length();
+        x /= length;
+        y /= length;
+        z /= length;
         return this;
     }
 
-    public float length()
+    public double length()
     {
-        return (float) Math.sqrt(x * x + y * y + z * z);
+        return Math.sqrt(x * x + y * y + z * z);
     }
 
-    /////STATIC OPERATORS (These Don't modify this) /////////////////////////////
+    /////STATIC OPERATORS (These don't modify this) //////////////////////////////////////
+
+    @Contract("_, _ -> new")
+    public static @NotNull Vector3f add(@NotNull Vector3f first, float scalar)
+    {
+        return new Vector3f(first.x + scalar, first.y + scalar, first.z + scalar);
+    }
 
     @Contract("_, _ -> new")
     public static @NotNull Vector3f add(@NotNull Vector3f first, @NotNull Vector3f second)

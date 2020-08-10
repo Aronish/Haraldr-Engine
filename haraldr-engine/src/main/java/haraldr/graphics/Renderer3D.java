@@ -1,6 +1,5 @@
 package haraldr.graphics;
 
-import haraldr.graphics.lighting.SceneLights;
 import haraldr.main.Camera;
 import haraldr.main.PerspectiveCamera;
 import haraldr.main.Window;
@@ -9,16 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_KEEP;
-import static org.lwjgl.opengl.GL11.GL_REPLACE;
 import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_STENCIL_TEST;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glClearStencil;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glStencilOp;
 
 @SuppressWarnings("unused")
 public abstract class Renderer3D
@@ -73,7 +65,7 @@ public abstract class Renderer3D
         matrixBuffer.setDataUnsafe(Matrix4f.perspective.matrix, 64);
         matrixBuffer.setDataUnsafe(camera.getRawPosition(), 128);
         window.getFramebuffer().bind();
-        Renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        Renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 
     public static void end(@NotNull Window window)

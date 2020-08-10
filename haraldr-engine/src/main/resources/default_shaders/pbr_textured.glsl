@@ -95,6 +95,8 @@ layout (binding = 7) uniform sampler2D map_Displacement;
 layout (binding = 8) uniform sampler2D map_Ambient_Occlusion;
 #endif
 
+uniform float u_Opacity = 1.0f;
+
 out vec4 o_Color;
 
 #include "cook_torrance.glsl"
@@ -203,5 +205,5 @@ void main()
 #else
     vec3 ambient = kD * diffuse + specular;
 #endif
-    o_Color = vec4(ambient + Lo, 1.0f);
+    o_Color = vec4(ambient + Lo, u_Opacity);
 }

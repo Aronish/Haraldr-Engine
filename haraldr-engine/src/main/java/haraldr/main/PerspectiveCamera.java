@@ -3,6 +3,7 @@ package haraldr.main;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MouseScrolledEvent;
 import haraldr.event.WindowFocusEvent;
+import haraldr.event.WindowResizedEvent;
 import haraldr.math.Matrix4f;
 import haraldr.math.Vector3f;
 
@@ -17,8 +18,10 @@ public class PerspectiveCamera extends Camera
     );
     private Vector3f right = Vector3f.normalize(Vector3f.cross(direction, Vector3f.UP));
     private Vector3f up = Vector3f.normalize(Vector3f.cross(right, direction));
-
     private Matrix4f lookAt;
+
+    private float fov = 60f, near = 0.1f, far = 100f;
+
     private PerspectiveCameraController controller;
 
     public PerspectiveCamera()
@@ -30,19 +33,6 @@ public class PerspectiveCamera extends Camera
     {
         this.position = position;
         controller = new PerspectiveCameraController(this);
-    }
-
-    @Override
-    public void calculateViewMatrix()
-    {
-        direction = new Vector3f(
-                (float) Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)),
-                (float) Math.sin(Math.toRadians(pitch)),
-                (float) Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch))
-        ).normalize();
-        right = Vector3f.cross(direction, Vector3f.UP).normalize();
-        up = Vector3f.cross(right, direction).normalize();
-        viewMatrix = Matrix4f.lookAt(position, Vector3f.add(position, direction), Vector3f.UP);
     }
 
     @Override
@@ -67,6 +57,31 @@ public class PerspectiveCamera extends Camera
     public void onFocus(WindowFocusEvent event)
     {
         controller.onFocus(event);
+    }
+
+    @Override
+    public void onResize(WindowResizedEvent event)
+    {
+
+    }
+
+    @Override
+    public void calculateViewMatrix()
+    {
+        direction = new Vector3f(
+                (float) Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)),
+                (float) Math.sin(Math.toRadians(pitch)),
+                (float) Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch))
+        ).normalize();
+        right = Vector3f.cross(direction, Vector3f.UP).normalize();
+        up = Vector3f.cross(right, direction).normalize();
+        viewMatrix = Matrix4f.lookAt(position, Vector3f.add(position, direction), Vector3f.UP);
+    }
+
+    @Override
+    public void calculateProjectionMatrix()
+    {
+
     }
 
     public void setDirection(Vector3f direction)

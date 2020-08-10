@@ -42,13 +42,15 @@ layout (std140, binding = 0) uniform matrices
     vec3 viewPosition_W;
 };
 
-uniform float u_Begin_Medium = 1.0;
-uniform float u_End_Medium = 1.52;
+uniform float u_Begin_Medium = 1.0f;
+uniform float u_End_Medium = 1.52f;
 
 layout (binding = 0) uniform samplerCube c_EnvironmentMap;
 
 layout (binding = 1) uniform sampler2D map_Diffuse_Texture;
 layout (binding = 2) uniform sampler2D map_Refraction_Map;
+
+uniform float u_Opacity;
 
 out vec4 o_Color;
 
@@ -58,5 +60,5 @@ void main()
     vec3 R = refract(I, normalize(v_Normal_W), u_Begin_Medium / u_End_Medium);
 
     vec3 color = texture(c_EnvironmentMap, R).rgb * texture(map_Refraction_Map, v_TextureCoordinate).rgb + texture(map_Diffuse_Texture, v_TextureCoordinate).rgb;
-    o_Color = vec4(color, 1.f);
+    o_Color = vec4(color, u_Opacity);
 }

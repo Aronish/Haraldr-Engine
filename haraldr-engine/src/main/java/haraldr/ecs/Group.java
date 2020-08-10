@@ -18,7 +18,7 @@ public class Group<A, B>
         ++size;
     }
 
-    public void forEach(TriConsumer<A, B> action)
+    public void forEach(TriConsumer<TransformComponent, A, B> action)
     {
         for (int i = 0; i < size; ++i)
         {
@@ -26,7 +26,7 @@ public class Group<A, B>
         }
     }
 
-    public Entity find(TriFunction<A, B, Boolean> action, EntityRegistry registry)
+    public Entity find(TriFunction<TransformComponent, A, B, Boolean> action, EntityRegistry registry)
     {
         for (int i = 0; i < size; ++i)
         {
@@ -40,14 +40,14 @@ public class Group<A, B>
     }
 
     @FunctionalInterface
-    public interface TriConsumer<A, B>
+    public interface TriConsumer<A, B, C>
     {
-        void accept(TransformComponent transformComponent, A first, B second);
+        void accept(A a, B b, C c);
     }
 
     @FunctionalInterface
-    public interface TriFunction<A, B, R>
+    public interface TriFunction<A, B, C, R>
     {
-        R apply(TransformComponent transform, A first, B second);
+        R apply(A a, B b, C c);
     }
 }

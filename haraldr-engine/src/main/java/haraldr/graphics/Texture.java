@@ -70,7 +70,7 @@ public class Texture
 
     public static final Texture DEFAULT_WHITE = new Texture(1, 1, new int[] { -1 });
     public static final Texture DEFAULT_BLACK = new Texture(1, 1, new int[] { 0 });
-    public static final Texture BRDF_LUT = createBRDFLUT();
+    public static final Texture BRDF_LUT;
 
     private int width, height;
     private int textureHandle;
@@ -79,6 +79,11 @@ public class Texture
     {
         ResourceManager.addTexture("DEFAULT_BLACK", DEFAULT_BLACK);
         ResourceManager.addTexture("DEFAULT_WHITE", DEFAULT_WHITE);
+        BRDF_LUT = createBRDFLUT();
+    }
+
+    public static void init()
+    {
         ResourceManager.addTexture("BRDF_LUT", BRDF_LUT);
     }
 

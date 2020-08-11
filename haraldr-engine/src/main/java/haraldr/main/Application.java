@@ -5,19 +5,19 @@ import haraldr.event.DebugScreenUpdatedEvent;
 import haraldr.event.Event;
 import haraldr.event.EventDispatcher;
 import haraldr.event.EventType;
-import haraldr.event.MouseMovedEvent;
-import haraldr.event.MouseScrolledEvent;
 import haraldr.event.WindowFocusEvent;
 import haraldr.event.WindowResizedEvent;
+import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Renderer3D;
 import haraldr.graphics.ResourceManager;
+import haraldr.graphics.Texture;
 import haraldr.graphics.ui.TextManager;
 import haraldr.input.Input;
 import haraldr.input.Key;
+import haraldr.math.Matrix4f;
 import haraldr.scenegraph.Scene2D;
 import haraldr.scenegraph.Scene3D;
-import haraldr.math.Matrix4f;
 import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
@@ -28,15 +28,17 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.GL_KEEP;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_REPLACE;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_STENCIL_TEST;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glClearStencil;
 import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glStencilOp;
@@ -73,9 +75,10 @@ public abstract class Application
         /////OPENGL CODE WON'T WORK BEFORE THIS//////////
         EventDispatcher.addCallback(new EventCallback());
         Matrix4f.init(window.getWidth(), window.getHeight());
+        Texture.init();
 
         glEnable(GL_CULL_FACE);
-        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
@@ -84,7 +87,7 @@ public abstract class Application
 
         if (EntryPoint.DEBUG)
         {
-            glEnable(GL_DEBUG_OUTPUT);
+            //glEnable(GL_DEBUG_OUTPUT);
             glDebugMessageCallback((source, type, id, severity, length, message, userparam) ->
             {
                 if (id == 131218) return;
@@ -111,7 +114,7 @@ public abstract class Application
     public void setActiveOverlay(Scene2D overlay)
     {
         activeOverlay = overlay;
-        activeOverlay.onActivate();
+        activeOverlay.onActivate(window);
     }
 
     public class EventCallback implements haraldr.event.EventCallback
@@ -131,46 +134,44 @@ public abstract class Application
                     Renderer3D.getCamera().onFocus(new WindowFocusEvent(window.isFocused()));
                 }
             }
-            if (event.eventType == EventType.MOUSE_MOVED)
-            {
-                Renderer3D.getCamera().handleRotation((MouseMovedEvent) event);
-            }
-            if (event.eventType == EventType.MOUSE_SCROLLED)
-            {
-                Renderer3D.getCamera().handleScroll((MouseScrolledEvent) event);
-            }
-            if (event.eventType == EventType.WINDOW_FOCUS)
-            {
-                Renderer3D.getCamera().onFocus((WindowFocusEvent) event);
-            }
+            //if (event.eventType == EventType.MOUSE_MOVED)
+            //{
+            //    Renderer3D.getCamera().handleRotation((MouseMovedEvent) event);
+            //}
+            //if (event.eventType == EventType.MOUSE_SCROLLED)
+            //{
+            //    Renderer3D.getCamera().handleScroll((MouseScrolledEvent) event);
+            //}
+            //if (event.eventType == EventType.WINDOW_FOCUS)
+            //{
+            //    Renderer3D.getCamera().onFocus((WindowFocusEvent) event);
+            //}
             if (activeOverlay != null) activeOverlay.onEvent(event, window);
-            if (!event.isHandled()) activeScene.onEvent(event, window);
+            //if (!event.isHandled()) activeScene.onEvent(event, window);
         }
     }
 
     private void update(float deltaTime)
     {
         time = glfwGetTime();
-        if (window.isFocused())
-        {
-            Renderer3D.getCamera().handleMovement(window, deltaTime);
-        }
-        activeScene.onUpdate(window, deltaTime);
-        activeOverlay.onUpdate(window, deltaTime);
+        //if (window.isFocused())
+        //{
+        //    Renderer3D.getCamera().handleMovement(window, deltaTime);
+        //}
+        //activeScene.onUpdate(window, deltaTime);
+        //activeOverlay.onUpdate(window, deltaTime);
     }
 
     protected void render()
     {
-        Renderer3D.begin(window);
-        activeScene.onRender();
-        Renderer3D.end(window);
+        //TODO: Trying editor setup
+        //Renderer3D.begin(window);
+        //activeScene.onRender();
+        //Renderer3D.end(window);
 
-        glDisable(GL_DEPTH_TEST);
-        Renderer2D.begin();
+        Renderer.clear(GL_COLOR_BUFFER_BIT);
         activeOverlay.onRender();
-        Renderer2D.end();
-        TextManager.render();
-        glEnable(GL_DEPTH_TEST);
+        //TextManager.render();
         glfwSwapBuffers(window.getWindowHandle());
     }
 
@@ -218,8 +219,8 @@ public abstract class Application
     public void dispose()
     {
         window.delete();
-        activeScene.onDispose();
-        activeOverlay.onDispose();
+        //activeScene.onDispose();
+        //activeOverlay.onDispose();
         Renderer2D.dispose();
         Renderer3D.dispose();
         TextManager.dispose();

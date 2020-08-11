@@ -13,6 +13,12 @@ public class Logger
         if (LogLevel.INFO.compareTo(logLevel) <= 0) log(message, LogLevel.INFO);
     }
 
+    @SafeVarargs
+    public static <T> void info(T... messages)
+    {
+        for (T message : messages) info(message);
+    }
+
     public static <T> void warn(T message)
     {
         if (LogLevel.WARN.compareTo(logLevel) <= 0) log(message, LogLevel.WARN);

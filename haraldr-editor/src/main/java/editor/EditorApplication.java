@@ -1,17 +1,17 @@
-package sandbox;
+package editor;
 
 import haraldr.graphics.Renderer;
 import haraldr.main.Application;
 import haraldr.main.ProgramArguments;
 import haraldr.main.Window;
 
-class ExampleApplication extends Application
+public class EditorApplication extends Application
 {
     @Override
     public void start()
     {
         int samples = ProgramArguments.getIntOrDefault("MSAA", 0);
-        Window.WindowProperties windowProperties = new Window.WindowProperties(1280, 720, samples, true, false, false);
+        Window.WindowProperties windowProperties = new Window.WindowProperties(1280, 720, samples, false, false, false);
         init(windowProperties);
         loop();
     }
@@ -20,8 +20,7 @@ class ExampleApplication extends Application
     protected void init(Window.WindowProperties windowProperties)
     {
         super.init(windowProperties);
-        Renderer.setClearColor(0.1f, 0.1f, 0.1f, 1f);
-        setActiveScene(new TestScene());
-        setActiveOverlay(new DebugOverlay());
+        Renderer.setClearColor(0.8f, 0.8f, 0.8f, 1f);
+        setActiveOverlay(new EditorScene());
     }
 }

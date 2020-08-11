@@ -26,7 +26,7 @@ public class DebugOverlay extends Scene2D
     }
 
     @Override
-    public void onClientActivate()
+    public void onClientActivate(Window window)
     {
     }
 

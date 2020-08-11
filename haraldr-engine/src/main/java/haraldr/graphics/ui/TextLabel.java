@@ -20,7 +20,7 @@ public class TextLabel
         this.text = text;
         this.color = color;
         this.position = position;
-        TextManager.addTextLabel(this);
+        TextManager.addTextLabel(this); //Nope
         setText(text);
     }
 

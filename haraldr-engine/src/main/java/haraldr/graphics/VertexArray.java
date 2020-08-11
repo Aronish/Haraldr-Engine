@@ -88,11 +88,6 @@ public class VertexArray
         glDrawElements(GL_TRIANGLES, indexAmount, GL_UNSIGNED_INT, 0);
     }
 
-    /*public void drawElements(int drawMode)
-    {
-        glDrawElements(drawMode, indexAmount, GL_UNSIGNED_INT, 0);
-    }*/
-
     public void drawElements(int indexAmount)
     {
         glDrawElements(GL_TRIANGLES, indexAmount, GL_UNSIGNED_INT, 0);

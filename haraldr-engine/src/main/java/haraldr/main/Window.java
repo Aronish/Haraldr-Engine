@@ -2,7 +2,6 @@ package haraldr.main;
 
 import haraldr.debug.Logger;
 import haraldr.event.EventDispatcher;
-import haraldr.event.EventObserver;
 import haraldr.event.KeyPressedEvent;
 import haraldr.event.KeyReleasedEvent;
 import haraldr.event.MouseMovedEvent;
@@ -16,9 +15,6 @@ import haraldr.graphics.Framebuffer;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
@@ -74,7 +70,6 @@ public class Window
     private boolean focused = true;
     private int windowWidth, windowHeight, initWidth, initHeight;
 
-    private List<EventObserver<WindowResizedEvent>> observers = new ArrayList<>();
     private int mouseX, mouseY;
 
     private Framebuffer framebuffer;
@@ -165,10 +160,6 @@ public class Window
             minimized = newWidth <= 0 || newHeight <= 0;
             windowWidth = newWidth;
             windowHeight = newHeight;
-            for (EventObserver<WindowResizedEvent> observer : observers)
-            {
-                observer.onEvent(new WindowResizedEvent(newWidth, newHeight));
-            }
             setViewPortSize(newWidth, newHeight);
             framebuffer.resize(newWidth, newHeight);
             EventDispatcher.dispatch(new WindowResizedEvent(newWidth, newHeight), this);
@@ -182,16 +173,6 @@ public class Window
         glfwSetErrorCallback((error, description) -> Logger.info(error + " " + description));
     }
 
-    public void addObserver(EventObserver<WindowResizedEvent> observer)
-    {
-        observers.add(observer);
-    }
-
-    public void removeObserver(EventObserver<WindowResizedEvent> observer)
-    {
-        observers.remove(observer);
-    }
-
     public void changeFullscreen()
     {
         if (fullscreen)
@@ -199,7 +180,8 @@ public class Window
             fullscreen = false;
             glfwSetWindowMonitor(windowHandle, 0, vidmode.width() / 2 - initWidth / 2, vidmode.height() / 2 - initHeight / 2, initWidth, initHeight, 60);
             setViewPortSize(initWidth, initHeight);
-        }else{
+        } else
+        {
             fullscreen = true;
             glfwSetWindowMonitor(windowHandle, glfwGetPrimaryMonitor(), 0, 0, vidmode.width(), vidmode.height(), 60);
             setViewPortSize(vidmode.width(), vidmode.height());

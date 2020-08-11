@@ -85,6 +85,12 @@ public class Vector2f
         y += all;
     }
 
+    public void add(float x, float y)
+    {
+        this.x += x;
+        this.y += y;
+    }
+
     public void add(@NotNull Vector2f other)
     {
         x += other.getX();

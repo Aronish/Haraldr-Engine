@@ -5,15 +5,15 @@ import haraldr.main.Window;
 
 public abstract class Scene2D
 {
-    protected abstract void onClientActivate();
+    protected abstract void onClientActivate(Window window);
     protected abstract void onClientEvent(Event event, Window window);
     protected abstract void onClientUpdate(float deltaTime, Window window);
     protected abstract void onClientRender();
     protected abstract void onClientDispose();
 
-    public final void onActivate()
+    public final void onActivate(Window window)
     {
-        onClientActivate();
+        onClientActivate(window);
     }
 
     public final void onUpdate(Window window, float deltaTime)

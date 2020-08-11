@@ -78,7 +78,7 @@ public class Model
             glStencilMask(0x00);
             OUTLINE_SHADER.bind();
             OUTLINE_SHADER.setMatrix4f("model", transformationMatrix);
-            OUTLINE_SHADER.setFloat("u_Outline_Size", 0.1f);
+            OUTLINE_SHADER.setFloat("u_Outline_Size", 0.05f);
             OUTLINE_SHADER.setBoolean("u_Expand_Normals", true);
             mesh.drawElements();
             glStencilFunc(GL_ALWAYS, 1, 0xFF);

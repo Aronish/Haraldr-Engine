@@ -114,22 +114,22 @@ public class Vector4f
     
     public void addX(float dx)
     {
-        x = dx;
+        x += dx;
     }
 
     public void addY(float dy)
     {
-        y = dy;
+        y += dy;
     }
 
     public void addZ(float dz)
     {
-        z = dz;
+        z += dz;
     }
 
     public void addW(float dw)
     {
-        w = dw;
+        w += dw;
     }
 
     public float getX()

@@ -2,14 +2,9 @@ package haraldr.graphics.ui;
 
 import haraldr.math.Vector2f;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class UIComponent
 {
     protected Vector2f position, size;
-
-    protected List<UIComponent> children = new ArrayList<>();
 
     public UIComponent(Vector2f position, Vector2f size)
     {
@@ -17,17 +12,12 @@ public abstract class UIComponent
         this.size = size;
     }
 
-    public void addChild(UIComponent child)
-    {
-        children.add(child);
-    }
-
-    public void setPosition(float x, float y)
+    public void setPosition(int x, int y)
     {
         position.set(x, y);
     }
 
-    public void setSize(float width, float height)
+    public void setSize(int width, int height)
     {
         size.set(width, height);
     }
@@ -42,14 +32,5 @@ public abstract class UIComponent
         return size;
     }
 
-    protected abstract void render(Vector2f worldPosition);
-
-    public void renderAll(Vector2f parentPosition)
-    {
-        render(Vector2f.add(parentPosition, position));
-        for (UIComponent child : children)
-        {
-            child.renderAll(Vector2f.add(parentPosition, position));
-        }
-    }
+    public abstract void render(Vector2f parentPosition);
 }

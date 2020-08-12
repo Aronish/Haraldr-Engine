@@ -154,6 +154,7 @@ public abstract class Application
     private void update(float deltaTime)
     {
         time = glfwGetTime();
+        activeOverlay.onUpdate(window, deltaTime);
         //if (window.isFocused())
         //{
         //    Renderer3D.getCamera().handleMovement(window, deltaTime);

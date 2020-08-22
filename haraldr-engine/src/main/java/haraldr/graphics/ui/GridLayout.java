@@ -9,12 +9,31 @@ public class GridLayout
 {
     public static final GridLayout EMPTY = new GridLayout();
 
-    private int columns, rows, columnSize, rowSize;
-    private Vector2f paddingTopBottom, paddingLeftRight;
-    private Vector2f marginTopLeft;
+    private int columns;
+    private int rows;
+    private int columnSize;
+    private int rowSize;
+    private Vector2f paddingTopBottom;
+    private Vector2f paddingLeftRight;
+    private Vector2f marginLeftTop = new Vector2f();
 
     private GridLayout()
     {
+    }
+
+    public GridLayout(int columns, int rows, Vector4f padding)
+    {
+        this.columns = columns;
+        this.rows = rows;
+    }
+
+    public GridLayout(int columns, int rows, Vector4f padding, Vector2f marginLeftTop)
+    {
+        this.columns = columns;
+        this.rows = rows;
+        this.paddingTopBottom = new Vector2f(padding.getX(), padding.getY());
+        this.paddingLeftRight = new Vector2f(padding.getZ(), padding.getW());
+        this.marginLeftTop = marginLeftTop;
     }
 
     public GridLayout(int columns, int rows, int width, int height, Vector4f padding)
@@ -25,7 +44,6 @@ public class GridLayout
         this.rowSize = height / rows;
         this.paddingTopBottom = new Vector2f(padding.getX(), padding.getY());
         this.paddingLeftRight = new Vector2f(padding.getZ(), padding.getW());
-        marginTopLeft = new Vector2f();
     }
 
     public GridLayout(int columns, int rows, int width, int height, Vector4f padding, Vector2f margin)
@@ -36,8 +54,7 @@ public class GridLayout
         this.rowSize = height / rows;
         paddingTopBottom = new Vector2f(padding.getX(), padding.getY());
         paddingLeftRight = new Vector2f(padding.getZ(), padding.getW());
-        marginTopLeft = new Vector2f(margin.getX(), margin.getY());
-        marginTopLeft = margin;
+        marginLeftTop = margin;
     }
 
     public void setSize(int width, int height)
@@ -55,28 +72,36 @@ public class GridLayout
         paddingLeftRight = new Vector2f(padding.getZ(), padding.getW());
     }
 
-    public void setMarginTopLeft(Vector2f marginTopLeft)
+    public void setMarginLeftTop(Vector2f marginLeftTop)
     {
-        this.marginTopLeft = marginTopLeft;
+        this.marginLeftTop = marginLeftTop;
     }
 
-    public void orderComponents(List<? extends UIComponent> components, Vector2f parentPosition)
+    public int orderComponents(List<? extends UIComponent> components, Vector2f parentPosition, int startIndex)
     {
+        Vector2f adjustedPosition = Vector2f.add(parentPosition, marginLeftTop);
         for (int i = 0; i < components.size(); ++i)
         {
+            int index = startIndex + i;
             UIComponent component = components.get(i);
-            int verticalSize = (int) (rowSize - paddingTopBottom.getX() - paddingTopBottom.getY());
             int horizontalSize = (int) (columnSize - paddingLeftRight.getX() - paddingLeftRight.getY());
+            int verticalSize = (int) (rowSize - paddingTopBottom.getX() - paddingTopBottom.getY());
             component.setPosition(
-                    (int) (i % columns * columnSize + paddingLeftRight.getX() + marginTopLeft.getY() + parentPosition.getX()),
-                    (int) (i / columns % rows * rowSize + marginTopLeft.getX() + paddingTopBottom.getX() + parentPosition.getY())
+                    (int) (index % columns * columnSize + paddingLeftRight.getX() + adjustedPosition.getX()),
+                    (int) (index / columns % rows * rowSize + paddingTopBottom.getX() + adjustedPosition.getY())
             );
             component.setSize(horizontalSize, verticalSize);
         }
+        return components.size();
     }
 
     public int getMaxSlots()
     {
         return columns * rows;
+    }
+
+    public Vector2f getSize()
+    {
+        return new Vector2f(columnSize, rowSize);
     }
 }

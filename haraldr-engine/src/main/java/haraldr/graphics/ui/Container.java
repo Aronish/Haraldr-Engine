@@ -1,5 +1,6 @@
 package haraldr.graphics.ui;
 
+import haraldr.event.Event;
 import haraldr.graphics.Renderer2D;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -25,26 +26,26 @@ public class Container extends UIComponent
         if (components.size() < layout.getMaxSlots())
         {
             components.add(newComponent);
-            layout.orderComponents(components, position);
+            refresh(position);
         }
     }
 
-    public void addChild(Container newContainer)
+    public void addChild(Container container)
     {
         if (containers.size() < layout.getMaxSlots())
         {
-            containers.add(newContainer);
-            refresh();
+            containers.add(container);
+            refresh(position);
         }
     }
 
-    private void refresh()
+    public void refresh(Vector2f parentPosition)
     {
-        layout.orderComponents(components, position);
-        layout.orderComponents(containers, position);
+        int index = layout.orderComponents(components, parentPosition, 0);
+        layout.orderComponents(containers, parentPosition, index);
         for (Container container : containers)
         {
-            container.refresh();
+            container.refresh(parentPosition);
         }
     }
 
@@ -53,7 +54,13 @@ public class Container extends UIComponent
     {
         super.setSize(width, height);
         layout.setSize(width, height);
-        refresh();
+    }
+
+    @Override
+    public void onEvent(Event event)
+    {
+        components.forEach((component) -> component.onEvent(event));
+        containers.forEach((container -> container.onEvent(event)));
     }
 
     protected void renderSelf(Vector2f screenPosition)
@@ -74,6 +81,11 @@ public class Container extends UIComponent
         {
             container.render(screenPosition);
         }
+    }
+
+    public Vector2f getLayoutSize()
+    {
+        return layout.getSize();
     }
 
     public GridLayout getLayout()

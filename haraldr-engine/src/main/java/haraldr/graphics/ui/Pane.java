@@ -27,6 +27,8 @@ public class Pane extends Container
         headerSize.setX(width);
     }
 
+
+
     @Override
     public void renderSelf(Vector2f screenPosition)
     {

@@ -1,5 +1,6 @@
 package haraldr.graphics.ui;
 
+import haraldr.event.Event;
 import haraldr.math.Vector2f;
 
 public abstract class UIComponent
@@ -31,6 +32,8 @@ public abstract class UIComponent
     {
         return size;
     }
+
+    public abstract void onEvent(Event event);
 
     public abstract void render(Vector2f parentPosition);
 }

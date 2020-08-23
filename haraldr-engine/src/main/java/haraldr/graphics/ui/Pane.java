@@ -10,23 +10,25 @@ import java.util.List;
 
 public class Pane extends UIComponent
 {
-    private static final Font DEFAULT_FONT = new Font("default_fonts/consola.ttf", 20);
     private static final Vector4f HEADER_COLOR = new Vector4f(0.2f, 0.8f, 0.4f, 1f);
 
     private Vector2f headerSize;
     private Vector4f color;
-    private TextBatch textBatch = new TextBatch(DEFAULT_FONT);
 
-    private GridLayout layout;
+    private float nextY, padding = 5f;
     private List<UIComponent> components = new ArrayList<>();
 
-    public Pane(Vector2f position, Vector2f size, Vector4f color, String name, GridLayout layout)
+    public Pane(Vector2f position, Vector2f size, Vector4f color, String name)
     {
-        super(position, size);
+        super(position, size, name);
         this.color = color;
-        this.layout = layout;
-        headerSize = new Vector2f(size.getX(), DEFAULT_FONT.getSize());
-        textBatch.createTextLabel(name, position, new Vector4f(1f));
+        headerSize = new Vector2f(size.getX(), DEFAULT_FONT.getSize() + 2f);
+        nextY = headerSize.getY();
+    }
+
+    @Override
+    protected void setupLabel(String name)
+    {
     }
 
     @Override
@@ -34,7 +36,6 @@ public class Pane extends UIComponent
     {
         super.setSize(width, height);
         headerSize.setX(width);
-        layout.setSize(width, height);
     }
 
     @Override
@@ -54,38 +55,31 @@ public class Pane extends UIComponent
         }
     }
 
-    public void renderText()
-    {
-        textBatch.render();
-    }
-
     private void renderSelf(Vector2f screenPosition)
     {
         Renderer2D.drawQuad(screenPosition, size, color);
         Renderer2D.drawQuad(screenPosition, headerSize, HEADER_COLOR);
     }
 
-    public void addChild(UIComponent newComponent)
+    public void addChild(UIComponent component)
     {
-        if (components.size() < layout.getMaxSlots())
+        components.add(component);
+        orderComponents();
+    }
+
+    private void orderComponents()
+    {
+        nextY = headerSize.getY() + padding;
+        for (int i = 0; i < components.size(); ++i)
         {
-            components.add(newComponent);
-            refresh(position);
+            UIComponent component = components.get(i);
+            component.setPosition(Vector2f.add(position, new Vector2f(padding, nextY)));
+            nextY += component.size.getY() + padding;
         }
     }
 
-    public void refresh(Vector2f parentPosition)
+    public TextBatch getTextBatch()
     {
-        layout.orderComponents(components, parentPosition, 0);
-    }
-
-    public Vector2f getLayoutSize()
-    {
-        return layout.getSize();
-    }
-
-    public GridLayout getLayout()
-    {
-        return layout;
+        return textBatch;
     }
 }

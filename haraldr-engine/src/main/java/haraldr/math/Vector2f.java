@@ -38,10 +38,11 @@ public class Vector2f
         y = (float) jsonArray.getDouble(1);
     }
 
-    public void set(float x, float y)
+    public Vector2f set(float x, float y)
     {
         this.x = x;
         this.y = y;
+        return this;
     }
 
     public void set(double x, double y)
@@ -57,10 +58,11 @@ public class Vector2f
         return this;
     }
 
-    public void set(@NotNull Vector2f other)
+    public Vector2f set(@NotNull Vector2f other)
     {
         x = other.x;
         y = other.y;
+        return this;
     }
 
     public void setX(float x)
@@ -97,9 +99,10 @@ public class Vector2f
         y += other.getY();
     }
 
-    public void addX(float dx)
+    public Vector2f addX(float dx)
     {
         x += dx;
+        return this;
     }
 
     public void addY(float dy)
@@ -125,11 +128,12 @@ public class Vector2f
 
     public void normalize()
     {
-        x /= length();
-        y /= length();
+        double length = length();
+        x /= length;
+        y /= length;
     }
 
-    public float length()
+    public double length()
     {
         return (float) Math.sqrt(x * x + y * y);
     }

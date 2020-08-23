@@ -61,6 +61,7 @@ public class TextBatch
         List<Float> textMeshData = new ArrayList<>();
         for (TextLabel label : textLabels)
         {
+            label.refresh();
             textMeshData.addAll(label.getTextMeshData());
         }
         this.textMeshData.setData(ArrayUtils.toPrimitiveArrayF(textMeshData));

@@ -6,6 +6,7 @@ import haraldr.event.KeyPressedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Renderer2D;
+import haraldr.graphics.ui.Checkbox;
 import haraldr.graphics.ui.Font;
 import haraldr.graphics.ui.GridLayout;
 import haraldr.graphics.ui.Pane;
@@ -26,16 +27,11 @@ public class EditorScene extends Scene2D
                 new Vector2f(),
                 new Vector2f(300, window.getHeight()),
                 new Vector4f(0.3f, 0.3f, 0.3f, 1f),
-                "Properties",
-                new GridLayout(
-                        1,
-                        5,
-                        300,
-                        window.getHeight(),
-                        new Vector4f(10f, 0f, 10f, 10f),
-                        new Vector2f(0f, 30f)
-                )
+                "Properties"
         );
+        propertiesPane.addChild(new Checkbox("Test:", new Vector2f(), propertiesPane));
+        propertiesPane.addChild(new Checkbox("Render:", new Vector2f(), propertiesPane));
+        propertiesPane.addChild(new Checkbox("AHAOWUDHOUAWHD:", new Vector2f(), propertiesPane));
     }
 
     @Override
@@ -46,7 +42,6 @@ public class EditorScene extends Scene2D
         {
             var windowResizedEvent = (WindowResizedEvent) event;
             propertiesPane.setSize(300, windowResizedEvent.height);
-            propertiesPane.refresh(propertiesPane.getPosition());
         }
         if (event.eventType == EventType.MOUSE_PRESSED)
         {

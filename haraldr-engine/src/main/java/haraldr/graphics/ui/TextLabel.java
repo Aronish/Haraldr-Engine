@@ -25,10 +25,35 @@ public class TextLabel
         setText(text);
     }
 
+    public void refresh()
+    {
+        textMeshData = font.createTextMesh(text, position, color);
+    }
+
     public void setText(@NotNull String text)
     {
         this.text = text;
         textMeshData = font.createTextMesh(text, position, color);
+    }
+
+    public void setPosition(Vector2f position)
+    {
+        this.position = Vector2f.add(position, new Vector2f(0f, font.getSize() - font.getBaseline()));
+    }
+
+    public Font getFont()
+    {
+        return font;
+    }
+
+    public int getPixelWidth()
+    {
+        return Math.round(font.getPixelWidth(text));
+    }
+
+    public Vector2f getPosition()
+    {
+        return position;
     }
 
     public List<Float> getTextMeshData()

@@ -171,10 +171,11 @@ public class Vector4f
 
     public void normalize()
     {
-        x /= length();
-        y /= length();
-        z /= length();
-        w /= length();
+        double length = length();
+        x /= length;
+        y /= length;
+        z /= length;
+        w /= length;
     }
 
     public float length()

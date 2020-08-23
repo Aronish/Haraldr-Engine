@@ -83,10 +83,10 @@ public class GridLayout
             UIComponent component = components.get(i);
             int horizontalSize = (int) (columnSize - paddingLeftRight.getX() - paddingLeftRight.getY());
             int verticalSize = (int) (rowSize - paddingTopBottom.getX() - paddingTopBottom.getY());
-            component.setPosition(
-                    (int) (index % columns * columnSize + paddingLeftRight.getX() + adjustedPosition.getX()),
-                    (int) (index / columns % rows * rowSize + paddingTopBottom.getX() + adjustedPosition.getY())
-            );
+            //component.setPosition(
+            //        (int) (index % columns * columnSize + paddingLeftRight.getX() + adjustedPosition.getX()),
+            //        (int) (index / columns % rows * rowSize + paddingTopBottom.getX() + adjustedPosition.getY())
+            //);
             component.setSize(horizontalSize, verticalSize);
         }
         return components.size();

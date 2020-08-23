@@ -17,18 +17,18 @@ public class Button extends UIComponent
 
     public Button()
     {
-        super(new Vector2f(), new Vector2f());
+        super(new Vector2f(), new Vector2f(), "");
     }
 
     public Button(boolean initialState)
     {
-        super(new Vector2f(), new Vector2f());
+        super(new Vector2f(), new Vector2f(), "");
         active = initialState;
     }
 
     public Button(Vector2f position, Vector2f size)
     {
-        super(position, size);
+        super(position, size, "");
     }
 
     public void onClick(int x, int y)
@@ -37,6 +37,12 @@ public class Button extends UIComponent
         {
             active = !active;
         }
+    }
+
+    @Override
+    protected void setupLabel(String name)
+    {
+
     }
 
     @Override

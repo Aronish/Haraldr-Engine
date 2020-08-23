@@ -16,13 +16,13 @@ public class DebugOverlay extends Scene2D
 {
     private List<TextLabel> textLabels = new ArrayList<>();
 
-    private TextLabel debugModeEnabled = new TextLabel(new Vector2f(10f, 30f), new Vector4f(1f), "Debug Mode Enabled");
-    private TextLabel frameTimeData = new TextLabel(new Vector2f(10f, 60f), new Vector4f(1f), "<frame data>");
+    //private TextLabel debugModeEnabled = new TextLabel("Debug Mode Enabled", new Vector2f(10f, 30f), new Vector4f(1f));
+    //private TextLabel frameTimeData = new TextLabel("<frame data>", new Vector2f(10f, 60f), new Vector4f(1f));
 
     public DebugOverlay()
     {
-        textLabels.add(debugModeEnabled);
-        textLabels.add(frameTimeData);
+        //textLabels.add(debugModeEnabled);
+        //textLabels.add(frameTimeData);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class DebugOverlay extends Scene2D
     {
         if (event.eventType == EventType.DEBUG_SCREEN_UPDATED)
         {
-            frameTimeData.setText(String.format("FPS: %d, UPS: %d", ((DebugScreenUpdatedEvent) event).fps, ((DebugScreenUpdatedEvent) event).ups));
+            //frameTimeData.setText(String.format("FPS: %d, UPS: %d", ((DebugScreenUpdatedEvent) event).fps, ((DebugScreenUpdatedEvent) event).ups));
         }
     }
 

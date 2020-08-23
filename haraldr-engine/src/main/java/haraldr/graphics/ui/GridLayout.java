@@ -9,12 +9,9 @@ public class GridLayout
 {
     public static final GridLayout EMPTY = new GridLayout();
 
-    private int columns;
-    private int rows;
-    private int columnSize;
-    private int rowSize;
-    private Vector2f paddingTopBottom;
-    private Vector2f paddingLeftRight;
+    private int columns, rows;
+    private int columnSize, rowSize;
+    private Vector2f paddingTopBottom, paddingLeftRight;
     private Vector2f marginLeftTop = new Vector2f();
 
     private GridLayout()
@@ -51,7 +48,7 @@ public class GridLayout
         this.columns = columns;
         this.rows = rows;
         this.columnSize = width / columns;
-        this.rowSize = height / rows;
+        this.rowSize = (int) (height - margin.getY() - padding.getX() - padding.getY()) / rows;
         paddingTopBottom = new Vector2f(padding.getX(), padding.getY());
         paddingLeftRight = new Vector2f(padding.getZ(), padding.getW());
         marginLeftTop = margin;
@@ -62,7 +59,7 @@ public class GridLayout
         if (!(rows == 0 || columns == 0))
         {
             this.columnSize = width / columns;
-            this.rowSize = height / rows;
+            this.rowSize = (int) (height - marginLeftTop.getY() - paddingTopBottom.getX() - paddingTopBottom.getY()) / rows;
         }
     }
 

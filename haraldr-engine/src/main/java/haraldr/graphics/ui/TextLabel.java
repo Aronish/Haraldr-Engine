@@ -10,25 +10,25 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class TextLabel
 {
+    private Font font;
     private String text;
     private Vector4f color;
     private Vector2f position;
     private List<Float> textMeshData = new ArrayList<>();
 
-    public TextLabel(Vector2f position, Vector4f color, @NotNull String text)
+    public TextLabel(@NotNull String text, Vector2f position, Vector4f color, Font font)
     {
         this.text = text;
         this.color = color;
-        this.position = position;
-        TextManager.addTextLabel(this); //Nope
+        this.font = font;
+        this.position = Vector2f.add(position, new Vector2f(0f, font.getSize() - font.getBaseline()));
         setText(text);
     }
 
     public void setText(@NotNull String text)
     {
         this.text = text;
-        textMeshData = TextManager.FONT.createTextMesh(text, position, color);
-        TextManager.refreshTextMeshData(); // Observer Pattern?
+        textMeshData = font.createTextMesh(text, position, color);
     }
 
     public List<Float> getTextMeshData()

@@ -1,5 +1,6 @@
 package haraldr.graphics.ui;
 
+import haraldr.graphics.ResourceManager;
 import haraldr.graphics.Shader;
 import haraldr.graphics.ShaderDataType;
 import haraldr.graphics.VertexArray;
@@ -8,62 +9,79 @@ import haraldr.graphics.VertexBufferElement;
 import haraldr.graphics.VertexBufferLayout;
 import haraldr.main.ArrayUtils;
 import haraldr.math.Matrix4f;
+import haraldr.math.Vector2f;
+import haraldr.math.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextManager
+public class TextBatch
 {
-    private static final int MAX_CHARACTERS = 1000, VERTEX_SIZE;
+    private static final int MAX_CHARACTERS = 1000, VERTEX_SIZE = 8;
     private static final Shader TEXT_PASS = Shader.create("default_shaders/textpass.glsl");
 
-    private static VertexArray texts = new VertexArray();
-    private static VertexBuffer textMeshes;
-    private static int indexCount;
+    private List<TextLabel> textLabels = new ArrayList<>();
+    private Font font;
 
-    public static Font FONT = new Font("default_fonts/Roboto-Regular.ttf", 30);
+    private VertexArray texts = new VertexArray();
+    private VertexBuffer textMeshData;
+    private int indexCount;
 
-    private static List<TextLabel> textLabels = new ArrayList<>();
-
-    static
+    public TextBatch(Font font)
     {
+        this.font = font;
         texts.setIndexBufferData(VertexBuffer.createQuadIndices(MAX_CHARACTERS * 6));
         VertexBufferLayout layout = new VertexBufferLayout(
                 new VertexBufferElement(ShaderDataType.FLOAT2),
                 new VertexBufferElement(ShaderDataType.FLOAT2),
                 new VertexBufferElement(ShaderDataType.FLOAT4)
         );
-        VERTEX_SIZE = layout.getVertexSize();
-        textMeshes = new VertexBuffer(MAX_CHARACTERS * 4 * VERTEX_SIZE * 4, layout, VertexBuffer.Usage.DYNAMIC_DRAW);
-        texts.setVertexBuffers(textMeshes);
+        textMeshData = new VertexBuffer(MAX_CHARACTERS * 4 * VERTEX_SIZE * 4, layout, VertexBuffer.Usage.DYNAMIC_DRAW);
+        texts.setVertexBuffers(textMeshData);
+
+        ResourceManager.addTextBatch(this);
     }
 
-    public static void addTextLabel(TextLabel newLabel)
+    public TextLabel createTextLabel(String text, Vector2f position, Vector4f color)
     {
-        textLabels.add(newLabel);
+        TextLabel label = new TextLabel(text, position, color, font);
+        textLabels.add(label);
+        refreshTextMeshData();
+        return label;
     }
 
-    public static void refreshTextMeshData()
+    public void addTextLabel(TextLabel label)
+    {
+        textLabels.add(label);
+        refreshTextMeshData();
+    }
+
+    public void refreshTextMeshData()
     {
         List<Float> textMeshData = new ArrayList<>();
         for (TextLabel label : textLabels)
         {
             textMeshData.addAll(label.getTextMeshData());
         }
-        textMeshes.setData(ArrayUtils.toPrimitiveArrayF(textMeshData));
+        this.textMeshData.setData(ArrayUtils.toPrimitiveArrayF(textMeshData));
         indexCount = (textMeshData.size() / (VERTEX_SIZE * 4)) * 6;
     }
 
-    public static void render()
+    public void render()
     {
         TEXT_PASS.bind();
         TEXT_PASS.setMatrix4f("projection", Matrix4f.pixelOrthographic);
-        FONT.bind(0);
+        font.bind(0);
         texts.bind();
         texts.drawElements(indexCount);
     }
 
-    public static void dispose()
+    public Font getFont()
+    {
+        return font;
+    }
+
+    public void dispose()
     {
         texts.delete();
     }

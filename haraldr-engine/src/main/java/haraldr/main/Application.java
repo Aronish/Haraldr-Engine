@@ -12,7 +12,7 @@ import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Renderer3D;
 import haraldr.graphics.ResourceManager;
 import haraldr.graphics.Texture;
-import haraldr.graphics.ui.TextManager;
+import haraldr.graphics.ui.TextBatch;
 import haraldr.input.Input;
 import haraldr.input.Key;
 import haraldr.math.Matrix4f;
@@ -221,7 +221,6 @@ public abstract class Application
         //activeOverlay.onDispose();
         Renderer2D.dispose();
         Renderer3D.dispose();
-        TextManager.dispose();
         ResourceManager.dispose();
         glfwTerminate();
     }

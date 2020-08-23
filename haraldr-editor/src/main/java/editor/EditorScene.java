@@ -6,12 +6,10 @@ import haraldr.event.KeyPressedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Renderer2D;
-import haraldr.graphics.ui.Button;
-import haraldr.graphics.ui.Container;
+import haraldr.graphics.ui.Font;
 import haraldr.graphics.ui.GridLayout;
 import haraldr.graphics.ui.Pane;
-import haraldr.input.Input;
-import haraldr.input.Key;
+import haraldr.graphics.ui.TextBatch;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -20,7 +18,6 @@ import haraldr.scenegraph.Scene2D;
 public class EditorScene extends Scene2D
 {
     private Pane propertiesPane;
-    private Pane buttonPane;
 
     @Override
     protected void onClientActivate(Window window)
@@ -29,8 +26,9 @@ public class EditorScene extends Scene2D
                 new Vector2f(),
                 new Vector2f(300, window.getHeight()),
                 new Vector4f(0.3f, 0.3f, 0.3f, 1f),
+                "Properties",
                 new GridLayout(
-                        2,
+                        1,
                         5,
                         300,
                         window.getHeight(),
@@ -38,10 +36,6 @@ public class EditorScene extends Scene2D
                         new Vector2f(0f, 30f)
                 )
         );
-        for (int i = 0; i < propertiesPane.getLayout().getMaxSlots(); ++i)
-        {
-            propertiesPane.addChild(new Button());
-        }
     }
 
     @Override
@@ -75,6 +69,7 @@ public class EditorScene extends Scene2D
         Renderer2D.begin();
         propertiesPane.render(new Vector2f());
         Renderer2D.end();
+        propertiesPane.renderText();
     }
 
     @Override

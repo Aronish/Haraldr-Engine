@@ -143,6 +143,12 @@ public class Vector2f
     }
 
     @Contract("_, _ -> new")
+    public static @NotNull Vector2f add(@NotNull Vector2f vector, float scalar)
+    {
+        return new Vector2f(vector.x + scalar, vector.y + scalar);
+    }
+
+    @Contract("_, _ -> new")
     public static @NotNull Vector2f subtract(@NotNull Vector2f first, @NotNull Vector2f second)
     {
         return new Vector2f(first.x - second.x, first.y - second.y);

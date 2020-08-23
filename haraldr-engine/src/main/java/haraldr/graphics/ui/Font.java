@@ -28,7 +28,10 @@ import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL45.glCreateTextures;
+import static org.lwjgl.stb.STBTruetype.nstbtt_GetFontOffsetForIndex;
+import static org.lwjgl.stb.STBTruetype.stbtt_FreeBitmap;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetCodepointKernAdvance;
+import static org.lwjgl.stb.STBTruetype.stbtt_GetFontBoundingBox;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetFontVMetrics;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetPackedQuad;
 import static org.lwjgl.stb.STBTruetype.stbtt_InitFont;
@@ -43,7 +46,7 @@ public class Font
     public static final int WIDTH = 512, HEIGHT = 512;
 
     private float scaleFactor;
-    private int ascent, descent, lineGap;
+    private int size, ascent, descent, lineGap, baseline;
     private Texture fontAtlas;
     private STBTTFontinfo fontinfo;
     private STBTTPackedchar.Buffer packedchars;
@@ -53,6 +56,7 @@ public class Font
     public Font(String path, int size)
     {
         ///// Load Font /////
+        this.size = size;
         fontData = IOUtils.readResource(path, (stream -> IOUtils.resourceToByteBuffer(stream, 512 * 1024)));
         fontinfo = STBTTFontinfo.create();
         if (!stbtt_InitFont(fontinfo, fontData)) throw new IllegalStateException("Couldn't initialize font!");
@@ -67,6 +71,13 @@ public class Font
             ascent = pAscent.get(0);
             descent = pDescent.get(0);
             lineGap = pLineGap.get(0);
+
+            IntBuffer x0 = stack.mallocInt(1);
+            IntBuffer y0 = stack.mallocInt(1);
+            IntBuffer x1 = stack.mallocInt(1);
+            IntBuffer y1 = stack.mallocInt(1);
+            stbtt_GetFontBoundingBox(fontinfo, x0, y0, x1, y1);
+            baseline = Math.round(scaleFactor * -y0.get(0));
         }
 
         ///// Init Font Atlas /////
@@ -173,6 +184,16 @@ public class Font
     public Texture getFontAtlas()
     {
         return fontAtlas;
+    }
+
+    public int getBaseline()
+    {
+        return baseline;
+    }
+
+    public int getSize()
+    {
+        return size;
     }
 
     public void bind(int unit)

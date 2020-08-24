@@ -32,6 +32,12 @@ public class Vector2f
         this.y = (float) y;
     }
 
+    public Vector2f(Vector2f other)
+    {
+        x = other.x;
+        y = other.y;
+    }
+
     public Vector2f(@NotNull JSONArray jsonArray)
     {
         x = (float) jsonArray.getDouble(0);

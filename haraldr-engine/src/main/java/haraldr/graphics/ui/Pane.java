@@ -8,60 +8,56 @@ import haraldr.math.Vector4f;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pane extends UIComponent
+public class Pane
 {
-    private static final Vector4f HEADER_COLOR = new Vector4f(0.2f, 0.8f, 0.4f, 1f);
+    private static final Vector4f COLOR = new Vector4f(0.3f, 0.3f, 0.3f, 1f);
+    private static final Vector4f HEADER_COLOR = new Vector4f(0.2f, 0.2f, 0.2f, 1f);
+    private static final Font DEFAULT_FONT = new Font("default_fonts/consola.ttf", 20);
 
+    protected Vector2f position, size;
     private Vector2f headerSize;
-    private Vector4f color;
+    private float divider;
 
-    private float nextY, padding = 5f;
-    private List<UIComponent> components = new ArrayList<>();
+    protected TextBatch textBatch = new TextBatch(DEFAULT_FONT);
+    protected TextLabel name;
 
-    public Pane(Vector2f position, Vector2f size, Vector4f color, String name)
+    private List<LabeledComponent> components = new ArrayList<>();
+
+    public Pane(Vector2f position, Vector2f size, String name)
     {
-        super(position, size, name);
-        this.color = color;
+        this.position = position;
+        this.size = size;
+        this.name = textBatch.createTextLabel(name, position, new Vector4f(1f));
         headerSize = new Vector2f(size.getX(), DEFAULT_FONT.getSize() + 2f);
-        nextY = headerSize.getY();
+        divider = size.getX() / 2f - 30f;
     }
 
-    @Override
-    protected void setupLabel(String name)
-    {
-    }
-
-    @Override
     public void setSize(int width, int height)
     {
-        super.setSize(width, height);
         headerSize.setX(width);
     }
 
-    @Override
     public void onEvent(Event event)
     {
         components.forEach((component) -> component.onEvent(event));
     }
 
-    @Override
-    public void render(Vector2f parentPosition)
+    public void render()
     {
-        Vector2f screenPosition = Vector2f.add(parentPosition, position);
-        renderSelf(screenPosition);
-        for (UIComponent child : components)
+        renderSelf(position);
+        for (LabeledComponent child : components)
         {
-            child.render(screenPosition);
+            child.render();
         }
     }
 
     private void renderSelf(Vector2f screenPosition)
     {
-        Renderer2D.drawQuad(screenPosition, size, color);
+        Renderer2D.drawQuad(screenPosition, size, COLOR);
         Renderer2D.drawQuad(screenPosition, headerSize, HEADER_COLOR);
     }
 
-    public void addChild(UIComponent component)
+    public void addChild(LabeledComponent component)
     {
         components.add(component);
         orderComponents();
@@ -69,17 +65,21 @@ public class Pane extends UIComponent
 
     private void orderComponents()
     {
-        nextY = headerSize.getY() + padding;
-        for (int i = 0; i < components.size(); ++i)
+        float nextY = headerSize.getY();
+        for (LabeledComponent component : components)
         {
-            UIComponent component = components.get(i);
-            component.setPosition(Vector2f.add(position, new Vector2f(padding, nextY)));
-            nextY += component.size.getY() + padding;
+            component.setPosition(Vector2f.add(position, new Vector2f(0f, nextY)));
+            nextY += component.getVerticalSize();
         }
     }
 
-    public TextBatch getTextBatch()
+    public float getDivider()
     {
-        return textBatch;
+        return divider;
+    }
+
+    public void renderText()
+    {
+        textBatch.render();
     }
 }

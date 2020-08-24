@@ -3,46 +3,36 @@ package haraldr.graphics.ui;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
-import haraldr.event.MouseReleasedEvent;
 import haraldr.graphics.Renderer2D;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 
-public class Button extends UIComponent
+public class Button extends LabeledComponent
 {
     private static final Vector4f ON_COLOR = new Vector4f(0.2f, 0.8f, 0.3f, 1f);
     private static final Vector4f OFF_COLOR = new Vector4f(0.8f, 0.2f, 0.3f, 1f);
 
+    private Vector2f buttonPosition, buttonSize;
     private boolean active;
+    private ButtonPressAction action = () -> {};
 
-    public Button()
+    public Button(String name, Pane parent)
     {
-        super(new Vector2f(), new Vector2f(), "");
+        super(name, parent);
+        buttonPosition = Vector2f.add(position, new Vector2f(0f, label.getPixelWidth()));
+        buttonSize = new Vector2f(parent.size.getX() - parent.getDivider(), label.getFont().getSize());
     }
 
-    public Button(boolean initialState)
+    public void setPressAction(ButtonPressAction action)
     {
-        super(new Vector2f(), new Vector2f(), "");
-        active = initialState;
-    }
-
-    public Button(Vector2f position, Vector2f size)
-    {
-        super(position, size, "");
-    }
-
-    public void onClick(int x, int y)
-    {
-        if (x >= position.getX() && x <= position.getX() + size.getX() && y >= position.getY() && y <= position.getY() + size.getY())
-        {
-            active = !active;
-        }
+        this.action = action;
     }
 
     @Override
-    protected void setupLabel(String name)
+    public void setPosition(Vector2f position)
     {
-
+        super.setPosition(position);
+        buttonPosition.set(Vector2f.add(position, new Vector2f(parent.getDivider(), 0f)));
     }
 
     @Override
@@ -51,13 +41,36 @@ public class Button extends UIComponent
         if (event.eventType == EventType.MOUSE_PRESSED)
         {
             var mousePressedEvent = (MousePressedEvent) event;
-            onClick(mousePressedEvent.xPos, mousePressedEvent.yPos);
+            if (mousePressedEvent.xPos >= buttonPosition.getX() &&
+                mousePressedEvent.xPos <= buttonPosition.getX() + buttonSize.getX() &&
+                mousePressedEvent.yPos >= buttonPosition.getY() &&
+                mousePressedEvent.yPos <= buttonPosition.getY() + buttonSize.getY())
+            {
+                active = true;
+                action.run();
+            }
+        }
+        if (event.eventType == EventType.MOUSE_RELEASED)
+        {
+            active = false;
         }
     }
 
     @Override
-    public void render(Vector2f parentPosition)
+    public void render()
     {
-        Renderer2D.drawQuad(Vector2f.add(parentPosition, position), size, active ? ON_COLOR : OFF_COLOR);
+        Renderer2D.drawQuad(buttonPosition, buttonSize, active ? ON_COLOR : OFF_COLOR);
+    }
+
+    @Override
+    public float getVerticalSize()
+    {
+        return buttonSize.getY();
+    }
+
+    @FunctionalInterface
+    public interface ButtonPressAction
+    {
+        void run();
     }
 }

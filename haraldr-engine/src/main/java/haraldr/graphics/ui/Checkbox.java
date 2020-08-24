@@ -9,31 +9,31 @@ import haraldr.input.Input;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 
-public class Checkbox extends UIComponent
+public class Checkbox extends LabeledComponent
 {
     private static final Vector4f OFF_COLOR = new Vector4f(0.8f, 0.2f, 0.3f, 1f), ON_COLOR = new Vector4f(0.3f, 0.8f, 0.2f, 1f);
 
-    private Pane parent;
-
+    private Vector2f boxPosition = new Vector2f(), boxSize;
     private boolean state;
 
-    public Checkbox(String name, Vector2f position, Pane parent)
-    {
-        super(position, new Vector2f(parent.getTextBatch().getFont().getSize()), name);
-        this.parent = parent;
-   }
+    private CheckboxStateChangeAction stateChangeAction = (state) -> {};
 
-    @Override
-    protected void setupLabel(String name)
+    public Checkbox(String name, Pane parent)
     {
+        super(name, parent);
+        boxSize = new Vector2f(parent.size.getX() - parent.getDivider(), label.getFont().getSize());
     }
 
     @Override
     public void setPosition(Vector2f position)
     {
-        name.setPosition(position);
-        parent.getTextBatch().refreshTextMeshData();
-        this.position.set(position).add(name.getPixelWidth(), 0f);
+        super.setPosition(position);
+        boxPosition.set(Vector2f.add(position, new Vector2f(parent.getDivider(), 0f)));
+    }
+
+    public void setStateChangeAction(CheckboxStateChangeAction stateChangeAction)
+    {
+        this.stateChangeAction = stateChangeAction;
     }
 
     @Override
@@ -44,20 +44,33 @@ public class Checkbox extends UIComponent
             if (Input.wasMouseButton(event, Button.MOUSE_BUTTON_1))
             {
                 var mousePressedEvent = (MousePressedEvent) event;
-                if (mousePressedEvent.xPos > position.getX() &&
-                    mousePressedEvent.xPos < position.getX() + size.getX() &&
-                    mousePressedEvent.yPos > position.getY() &&
-                    mousePressedEvent.yPos < position.getY() + size.getY())
+                if (mousePressedEvent.xPos > boxPosition.getX() &&
+                    mousePressedEvent.xPos < boxPosition.getX() + boxSize.getX() &&
+                    mousePressedEvent.yPos > boxPosition.getY() &&
+                    mousePressedEvent.yPos < boxPosition.getY() + boxSize.getY())
                 {
                     state = !state;
+                    stateChangeAction.run(state);
                 }
             }
         }
     }
 
     @Override
-    public void render(Vector2f parentPosition)
+    public void render()
     {
-        Renderer2D.drawQuad(position, size, state ? ON_COLOR : OFF_COLOR);
+        Renderer2D.drawQuad(boxPosition, boxSize, state ? ON_COLOR : OFF_COLOR);
+    }
+
+    @Override
+    public float getVerticalSize()
+    {
+        return boxSize.getY();
+    }
+
+    @FunctionalInterface
+    public interface CheckboxStateChangeAction
+    {
+        void run(boolean state);
     }
 }

@@ -65,14 +65,14 @@ public abstract class Renderer3D
         matrixBuffer.setDataUnsafe(Matrix4f.perspective.matrix, 64);
         matrixBuffer.setDataUnsafe(camera.getRawPosition(), 128);
         window.getFramebuffer().bind();
-        Renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        Renderer.clear(Renderer.ClearMask.COLOR_DEPTH_STENCIL);
     }
 
     public static void end(@NotNull Window window)
     {
         glBindTexture(GL_TEXTURE_2D, window.getFramebuffer().getColorAttachmentTexture());
         window.getFramebuffer().unbind();
-        Renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        Renderer.clear(Renderer.ClearMask.COLOR_DEPTH);
         ///// POST PROCESSING //////
         postProcessingShader.bind();
         postProcessingShader.setFloat("u_Exposure", exposure);

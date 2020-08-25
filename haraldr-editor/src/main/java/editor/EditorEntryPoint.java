@@ -1,6 +1,8 @@
 package editor;
 
-public class EditorEntryPoint extends haraldr.main.EntryPoint
+import haraldr.main.EntryPoint;
+
+public class EditorEntryPoint extends EntryPoint
 {
     static
     {

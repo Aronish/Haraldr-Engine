@@ -12,8 +12,8 @@ import java.util.Arrays;
  */
 public abstract class EntryPoint
 {
-    // Cannot have static abstract methods, therefore a static initializer is the only option.
-    public static Application application;
+    // Static initializer in client to set this. Mimics C++ extern getter.
+    public static GenericApplication application;
     protected static ArgumentValidator argumentValidator = new ArgumentValidator() {};
     public static boolean DEBUG = false;
 
@@ -52,7 +52,7 @@ public abstract class EntryPoint
     }
 
     ///// UTILITY ///////////////////////
-
+//TODO: Move to math/MathUtil
     public static int fastFloor(double x)
     {
         int xi = (int) x;

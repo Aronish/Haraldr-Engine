@@ -14,6 +14,7 @@ import haraldr.event.WindowClosedEvent;
 import haraldr.event.WindowFocusEvent;
 import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Framebuffer;
+import haraldr.graphics.Renderer;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -21,7 +22,6 @@ import org.lwjgl.opengl.GL;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
-import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_DISABLED;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_HIDDEN;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
@@ -61,7 +61,6 @@ import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.opengl.GL30.GL_DEPTH24_STENCIL8;
 import static org.lwjgl.opengl.GL30.GL_RGB16F;
 import static org.lwjgl.opengl.GL46.GL_TRUE;
-import static org.lwjgl.opengl.GL46.glViewport;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
@@ -71,7 +70,6 @@ public class Window
     private GLFWVidMode vidmode;
     private boolean vSyncOn;
     private boolean fullscreen, minimized;
-    private boolean focused = true;
     private int windowWidth, windowHeight, initWidth, initHeight;
 
     private int mouseX, mouseY;
@@ -96,7 +94,6 @@ public class Window
         glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
         glfwWindowHint(GLFW_MAXIMIZED, windowProperties.maximized ? GLFW_TRUE : GLFW_FALSE);
-
         glfwWindowHint(GLFW_SAMPLES, windowProperties.samples);
 
         vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -117,8 +114,7 @@ public class Window
         glfwMakeContextCurrent(windowHandle);
         GL.createCapabilities();
 
-        setCursorVisible(true);
-        setFocus(true);
+        setCursorVisibility(true);
         setVSync(windowProperties.vsync);
         ///// FRAMEBUFFER //////////////
         framebuffer = new Framebuffer();
@@ -168,7 +164,8 @@ public class Window
 
         glfwSetCursorPosCallback(windowHandle, (window, xPos, yPos) ->
         {
-            setCurrentMousePosition((int) xPos, (int) yPos);
+            this.mouseX = (int) xPos;
+            this.mouseY = (int) yPos;
             if (leftButtonHeld)
             {
                 EventDispatcher.dispatch(new MouseDraggedEvent(xPos, yPos), this);
@@ -183,14 +180,13 @@ public class Window
             minimized = newWidth <= 0 || newHeight <= 0;
             windowWidth = newWidth;
             windowHeight = newHeight;
-            setViewPortSize(newWidth, newHeight);
+            Renderer.setViewPort(0, 0, newWidth, newHeight);
             framebuffer.resize(newWidth, newHeight);
             EventDispatcher.dispatch(new WindowResizedEvent(newWidth, newHeight), this);
         });
 
         glfwSetWindowFocusCallback(windowHandle, (window, focused) ->
         {
-            setFocus(focused);
             EventDispatcher.dispatch(new WindowFocusEvent(focused), this);
         });
 
@@ -203,33 +199,16 @@ public class Window
         {
             fullscreen = false;
             glfwSetWindowMonitor(windowHandle, 0, vidmode.width() / 2 - initWidth / 2, vidmode.height() / 2 - initHeight / 2, initWidth, initHeight, 60);
-            setViewPortSize(initWidth, initHeight);
+            Renderer.setViewPort(0, 0, initWidth, initHeight);
         } else
         {
             fullscreen = true;
             glfwSetWindowMonitor(windowHandle, glfwGetPrimaryMonitor(), 0, 0, vidmode.width(), vidmode.height(), 60);
-            setViewPortSize(vidmode.width(), vidmode.height());
+            Renderer.setViewPort(0, 0, vidmode.width(), vidmode.height());
         }
     }
 
-    public void setCurrentMousePosition(int mouseX, int mouseY)
-    {
-        this.mouseX = mouseX;
-        this.mouseY = mouseY;
-    }
-
-    public void setFocus(boolean focused)
-    {
-        this.focused = focused;
-        glfwSetInputMode(windowHandle, GLFW_CURSOR, focused ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
-    }
-
-    private void setViewPortSize(int width, int height)
-    {
-        glViewport(0, 0, width, height);
-    }
-
-    public void setCursorVisible(boolean visible)
+    public void setCursorVisibility(boolean visible)
     {
         glfwSetInputMode(windowHandle, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN);
     }
@@ -275,11 +254,6 @@ public class Window
         return initHeight;
     }
 
-    public boolean isFocused()
-    {
-        return focused;
-    }
-
     public boolean vSyncOn()
     {
         return vSyncOn;
@@ -298,7 +272,6 @@ public class Window
 
     public static class WindowProperties
     {
-
         public final int width, height, samples;
         public final boolean maximized, fullscreen, vsync;
 

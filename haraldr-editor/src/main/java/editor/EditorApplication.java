@@ -1,27 +1,33 @@
 package editor;
 
 import haraldr.graphics.Renderer;
-import haraldr.main.Application;
+import haraldr.main.GenericApplication;
 import haraldr.main.ProgramArguments;
 import haraldr.main.Window;
 
-public class EditorApplication extends Application
+public class EditorApplication extends GenericApplication
 {
-    @Override
-    public void start()
+
+
+    public EditorApplication()
     {
-        int samples = ProgramArguments.getIntOrDefault("MSAA", 0);
-        Window.WindowProperties windowProperties = new Window.WindowProperties(1280, 720, samples, false, false, false);
-        init(windowProperties);
-        loop();
+        super(new Window.WindowProperties(1280, 720, ProgramArguments.getIntOrDefault("MSAA", 0), false, false, false));
     }
 
     @Override
-    protected void init(Window.WindowProperties windowProperties)
+    protected void clientInit()
     {
-        super.init(windowProperties);
-        Renderer.setClearColor(0.8f, 0.8f, 0.8f, 1f);
-        setActiveOverlay(new EditorOverlay());
-        setActiveScene(new EditorTestScene());
+        Renderer.setClearColor(0.8f, 0.2f, 0.3f, 1f);
+    }
+
+    @Override
+    protected void clientUpdate(float deltaTime)
+    {
+    }
+
+    @Override
+    protected void clientRender()
+    {
+        Renderer.clear(Renderer.ClearMask.COLOR);
     }
 }

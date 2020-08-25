@@ -14,18 +14,24 @@ public class Button extends LabeledComponent
 
     private Vector2f buttonPosition, buttonSize;
     private boolean active;
-    private ButtonPressAction action = () -> {};
+    private ButtonPressAction buttonPressAction;
 
     public Button(String name, Pane parent)
+    {
+        this(name, parent, () -> {});
+    }
+
+    public Button(String name, Pane parent, ButtonPressAction buttonPressAction)
     {
         super(name, parent);
         buttonPosition = Vector2f.add(position, new Vector2f(0f, label.getPixelWidth()));
         buttonSize = new Vector2f(parent.size.getX() - parent.getDivider(), label.getFont().getSize());
+        this.buttonPressAction = buttonPressAction;
     }
 
     public void setPressAction(ButtonPressAction action)
     {
-        this.action = action;
+        this.buttonPressAction = action;
     }
 
     @Override
@@ -47,13 +53,18 @@ public class Button extends LabeledComponent
                 mousePressedEvent.yPos <= buttonPosition.getY() + buttonSize.getY())
             {
                 active = true;
-                action.run();
+                buttonPressAction.run();
             }
         }
         if (event.eventType == EventType.MOUSE_RELEASED)
         {
             active = false;
         }
+    }
+
+    @Override
+    public void onUpdate(float deltaTime)
+    {
     }
 
     @Override

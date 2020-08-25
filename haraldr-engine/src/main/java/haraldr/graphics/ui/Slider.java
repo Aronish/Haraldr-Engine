@@ -17,13 +17,19 @@ public class Slider extends LabeledComponent
 
     private float value;
     private boolean held;
-    private SliderChangeAction sliderChangeAction = (value) -> {};
+    private SliderChangeAction sliderChangeAction;
 
     public Slider(String name, Pane parent)
+    {
+        this(name, parent, (value) -> {});
+    }
+
+    public Slider(String name, Pane parent, SliderChangeAction sliderChangeAction)
     {
         super(name, parent);
         sliderSize = new Vector2f(parent.size.getX() - parent.getDivider(), label.getFont().getSize());
         handleSize = new Vector2f(20f, label.getFont().getSize());
+        this.sliderChangeAction = sliderChangeAction;
     }
 
     public void setValue(float value)
@@ -77,6 +83,11 @@ public class Slider extends LabeledComponent
                 sliderChangeAction.run(value);
             }
         }
+    }
+
+    @Override
+    public void onUpdate(float deltaTime)
+    {
     }
 
     @Override

@@ -28,7 +28,6 @@ import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL45.glCreateTextures;
-import static org.lwjgl.stb.STBTruetype.stbtt_FreeBitmap;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetCodepointHMetrics;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetCodepointKernAdvance;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetFontBoundingBox;

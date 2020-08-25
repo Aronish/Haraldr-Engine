@@ -12,7 +12,7 @@ public class Pane
 {
     private static final Vector4f COLOR = new Vector4f(0.3f, 0.3f, 0.3f, 1f);
     private static final Vector4f HEADER_COLOR = new Vector4f(0.2f, 0.2f, 0.2f, 1f);
-    private static final Font DEFAULT_FONT = new Font("default_fonts/consola.ttf", 20);
+    private static final Font DEFAULT_FONT = new Font("default_fonts/consola.ttf", 40);
 
     protected Vector2f position, size;
     private Vector2f headerSize;
@@ -40,6 +40,11 @@ public class Pane
     public void onEvent(Event event)
     {
         components.forEach((component) -> component.onEvent(event));
+    }
+
+    public void onUpdate(float deltaTime)
+    {
+        components.forEach((component) -> component.onUpdate(deltaTime));
     }
 
     public void render()

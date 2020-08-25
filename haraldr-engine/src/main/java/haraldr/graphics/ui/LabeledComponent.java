@@ -28,5 +28,7 @@ public abstract class LabeledComponent
 
     public abstract void onEvent(Event event);
 
+    public abstract void onUpdate(float deltaTime);
+
     public abstract void render();
 }

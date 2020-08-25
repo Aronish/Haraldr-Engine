@@ -1,6 +1,7 @@
 package haraldr.main;
 
 import haraldr.debug.Logger;
+import haraldr.event.CharTypedEvent;
 import haraldr.event.EventDispatcher;
 import haraldr.event.KeyPressedEvent;
 import haraldr.event.KeyReleasedEvent;
@@ -28,6 +29,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+import static org.lwjgl.glfw.GLFW.GLFW_REPEAT;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_SAMPLES;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
@@ -39,6 +41,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwSetCharCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
@@ -129,19 +132,30 @@ public class Window
         }
         else throw new IllegalArgumentException("Multisample sample count cannot be below 0");
 
-        ///// CALLBACKS ///////////////////////////////////////////////////////////
-        glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
-            if (action == GLFW_PRESS){
+        ///// CALLBACKS /////////////////////////////////////////////////////////
+        glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) ->
+        {
+            if (action == GLFW_PRESS || action == GLFW_REPEAT)
+            {
                 EventDispatcher.dispatch(new KeyPressedEvent(key), this);
-            }else if (action == GLFW_RELEASE){
+            } else if (action == GLFW_RELEASE)
+            {
                 EventDispatcher.dispatch(new KeyReleasedEvent(key), this);
             }
         });
 
-        glfwSetMouseButtonCallback(windowHandle, (window, button, action, mods) -> {
-            if (action == GLFW_PRESS){
+        glfwSetCharCallback(windowHandle, (window, codePoint) ->
+        {
+            EventDispatcher.dispatch(new CharTypedEvent(codePoint), this);
+        });
+
+        glfwSetMouseButtonCallback(windowHandle, (window, button, action, mods) ->
+        {
+            if (action == GLFW_PRESS)
+            {
                 EventDispatcher.dispatch(new MousePressedEvent(button, mouseX, mouseY), this);
-            }else if (action == GLFW_RELEASE){
+            } else if (action == GLFW_RELEASE)
+            {
                 EventDispatcher.dispatch(new MouseReleasedEvent(button, mouseX, mouseY), this);
             }
         });
@@ -156,7 +170,8 @@ public class Window
 
         glfwSetWindowCloseCallback(windowHandle, (window) -> EventDispatcher.dispatch(new WindowClosedEvent(), this));
 
-        glfwSetWindowSizeCallback(windowHandle, (window, newWidth, newHeight) -> {
+        glfwSetWindowSizeCallback(windowHandle, (window, newWidth, newHeight) ->
+        {
             minimized = newWidth <= 0 || newHeight <= 0;
             windowWidth = newWidth;
             windowHeight = newHeight;
@@ -165,7 +180,8 @@ public class Window
             EventDispatcher.dispatch(new WindowResizedEvent(newWidth, newHeight), this);
         });
 
-        glfwSetWindowFocusCallback(windowHandle, (window, focused) -> {
+        glfwSetWindowFocusCallback(windowHandle, (window, focused) ->
+        {
             setFocus(focused);
             EventDispatcher.dispatch(new WindowFocusEvent(focused), this);
         });

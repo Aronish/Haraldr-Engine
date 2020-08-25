@@ -16,12 +16,18 @@ public class Checkbox extends LabeledComponent
     private Vector2f boxPosition = new Vector2f(), boxSize;
     private boolean state;
 
-    private CheckboxStateChangeAction stateChangeAction = (state) -> {};
+    private CheckboxStateChangeAction checkboxStateChangeAction;
 
     public Checkbox(String name, Pane parent)
     {
+        this(name, parent, (state) -> {});
+    }
+
+    public Checkbox(String name, Pane parent, CheckboxStateChangeAction checkboxStateChangeAction)
+    {
         super(name, parent);
         boxSize = new Vector2f(parent.size.getX() - parent.getDivider(), label.getFont().getSize());
+        this.checkboxStateChangeAction = checkboxStateChangeAction;
     }
 
     @Override
@@ -31,9 +37,9 @@ public class Checkbox extends LabeledComponent
         boxPosition.set(Vector2f.add(position, new Vector2f(parent.getDivider(), 0f)));
     }
 
-    public void setStateChangeAction(CheckboxStateChangeAction stateChangeAction)
+    public void setCheckboxStateChangeAction(CheckboxStateChangeAction checkboxStateChangeAction)
     {
-        this.stateChangeAction = stateChangeAction;
+        this.checkboxStateChangeAction = checkboxStateChangeAction;
     }
 
     @Override
@@ -50,10 +56,15 @@ public class Checkbox extends LabeledComponent
                     mousePressedEvent.yPos < boxPosition.getY() + boxSize.getY())
                 {
                     state = !state;
-                    stateChangeAction.run(state);
+                    checkboxStateChangeAction.run(state);
                 }
             }
         }
+    }
+
+    @Override
+    public void onUpdate(float deltaTime)
+    {
     }
 
     @Override

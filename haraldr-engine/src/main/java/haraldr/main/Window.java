@@ -5,6 +5,7 @@ import haraldr.event.CharTypedEvent;
 import haraldr.event.EventDispatcher;
 import haraldr.event.KeyPressedEvent;
 import haraldr.event.KeyReleasedEvent;
+import haraldr.event.MouseDraggedEvent;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.event.MouseReleasedEvent;
@@ -74,6 +75,7 @@ public class Window
     private int windowWidth, windowHeight, initWidth, initHeight;
 
     private int mouseX, mouseY;
+    private boolean leftButtonHeld;
 
     private Framebuffer framebuffer;
 
@@ -154,9 +156,11 @@ public class Window
             if (action == GLFW_PRESS)
             {
                 EventDispatcher.dispatch(new MousePressedEvent(button, mouseX, mouseY), this);
+                leftButtonHeld = true;
             } else if (action == GLFW_RELEASE)
             {
                 EventDispatcher.dispatch(new MouseReleasedEvent(button, mouseX, mouseY), this);
+                leftButtonHeld = false;
             }
         });
 
@@ -165,6 +169,10 @@ public class Window
         glfwSetCursorPosCallback(windowHandle, (window, xPos, yPos) ->
         {
             setCurrentMousePosition((int) xPos, (int) yPos);
+            if (leftButtonHeld)
+            {
+                EventDispatcher.dispatch(new MouseDraggedEvent(xPos, yPos), this);
+            }
             EventDispatcher.dispatch(new MouseMovedEvent(xPos, yPos), this);
         });
 

@@ -4,6 +4,7 @@ import haraldr.event.Event;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 
+// These are to be contained in a Pane, they cannot be freely positioned.
 public abstract class LabeledComponent
 {
     protected Pane parent;
@@ -17,12 +18,17 @@ public abstract class LabeledComponent
         label = parent.textBatch.createTextLabel(name, position, new Vector4f(1f));
     }
 
-    public void setPosition(Vector2f position)
+    public void setPosition(Vector2f position, float divider)
     {
         this.position.set(position);
         label.setPosition(position);
         parent.textBatch.refreshTextMeshData();
+        setComponentPosition(Vector2f.add(position, new Vector2f(divider, 0f)));
     }
+
+    protected abstract void setComponentPosition(Vector2f position);
+
+    public abstract void setWidth(float width);
 
     public abstract float getVerticalSize();
 

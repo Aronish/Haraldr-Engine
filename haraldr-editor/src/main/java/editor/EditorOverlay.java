@@ -4,13 +4,16 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Renderer2D;
+import haraldr.graphics.ui.Button;
 import haraldr.graphics.ui.InputField;
 import haraldr.graphics.ui.Pane;
+import haraldr.graphics.ui.Slider;
+import haraldr.main.Application;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.scenegraph.Scene2D;
 
-public class EditorScene extends Scene2D
+public class EditorOverlay extends Scene2D
 {
     private Pane propertiesPane;
 
@@ -20,20 +23,38 @@ public class EditorScene extends Scene2D
         propertiesPane = new Pane(
                 new Vector2f(),
                 new Vector2f(400, window.getHeight()),
+                0.25f,
+                0.3f,
                 "Properties"
         );
+        Application.gameViewPosition = Vector2f.add(propertiesPane.getPosition(), new Vector2f(propertiesPane.getSize().getX(), 0f));
+        Application.gameViewSize = new Vector2f(window.getWidth() - Application.gameViewPosition.getX(), window.getHeight());
+
         InputField field = new InputField("Name", propertiesPane);
         propertiesPane.addChild(field);
+        InputField description = new InputField("Description", propertiesPane);
+        propertiesPane.addChild(description);
+
+        Slider interpolation = new Slider("Interpolation", propertiesPane);
+        propertiesPane.addChild(interpolation);
+
+        Button button = new Button("Reset", propertiesPane);
+        propertiesPane.addChild(button);
+
+        Slider test = new Slider("Test", propertiesPane);
+        propertiesPane.addChild(test);
     }
 
     @Override
     protected void onClientEvent(Event event, Window window)
     {
-        propertiesPane.onEvent(event);
+        propertiesPane.onEvent(event, window);
         if (event.eventType == EventType.WINDOW_RESIZED)
         {
             var windowResizedEvent = (WindowResizedEvent) event;
-            propertiesPane.setSize(400, windowResizedEvent.height);
+            propertiesPane.onWindowResized(windowResizedEvent.width, windowResizedEvent.height);
+            Application.gameViewPosition = Vector2f.add(propertiesPane.getPosition(), new Vector2f(propertiesPane.getSize().getX(), 0f));
+            Application.gameViewSize = new Vector2f(window.getWidth() - Application.gameViewPosition.getX(), window.getHeight());
         }
     }
 

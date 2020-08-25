@@ -11,7 +11,7 @@ public class EditorApplication extends Application
     public void start()
     {
         int samples = ProgramArguments.getIntOrDefault("MSAA", 0);
-        Window.WindowProperties windowProperties = new Window.WindowProperties(1280, 720, samples, false, false, true);
+        Window.WindowProperties windowProperties = new Window.WindowProperties(1280, 720, samples, false, false, false);
         init(windowProperties);
         loop();
     }
@@ -21,6 +21,7 @@ public class EditorApplication extends Application
     {
         super.init(windowProperties);
         Renderer.setClearColor(0.8f, 0.8f, 0.8f, 1f);
-        setActiveOverlay(new EditorScene());
+        setActiveOverlay(new EditorOverlay());
+        setActiveScene(new EditorTestScene());
     }
 }

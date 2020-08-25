@@ -12,7 +12,7 @@ public class Button extends LabeledComponent
     private static final Vector4f ON_COLOR = new Vector4f(0.2f, 0.8f, 0.3f, 1f);
     private static final Vector4f OFF_COLOR = new Vector4f(0.8f, 0.2f, 0.3f, 1f);
 
-    private Vector2f buttonPosition, buttonSize;
+    private Vector2f buttonPosition = new Vector2f(), buttonSize;
     private boolean active;
     private ButtonPressAction buttonPressAction;
 
@@ -24,8 +24,7 @@ public class Button extends LabeledComponent
     public Button(String name, Pane parent, ButtonPressAction buttonPressAction)
     {
         super(name, parent);
-        buttonPosition = Vector2f.add(position, new Vector2f(0f, label.getPixelWidth()));
-        buttonSize = new Vector2f(parent.size.getX() - parent.getDivider(), label.getFont().getSize());
+        buttonSize = new Vector2f(parent.getComponentDivisionSize(), label.getFont().getSize());
         this.buttonPressAction = buttonPressAction;
     }
 
@@ -35,10 +34,15 @@ public class Button extends LabeledComponent
     }
 
     @Override
-    public void setPosition(Vector2f position)
+    public void setComponentPosition(Vector2f position)
     {
-        super.setPosition(position);
-        buttonPosition.set(Vector2f.add(position, new Vector2f(parent.getDivider(), 0f)));
+        buttonPosition = position;
+    }
+
+    @Override
+    public void setWidth(float width)
+    {
+        buttonSize.setX(width);
     }
 
     @Override

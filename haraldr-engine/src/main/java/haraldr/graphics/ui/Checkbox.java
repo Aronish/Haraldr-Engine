@@ -26,15 +26,20 @@ public class Checkbox extends LabeledComponent
     public Checkbox(String name, Pane parent, CheckboxStateChangeAction checkboxStateChangeAction)
     {
         super(name, parent);
-        boxSize = new Vector2f(parent.size.getX() - parent.getDivider(), label.getFont().getSize());
+        boxSize = new Vector2f(parent.getComponentDivisionSize(), label.getFont().getSize());
         this.checkboxStateChangeAction = checkboxStateChangeAction;
     }
 
     @Override
-    public void setPosition(Vector2f position)
+    public void setComponentPosition(Vector2f position)
     {
-        super.setPosition(position);
-        boxPosition.set(Vector2f.add(position, new Vector2f(parent.getDivider(), 0f)));
+        boxPosition = position;
+    }
+
+    @Override
+    public void setWidth(float width)
+    {
+        boxSize.setX(width);
     }
 
     public void setCheckboxStateChangeAction(CheckboxStateChangeAction checkboxStateChangeAction)

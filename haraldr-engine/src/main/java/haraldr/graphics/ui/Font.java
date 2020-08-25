@@ -37,6 +37,7 @@ import static org.lwjgl.stb.STBTruetype.stbtt_InitFont;
 import static org.lwjgl.stb.STBTruetype.stbtt_PackBegin;
 import static org.lwjgl.stb.STBTruetype.stbtt_PackEnd;
 import static org.lwjgl.stb.STBTruetype.stbtt_PackFontRange;
+import static org.lwjgl.stb.STBTruetype.stbtt_PackSetOversampling;
 import static org.lwjgl.stb.STBTruetype.stbtt_ScaleForPixelHeight;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
@@ -53,6 +54,11 @@ public class Font
     private ByteBuffer fontData; //STBTT only keeps pointers, don't let gc clean this up.
 
     public Font(String path, int size)
+    {
+        this(path, size, 1);
+    }
+
+    public Font(String path, int size, int oversampling)
     {
         ///// Load Font /////
         this.size = size;
@@ -84,6 +90,7 @@ public class Font
         packedchars = STBTTPackedchar.malloc(95);
         STBTTPackContext packContext = STBTTPackContext.create();
         stbtt_PackBegin(packContext, atlasData, WIDTH, HEIGHT, 0, 1);
+        stbtt_PackSetOversampling(packContext, oversampling, oversampling);
         stbtt_PackFontRange(packContext, fontData, 0, (float) size, 32, packedchars);
         stbtt_PackEnd(packContext);
 

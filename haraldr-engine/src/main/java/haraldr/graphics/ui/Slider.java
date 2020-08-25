@@ -10,6 +10,7 @@ import haraldr.input.Input;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 
+@SuppressWarnings("unused")
 public class Slider extends LabeledComponent
 {
     private Vector2f sliderPosition = new Vector2f(), sliderSize;
@@ -27,7 +28,7 @@ public class Slider extends LabeledComponent
     public Slider(String name, Pane parent, SliderChangeAction sliderChangeAction)
     {
         super(name, parent);
-        sliderSize = new Vector2f(parent.size.getX() - parent.getDivider(), label.getFont().getSize());
+        sliderSize = new Vector2f(parent.getComponentDivisionSize(), label.getFont().getSize());
         handleSize = new Vector2f(20f, label.getFont().getSize());
         this.sliderChangeAction = sliderChangeAction;
     }
@@ -45,11 +46,16 @@ public class Slider extends LabeledComponent
     }
 
     @Override
-    public void setPosition(Vector2f position)
+    public void setComponentPosition(Vector2f position)
     {
-        super.setPosition(position);
-        sliderPosition = Vector2f.add(position, new Vector2f(parent.getDivider(), 0f));
+        sliderPosition = position;
         handlePosition = new Vector2f(sliderPosition);
+    }
+
+    @Override
+    public void setWidth(float width)
+    {
+        sliderSize.setX(width);
     }
 
     @Override

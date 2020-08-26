@@ -8,7 +8,6 @@ import haraldr.graphics.ui.Button;
 import haraldr.graphics.ui.InputField;
 import haraldr.graphics.ui.Pane;
 import haraldr.graphics.ui.Slider;
-import haraldr.main.Application;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.scenegraph.Scene2D;
@@ -22,13 +21,11 @@ public class EditorOverlay extends Scene2D
     {
         propertiesPane = new Pane(
                 new Vector2f(),
-                new Vector2f(400, window.getHeight()),
+                window.getWidth(), window.getHeight(),
                 0.25f,
                 0.3f,
                 "Properties"
         );
-        Application.gameViewPosition = Vector2f.add(propertiesPane.getPosition(), new Vector2f(propertiesPane.getSize().getX(), 0f));
-        Application.gameViewSize = new Vector2f(window.getWidth() - Application.gameViewPosition.getX(), window.getHeight());
 
         InputField field = new InputField("Name", propertiesPane);
         propertiesPane.addChild(field);
@@ -53,8 +50,6 @@ public class EditorOverlay extends Scene2D
         {
             var windowResizedEvent = (WindowResizedEvent) event;
             propertiesPane.onWindowResized(windowResizedEvent.width, windowResizedEvent.height);
-            Application.gameViewPosition = Vector2f.add(propertiesPane.getPosition(), new Vector2f(propertiesPane.getSize().getX(), 0f));
-            Application.gameViewSize = new Vector2f(window.getWidth() - Application.gameViewPosition.getX(), window.getHeight());
         }
     }
 

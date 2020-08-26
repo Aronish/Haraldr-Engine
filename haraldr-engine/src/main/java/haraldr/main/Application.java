@@ -30,7 +30,6 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.GL_KEEP;
@@ -155,13 +154,13 @@ public abstract class Application
     private void update(float deltaTime)
     {
         time = glfwGetTime();
-        activeOverlay.onUpdate(window, deltaTime);
+        activeOverlay.onUpdate(deltaTime, window);
         //if (window.isFocused())
         //{
         //    Renderer3D.getCamera().handleMovement(window, deltaTime);
         //}
         activeScene.onUpdate(window, deltaTime);
-        activeOverlay.onUpdate(window, deltaTime);
+        activeOverlay.onUpdate(deltaTime, window);
     }
 
     protected void render()

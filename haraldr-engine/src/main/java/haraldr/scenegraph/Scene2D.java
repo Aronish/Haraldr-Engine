@@ -16,7 +16,7 @@ public abstract class Scene2D
         onClientActivate(window);
     }
 
-    public final void onUpdate(Window window, float deltaTime)
+    public final void onUpdate(float deltaTime, Window window)
     {
         onClientUpdate(deltaTime, window);
     }

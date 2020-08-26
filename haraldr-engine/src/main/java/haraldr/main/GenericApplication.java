@@ -9,8 +9,6 @@ import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Renderer3D;
 import haraldr.graphics.ResourceManager;
 import haraldr.graphics.Texture;
-import haraldr.input.Input;
-import haraldr.input.Key;
 import haraldr.math.Matrix4f;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,6 +30,7 @@ import static org.lwjgl.opengl.GL11.GL_STENCIL_TEST;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glStencilOp;
+import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_SEVERITY_NOTIFICATION;
@@ -63,7 +62,7 @@ public abstract class GenericApplication
         event.setHandled(true);
     }
 
-    protected abstract void clientInit();
+    protected abstract void clientInit(Window window);
 
     private void init()
     {
@@ -97,28 +96,32 @@ public abstract class GenericApplication
                 //if (type == GL_DEBUG_TYPE_ERROR || type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR) stop(new WindowClosedEvent());
             }, 0);
         }
-        clientInit();
+        clientInit(window);
 
+        glViewport(0, 0, window.getWidth(), window.getHeight());
         glfwShowWindow(window.getWindowHandle());
         initialized = true;
     }
+
+    protected abstract void clientEvent(Event event, Window window);
 
     private class EventCallback implements haraldr.event.EventCallback
     {
         @Override
         public void onEvent(@NotNull Event event, Window window)
         {
+            clientEvent(event, window);
             if (event.eventType == EventType.WINDOW_CLOSED) stop(event);
             if (event.eventType == EventType.WINDOW_RESIZED) Matrix4f.onResize((WindowResizedEvent) event);
         }
     }
 
-    protected abstract void clientUpdate(float deltaTime);
+    protected abstract void clientUpdate(float deltaTime, Window window);
 
     private void update(float deltaTime)
     {
         time = glfwGetTime();
-        clientUpdate(deltaTime);
+        clientUpdate(deltaTime, window);
     }
 
     protected abstract void clientRender();

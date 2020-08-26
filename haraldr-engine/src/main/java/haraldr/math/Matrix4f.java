@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public class Matrix4f //TODO: can be improved
 {
     public static final Matrix4f IDENTITY = identity();
+    //TODO: Move to cameras when they are fixed
     /////ORTHOGRAPHIC///////////////////////////
     public static float dynamicOrthographicAxis;
     public static final float FIXED_ORTHOGRAPHIC_AXIS = 9f;
@@ -464,7 +465,8 @@ public class Matrix4f //TODO: can be improved
         if (fixedWidth)
         {
             recalcOrthoFixedWidth(aspectRatio);
-        }else{
+        }else
+        {
             recalcOrthoFixedHeight(aspectRatio);
         }
     }

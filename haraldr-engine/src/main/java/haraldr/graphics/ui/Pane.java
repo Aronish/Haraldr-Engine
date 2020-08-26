@@ -28,17 +28,18 @@ public class Pane
 
     private List<LabeledComponent> components = new ArrayList<>();
 
-    public Pane(Vector2f position, Vector2f initialSize, float widthRatio, float dividerRatio, String name)
+    public Pane(Vector2f position, float windowWidth, float windowHeight, float widthRatio, float dividerRatio, String name)
     {
         this.position = position;
-        size = initialSize;
+        size = new Vector2f(windowWidth * widthRatio, windowHeight);
         this.widthRatio = widthRatio;
         this.dividerRatio = dividerRatio;
         this.name = textBatch.createTextLabel(name, position, new Vector4f(1f));
-        headerSize = new Vector2f(initialSize.getX(), DEFAULT_FONT.getSize() + 2f);
+        headerSize = new Vector2f(size.getX(), DEFAULT_FONT.getSize() + 2f);
         divider = size.getX() * dividerRatio;
     }
 
+    //TODO: Doesn't keep old size
     public void onWindowResized(float width, float height)
     {
         size.set(width * widthRatio, height);
@@ -53,7 +54,7 @@ public class Pane
         {
             var mousePressedEvent = (MousePressedEvent) event;
             resizing = mousePressedEvent.xPos > size.getX() - 10f &&
-                    mousePressedEvent.xPos < size.getX() + 10f;
+                       mousePressedEvent.xPos < size.getX() + 10f;
         }
         if (event.eventType == EventType.MOUSE_RELEASED)
         {

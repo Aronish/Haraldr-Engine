@@ -2,9 +2,12 @@ package haraldr.graphics;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glViewport;
 
 @SuppressWarnings("unused")
@@ -25,6 +28,16 @@ public class Renderer
         if (width < 0) width = 0;
         if (height < 0) height = 0;
         glViewport(x, y, width, height);
+    }
+
+    public static void enableDepthTest()
+    {
+        glEnable(GL_DEPTH_TEST);
+    }
+
+    public static void disableDepthTest()
+    {
+        glDisable(GL_DEPTH_TEST);
     }
 
     public enum ClearMask

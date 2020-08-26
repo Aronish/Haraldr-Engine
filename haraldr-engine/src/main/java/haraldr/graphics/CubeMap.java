@@ -1,7 +1,6 @@
 package haraldr.graphics;
 
 import haraldr.debug.Logger;
-import haraldr.main.Application;
 import haraldr.main.EntryPoint;
 import haraldr.main.IOUtils;
 import haraldr.math.Matrix4f;
@@ -270,7 +269,6 @@ public class CubeMap
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glDeleteFramebuffers(mappingFrameBuffer);
         glDeleteRenderbuffers(depthRenderBuffer);
-        glViewport(0, 0, Application.initWidth, Application.initHeight);
         glCullFace(GL_BACK);
         return cubemap;
     }

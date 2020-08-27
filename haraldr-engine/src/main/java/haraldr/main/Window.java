@@ -58,8 +58,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
-import static org.lwjgl.opengl.GL30.GL_DEPTH24_STENCIL8;
-import static org.lwjgl.opengl.GL30.GL_RGB16F;
 import static org.lwjgl.opengl.GL46.GL_TRUE;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -73,11 +71,11 @@ public class Window
     private int windowWidth, windowHeight, initWidth, initHeight;
 
     private int mouseX, mouseY;
-    private boolean leftButtonHeld;
+    private boolean leftButtonHeld; //TODO: Probably useless
 
-    private Framebuffer framebuffer;
+    private Framebuffer framebuffer;//TODO: Does not belong in here
 
-    Window(@NotNull WindowProperties windowProperties)
+    public Window(@NotNull WindowProperties windowProperties)
     {
         fullscreen = windowProperties.fullscreen;
         vSyncOn = windowProperties.vsync;
@@ -120,13 +118,13 @@ public class Window
         framebuffer = new Framebuffer();
         if (windowProperties.samples > 0)
         {
-            framebuffer.setColorAttachment(new Framebuffer.MultisampledColorAttachment(initWidth, initHeight, GL_RGB16F, windowProperties.samples));
-            framebuffer.setDepthBuffer(new Framebuffer.MultisampledRenderBuffer(initWidth, initHeight, GL_DEPTH24_STENCIL8, windowProperties.samples));
+            framebuffer.setColorAttachment(new Framebuffer.MultisampledColorAttachment(initWidth, initHeight, Framebuffer.ColorAttachment.Format.RGB16F, windowProperties.samples));
+            framebuffer.setDepthBuffer(new Framebuffer.MultisampledRenderBuffer(initWidth, initHeight, Framebuffer.RenderBuffer.Format.DEPTH_24_STENCIL_8, windowProperties.samples));
         }
         else if (windowProperties.samples == 0)
         {
-            framebuffer.setColorAttachment(new Framebuffer.ColorAttachment(initWidth, initHeight, GL_RGB16F));
-            framebuffer.setDepthBuffer(new Framebuffer.RenderBuffer(initWidth, initHeight, GL_DEPTH24_STENCIL8));
+            framebuffer.setColorAttachment(new Framebuffer.ColorAttachment(initWidth, initHeight, Framebuffer.ColorAttachment.Format.RGB16F));
+            framebuffer.setDepthBuffer(new Framebuffer.RenderBuffer(initWidth, initHeight, Framebuffer.RenderBuffer.Format.DEPTH_24_STENCIL_8));
         }
         else throw new IllegalArgumentException("Multisample sample count cannot be below 0");
 

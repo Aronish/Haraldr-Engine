@@ -18,8 +18,10 @@ import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
+import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT24;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
+import static org.lwjgl.opengl.GL30.GL_DEPTH24_STENCIL8;
 import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
 import static org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL_ATTACHMENT;
 import static org.lwjgl.opengl.GL30.GL_DRAW_FRAMEBUFFER;
@@ -116,31 +118,34 @@ public class Framebuffer
     {
         protected int textureId, internalFormat, width, height, format, type;
 
-        public ColorAttachment(int width, int height, int internalFormat)
+        public ColorAttachment(int width, int height, Format format)
         {
-            this.internalFormat = internalFormat;
             this.width = width;
             this.height = height;
-            switch (internalFormat)
+            switch (format)
             {
-                case GL_RGBA8 ->
+                case RGBA8 ->
                 {
-                    format = GL_RGBA;
+                    internalFormat = GL_RGBA8;
+                    this.format = GL_RGBA;
                     type = GL_UNSIGNED_BYTE;
                 }
-                case GL_RGBA16F ->
+                case RGBA16F ->
                 {
-                    format = GL_RGBA;
+                    internalFormat = GL_RGBA16F;
+                    this.format = GL_RGBA;
                     type = GL_FLOAT;
                 }
-                case GL_RGB8 ->
+                case RGB8 ->
                 {
-                    format = GL_RGB;
+                    internalFormat = GL_RGB8;
+                    this.format = GL_RGB;
                     type = GL_UNSIGNED_BYTE;
                 }
-                case GL_RGB16F ->
+                case RGB16F ->
                 {
-                    format = GL_RGB;
+                    internalFormat = GL_RGB16F;
+                    this.format = GL_RGB;
                     type = GL_FLOAT;
                 }
                 default -> Logger.error("Unsupported format for color attachment!");
@@ -185,19 +190,25 @@ public class Framebuffer
         {
             glDeleteTextures(textureId);
         }
+
+        public enum Format
+        {
+            RGB8, RGBA8,
+            RGB16F, RGBA16F
+        }
     }
 
     public static class MultisampledColorAttachment extends ColorAttachment
     {
         private int samples, intermediateFramebuffer, intermediateColorAttachment;
 
-        public MultisampledColorAttachment(int width, int height, int internalFormat, int samples)
+        public MultisampledColorAttachment(int width, int height, Format format, int samples)
         {
-            super(width, height, internalFormat);
+            super(width, height, format);
             this.samples = samples;
             intermediateColorAttachment = glCreateTextures(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, intermediateColorAttachment);
-            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, 0);
+            glTexImage2D(GL_TEXTURE_2D, 0, this.internalFormat, width, height, 0, this.format, type, 0);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -256,9 +267,9 @@ public class Framebuffer
     {
         protected int renderBufferId, internalFormat, width, height;
 
-        public RenderBuffer(int width, int height, int internalFormat)
+        public RenderBuffer(int width, int height, Format format)
         {
-            this.internalFormat = internalFormat;
+            this.internalFormat = format.internalFormat;
             this.width = width;
             this.height = height;
         }
@@ -291,15 +302,28 @@ public class Framebuffer
         {
             glDeleteRenderbuffers(renderBufferId);
         }
+
+        public enum Format
+        {
+            DEPTH_24(GL_DEPTH_COMPONENT24),
+            DEPTH_24_STENCIL_8(GL_DEPTH24_STENCIL8);
+
+            private int internalFormat;
+
+            Format(int internalFormat)
+            {
+                this.internalFormat = internalFormat;
+            }
+        }
     }
 
     public static class MultisampledRenderBuffer extends RenderBuffer
     {
         private int samples;
 
-        public MultisampledRenderBuffer(int width, int height, int internalFormat, int samples)
+        public MultisampledRenderBuffer(int width, int height, Format format, int samples)
         {
-            super(width, height, internalFormat);
+            super(width, height, format);
             this.samples = samples;
         }
 

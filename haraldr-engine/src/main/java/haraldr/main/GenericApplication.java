@@ -124,11 +124,11 @@ public abstract class GenericApplication
         clientUpdate(deltaTime, window);
     }
 
-    protected abstract void clientRender();
+    protected abstract void clientRender(Window window);
 
     private void render()
     {
-        clientRender();
+        clientRender(window);
         glfwSwapBuffers(window.getWindowHandle());
     }
 

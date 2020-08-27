@@ -136,15 +136,15 @@ public abstract class Application
             }
             if (event.eventType == EventType.MOUSE_MOVED)
             {
-                Renderer3D.getCamera().handleRotation((MouseMovedEvent) event);
+                //Renderer3D.getCamera().handleRotation((MouseMovedEvent) event);
             }
             if (event.eventType == EventType.MOUSE_SCROLLED)
             {
-                Renderer3D.getCamera().handleScroll((MouseScrolledEvent) event);
+                //Renderer3D.getCamera().handleScroll((MouseScrolledEvent) event);
             }
             if (event.eventType == EventType.WINDOW_FOCUS)
             {
-                Renderer3D.getCamera().onFocus((WindowFocusEvent) event);
+                //Renderer3D.getCamera().onFocus((WindowFocusEvent) event);
             }
             if (activeOverlay != null) activeOverlay.onEvent(event, window);
             if (!event.isHandled()) activeScene.onEvent(event, window);
@@ -159,7 +159,7 @@ public abstract class Application
         //{
         //    Renderer3D.getCamera().handleMovement(window, deltaTime);
         //}
-        activeScene.onUpdate(window, deltaTime);
+        activeScene.onUpdate(deltaTime, window);
         activeOverlay.onUpdate(deltaTime, window);
     }
 
@@ -167,7 +167,7 @@ public abstract class Application
     {
         Renderer.clear(Renderer.ClearMask.COLOR);
         glEnable(GL_DEPTH_TEST);
-        Renderer3D.begin(window);
+        //Renderer3D.begin(window);
         activeScene.onRender();
         Renderer3D.end(window);
         glDisable(GL_DEPTH_TEST);

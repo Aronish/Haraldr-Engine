@@ -2,6 +2,8 @@ package editor;
 
 import haraldr.event.Event;
 import haraldr.event.EventType;
+import haraldr.event.MouseMovedEvent;
+import haraldr.event.MouseScrolledEvent;
 import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
@@ -46,6 +48,14 @@ public class EditorApplication extends GenericApplication
             var windowResizedEvent = (WindowResizedEvent) event;
             propertiesPane.onWindowResized(windowResizedEvent.width, windowResizedEvent.height);
         }
+        if (event.eventType == EventType.MOUSE_MOVED)
+        {
+            //Renderer3D.getCamera().handleRotation((MouseMovedEvent) event);
+        }
+        if (event.eventType == EventType.MOUSE_SCROLLED)
+        {
+            //Renderer3D.getCamera().handleScroll((MouseScrolledEvent) event);
+        }
         scene.onEvent(event, window);
     }
 
@@ -53,6 +63,7 @@ public class EditorApplication extends GenericApplication
     protected void clientUpdate(float deltaTime, Window window)
     {
         propertiesPane.onUpdate(deltaTime);
+        //Renderer3D.getCamera().handleMovement(window, deltaTime);
         scene.onUpdate(window, deltaTime);
     }
 
@@ -60,7 +71,7 @@ public class EditorApplication extends GenericApplication
     protected void clientRender(Window window)
     {
         Renderer.enableDepthTest();
-        Renderer3D.begin(window);
+        //Renderer3D.begin(window);
         scene.onRender();
         Renderer3D.end(window);
 

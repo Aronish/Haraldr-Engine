@@ -81,7 +81,7 @@ public class InputField extends LabeledComponent
     {
         if (event.eventType == EventType.MOUSE_PRESSED)
         {
-            if (Input.wasMouseButton(event, Button.MOUSE_BUTTON_1))
+            if (Input.wasMousePressed(event, Button.MOUSE_BUTTON_1))
             {
                 var mousePressedEvent = (MousePressedEvent) event;
                 selected = mousePressedEvent.xPos >= fieldPosition.getX() &&
@@ -89,7 +89,7 @@ public class InputField extends LabeledComponent
                            mousePressedEvent.yPos >= fieldPosition.getY() &&
                            mousePressedEvent.yPos <= fieldPosition.getY() + fieldSize.getY();
             }
-            if (Input.wasMouseButton(event, Button.MOUSE_BUTTON_2) && selected)
+            if (Input.wasMousePressed(event, Button.MOUSE_BUTTON_2) && selected)
             {
                 text = "";
                 textLabel.setText(text);
@@ -101,7 +101,7 @@ public class InputField extends LabeledComponent
         {
             if (event.eventType == EventType.KEY_PRESSED)
             {
-                if (Input.wasKey(event, Key.KEY_BACKSPACE) && text.length() > 0)
+                if (Input.wasKeyPressed(event, Key.KEY_BACKSPACE) && text.length() > 0)
                 {
                     text = text.substring(0, text.length() - 1);
                     textLabel.setText(text);

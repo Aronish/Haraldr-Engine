@@ -56,10 +56,9 @@ public abstract class GenericApplication
         loop();
     }
 
-    private void stop(@NotNull Event event)
+    protected void stop()
     {
         glfwSetWindowShouldClose(window.getWindowHandle(), true);
-        event.setHandled(true);
     }
 
     protected abstract void clientInit(Window window);
@@ -111,7 +110,7 @@ public abstract class GenericApplication
         public void onEvent(@NotNull Event event, Window window)
         {
             clientEvent(event, window);
-            if (event.eventType == EventType.WINDOW_CLOSED) stop(event);
+            if (event.eventType == EventType.WINDOW_CLOSED) stop();
             if (event.eventType == EventType.WINDOW_RESIZED) Matrix4f.onResize((WindowResizedEvent) event);
         }
     }

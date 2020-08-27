@@ -1,5 +1,8 @@
 package haraldr.main;
 
+import haraldr.debug.Logger;
+import haraldr.event.Event;
+import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MouseScrolledEvent;
 import haraldr.event.WindowFocusEvent;
@@ -20,49 +23,41 @@ public class PerspectiveCamera extends Camera
     private Vector3f up = Vector3f.normalize(Vector3f.cross(right, direction));
     private Matrix4f lookAt;
 
-    private float fov = 60f, near = 0.1f, far = 100f;
+    private float fov = 60f, aspectRatio, near = 0.1f, far = 100f;
 
-    private PerspectiveCameraController controller;
+    private PerspectiveCameraController cameraController;
 
-    public PerspectiveCamera()
+    public PerspectiveCamera(float width, float height, PerspectiveCameraController cameraController)
     {
-        this(Vector3f.IDENTITY);
+        this(width, height, Vector3f.IDENTITY, cameraController);
     }
 
-    public PerspectiveCamera(Vector3f position)
+    public PerspectiveCamera(float width, float height, Vector3f position, PerspectiveCameraController cameraController)
     {
         this.position = position;
-        controller = new PerspectiveCameraController(this);
+        aspectRatio = width / height;
+        this.cameraController = cameraController;
+        this.cameraController.setReference(this);
+        calculateViewMatrix();
+        calculateProjectionMatrix();
     }
 
     @Override
-    public void handleMovement(Window window, float deltaTime)
+    public void onUpdate(float deltaTime, Window window)
     {
-        controller.handleMovement(window, deltaTime);
+        cameraController.onUpdate(deltaTime, window);
     }
 
     @Override
-    public void handleRotation(MouseMovedEvent event)
+    public void onEvent(Event event, Window window)
     {
-        controller.handleRotation(event);
-    }
-
-    @Override
-    public void handleScroll(MouseScrolledEvent event)
-    {
-        controller.handleScroll(event);
-    }
-
-    @Override
-    public void onFocus(WindowFocusEvent event)
-    {
-        controller.onFocus(event);
-    }
-
-    @Override
-    public void onResize(WindowResizedEvent event)
-    {
-
+        if (event.eventType == EventType.WINDOW_RESIZED)
+        {
+            var windowResizedEvent = (WindowResizedEvent) event;
+            aspectRatio = (float) windowResizedEvent.width / (float) windowResizedEvent.height;
+            calculateProjectionMatrix();
+        }
+        cameraController.onEvent(event, window);
     }
 
     @Override
@@ -81,23 +76,26 @@ public class PerspectiveCamera extends Camera
     @Override
     public void calculateProjectionMatrix()
     {
-
+        projectionMatrix = Matrix4f.perspective(fov, aspectRatio, near, far);
     }
 
-    public void setDirection(Vector3f direction)
+    public void addFov(float fov)
     {
-        this.direction = direction;
+        this.fov += fov;
+        if (this.fov < 10f) this.fov = 10f;
+        if (this.fov > 179f) this.fov = 179f;
+        calculateProjectionMatrix();
     }
 
-    public void addYaw(float yaw)
+    public void setYaw(float yaw)
     {
-        this.yaw += yaw;
+        this.yaw = yaw;
         calculateViewMatrix();
     }
 
-    public void addPitch(float pitch)
+    public void setPitch(float pitch)
     {
-        this.pitch += pitch;
+        this.pitch = pitch;
         if (this.pitch > 89f) this.pitch = 89f;
         if (this.pitch < -89f) this.pitch = -89f;
         calculateViewMatrix();
@@ -114,7 +112,7 @@ public class PerspectiveCamera extends Camera
 
     public Vector3f getDirection()
     {
-        return this.direction;
+        return direction;
     }
 
     public Vector3f getRight()
@@ -125,5 +123,10 @@ public class PerspectiveCamera extends Camera
     public Vector3f getUp()
     {
         return up;
+    }
+
+    public float getYaw()
+    {
+        return yaw;
     }
 }

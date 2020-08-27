@@ -63,7 +63,7 @@ public class Slider extends LabeledComponent
     {
         if (event.eventType == EventType.MOUSE_PRESSED)
         {
-            if (Input.wasMouseButton(event, Button.MOUSE_BUTTON_1))
+            if (Input.wasMousePressed(event, Button.MOUSE_BUTTON_1))
             {
                 var mousePressedEvent = (MousePressedEvent) event;
                 if (mousePressedEvent.xPos > handlePosition.getX() &&

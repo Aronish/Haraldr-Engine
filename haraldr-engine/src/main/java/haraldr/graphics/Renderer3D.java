@@ -1,6 +1,5 @@
 package haraldr.graphics;
 
-import haraldr.main.Camera;
 import haraldr.main.PerspectiveCamera;
 import haraldr.main.Window;
 import haraldr.math.Matrix4f;
@@ -31,12 +30,6 @@ public abstract class Renderer3D
         SCREEN_QUAD.setIndexBufferData(new int[] { 0, 3, 2, 0, 2, 1 });
     }
 
-    protected static Camera camera = new PerspectiveCamera();
-    public static Camera getCamera()
-    {
-        return camera;
-    }
-
     private static final UniformBuffer matrixBuffer = new UniformBuffer(140);
     private static Shader postProcessingShader = Shader.create("internal_shaders/hdr_gamma_correct.glsl");
     private static float exposure = 0.5f;
@@ -55,16 +48,17 @@ public abstract class Renderer3D
 
     /////RENDERING////////////////////
 
-    public static void begin(@NotNull Window window)
+    public static void begin(@NotNull Window window, PerspectiveCamera camera)
     {
         matrixBuffer.bind(0);
         matrixBuffer.setDataUnsafe(camera.getViewMatrix().matrix, 0);
-        matrixBuffer.setDataUnsafe(Matrix4f.perspective.matrix, 64);
+        matrixBuffer.setDataUnsafe(camera.getProjectionMatrix().matrix, 64);
         matrixBuffer.setDataUnsafe(camera.getRawPosition(), 128);
         window.getFramebuffer().bind();
         Renderer.clear(Renderer.ClearMask.COLOR_DEPTH_STENCIL);
     }
 
+    //TODO: Abstract away render passes
     public static void end(@NotNull Window window)
     {
         glBindTexture(GL_TEXTURE_2D, window.getFramebuffer().getColorAttachmentTexture());

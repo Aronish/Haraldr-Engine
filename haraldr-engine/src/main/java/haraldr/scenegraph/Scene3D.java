@@ -60,14 +60,14 @@ public abstract class Scene3D
     {
         onClientEvent(event, window);
 
-        if (event.eventType == EventType.MOUSE_PRESSED)
-        {
-            var mousePressedEvent = (MousePressedEvent) event;
-            selected = selectEntity(mousePressedEvent.xPos, mousePressedEvent.yPos, window.getWidth(), window.getHeight(), selected, registry);
-        }
+        //if (event.eventType == EventType.MOUSE_PRESSED)
+        //{
+        //    var mousePressedEvent = (MousePressedEvent) event;
+        //    selected = selectEntity(mousePressedEvent.xPos, mousePressedEvent.yPos, window.getWidth(), window.getHeight(), selected, registry);
+        //}
     }
 
-    public final void onUpdate(Window window, float deltaTime)
+    public final void onUpdate(float deltaTime, Window window)
     {
         onClientUpdate(deltaTime, window);
     }
@@ -86,7 +86,7 @@ public abstract class Scene3D
         onClientDispose();
         sceneLights.dispose();
     }
-
+/*
     public static Entity selectEntity(int mouseX, int mouseY, int width, int height, Entity lastSelected, EntityRegistry registry)
     {
         Vector4f rayClipSpace = new Vector4f(
@@ -119,4 +119,6 @@ public abstract class Scene3D
         }
         return selected;
     }
+
+ */
 }

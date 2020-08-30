@@ -13,7 +13,7 @@ import java.util.Arrays;
 public abstract class EntryPoint
 {
     // Static initializer in client to set this. Mimics C++ extern getter.
-    public static GenericApplication application;
+    public static Application application;
     protected static ArgumentValidator argumentValidator = new ArgumentValidator() {};
     public static boolean DEBUG = false;
 

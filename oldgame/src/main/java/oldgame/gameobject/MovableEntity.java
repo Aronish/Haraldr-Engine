@@ -1,6 +1,6 @@
 package oldgame.gameobject;
 
-import haraldr.main.OrthographicCamera;
+import haraldr.scene.OrthographicCamera;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector3f;
 

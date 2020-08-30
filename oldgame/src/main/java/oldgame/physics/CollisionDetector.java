@@ -1,6 +1,6 @@
 package oldgame.physics;
 
-import haraldr.main.OrthographicCamera;
+import haraldr.scene.OrthographicCamera;
 import haraldr.math.Vector3f;
 import oldgame.gameobject.Player;
 import oldgame.gameobject.tile.Tile;
@@ -77,19 +77,19 @@ public class CollisionDetector
                     player.setFalling(false);
                 }
                 player.addPosition(new Vector3f(0.0f, inside, 0f));
-                camera.addPosition(new Vector3f(0.0f, inside * camera.getScale(), 0f));
+                //camera.addPosition(new Vector3f(0.0f, inside * camera.getScale(), 0f));
                 break;
             case EAST:
                 player.addPosition(new Vector3f(inside, 0.0f, 0f));
-                camera.addPosition(new Vector3f(inside * camera.getScale(), 0.0f, 0f));
+                //camera.addPosition(new Vector3f(inside * camera.getScale(), 0.0f, 0f));
                 break;
             case WEST:
                 player.addPosition(new Vector3f(-inside, 0.0f, 0f));
-                camera.addPosition(new Vector3f(-inside * camera.getScale(), 0.0f, 0f));
+                //camera.addPosition(new Vector3f(-inside * camera.getScale(), 0.0f, 0f));
                 break;
             case SOUTH:
                 player.addPosition(new Vector3f(0.0f, -inside, 0f));
-                camera.addPosition(new Vector3f(0.0f, -inside * camera.getScale(), 0f));
+                //camera.addPosition(new Vector3f(0.0f, -inside * camera.getScale(), 0f));
                 break;
         }
     }

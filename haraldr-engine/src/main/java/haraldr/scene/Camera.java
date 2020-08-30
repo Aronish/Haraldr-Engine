@@ -1,10 +1,7 @@
-package haraldr.main;
+package haraldr.scene;
 
 import haraldr.event.Event;
-import haraldr.event.MouseMovedEvent;
-import haraldr.event.MouseScrolledEvent;
-import haraldr.event.WindowFocusEvent;
-import haraldr.event.WindowResizedEvent;
+import haraldr.main.Window;
 import haraldr.math.Matrix4f;
 import haraldr.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class Camera
 {
     protected Vector3f position = Vector3f.IDENTITY;
-    private float[] rawPosition = new float[3]; //TODO: Move to vector
+    protected float[] rawPosition = new float[3];
     protected Matrix4f viewMatrix, projectionMatrix;
 
     public abstract void onUpdate(float deltaTime, Window window);

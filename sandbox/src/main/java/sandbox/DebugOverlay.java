@@ -1,13 +1,10 @@
 package sandbox;
 
-import haraldr.event.DebugScreenUpdatedEvent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.graphics.ui.TextLabel;
-import haraldr.scenegraph.Scene2D;
+import haraldr.scene.Scene2D;
 import haraldr.main.Window;
-import haraldr.math.Vector2f;
-import haraldr.math.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;

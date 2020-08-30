@@ -1,8 +1,7 @@
 package haraldr.graphics;
 
-import haraldr.main.PerspectiveCamera;
+import haraldr.scene.Camera;
 import haraldr.main.Window;
-import haraldr.math.Matrix4f;
 import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
@@ -48,7 +47,7 @@ public abstract class Renderer3D
 
     /////RENDERING////////////////////
 
-    public static void begin(@NotNull Window window, PerspectiveCamera camera)
+    public static void begin(@NotNull Window window, Camera camera)
     {
         matrixBuffer.bind(0);
         matrixBuffer.setDataUnsafe(camera.getViewMatrix().matrix, 0);

@@ -1,18 +1,29 @@
-package haraldr.main;
+package haraldr.scene;
 
-import haraldr.debug.Logger;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MouseScrolledEvent;
-import haraldr.event.WindowFocusEvent;
 import haraldr.event.WindowResizedEvent;
+import haraldr.input.Input;
+import haraldr.main.Window;
 import haraldr.math.Matrix4f;
 import haraldr.math.Vector3f;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
-public class PerspectiveCamera extends Camera
+import static haraldr.input.Key.KEY_A;
+import static haraldr.input.Key.KEY_C;
+import static haraldr.input.Key.KEY_D;
+import static haraldr.input.Key.KEY_S;
+import static haraldr.input.Key.KEY_SPACE;
+import static haraldr.input.Key.KEY_W;
+
+@SuppressWarnings("unused")
+public class FPSCamera extends Camera
 {
+    private static final float CAMERA_SPEED = 0.75f;
+    private static final float MOUSE_SENSITIVITY = 0.1f;
+    private static final float ZOOM_SENSITIVITY = 2f;
+
     private float pitch = 0f, yaw = 0f;
     private Vector3f direction = new Vector3f(
             (float) Math.cos(Math.toRadians(yaw) * Math.cos(Math.toRadians(pitch))),
@@ -21,23 +32,19 @@ public class PerspectiveCamera extends Camera
     );
     private Vector3f right = Vector3f.normalize(Vector3f.cross(direction, Vector3f.UP));
     private Vector3f up = Vector3f.normalize(Vector3f.cross(right, direction));
-    private Matrix4f lookAt;
 
-    private float fov = 60f, aspectRatio, near = 0.1f, far = 100f;
+    private float fov = 60f, aspectRatio, near = 0.1f, far = 100f, zoom = 1f;
+    private float lastX, lastY;
 
-    private PerspectiveCameraController cameraController;
-
-    public PerspectiveCamera(float width, float height, PerspectiveCameraController cameraController)
+    public FPSCamera(float width, float height)
     {
-        this(width, height, Vector3f.IDENTITY, cameraController);
+        this(width, height, Vector3f.IDENTITY);
     }
 
-    public PerspectiveCamera(float width, float height, Vector3f position, PerspectiveCameraController cameraController)
+    public FPSCamera(float width, float height, Vector3f position)
     {
         this.position = position;
         aspectRatio = width / height;
-        this.cameraController = cameraController;
-        this.cameraController.setReference(this);
         calculateViewMatrix();
         calculateProjectionMatrix();
     }
@@ -45,7 +52,30 @@ public class PerspectiveCamera extends Camera
     @Override
     public void onUpdate(float deltaTime, Window window)
     {
-        cameraController.onUpdate(deltaTime, window);
+        if (Input.isKeyPressed(window, KEY_W))
+        {
+            addPosition(Vector3f.multiply(direction, CAMERA_SPEED * deltaTime));
+        }
+        if (Input.isKeyPressed(window, KEY_S))
+        {
+            addPosition(Vector3f.multiply(direction, -CAMERA_SPEED * deltaTime));
+        }
+        if (Input.isKeyPressed(window, KEY_D))
+        {
+            addPosition(Vector3f.multiply(right, CAMERA_SPEED * deltaTime));
+        }
+        if (Input.isKeyPressed(window, KEY_A))
+        {
+            addPosition(Vector3f.multiply(right, -CAMERA_SPEED * deltaTime));
+        }
+        if (Input.isKeyPressed(window, KEY_SPACE))
+        {
+            addPosition(Vector3f.multiply(up, CAMERA_SPEED * deltaTime));
+        }
+        if (Input.isKeyPressed(window, KEY_C))
+        {
+            addPosition(Vector3f.multiply(up, -CAMERA_SPEED * deltaTime));
+        }
     }
 
     @Override
@@ -57,7 +87,14 @@ public class PerspectiveCamera extends Camera
             aspectRatio = (float) windowResizedEvent.width / (float) windowResizedEvent.height;
             calculateProjectionMatrix();
         }
-        cameraController.onEvent(event, window);
+        if (event.eventType == EventType.MOUSE_MOVED)
+        {
+            var mouseMovedEvent = (MouseMovedEvent) event;
+            if (!window.isCursorVisible()) rotate(((float) mouseMovedEvent.xPos - lastX) * MOUSE_SENSITIVITY, (lastY - (float) mouseMovedEvent.yPos) * MOUSE_SENSITIVITY);
+            lastX = (float) mouseMovedEvent.xPos;
+            lastY = (float) mouseMovedEvent.yPos;
+        }
+        if (event.eventType == EventType.MOUSE_SCROLLED) addFov((float) -((MouseScrolledEvent) event).yOffset * ZOOM_SENSITIVITY);
     }
 
     @Override
@@ -79,7 +116,14 @@ public class PerspectiveCamera extends Camera
         projectionMatrix = Matrix4f.perspective(fov, aspectRatio, near, far);
     }
 
-    public void addFov(float fov)
+    private void addZoom(float zoom)
+    {
+        this.zoom += zoom;
+        if (this.zoom < 0.1f) this.zoom = 0.1f;
+        calculateViewMatrix();
+    }
+
+    private void addFov(float fov)
     {
         this.fov += fov;
         if (this.fov < 10f) this.fov = 10f;
@@ -87,46 +131,26 @@ public class PerspectiveCamera extends Camera
         calculateProjectionMatrix();
     }
 
-    public void setYaw(float yaw)
+    private void addYaw(float yaw)
     {
         this.yaw = yaw;
         calculateViewMatrix();
     }
 
-    public void setPitch(float pitch)
+    private void addPitch(float pitch)
     {
-        this.pitch = pitch;
-        if (this.pitch > 89f) this.pitch = 89f;
-        if (this.pitch < -89f) this.pitch = -89f;
-        calculateViewMatrix();
-    }
-
-    public void rotate(float yaw, float pitch)
-    {
-        this.yaw += yaw;
         this.pitch += pitch;
         if (this.pitch > 89f) this.pitch = 89f;
         if (this.pitch < -89f) this.pitch = -89f;
         calculateViewMatrix();
     }
 
-    public Vector3f getDirection()
+    private void rotate(float yaw, float pitch)
     {
-        return direction;
-    }
-
-    public Vector3f getRight()
-    {
-        return right;
-    }
-
-    public Vector3f getUp()
-    {
-        return up;
-    }
-
-    public float getYaw()
-    {
-        return yaw;
+        this.yaw += yaw;
+        this.pitch += pitch;
+        if (this.pitch > 89f) this.pitch = 89f;
+        if (this.pitch < -89f) this.pitch = -89f;
+        calculateViewMatrix();
     }
 }

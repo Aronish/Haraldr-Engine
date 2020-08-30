@@ -38,7 +38,7 @@ module haraldr
     exports haraldr.main;
     exports haraldr.math;
     exports haraldr.physics;
-    exports haraldr.scenegraph;
+    exports haraldr.scene;
 
     opens default_shaders;
     opens default_textures;

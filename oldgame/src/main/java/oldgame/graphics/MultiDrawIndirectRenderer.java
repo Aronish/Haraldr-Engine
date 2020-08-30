@@ -7,7 +7,7 @@ import haraldr.graphics.VertexBufferElement;
 import haraldr.graphics.VertexBufferLayout;
 import haraldr.graphics.Wrapper;
 import haraldr.main.ArrayUtils;
-import haraldr.main.OrthographicCamera;
+import haraldr.scene.OrthographicCamera;
 import haraldr.math.Matrix4f;
 import oldgame.gameobject.GameObject;
 import oldgame.world.Grid;
@@ -89,7 +89,7 @@ public class MultiDrawIndirectRenderer implements RenderSystem
     {
         Shaders.MULTI_DRAW_SHADER.bind();
         Shaders.MULTI_DRAW_SHADER.setMatrix4f("view", camera.getViewMatrix());
-        Shaders.MULTI_DRAW_SHADER.setMatrix4f("projection", Matrix4f.orthographic);
+        Shaders.MULTI_DRAW_SHADER.setMatrix4f("projection", Matrix4f.identity()); //Wrong
         /////COLLECT MATRICES/////////////////////////////////////////////////////////////////
         matrices.clear();
         instanceCounts.replaceAll((key, value) -> 0);

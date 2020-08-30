@@ -12,6 +12,7 @@ public class Vector2f
 
     private float x, y;
 
+    @Contract(pure = true)
     public Vector2f() {}
 
     public Vector2f(float all)
@@ -51,10 +52,11 @@ public class Vector2f
         return this;
     }
 
-    public void set(double x, double y)
+    public Vector2f set(double x, double y)
     {
         this.x = (float) x;
         this.y = (float) y;
+        return this;
     }
 
     public Vector2f set(float all)
@@ -71,38 +73,44 @@ public class Vector2f
         return this;
     }
 
-    public void setX(float x)
+    public Vector2f setX(float x)
     {
         this.x = x;
+        return this;
     }
 
-    public void setY(float y)
+    public Vector2f setY(float y)
     {
         this.y = y;
+        return this;
     }
 
-    public void add(float all)
+    public Vector2f add(float all)
     {
         x += all;
         y += all;
+        return this;
     }
 
-    public void add(double all)
+    public Vector2f add(double all)
     {
         x += all;
         y += all;
+        return this;
     }
 
-    public void add(float x, float y)
+    public Vector2f add(float x, float y)
     {
         this.x += x;
         this.y += y;
+        return this;
     }
 
-    public void add(@NotNull Vector2f other)
+    public Vector2f add(@NotNull Vector2f other)
     {
         x += other.getX();
         y += other.getY();
+        return this;
     }
 
     public Vector2f addX(float dx)
@@ -111,9 +119,10 @@ public class Vector2f
         return this;
     }
 
-    public void addY(float dy)
+    public Vector2f addY(float dy)
     {
         y += dy;
+        return this;
     }
 
     public float getX()
@@ -126,17 +135,19 @@ public class Vector2f
         return y;
     }
 
-    public void multiply(float scalar)
+    public Vector2f multiply(float scalar)
     {
         x *= scalar;
         y *= scalar;
+        return this;
     }
 
-    public void normalize()
+    public Vector2f normalize()
     {
         double length = length();
         x /= length;
         y /= length;
+        return this;
     }
 
     public double length()

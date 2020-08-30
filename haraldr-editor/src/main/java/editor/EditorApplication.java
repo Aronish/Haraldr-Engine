@@ -2,20 +2,18 @@ package editor;
 
 import haraldr.event.Event;
 import haraldr.event.EventType;
-import haraldr.event.MouseMovedEvent;
-import haraldr.event.MouseScrolledEvent;
 import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Renderer3D;
 import haraldr.graphics.ui.Pane;
-import haraldr.main.GenericApplication;
+import haraldr.main.Application;
 import haraldr.main.ProgramArguments;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
-import haraldr.scenegraph.Scene3D;
+import haraldr.scene.Scene3D;
 
-public class EditorApplication extends GenericApplication
+public class EditorApplication extends Application
 {
     private Pane propertiesPane;
     private Scene3D scene;
@@ -64,7 +62,7 @@ public class EditorApplication extends GenericApplication
     {
         propertiesPane.onUpdate(deltaTime);
         //Renderer3D.getCamera().handleMovement(window, deltaTime);
-        scene.onUpdate(window, deltaTime);
+        scene.onUpdate(deltaTime, window);
     }
 
     @Override

@@ -1,74 +1,15 @@
 package haraldr.math;
 
 import haraldr.debug.Logger;
-import haraldr.event.WindowResizedEvent;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class Matrix4f //TODO: can be improved
+public class Matrix4f
 {
     public static final Matrix4f IDENTITY = identity();
-    //TODO: Move to cameras when they are fixed
-    /////ORTHOGRAPHIC///////////////////////////
-    public static float dynamicOrthographicAxis;
-    public static final float FIXED_ORTHOGRAPHIC_AXIS = 9f;
-    private static final float NEAR_FAR = 5f;
-    public static float scale = 1f;
-    private static final boolean fixedWidth = true; //Fixed width is better
-    public static Matrix4f orthographic;
-    public static Matrix4f pixelOrthographic;
-    /////PERSPECTIVE/////////////////////////////
-    private static final float DEFAULT_FOV = 60f;
-    public static float fov = DEFAULT_FOV;
-    private static float aspectRatio;
-    public static Matrix4f perspective;
 
     public float[] matrix = new float[16]; //Stored in column major both in memory and value-wise.
-
-    public static void onResize(@NotNull WindowResizedEvent event)
-    {
-        aspectRatio = (float) event.width / event.height;
-        recalculateOrthographic(aspectRatio);
-        recalculatePixelOrthographic(event.width, event.height);
-        recalculatePerspective(aspectRatio);
-    }
-
-    public static void init(int width, int height)
-    {
-        aspectRatio = (float) width / height;
-        recalculateOrthographic(aspectRatio);
-        recalculatePixelOrthographic(width, height);
-        recalculatePerspective(aspectRatio);
-    }
-
-    public static void setZoom(float zoom)
-    {
-        scale = zoom;
-        fov = zoom;
-        recalculateOrthographic(FIXED_ORTHOGRAPHIC_AXIS / dynamicOrthographicAxis);
-        recalculatePerspective(aspectRatio);
-    }
-
-    public static void addZoom(float zoom)
-    {
-        scale += zoom;
-        fov += zoom;
-        if (scale < 0f) scale = 0f;
-        if (fov < 10f) fov = 10f;
-        if (fov > 179f) fov = 179f;
-        recalculateOrthographic(FIXED_ORTHOGRAPHIC_AXIS / dynamicOrthographicAxis);
-        recalculatePerspective(aspectRatio);
-    }
-
-    public static void resetZoom()
-    {
-        scale = 1f;
-        fov = DEFAULT_FOV;
-        recalculateOrthographic(FIXED_ORTHOGRAPHIC_AXIS / dynamicOrthographicAxis);
-        recalculatePerspective(aspectRatio);
-    }
-
-    ///// Matrix Operations /////////
 
     @NotNull
     public static Matrix4f identity()
@@ -448,7 +389,7 @@ public class Matrix4f //TODO: can be improved
         return multiply(createRotate(Quaternion.fromAxis(axis, angle)));
     }
 
-    private static @NotNull Matrix4f orthographic(float right, float left, float top, float bottom, float far, float near)
+    public static @NotNull Matrix4f orthographic(float left, float right, float bottom, float top, float near, float far)
     {
         Matrix4f result = identity();
         result.matrix[0] = 2f / (right - left);
@@ -458,41 +399,6 @@ public class Matrix4f //TODO: can be improved
         result.matrix[13] = -((top + bottom) / (top - bottom));
         result.matrix[14] = -((far + near) / (far - near));
         return result;
-    }
-
-    private static void recalculateOrthographic(float aspectRatio)
-    {
-        if (fixedWidth)
-        {
-            recalcOrthoFixedWidth(aspectRatio);
-        }else
-        {
-            recalcOrthoFixedHeight(aspectRatio);
-        }
-    }
-
-    private static void recalcOrthoFixedWidth(float aspectRatio)
-    {
-        dynamicOrthographicAxis = FIXED_ORTHOGRAPHIC_AXIS / aspectRatio;
-        orthographic = orthographic(FIXED_ORTHOGRAPHIC_AXIS * scale, -FIXED_ORTHOGRAPHIC_AXIS * scale, dynamicOrthographicAxis * scale, -dynamicOrthographicAxis * scale, -NEAR_FAR, NEAR_FAR);
-    }
-
-    private static void recalcOrthoFixedHeight(float aspectRatio)
-    {
-        dynamicOrthographicAxis = FIXED_ORTHOGRAPHIC_AXIS * aspectRatio;
-        orthographic = orthographic(dynamicOrthographicAxis * scale, -dynamicOrthographicAxis * scale, FIXED_ORTHOGRAPHIC_AXIS * scale, -FIXED_ORTHOGRAPHIC_AXIS * scale, -NEAR_FAR, NEAR_FAR);
-    }
-
-    private static void recalculatePixelOrthographic(int width, int height)
-    {
-        pixelOrthographic = orthographic(width, 0, 0, height, -NEAR_FAR, NEAR_FAR);
-    }
-
-    public static float near = 0.1f, far = 100f;
-
-    public static void recalculatePerspective(float aspectRatio)
-    {
-        perspective = perspective(fov, aspectRatio, near, far);
     }
 
     public static @NotNull Matrix4f perspective(float fov, float aspectRatio, float near, float far)
@@ -510,7 +416,8 @@ public class Matrix4f //TODO: can be improved
         return result;
     }
 
-    public static Vector3f unproject(Vector3f position, Matrix4f model, Matrix4f projection, Vector4f viewPort) //Hmmmmmmm?
+    @Contract("_, _, _, _ -> new")
+    public static @NotNull Vector3f unproject(@NotNull Vector3f position, Matrix4f model, Matrix4f projection, @NotNull Vector4f viewPort) //Hmmmmmmm?
     {
         Matrix4f inverse = invert(Matrix4f.multiply(projection, model));
         Vector4f tmp = new Vector4f(position.getX(), position.getY(), position.getZ(), 1);

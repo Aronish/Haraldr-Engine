@@ -6,7 +6,7 @@ import haraldr.graphics.VertexBufferElement;
 import haraldr.graphics.VertexBufferLayout;
 import haraldr.graphics.Wrapper;
 import haraldr.main.ArrayUtils;
-import haraldr.main.OrthographicCamera;
+import haraldr.scene.OrthographicCamera;
 import haraldr.math.Matrix4f;
 import oldgame.gameobject.GameObject;
 import oldgame.world.Grid;
@@ -52,7 +52,7 @@ public class InstancedRenderer implements RenderSystem
     {
         Shaders.INSTANCED_SHADER.bind();
         Shaders.INSTANCED_SHADER.setMatrix4f("view", camera.getViewMatrix());
-        Shaders.INSTANCED_SHADER.setMatrix4f("projection", Matrix4f.orthographic);
+        Shaders.INSTANCED_SHADER.setMatrix4f("projection", Matrix4f.identity()); //Wrong
         instancedMatrixBuffer.bind();
         for (GameObject gameObject : GameObject.instancedObjects)
         {

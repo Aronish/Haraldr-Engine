@@ -5,7 +5,6 @@ import haraldr.event.CharTypedEvent;
 import haraldr.event.EventDispatcher;
 import haraldr.event.KeyPressedEvent;
 import haraldr.event.KeyReleasedEvent;
-import haraldr.event.MouseDraggedEvent;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.event.MouseReleasedEvent;
@@ -66,12 +65,10 @@ public class Window
 {
     private long windowHandle;
     private GLFWVidMode vidmode;
-    private boolean vSyncOn;
-    private boolean fullscreen, minimized;
+    private boolean vSyncOn, fullscreen, minimized, cursorVisible;
     private int windowWidth, windowHeight, initWidth, initHeight;
 
     private int mouseX, mouseY;
-    private boolean leftButtonHeld; //TODO: Probably useless
 
     private Framebuffer framebuffer;//TODO: Does not belong in here
 
@@ -150,11 +147,9 @@ public class Window
             if (action == GLFW_PRESS)
             {
                 EventDispatcher.dispatch(new MousePressedEvent(button, mouseX, mouseY), this);
-                leftButtonHeld = true;
             } else if (action == GLFW_RELEASE)
             {
                 EventDispatcher.dispatch(new MouseReleasedEvent(button, mouseX, mouseY), this);
-                leftButtonHeld = false;
             }
         });
 
@@ -164,10 +159,6 @@ public class Window
         {
             this.mouseX = (int) xPos;
             this.mouseY = (int) yPos;
-            if (leftButtonHeld)
-            {
-                EventDispatcher.dispatch(new MouseDraggedEvent(xPos, yPos), this);
-            }
             EventDispatcher.dispatch(new MouseMovedEvent(xPos, yPos), this);
         });
 
@@ -191,7 +182,7 @@ public class Window
         glfwSetErrorCallback((error, description) -> Logger.info(error + " " + description));
     }
 
-    public void changeFullscreen()
+    public void toggleFullscreen()
     {
         if (fullscreen)
         {
@@ -208,7 +199,14 @@ public class Window
 
     public void setCursorVisibility(boolean visible)
     {
+        cursorVisible = visible;
         glfwSetInputMode(windowHandle, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+    }
+
+    public void toggleCursor()
+    {
+        cursorVisible = !cursorVisible;
+        glfwSetInputMode(windowHandle, GLFW_CURSOR, cursorVisible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
     }
 
     public void setVSync(boolean enabled)
@@ -260,6 +258,11 @@ public class Window
     public boolean isMinimized()
     {
         return minimized;
+    }
+
+    public boolean isCursorVisible()
+    {
+        return cursorVisible;
     }
 
     public void delete()

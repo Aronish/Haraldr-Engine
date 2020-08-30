@@ -1,21 +1,13 @@
-package haraldr.scenegraph;
+package haraldr.scene;
 
-import haraldr.ecs.BoundingSphereComponent;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
 import haraldr.ecs.ModelComponent;
 import haraldr.event.Event;
-import haraldr.event.EventType;
-import haraldr.event.MousePressedEvent;
 import haraldr.graphics.CubeMap;
-import haraldr.graphics.Renderer3D;
 import haraldr.graphics.lighting.Light;
 import haraldr.graphics.lighting.SceneLights;
 import haraldr.main.Window;
-import haraldr.math.Matrix4f;
-import haraldr.math.Vector3f;
-import haraldr.math.Vector4f;
-import haraldr.physics.Physics3D;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public abstract class Scene3D

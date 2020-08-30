@@ -2,9 +2,9 @@ package haraldr.graphics;
 
 import haraldr.debug.Logger;
 import haraldr.graphics.ui.Font;
-import haraldr.main.Application;
 import haraldr.main.EntryPoint;
 import haraldr.main.IOUtils;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
@@ -87,9 +87,8 @@ public class Texture
         ResourceManager.addTexture("BRDF_LUT", BRDF_LUT);
     }
 
-    private Texture()
-    {
-    }
+    @Contract(pure = true)
+    private Texture() {}
 
     public static Texture wrapFontBitmap(int fontAtlasHandle)
     {
@@ -219,6 +218,7 @@ public class Texture
         return result;
     }
 
+    @Contract(" -> new")
     private static @NotNull Texture createBRDFLUT()
     {
         int size = 512;
@@ -251,7 +251,6 @@ public class Texture
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glDeleteFramebuffers(mappingFrameBuffer);
         glDeleteRenderbuffers(depthRenderBuffer);
-        glViewport(0, 0, Application.initWidth, Application.initHeight);
         return new Texture(brdf, size, size);
     }
 

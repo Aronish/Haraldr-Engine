@@ -3,7 +3,7 @@ package oldgame.graphics;
 import haraldr.debug.Logger;
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Shader;
-import haraldr.main.OrthographicCamera;
+import haraldr.scene.OrthographicCamera;
 import haraldr.math.Matrix4f;
 import oldgame.gameobject.Entity;
 import oldgame.main.EntryPoint;
@@ -37,7 +37,7 @@ public class GameRenderer2D extends Renderer2D
         shader.bind();
         shader.setMatrix4f("matrix", entity.getMatrix());
         shader.setMatrix4f("view", camera.getViewMatrix());
-        shader.setMatrix4f("projection", Matrix4f.orthographic);
+        shader.setMatrix4f("projection", Matrix4f.identity()); //Wrong
         entity.getGameObjectType().getModel().getVertexArray().bind();
         entity.getGameObjectType().getModel().getVertexArray().drawElements();
     }

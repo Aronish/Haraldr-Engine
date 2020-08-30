@@ -1,6 +1,6 @@
 package oldgame.graphics;
 
-import haraldr.main.OrthographicCamera;
+import haraldr.scene.OrthographicCamera;
 import oldgame.world.Grid;
 import org.jetbrains.annotations.NotNull;
 

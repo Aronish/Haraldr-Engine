@@ -11,7 +11,7 @@ import haraldr.input.Input;
 import haraldr.input.Key;
 import haraldr.main.Window;
 import haraldr.math.Vector3f;
-import haraldr.scenegraph.Scene3D;
+import haraldr.scene.Scene3D;
 
 public class TestScene extends Scene3D
 {
@@ -19,7 +19,7 @@ public class TestScene extends Scene3D
     private float interpolation;
 
     private PointLight pointLight = new PointLight(new Vector3f(), new Vector3f(2.5f, 2.5f, 7.5f));
-    private PointLight pointLight2 = new PointLight(new Vector3f(0.4f, 0.3f, 0f), new Vector3f(10f, 3f, 3f));
+    private PointLight pointLight2 = new PointLight(new Vector3f(1.4f, 2.3f, 0f), new Vector3f(10f, 3f, 3f));
 
     @Override
     public void onClientActivate()

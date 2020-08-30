@@ -1,5 +1,6 @@
 package haraldr.graphics.ui;
 
+import haraldr.graphics.Renderer2D;
 import haraldr.graphics.ResourceManager;
 import haraldr.graphics.Shader;
 import haraldr.graphics.ShaderDataType;
@@ -71,7 +72,7 @@ public class TextBatch
     public void render()
     {
         TEXT_PASS.bind();
-        TEXT_PASS.setMatrix4f("projection", Matrix4f.pixelOrthographic);
+        TEXT_PASS.setMatrix4f("projection", Renderer2D.pixelOrthographic);
         font.bind(0);
         texts.bind();
         texts.drawElements(indexCount);

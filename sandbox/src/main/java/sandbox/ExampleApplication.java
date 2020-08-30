@@ -1,26 +1,20 @@
 package sandbox;
 
 import haraldr.event.Event;
-import haraldr.event.EventType;
-import haraldr.event.MouseMovedEvent;
-import haraldr.event.MouseScrolledEvent;
 import haraldr.graphics.Renderer3D;
 import haraldr.input.Input;
 import haraldr.input.Key;
-import haraldr.main.EditorCameraController;
-import haraldr.main.FPSCameraController;
-import haraldr.main.GenericApplication;
-import haraldr.main.PerspectiveCamera;
+import haraldr.scene.Camera;
+import haraldr.main.Application;
 import haraldr.main.ProgramArguments;
 import haraldr.main.Window;
-import haraldr.scenegraph.Scene3D;
+import haraldr.scene.OrbitalCamera;
+import haraldr.scene.Scene3D;
 
-class ExampleApplication extends GenericApplication
+class ExampleApplication extends Application
 {
     private Scene3D testScene;
-    private boolean cursorVisible;
-
-    private PerspectiveCamera camera;
+    private Camera camera;
 
     public ExampleApplication()
     {
@@ -32,7 +26,7 @@ class ExampleApplication extends GenericApplication
     {
         testScene = new TestScene();
         testScene.onActivate();
-        camera = new PerspectiveCamera(window.getWidth(), window.getHeight(), new EditorCameraController());
+        camera = new OrbitalCamera(window.getWidth(), window.getHeight());
     }
 
     @Override
@@ -40,11 +34,8 @@ class ExampleApplication extends GenericApplication
     {
         camera.onEvent(event, window);
         testScene.onEvent(event, window);
-        if (Input.wasKeyPressed(event, Key.KEY_E))
-        {
-            cursorVisible = !cursorVisible;
-            window.setCursorVisibility(cursorVisible);
-        }
+        if (Input.wasKeyPressed(event, Key.KEY_E)) window.toggleCursor();
+        if (Input.wasKeyPressed(event, Key.KEY_F)) window.toggleFullscreen();
         if (Input.wasKeyPressed(event, Key.KEY_ESCAPE)) stop();
     }
 

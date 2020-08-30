@@ -11,7 +11,7 @@ import haraldr.input.Input;
 import haraldr.input.Key;
 import haraldr.main.Window;
 import haraldr.math.Vector3f;
-import haraldr.scenegraph.Scene3D;
+import haraldr.scene.Scene3D;
 
 public class EditorTestScene extends Scene3D
 {

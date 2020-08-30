@@ -12,9 +12,9 @@ public class Renderer2D
     private static VertexArray quadVertexArray = new VertexArray();
     private static VertexBuffer quadVertexBuffer;
     private static float[] vertexData = new float[MAX_QUADS * VERTEX_SIZE * 4];
-    private static int insertIndex;
+    private static int insertIndex, indexCount;
 
-    private static int indexCount;
+    public static Matrix4f pixelOrthographic;
 
     static
     {
@@ -27,12 +27,17 @@ public class Renderer2D
         quadVertexArray.setVertexBuffers(quadVertexBuffer);
     }
 
+    public static void init(int windowWidth, int windowHeight)
+    {
+        pixelOrthographic = Matrix4f.orthographic(0, windowWidth, windowHeight, 0, -1f, 1f);
+    }
+
     public static void begin()
     {
         indexCount = 0;
         insertIndex = 0;
         SHADER.bind();
-        SHADER.setMatrix4f("projection", Matrix4f.pixelOrthographic);
+        SHADER.setMatrix4f("projection", pixelOrthographic);
         quadVertexBuffer.bind();
     }
 

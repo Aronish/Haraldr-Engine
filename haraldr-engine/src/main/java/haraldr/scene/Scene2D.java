@@ -1,4 +1,4 @@
-package haraldr.scenegraph;
+package haraldr.scene;
 
 import haraldr.event.Event;
 import haraldr.main.Window;

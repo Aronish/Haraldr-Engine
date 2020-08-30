@@ -24,12 +24,6 @@ public class OrbitalCamera extends Camera
 
     public OrbitalCamera(float width, float height)
     {
-        this(width, height, Vector3f.IDENTITY);
-    }
-
-    public OrbitalCamera(float width, float height, Vector3f position)
-    {
-        this.position = position;
         aspectRatio = width / height;
         calculateViewMatrix();
         calculateProjectionMatrix();

@@ -5,9 +5,9 @@
     "type": "PBR",
     "properties":
     {
-      "color": [ 0.2, 0.8, 0.3 ],
-      "metalness": 0.0,
-      "roughness": 0.0,
+      "color": [ 0.4, 0.4, 0.4 ],
+      "metalness": 1.0,
+      "roughness": 0.6,
       "environment_map": "default_hdris/NorwayForest_4K_hdri_sphere.hdr"
     }
   }

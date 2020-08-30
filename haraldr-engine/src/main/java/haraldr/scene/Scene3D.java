@@ -1,6 +1,5 @@
 package haraldr.scene;
 
-import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
 import haraldr.ecs.ModelComponent;
 import haraldr.event.Event;
@@ -13,7 +12,6 @@ import haraldr.main.Window;
 public abstract class Scene3D
 {
     private CubeMap skyBox;
-    private Entity selected = Entity.INVALID;
 
     protected SceneLights sceneLights;
     protected EntityRegistry registry = new EntityRegistry();
@@ -37,32 +35,33 @@ public abstract class Scene3D
         }
     }
 
-    protected abstract void onClientActivate();
-    protected abstract void onClientEvent(Event event, Window window);
-    protected abstract void onClientUpdate(float deltaTime, Window window);
-    protected abstract void onClientRender();
-    protected abstract void onClientDispose();
+    public EntityRegistry getRegistry()
+    {
+        return registry;
+    }
 
+    protected abstract void onClientActivate();
+    
     public final void onActivate()
     {
         onClientActivate();
     }
 
+    protected abstract void onClientEvent(Event event, Window window);
+
     public final void onEvent(Event event, Window window)
     {
         onClientEvent(event, window);
-
-        //if (event.eventType == EventType.MOUSE_PRESSED)
-        //{
-        //    var mousePressedEvent = (MousePressedEvent) event;
-        //    selected = selectEntity(mousePressedEvent.xPos, mousePressedEvent.yPos, window.getWidth(), window.getHeight(), selected, registry);
-        //}
     }
+
+    protected abstract void onClientUpdate(float deltaTime, Window window);
 
     public final void onUpdate(float deltaTime, Window window)
     {
         onClientUpdate(deltaTime, window);
     }
+
+    protected abstract void onClientRender();
 
     public final void onRender()
     {
@@ -73,44 +72,11 @@ public abstract class Scene3D
         onClientRender();
     }
 
+    protected abstract void onClientDispose();
+
     public final void onDispose()
     {
         onClientDispose();
         sceneLights.dispose();
     }
-/*
-    public static Entity selectEntity(int mouseX, int mouseY, int width, int height, Entity lastSelected, EntityRegistry registry)
-    {
-        Vector4f rayClipSpace = new Vector4f(
-                (2f * mouseX) / width - 1f,
-                1f - (2f * mouseY) / height,
-                -1f,
-                1f
-        );
-        Vector4f rayEyeSpace = Matrix4f.multiply(Matrix4f.invert(Matrix4f.perspective), rayClipSpace);
-        rayEyeSpace.setZ(-1f);
-        rayEyeSpace.setW(0f);
-
-        Vector3f rayWorldSpace = new Vector3f(Matrix4f.multiply(Matrix4f.invert(Renderer3D.getCamera().getViewMatrix()), rayEyeSpace));
-        rayWorldSpace.normalize();
-
-        Entity selected;
-        if (!lastSelected.equals(Entity.INVALID))
-        {
-            ModelComponent lastModel = registry.getComponent(ModelComponent.class, lastSelected);
-            lastModel.model.setOutlined(false);
-        }
-
-        selected = registry.view(BoundingSphereComponent.class).find(((transform, bsphere) ->
-                Physics3D.rayIntersectsSphere(Renderer3D.getCamera().getPosition(), rayWorldSpace, transform.position, bsphere.radius)), registry);
-
-        if (!selected.equals(Entity.INVALID))
-        {
-            ModelComponent model = registry.getComponent(ModelComponent.class, selected);
-            model.model.setOutlined(true);
-        }
-        return selected;
-    }
-
- */
 }

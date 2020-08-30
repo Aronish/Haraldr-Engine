@@ -18,7 +18,7 @@ class ExampleApplication extends Application
 
     public ExampleApplication()
     {
-        super(new Window.WindowProperties(1280, 720, ProgramArguments.getIntOrDefault("MSAA", 0), false, false, false));
+        super(new Window.WindowProperties(1280, 720, ProgramArguments.getIntOrDefault("MSAA", 0), false, false, true));
     }
 
     @Override

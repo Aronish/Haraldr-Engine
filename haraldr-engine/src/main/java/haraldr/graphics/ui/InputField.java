@@ -10,6 +10,7 @@ import haraldr.input.Input;
 import haraldr.input.Key;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
+import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +54,12 @@ public class InputField extends LabeledComponent
     public void setInputFieldChangeAction(InputFieldChangeAction inputFieldChangeAction)
     {
         this.inputFieldChangeAction = inputFieldChangeAction;
+    }
+
+    public void setText(String text)
+    {
+        this.text = text;
+        textLabel.setText(text);
     }
 
     @Override
@@ -142,6 +149,7 @@ public class InputField extends LabeledComponent
 
         private final List<Character> allowedCharacters;
 
+        @Contract(pure = true)
         InputType(List<Character> allowedCharacters)
         {
             this.allowedCharacters = allowedCharacters;

@@ -48,7 +48,7 @@ public class Pane
         orderComponents();
     }
 
-    public void onEvent(Event event, Window window)
+    public boolean onEvent(Event event, Window window)
     {
         if (event.eventType == EventType.MOUSE_PRESSED)
         {
@@ -78,6 +78,7 @@ public class Pane
             }
         }
         components.forEach((component) -> component.onEvent(event));
+        return resizing;
     }
 
     public void onUpdate(float deltaTime)
@@ -98,6 +99,11 @@ public class Pane
     {
         Renderer2D.drawQuad(screenPosition, size, COLOR);
         Renderer2D.drawQuad(screenPosition, headerSize, HEADER_COLOR);
+    }
+
+    public void renderText()
+    {
+        textBatch.render();
     }
 
     public void addChild(LabeledComponent component)
@@ -127,13 +133,13 @@ public class Pane
         return size;
     }
 
+    public TextBatch getTextBatch()
+    {
+        return textBatch;
+    }
+
     public float getComponentDivisionSize()
     {
         return size.getX() - divider - sidePadding;
-    }
-
-    public void renderText()
-    {
-        textBatch.render();
     }
 }

@@ -4,6 +4,7 @@ import haraldr.ecs.BoundingSphereComponent;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
 import haraldr.ecs.ModelComponent;
+import haraldr.ecs.TransformComponent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
@@ -11,9 +12,8 @@ import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Renderer3D;
-import haraldr.graphics.ui.InputField;
+import haraldr.graphics.ui.InfoLabel;
 import haraldr.graphics.ui.Pane;
-import haraldr.graphics.ui.TextLabel;
 import haraldr.input.Input;
 import haraldr.input.Key;
 import haraldr.main.Application;
@@ -31,7 +31,7 @@ import haraldr.scene.Scene3D;
 public class EditorApplication extends Application
 {
     private Pane propertiesPane;
-    private InputField entityId;
+    private InfoLabel entityId;
 
     private Camera editorCamera;
     private Scene3D scene;
@@ -52,7 +52,7 @@ public class EditorApplication extends Application
                 0.3f,
                 "Properties"
         );
-        entityId = new InputField("Selected Entity: ", propertiesPane);
+        entityId = new InfoLabel("Selected:", propertiesPane);
         propertiesPane.addChild(entityId);
 
         scene = new EditorTestScene();
@@ -63,6 +63,7 @@ public class EditorApplication extends Application
     @Override
     protected void clientEvent(Event event, Window window)
     {
+        boolean handled = propertiesPane.onEvent(event, window); //TODO: Some kind of layering system to handle event fallthrough.
         if (event.eventType == EventType.WINDOW_RESIZED)
         {
             var windowResizedEvent = (WindowResizedEvent) event;
@@ -74,9 +75,11 @@ public class EditorApplication extends Application
         {
             var mousePressedEvent = (MousePressedEvent) event;
             selected = selectEntity(mousePressedEvent.xPos, mousePressedEvent.yPos, window.getWidth(), window.getHeight(), selected, scene.getRegistry());
-            entityId.setText(Integer.toString(selected.id));
+            if (!selected.equals(Entity.INVALID))
+            {
+                editorCamera.setPosition(scene.getRegistry().getComponent(TransformComponent.class, selected).position);
+            }
         }
-        boolean handled = propertiesPane.onEvent(event, window); //TODO: Some kind of layering system to handle event fallthrough.
         if (!handled)
         {
             editorCamera.onEvent(event, window);
@@ -138,5 +141,11 @@ public class EditorApplication extends Application
         propertiesPane.render();
         Renderer2D.end();
         propertiesPane.renderText();
+    }
+
+    @Override
+    public void clientDispose()
+    {
+        scene.onDispose();
     }
 }

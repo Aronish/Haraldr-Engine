@@ -4,7 +4,7 @@ import haraldr.ecs.BoundingSphereComponent;
 import haraldr.ecs.Entity;
 import haraldr.ecs.ModelComponent;
 import haraldr.event.Event;
-import haraldr.graphics.CubeMap;
+//import haraldr.graphics.CubeMap;
 import haraldr.graphics.Renderer3D;
 import haraldr.graphics.lighting.PointLight;
 import haraldr.input.Input;
@@ -28,7 +28,7 @@ public class TestScene extends Scene3D
                 pointLight,
                 pointLight2
         );
-        setSkyBox(CubeMap.createEnvironmentMap("default_hdris/NorwayForest_4K_hdri_sphere.hdr"));
+        //setSkyBox(CubeMap.createEnvironmentMap("default_hdris/NorwayForest_4K_hdri_sphere.hdr"));
         registry.addComponent(new ModelComponent("default_models/model.json"), ape);
         registry.addComponent(new BoundingSphereComponent(0.75f), ape);
     }

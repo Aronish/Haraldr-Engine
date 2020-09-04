@@ -7,7 +7,7 @@
     {
       "color": [ 0.4, 0.4, 0.4 ],
       "metalness": 1.0,
-      "roughness": 0.6,
+      "roughness": 0.3,
       "environment_map": "default_hdris/NorwayForest_4K_hdri_sphere.hdr"
     }
   }

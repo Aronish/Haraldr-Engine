@@ -46,6 +46,7 @@ public class Pane
         headerSize.setX(size.getX());
         divider = size.getX() * dividerRatio;
         orderComponents();
+        size.print();
     }
 
     public boolean onEvent(Event event, Window window)

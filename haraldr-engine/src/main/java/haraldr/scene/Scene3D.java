@@ -78,5 +78,6 @@ public abstract class Scene3D
     {
         onClientDispose();
         sceneLights.dispose();
+        skyBox.delete();
     }
 }

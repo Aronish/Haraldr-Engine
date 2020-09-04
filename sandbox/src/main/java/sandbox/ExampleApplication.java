@@ -53,4 +53,10 @@ class ExampleApplication extends Application
         testScene.onRender();
         Renderer3D.end(window);
     }
+
+    @Override
+    public void clientDispose()
+    {
+        
+    }
 }

@@ -11,6 +11,7 @@ import haraldr.input.Key;
 import haraldr.main.Window;
 import haraldr.math.Matrix4f;
 import haraldr.math.Vector3f;
+import org.jetbrains.annotations.NotNull;
 
 public class OrbitalCamera extends Camera
 {
@@ -104,6 +105,13 @@ public class OrbitalCamera extends Camera
     public void calculateProjectionMatrix()
     {
         projectionMatrix = Matrix4f.perspective(fov, aspectRatio, near, far);
+    }
+
+    @Override
+    public void setPosition(@NotNull Vector3f position)
+    {
+        target.set(position);
+        calculateViewMatrix();
     }
 
     private void addZoom(float zoom)

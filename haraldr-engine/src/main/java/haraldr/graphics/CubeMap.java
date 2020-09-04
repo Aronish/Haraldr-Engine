@@ -5,6 +5,7 @@ import haraldr.main.EntryPoint;
 import haraldr.main.IOUtils;
 import haraldr.math.Matrix4f;
 import haraldr.math.Vector3f;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
@@ -35,7 +36,6 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glCullFace;
 import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL11.glDepthFunc;
-import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glStencilFunc;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
@@ -63,6 +63,7 @@ import static org.lwjgl.opengl.GL30.glGenRenderbuffers;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
 import static org.lwjgl.opengl.GL45.glBindTextureUnit;
+import static org.lwjgl.opengl.GL45.glCreateTextures;
 
 //TODO: Maybe clean up.
 public class CubeMap
@@ -70,9 +71,10 @@ public class CubeMap
     private static final Shader MAP_DIFFUSE_IRRADIANCE  = Shader.create("internal_shaders/map_diffuse_irradiance.glsl");
     private static final Shader PREFILTER_CONVOLUTION   = Shader.create("internal_shaders/prefilter_convolution.glsl");
     private static final Shader MAP_CUBEMAP             = Shader.create("internal_shaders/map_cubemap.glsl");
-    private static final Shader CUBEMAP                 = Shader.create("default_shaders/skybox.glsl");
+    private static final Shader SKYBOX                  = Shader.create("default_shaders/skybox.glsl");
     private int cubeMapId;
 
+    @Contract(pure = true)
     private CubeMap(int cubeMapId)
     {
         this.cubeMapId = cubeMapId;
@@ -93,8 +95,8 @@ public class CubeMap
         glDepthFunc(GL_LEQUAL);
         glCullFace(GL_FRONT);
         glStencilFunc(GL_ALWAYS, 0, -1);
-        CUBEMAP.bind();
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapId);
+        SKYBOX.bind();
+        glBindTextureUnit(0, cubeMapId);
         DefaultModels.CUBE.bind();
         DefaultModels.CUBE.drawElements();
         glDepthFunc(GL_LESS);
@@ -124,11 +126,10 @@ public class CubeMap
 
                 width1 = width.get();
                 size = height.get();
-                if (EntryPoint.DEBUG)
-                    Logger.info(String.format("Loaded HDR %s | Width: %d, Height: %d, Components: %d", path, width1, size, comps.get()));
+                if (EntryPoint.DEBUG) Logger.info(String.format("Loaded HDR %s | Width: %d, Height: %d, Components: %d", path, width1, size, comps.get()));
             }
             assert image != null : "Image was somehow null here!";
-            int texture = glGenTextures();
+            int texture = glCreateTextures(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, texture);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width1, size, 0, GL_RGB, GL_FLOAT, image);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -191,7 +192,6 @@ public class CubeMap
         {
             CubeMap cubeMap = new CubeMap(mapToCubeMap(PREFILTER_CONVOLUTION, (Shader mappingShader, int framebuffer, int depthRenderBuffer, int colorAttachment, int originalEnvironmentMap, Matrix4f[] mappingViews, int cubeFaceSize) ->
             {
-                glBindTexture(GL_TEXTURE_CUBE_MAP, colorAttachment);
                 glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
                 glBindTextureUnit(0, originalEnvironmentMap);
                 int maxMipLevels = 5;
@@ -233,17 +233,18 @@ public class CubeMap
         }
 
         //Allocating memory for cubemap
-        int cubemap = glGenTextures();
+        int cubemap = glCreateTextures(GL_TEXTURE_CUBE_MAP);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
-        for (int i = 0; i < 6; ++i)
-        {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, size, size, 0, GL_RGB, GL_FLOAT, 0);
-        }
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        for (int i = 0; i < 6; ++i)
+        {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, size, size, 0, GL_RGB, GL_FLOAT, 0);
+        }
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
         //A list of views for all cube faces
         Matrix4f mappingProjection = Matrix4f.perspective(90f, 1f, 0.1f, 10f);
         Matrix4f[] mappingViews = {
@@ -259,11 +260,11 @@ public class CubeMap
         mappingShader.setMatrix4f("model", Matrix4f.identity().scale(new Vector3f(0.5f))); //(Cube .obj is two units in size)
         mappingShader.setMatrix4f("mappingProjection", mappingProjection);
 
-        glBindTextureUnit(0, environmentMap);
         glViewport(0, 0, size, size);
         glClearColor(1f, 1f, 1f, 1f);
         glCullFace(GL_FRONT);
 
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
         mappingFunction.map(mappingShader, mappingFrameBuffer, depthRenderBuffer, cubemap, environmentMap, mappingViews, size);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

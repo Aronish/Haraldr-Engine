@@ -4,6 +4,7 @@ import haraldr.debug.Logger;
 import haraldr.event.Event;
 import haraldr.event.EventDispatcher;
 import haraldr.event.EventType;
+import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Renderer3D;
 import haraldr.graphics.ResourceManager;
@@ -65,7 +66,7 @@ public abstract class Application
 
     private void init()
     {
-        /////WINDOW///////////////////////////
+        /////WINDOW//////////////////////////////////
         window = new Window(initialWindowProperties);
         /////OPENGL CODE WON'T WORK BEFORE THIS//////////
         EventDispatcher.addCallback(new EventCallback());
@@ -97,6 +98,7 @@ public abstract class Application
         }
         clientInit(window);
 
+        //Renderer.setClearColor(0f, 0f, 1f, 1f);
         glViewport(0, 0, window.getWidth(), window.getHeight());
         glfwShowWindow(window.getWindowHandle());
         initialized = true;
@@ -169,6 +171,8 @@ public abstract class Application
             glfwPollEvents();
         }
     }
+
+    public abstract void clientDispose();
 
     public void dispose()
     {

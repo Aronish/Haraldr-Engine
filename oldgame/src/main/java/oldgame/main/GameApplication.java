@@ -14,7 +14,7 @@ public class GameApplication extends Application
     }
 
     @Override
-    public void dispose()
+    public void clientDispose()
     {
         super.dispose();
         Models.dispose();

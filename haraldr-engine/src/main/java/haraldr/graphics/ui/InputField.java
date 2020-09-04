@@ -75,6 +75,7 @@ public class InputField extends LabeledComponent
     {
         borderSize.setX(width);
         fieldSize.setX(width - 2f * borderWidth);
+        parent.textBatch.refreshTextMeshData();
     }
 
     @Override
@@ -101,7 +102,7 @@ public class InputField extends LabeledComponent
                 text = "";
                 textLabel.setText(text);
                 parent.textBatch.refreshTextMeshData();
-                inputFieldChangeAction.run('\r', text);
+                inputFieldChangeAction.run('\b', text);
             }
         }
         if (selected)
@@ -113,7 +114,7 @@ public class InputField extends LabeledComponent
                     text = text.substring(0, text.length() - 1);
                     textLabel.setText(text);
                     parent.textBatch.refreshTextMeshData();
-                    inputFieldChangeAction.run('\r', text);
+                    inputFieldChangeAction.run('\b', text);
                 }
             }
             if (event.eventType == EventType.CHAR_TYPED)

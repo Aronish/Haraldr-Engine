@@ -97,7 +97,7 @@ public class ResourceManager
         TEXTURES.forEach((key, texture) -> texture.delete());
         MESHES.forEach((key, mesh) -> mesh.delete());
         SHADERS.forEach((key, shader) -> shader.delete());
-        CUBEMAPS.forEach((key, cubeMap) -> cubeMap.delete());
+        //CUBEMAPS.forEach((key, cubeMap) -> cubeMap.delete());
         TEXT_BATCHES.forEach(TextBatch::dispose);
     }
 }

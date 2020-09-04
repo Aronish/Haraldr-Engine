@@ -8,6 +8,7 @@ import haraldr.math.Matrix4f;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector3f;
 import haraldr.math.Vector4f;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.system.MemoryStack;
 
@@ -237,6 +238,7 @@ public class Shader
         private String source;
         private int shaderType, shaderId;
 
+        @Contract(pure = true)
         InternalShader(int shaderType, String source)
         {
             this.source = source;
@@ -268,6 +270,7 @@ public class Shader
             return shader;
         }
 
+        @Contract(pure = true)
         private int getShaderId()
         {
             return shaderId;

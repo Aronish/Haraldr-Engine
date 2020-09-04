@@ -27,6 +27,7 @@ public class EditorTestScene extends Scene3D
                 pointLight
         );
         setSkyBox(CubeMap.createEnvironmentMap("default_hdris/NorwayForest_4K_hdri_sphere.hdr"));
+        new ModelComponent("default_models/model.json");
         registry.addComponent(new ModelComponent("default_models/model.json"), ape);
         registry.addComponent(new BoundingSphereComponent(0.75f), ape);
     }
@@ -55,5 +56,6 @@ public class EditorTestScene extends Scene3D
     @Override
     protected void onClientDispose()
     {
+
     }
 }

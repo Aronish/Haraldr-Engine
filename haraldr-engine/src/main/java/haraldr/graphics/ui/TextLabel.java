@@ -1,71 +1,63 @@
 package haraldr.graphics.ui;
 
-import haraldr.graphics.ResourceManager;
-import haraldr.graphics.Shader;
-import haraldr.graphics.ShaderDataType;
-import haraldr.graphics.VertexArray;
-import haraldr.graphics.VertexBuffer;
-import haraldr.graphics.VertexBufferElement;
-import haraldr.graphics.VertexBufferLayout;
-import haraldr.math.Matrix4f;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import org.jetbrains.annotations.NotNull;
 
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class TextLabel
 {
-    private static final Shader TEXT = Shader.create("default_shaders/text.glsl");
-
     private Font font;
     private String text;
     private Vector4f color;
     private Vector2f position;
-    private VertexArray textMesh;
-    private VertexBuffer textMeshBuffer;
+    private List<Float> textMeshData = new ArrayList<>();
 
-    public TextLabel(Vector2f position, @NotNull Font font, Vector4f color, @NotNull String text)
+    public TextLabel(@NotNull String text, Vector2f position, Vector4f color, Font font)
     {
-        this.font = font;
         this.text = text;
         this.color = color;
-        this.position = position;
-        VertexBufferLayout layout = new VertexBufferLayout(
-                new VertexBufferElement(ShaderDataType.FLOAT2),
-                new VertexBufferElement(ShaderDataType.FLOAT2)
-        );
-        textMeshBuffer = new VertexBuffer(text.length() * 64, layout, VertexBuffer.Usage.DYNAMIC_DRAW);
-        textMesh = new VertexArray();
-        textMesh.setVertexBuffers(textMeshBuffer);
+        this.font = font;
+        this.position = Vector2f.add(position, new Vector2f(0f, font.getSize() - font.getBaseline()));
         setText(text);
+    }
+
+    public void refresh()
+    {
+        textMeshData = font.createTextMesh(text, position, color);
     }
 
     public void setText(@NotNull String text)
     {
         this.text = text;
-        textMeshBuffer.setData(font.createTextMesh(text));
-        textMesh.setIndexBufferData(VertexBuffer.createQuadIndices(text.length()));
+        textMeshData = font.createTextMesh(text, position, color);
     }
 
-    public void render()
+    public void setPosition(Vector2f position)
     {
-        glDisable(GL_DEPTH_TEST);
-        TEXT.bind();
-        TEXT.setMatrix4f("model", Matrix4f.identity().translate(position));
-        TEXT.setMatrix4f("projection", Matrix4f.pixelOrthographic);
-        TEXT.setVector4f("u_Color", color);
-        font.bind(0);
-        textMesh.bind();
-        textMesh.drawElements();
-        glEnable(GL_DEPTH_TEST);
+        this.position = Vector2f.add(position, new Vector2f(0f, font.getSize() - font.getBaseline()));
     }
 
-    public void delete()
+    public Font getFont()
     {
-        textMesh.delete();
+        return font;
+    }
+
+    public int getPixelWidth()
+    {
+        return Math.round(font.getPixelWidth(text));
+    }
+
+    public Vector2f getPosition()
+    {
+        return position;
+    }
+
+    public List<Float> getTextMeshData()
+    {
+        return textMeshData;
     }
 }

@@ -7,6 +7,7 @@ import haraldr.math.Vector4f;
 import jsonparser.JSONArray;
 import jsonparser.JSONException;
 import jsonparser.JSONObject;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.system.MemoryStack;
 
@@ -29,7 +30,8 @@ public class MaterialParser
 {
     private static final JSONObject specification = new JSONObject(IOUtils.readResource("default_models/material_specification.json", IOUtils::resourceToString));
 
-    public static JsonMaterial parseMaterial(JSONObject materialDefinition) throws JSONException
+    @Contract("_ -> new")
+    public static @NotNull Material parseMaterial(@NotNull JSONObject materialDefinition) throws JSONException
     {
         String type = materialDefinition.getString("type");
         JSONObject materialProperties = materialDefinition.getJSONObject("properties");
@@ -40,7 +42,7 @@ public class MaterialParser
             variant = getBestVariantCandidate(materialProperties, specification.getJSONObject(type).getJSONObject("variants"));
         } else
         {
-            variant = specification.getJSONObject("materials").getJSONObject(type);
+            variant = specification.getJSONObject(type);
         }
 
         // Extract samplers and optional switches
@@ -65,7 +67,7 @@ public class MaterialParser
                 variant.has("optional") ? JSONArrayToStringList(variant.getJSONArray("optional")) : new ArrayList<>()
         );
 
-        return new JsonMaterial(shader, shaderUniforms, shaderSamplers);
+        return new Material(shader, shaderUniforms, shaderSamplers);
     }
 
     /**

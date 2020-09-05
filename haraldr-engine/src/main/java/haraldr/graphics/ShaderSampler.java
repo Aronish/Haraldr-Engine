@@ -1,9 +1,12 @@
 package haraldr.graphics;
 
+import org.jetbrains.annotations.Contract;
+
 public abstract class ShaderSampler
 {
     protected final int unit;
 
+    @Contract(pure = true)
     protected ShaderSampler(int unit)
     {
         this.unit = unit;

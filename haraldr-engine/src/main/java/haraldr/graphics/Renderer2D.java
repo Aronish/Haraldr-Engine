@@ -1,89 +1,107 @@
 package haraldr.graphics;
 
-import haraldr.main.OrthographicCamera;
 import haraldr.math.Matrix4f;
-import haraldr.math.Vector3f;
+import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
-import org.jetbrains.annotations.NotNull;
 
-@Deprecated
-@SuppressWarnings({"unused", "WeakerAccess"})
 public class Renderer2D
 {
-    public static SceneData2D sceneData = new SceneData2D();
+    private static final int MAX_QUADS = 1000, MAX_INDICES = MAX_QUADS * 6, VERTEX_SIZE = 6;
+    private static final Shader SHADER = Shader.create("default_shaders/renderer2d.glsl");
 
-    public static void beginScene(@NotNull OrthographicCamera camera)
+    private static VertexArray quadVertexArray = new VertexArray();
+    private static VertexBuffer quadVertexBuffer;
+    private static float[] vertexData = new float[MAX_QUADS * VERTEX_SIZE * 4];
+    private static int insertIndex, indexCount;
+
+    public static Matrix4f pixelOrthographic;
+
+    static
     {
-        sceneData.setViewMatrix(camera.getViewMatrix());
-        //Shader.DEFAULT2D.bind(); // Versions of draw* without shader parameter will use default shader.
+        quadVertexArray.setIndexBufferData(VertexBuffer.createQuadIndices(MAX_INDICES));
+        VertexBufferLayout layout = new VertexBufferLayout(
+                new VertexBufferElement(ShaderDataType.FLOAT2),
+                new VertexBufferElement(ShaderDataType.FLOAT4)
+        );
+        quadVertexBuffer = new VertexBuffer(MAX_QUADS * VERTEX_SIZE * 16/*vertices * sizeof(float)*/, layout, VertexBuffer.Usage.DYNAMIC_DRAW);
+        quadVertexArray.setVertexBuffers(quadVertexBuffer);
     }
 
-    public static void drawQuad(Vector3f position)
+    public static void init(int windowWidth, int windowHeight)
     {
-        drawQuad(position, new Vector4f(1.0f));
+        pixelOrthographic = Matrix4f.orthographic(0, windowWidth, windowHeight, 0, -1f, 1f);
     }
 
-    public static void drawQuad(Vector3f position, Vector4f color)
+    public static void begin()
     {
-        Texture.DEFAULT_WHITE.bind(0);
-        //Shader.DEFAULT2D.setMatrix4f("model", Matrix4f.identity().translate(position));
-        //Shader.DEFAULT2D.setMatrix4f("view", sceneData.getViewMatrix());
-        //Shader.DEFAULT2D.setMatrix4f("projection", Matrix4f.orthographic);
-        //Shader.DEFAULT2D.setVector4f("u_Color", color);
-
-        SceneData2D.QUAD.bind();
-        SceneData2D.QUAD.drawElements();
+        indexCount = 0;
+        insertIndex = 0;
+        SHADER.bind();
+        SHADER.setMatrix4f("projection", pixelOrthographic);
+        quadVertexBuffer.bind();
     }
 
-    public static void drawQuad(Vector3f position, @NotNull Shader shader)
+    public static void end()
     {
-        drawQuad(position, shader, new Vector4f(1.0f));
+        if (indexCount == 0) return;
+        quadVertexBuffer.setSubDataUnsafe(vertexData);
+        quadVertexArray.bind();
+        quadVertexArray.drawElements(indexCount);
     }
 
-    public static void drawQuad(Vector3f position, @NotNull Shader shader, Vector4f color)
+    public static void reset()
     {
-        shader.bind();
-        Texture.DEFAULT_WHITE.bind(0);
-        shader.setMatrix4f("model", Matrix4f.identity().translate(position));
-        shader.setMatrix4f("view", sceneData.getViewMatrix());
-        shader.setMatrix4f("projection", Matrix4f.orthographic);
-        shader.setVector4f("u_Color", color);
-
-        SceneData2D.QUAD.bind();
-        SceneData2D.QUAD.drawElements();
+        indexCount = 0;
+        insertIndex = 0;
     }
 
-    public static void drawQuad(Vector3f position, @NotNull Texture texture)
+    public static void drawQuad(Vector2f position, Vector2f size, Vector4f color)
     {
-        drawQuad(position, texture, new Vector4f(1.0f));
+        if (indexCount >= MAX_INDICES)
+        {
+            end();
+            reset();
+        }
+
+        float xPos = position.getX(), yPos = position.getY();
+        float r = color.getX();
+        float g = color.getY();
+        float b = color.getZ();
+        float a = color.getW();
+        
+        vertexData[insertIndex++] = xPos;
+        vertexData[insertIndex++] = yPos;
+        vertexData[insertIndex++] = r;
+        vertexData[insertIndex++] = g;
+        vertexData[insertIndex++] = b;
+        vertexData[insertIndex++] = a;
+
+        vertexData[insertIndex++] = xPos + size.getX();
+        vertexData[insertIndex++] = yPos;
+        vertexData[insertIndex++] = r;
+        vertexData[insertIndex++] = g;
+        vertexData[insertIndex++] = b;
+        vertexData[insertIndex++] = a;
+
+        vertexData[insertIndex++] = xPos + size.getX();
+        vertexData[insertIndex++] = yPos + size.getY();
+        vertexData[insertIndex++] = r;
+        vertexData[insertIndex++] = g;
+        vertexData[insertIndex++] = b;
+        vertexData[insertIndex++] = a;
+
+        vertexData[insertIndex++] = xPos;
+        vertexData[insertIndex++] = yPos + size.getY();
+        vertexData[insertIndex++] = r;
+        vertexData[insertIndex++] = g;
+        vertexData[insertIndex++] = b;
+        vertexData[insertIndex++] = a;
+
+        indexCount += 6;
     }
 
-    public static void drawQuad(Vector3f position, @NotNull Texture texture, Vector4f tintColor)
+    public static void dispose()
     {
-        texture.bind(0);
-        //Shader.DEFAULT2D.setMatrix4f("model", Matrix4f.identity().translate(position));
-        //Shader.DEFAULT2D.setMatrix4f("view", sceneData.getViewMatrix());
-        //Shader.DEFAULT2D.setMatrix4f("projection", Matrix4f.orthographic);
-        //Shader.DEFAULT2D.setVector4f("u_Color", tintColor);
-        SceneData2D.QUAD.bind();
-        SceneData2D.QUAD.drawElements();
-    }
-
-    public static void drawQuad(Vector3f position, @NotNull Shader shader, @NotNull Texture texture)
-    {
-        drawQuad(position, shader, texture, new Vector4f(1.0f));
-    }
-
-    public static void drawQuad(Vector3f position, @NotNull Shader shader, @NotNull Texture texture, Vector4f tintColor)
-    {
-        shader.bind();
-        texture.bind(0);
-        shader.setMatrix4f("model", Matrix4f.identity().translate(position));
-        shader.setMatrix4f("view", sceneData.getViewMatrix());
-        shader.setMatrix4f("projection", Matrix4f.orthographic);
-        shader.setVector4f("u_Color", tintColor);
-
-        SceneData2D.QUAD.bind();
-        SceneData2D.QUAD.drawElements();
+        quadVertexArray.delete();
     }
 }

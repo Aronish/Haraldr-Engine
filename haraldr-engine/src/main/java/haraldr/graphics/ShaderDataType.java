@@ -4,7 +4,8 @@ import static org.lwjgl.opengl.GL11.GL_FLOAT;
 
 @SuppressWarnings("unused")
 public enum ShaderDataType
-{
+{   // Why is token a thing??
+    FLOAT   (1, GL_FLOAT, 4, "float"),
     FLOAT2  (2, GL_FLOAT, 4, "vec2"),
     FLOAT3  (3, GL_FLOAT, 4, "vec3"),
     FLOAT4  (4, GL_FLOAT, 4, "vec4"),

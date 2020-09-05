@@ -2,7 +2,7 @@ package oldgame.main;
 
 import oldgame.graphics.RenderSystemType;
 
-public class EntryPoint extends engine.main.EntryPoint
+public class EntryPoint extends haraldr.main.EntryPoint
 {
     public static RenderSystemType gameRenderSystemType;
 

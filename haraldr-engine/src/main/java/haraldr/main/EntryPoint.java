@@ -1,6 +1,7 @@
 package haraldr.main;
 
 import haraldr.debug.Logger;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -12,10 +13,10 @@ import java.util.Arrays;
  */
 public abstract class EntryPoint
 {
-    // Cannot have static abstract methods, therefore a static initializer is the only option.
+    // Static initializer in client to set this. Mimics C++ extern getter.
     public static Application application;
     protected static ArgumentValidator argumentValidator = new ArgumentValidator() {};
-    public static boolean DEBUG = false;
+    public static boolean DEBUG;
 
     public static void main(@NotNull String[] args)
     {
@@ -52,19 +53,22 @@ public abstract class EntryPoint
     }
 
     ///// UTILITY ///////////////////////
-
+//TODO: Move to math/MathUtil
+    @Contract(pure = true)
     public static int fastFloor(double x)
     {
         int xi = (int) x;
         return x < xi ? xi - 1 : xi;
     }
 
+    @Contract(pure = true)
     public static int fastCeil(double x)
     {
         int xi = (int) x;
         return xi < x ? xi + 1 : xi;
     }
 
+    @Contract(pure = true)
     public static int bit(int x)
     {
         return 1 << x;

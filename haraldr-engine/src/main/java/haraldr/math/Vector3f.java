@@ -10,10 +10,10 @@ public class Vector3f
 {
     public static final Vector3f IDENTITY   = new Vector3f();
     public static final Vector3f UP         = new Vector3f(0f, 1f, 0f);
-    public static final Vector3f DOWN       = new Vector3f(0f, -1f, 0f);
 
     private float x, y, z;
 
+    @Contract(pure = true)
     public Vector3f() {}
 
     public Vector3f(float all)
@@ -37,6 +37,13 @@ public class Vector3f
         this.z = (float) z;
     }
 
+    public Vector3f(Vector4f vector)
+    {
+        x = vector.getX();
+        y = vector.getY();
+        z = vector.getZ();
+    }
+
     public Vector3f(@NotNull JSONArray jsonArray)
     {
         x = (float) jsonArray.getDouble(0);
@@ -44,80 +51,92 @@ public class Vector3f
         z = (float) jsonArray.getDouble(2);
     }
 
-    public void set(float x, float y, float z)
+    public Vector3f set(float x, float y, float z)
     {
         this.x = x;
         this.y = y;
         this.z = z;
+        return this;
     }
 
-    public void set(double x, double y, double z)
+    public Vector3f set(double x, double y, double z)
     {
         this.x = (float) x;
         this.y = (float) y;
         this.z = (float) z;
+        return this;
     }
 
-    public void set(float all)
+    public Vector3f set(float all)
     {
         x = all;
         y = all;
         z = all;
+        return this;
     }
 
-    public void set(double all)
+    public Vector3f set(double all)
     {
         x = (float) all;
         y = (float) all;
         z = (float) all;
+        return this;
     }
 
-    public void set(@NotNull Vector3f other)
+    public Vector3f set(@NotNull Vector3f other)
     {
         x = other.x;
         y = other.y;
         z = other.z;
+        return this;
     }
 
-    public void setX(float x)
+    public Vector3f setX(float x)
     {
         this.x = x;
+        return this;
     }
 
-    public void setY(float y)
+    public Vector3f setY(float y)
     {
         this.y = y;
+        return this;
     }
 
-    public void setZ(float z)
+    public Vector3f setZ(float z)
     {
         this.z = z;
+        return this;
     }
 
-    public void add(float all)
+    public Vector3f add(float all)
     {
         x += all;
         y += all;
         z += all;
+        return this;
     }
 
-    public void add(double all)
+    public Vector3f add(double all)
     {
         x += all;
         y += all;
         z += all;
+        return this;
     }
 
-    public void add(@NotNull Vector3f other)
+    public Vector3f add(@NotNull Vector3f other)
     {
         x += other.x;
         y += other.y;
         z += other.z;
+        return this;
     }
 
-    public void addX(float dx)
+    public Vector3f addX(float dx)
     {
         x += dx;
+        return this;
     }
 
     public Vector3f addY(float dy)
@@ -126,9 +145,10 @@ public class Vector3f
         return this;
     }
 
-    public void addZ(float dz)
+    public Vector3f addZ(float dz)
     {
         z += dz;
+        return this;
     }
 
     public float getX()
@@ -146,31 +166,48 @@ public class Vector3f
         return z;
     }
 
-    public void multiply(float scalar)
+    public Vector3f multiply(float scalar)
     {
         x *= scalar;
         y *= scalar;
         z *= scalar;
+        return this;
     }
 
-    public void normalize()
+    public Vector3f multiply(Vector3f other)
     {
-        x /= length();
-        y /= length();
-        z /= length();
+        x *= other.x;
+        y *= other.y;
+        z *= other.z;
+        return this;
     }
 
-    public float length()
+    public Vector3f normalize()
     {
-        return (float) Math.sqrt(x * x + y * y + z * z);
+        double length = length();
+        x /= length;
+        y /= length;
+        z /= length;
+        return this;
     }
 
-    /////STATIC OPERATORS (These Don't modify this) /////////////////////////////
+    public double length()
+    {
+        return Math.sqrt(x * x + y * y + z * z);
+    }
+
+    /////STATIC OPERATORS (These don't modify this) //////////////////////////////////////
+
+    @Contract("_, _ -> new")
+    public static @NotNull Vector3f add(@NotNull Vector3f first, float scalar)
+    {
+        return new Vector3f(first.x + scalar, first.y + scalar, first.z + scalar);
+    }
 
     @Contract("_, _ -> new")
     public static @NotNull Vector3f add(@NotNull Vector3f first, @NotNull Vector3f second)
     {
-        return new Vector3f(first.x + second.x, first.y + second.y, first.z + second.z);
+            return new Vector3f(first.x + second.x, first.y + second.y, first.z + second.z);
     }
 
     @Contract("_, _ -> new")
@@ -183,6 +220,12 @@ public class Vector3f
     public static @NotNull Vector3f multiply(@NotNull Vector3f first, float scalar)
     {
         return new Vector3f(first.x * scalar, first.y * scalar, first.z * scalar);
+    }
+
+    @Contract("_, _ -> new")
+    public static @NotNull Vector3f multiply(@NotNull Vector3f first, @NotNull Vector3f second)
+    {
+        return new Vector3f(first.x * second.x, first.y * second.y, first.z * second.z);
     }
 
     @Contract("_ -> new")

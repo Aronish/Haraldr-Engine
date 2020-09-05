@@ -5,7 +5,7 @@ import haraldr.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class PointLight extends Light implements SceneLightCompat
+public class PointLight extends Light
 {
     private float constant, linear, quadratic;
 
@@ -28,7 +28,7 @@ public class PointLight extends Light implements SceneLightCompat
     }
 
     @Override
-    public void updateBufferData(@NotNull UniformBuffer lightSetup, int offset)
+    protected void updateBufferData(@NotNull UniformBuffer lightSetup, int offset)
     {
         lightSetup.setData(new float[] {
                 position.getX(), position.getY(), position.getZ(),  0f,
@@ -38,7 +38,7 @@ public class PointLight extends Light implements SceneLightCompat
     }
 
     @Override
-    public void updateBufferDataUnsafe(@NotNull UniformBuffer lightSetup, int offset)
+    protected void updateBufferDataUnsafe(@NotNull UniformBuffer lightSetup, int offset)
     {
         lightSetup.setDataUnsafe(new float[] {
                 position.getX(), position.getY(), position.getZ(),  0f,

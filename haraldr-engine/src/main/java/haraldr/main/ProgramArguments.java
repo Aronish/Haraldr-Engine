@@ -12,13 +12,13 @@ public class ProgramArguments
         programArguments.put(argument, value);
     }
 
-    public static String getStringValue(String argument)
-    {
-        return programArguments.get(argument);
-    }
-
     public static boolean isArgumentSet(String argument)
     {
         return programArguments.containsKey(argument);
+    }
+
+    public static int getIntOrDefault(String argument, int defaultValue)
+    {
+        return programArguments.containsKey(argument) ? Integer.parseInt(programArguments.get("MSAA")) : defaultValue;
     }
 }

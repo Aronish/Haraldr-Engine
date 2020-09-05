@@ -1,6 +1,10 @@
 package haraldr.graphics;
 
+import haraldr.graphics.ui.TextBatch;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ResourceManager
@@ -9,6 +13,7 @@ public class ResourceManager
     private static final Map<String, VertexArray> MESHES    = new HashMap<>();
     private static final Map<String, Shader> SHADERS        = new HashMap<>();
     private static final Map<String, CubeMap> CUBEMAPS      = new HashMap<>();
+    private static final List<TextBatch> TEXT_BATCHES       = new ArrayList<>();
 
     public static VertexArray getMesh(String path)
     {
@@ -82,11 +87,17 @@ public class ResourceManager
         return CUBEMAPS.containsKey(path);
     }
 
+    public static void addTextBatch(TextBatch textBatch)
+    {
+        TEXT_BATCHES.add(textBatch);
+    }
+
     public static void dispose()
     {
         TEXTURES.forEach((key, texture) -> texture.delete());
         MESHES.forEach((key, mesh) -> mesh.delete());
         SHADERS.forEach((key, shader) -> shader.delete());
-        CUBEMAPS.forEach((key, cubeMap) -> cubeMap.delete());
+        //CUBEMAPS.forEach((key, cubeMap) -> cubeMap.delete());
+        TEXT_BATCHES.forEach(TextBatch::dispose);
     }
 }

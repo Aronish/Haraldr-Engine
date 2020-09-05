@@ -21,11 +21,19 @@ public class SceneLights
     {
         //Really isn't possible to do easily in any other generic way. Not beautiful, but works.
         if (light instanceof PointLight)
+        {
+            light.setBufferOffset(pointLights.size() * POINT_LIGHT_SIZE);
             addPointLight((PointLight) light);
-        else if (light instanceof Spotlight)
+        } else if (light instanceof Spotlight)
+        {
+            light.setBufferOffset(MAX_POINT_LIGHTS * POINT_LIGHT_SIZE + spotlights.size() * SPOTLIGHT_SIZE);
             addSpotLight((Spotlight) light);
-        else if (light instanceof DirectionalLight)
+        } else if (light instanceof DirectionalLight)
+        {
+            light.setBufferOffset(MAX_POINT_LIGHTS * POINT_LIGHT_SIZE + MAX_SPOTLIGHTS * SPOTLIGHT_SIZE + directionalLights.size() * DIRECTIONAL_LIGHT_SIZE);
             addDirectionalLight((DirectionalLight) light);
+        }
+        light.setSceneLightsBuffer(lightSetupBuffer);
     }
 
     private void addPointLight(PointLight pointLight)
@@ -48,22 +56,15 @@ public class SceneLights
         directionalLights.add(directionalLight);
         lightSetupBuffer.setData(new float[] { directionalLights.size() }, TOTAL_LIGHTS_SIZE + 8);
     }
-//TODO: Only update changed lights
+
     public void bind()
     {
         lightSetupBuffer.bind(1);
-        for (int i = 0; i < pointLights.size(); ++i)
-        {
-            pointLights.get(i).updateBufferDataUnsafe(lightSetupBuffer, i * POINT_LIGHT_SIZE);
-        }
-        for (int i = 0; i < spotlights.size(); ++i)
-        {
-            spotlights.get(i).updateBufferDataUnsafe(lightSetupBuffer, MAX_POINT_LIGHTS * POINT_LIGHT_SIZE + i * SPOTLIGHT_SIZE);
-        }
-        for (int i = 0; i < directionalLights.size(); ++i)
-        {
-            directionalLights.get(i).updateBufferDataUnsafe(lightSetupBuffer, MAX_POINT_LIGHTS * POINT_LIGHT_SIZE + MAX_SPOTLIGHTS * SPOTLIGHT_SIZE + i * DIRECTIONAL_LIGHT_SIZE);
-        }
+    }
+
+    public void renderLights()
+    {
+        pointLights.forEach(Light::render);
     }
 
     public void dispose()

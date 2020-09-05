@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static engine.main.EntryPoint.fastFloor;
+import static haraldr.main.EntryPoint.fastFloor;
 
 /**
  * Contains all objects int the World in a grid system.

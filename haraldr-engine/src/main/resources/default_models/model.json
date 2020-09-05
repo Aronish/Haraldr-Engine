@@ -1,0 +1,14 @@
+{
+  "mesh": "default_meshes/sphere.obj",
+  "material":
+  {
+    "type": "PBR",
+    "properties":
+    {
+      "color": [ 1.00, 0.57, 0.29 ],
+      "metalness": 1.0,
+      "roughness": 0.01,
+      "environment_map": "default_hdris/wooden_lounge_4k.hdr"
+    }
+  }
+}

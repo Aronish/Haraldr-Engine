@@ -29,15 +29,16 @@ module haraldr
     requires JsonParser;
     ///// EXPORTS ///////
     exports haraldr.debug;
+    exports haraldr.ecs;
     exports haraldr.event;
     exports haraldr.graphics;
     exports haraldr.graphics.lighting;
     exports haraldr.graphics.ui;
     exports haraldr.input;
-    exports haraldr.layer;
     exports haraldr.main;
     exports haraldr.math;
     exports haraldr.physics;
+    exports haraldr.scene;
 
     opens default_shaders;
     opens default_textures;

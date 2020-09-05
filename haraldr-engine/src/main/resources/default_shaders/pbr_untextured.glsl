@@ -45,6 +45,7 @@ layout (std140, binding = 0) uniform matrices
 uniform vec3 u_Color;
 uniform float u_Metalness = 0.0f;
 uniform float u_Roughness = 0.0f;
+uniform float u_Opacity = 1.0f;
 
 layout (binding = 0) uniform samplerCube c_DiffuseIrradianceMap;
 layout (binding = 1) uniform samplerCube c_PrefilteredMap;
@@ -103,5 +104,5 @@ void main()
 
     vec3 ambient = kD * diffuse + specular; // All this * ao later
 
-    o_Color = vec4(ambient + Lo, 1.0f);
+    o_Color = vec4(ambient + Lo, u_Opacity);
 }

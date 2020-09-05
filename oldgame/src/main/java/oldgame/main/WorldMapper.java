@@ -13,6 +13,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import static haraldr.main.EntryPoint.fastFloor;
+
 class WorldMapper
 {
     /**
@@ -58,14 +60,14 @@ class WorldMapper
                         }
                         if (color != null)
                         {
-                            worldMap.setRGB(engine.main.EntryPoint.fastFloor(tile.getPosition().getX()), height - engine.main.EntryPoint.fastFloor(tile.getPosition().getY()) - 1, color.getRGB());
+                            worldMap.setRGB(fastFloor(tile.getPosition().getX()), height - fastFloor(tile.getPosition().getY()) - 1, color.getRGB());
                         }
                     }else
                     {
                         Color color = new Color(0, 255, 80, 255);
                         for (int z = 0; z > -3; --z)
                         {
-                            worldMap.setRGB(engine.main.EntryPoint.fastFloor(tile.getPosition().getX()), height - EntryPoint.fastFloor(tile.getPosition().getY()) - 1 - z, color.getRGB());
+                            worldMap.setRGB(fastFloor(tile.getPosition().getX()), height - fastFloor(tile.getPosition().getY()) - 1 - z, color.getRGB());
                         }
                     }
                 }

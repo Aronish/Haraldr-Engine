@@ -1,9 +1,10 @@
 package haraldr.graphics;
 
 import haraldr.debug.Logger;
-import haraldr.main.Application;
+import haraldr.graphics.ui.Font;
 import haraldr.main.EntryPoint;
 import haraldr.main.IOUtils;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
@@ -69,25 +70,47 @@ public class Texture
 
     public static final Texture DEFAULT_WHITE = new Texture(1, 1, new int[] { -1 });
     public static final Texture DEFAULT_BLACK = new Texture(1, 1, new int[] { 0 });
-    public static final Texture BRDF_LUT = createBRDFLUT();
+    public static final Texture BRDF_LUT;
 
     private int width, height;
-    private int textureId;
+    private int textureHandle;
 
     static
     {
         ResourceManager.addTexture("DEFAULT_BLACK", DEFAULT_BLACK);
         ResourceManager.addTexture("DEFAULT_WHITE", DEFAULT_WHITE);
+        BRDF_LUT = createBRDFLUT();
+    }
+
+    public static void init()
+    {
         ResourceManager.addTexture("BRDF_LUT", BRDF_LUT);
     }
 
-    private Texture()
+    @Contract(pure = true)
+    private Texture() {}
+
+    public static Texture wrapFontBitmap(int fontAtlasHandle)
     {
+        String key = "font_" + fontAtlasHandle;
+        if (ResourceManager.isTextureLoaded(key))
+        {
+            return ResourceManager.getLoadedTexture(key);
+        }
+        else
+        {
+            Texture texture = new Texture();
+            texture.textureHandle = fontAtlasHandle;
+            texture.width = Font.WIDTH;
+            texture.height = Font.HEIGHT;
+            ResourceManager.addTexture(key, texture);
+            return texture;
+        }
     }
 
     public static Texture create(String path, boolean isColorData)
     {
-        String key = path + isColorData;
+        String key = path + "_" + isColorData;
         if (ResourceManager.isTextureLoaded(key))
         {
             return ResourceManager.getLoadedTexture(key);
@@ -153,13 +176,13 @@ public class Texture
         glBindTexture(GL_TEXTURE_2D, 0);
         STBImage.stbi_image_free(image);
 
-        result.textureId = texture;
+        result.textureHandle = texture;
         return result;
     }
 
-    private Texture(int textureId, int width, int height)
+    private Texture(int textureHandle, int width, int height)
     {
-        this.textureId = textureId;
+        this.textureHandle = textureHandle;
         this.width = width;
         this.height = height;
     }
@@ -168,7 +191,7 @@ public class Texture
     {
         this.width = width;
         this.height = height;
-        textureId = createTextureFromPixelData(pixelData);
+        textureHandle = createTextureFromPixelData(pixelData);
     }
 
     private int createTextureFromPixelData(int[] data)
@@ -195,6 +218,7 @@ public class Texture
         return result;
     }
 
+    @Contract(" -> new")
     private static @NotNull Texture createBRDFLUT()
     {
         int size = 512;
@@ -227,7 +251,6 @@ public class Texture
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glDeleteFramebuffers(mappingFrameBuffer);
         glDeleteRenderbuffers(depthRenderBuffer);
-        glViewport(0, 0, Application.initWidth, Application.initHeight);
         return new Texture(brdf, size, size);
     }
 
@@ -238,7 +261,7 @@ public class Texture
 
     public void bind(int unit)
     {
-        glBindTextureUnit(unit, textureId);
+        glBindTextureUnit(unit, textureHandle);
     }
 
     public void unbind(int unit)
@@ -248,6 +271,6 @@ public class Texture
 
     public void delete()
     {
-        glDeleteTextures(textureId);
+        glDeleteTextures(textureHandle);
     }
 }

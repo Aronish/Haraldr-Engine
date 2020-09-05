@@ -34,8 +34,8 @@ void main()
     mat3 normalMatrix = mat3(model); // (Note: Tangent space vectors don't care about translation)
     vec3 normal     = normalize(normalMatrix * a_Normal);
     vec3 tangent    = normalize(normalMatrix * a_Tangent);
-    tangent = normalize(tangent - dot(tangent, normal) * normal);       // Fixes potential weird edges
-    vec3 bitangent  = normalize(cross(normal, tangent));                // Is already in camera space.
+    tangent         = normalize(tangent - dot(tangent, normal) * normal);   // Fixes potential weird edges
+    vec3 bitangent  = normalize(cross(normal, tangent));                    // Is already in camera space.
     mat3 TBN        = transpose(mat3(tangent, bitangent, normal));
 
     //Lights to tangent space
@@ -56,7 +56,7 @@ void main()
     }
 
     v_ViewPosition_T    = TBN * viewPosition_W;
-    v_Position_WT   = TBN * vec3((model * vec4(a_Position, 1.0f))); // Need to be translated as well.
+    v_Position_WT       = TBN * vec3((model * vec4(a_Position, 1.0f))); // Need to be translated as well.
     v_TextureCoordinate = a_TextureCoordinate;                          // Not important for lighting, don't put in tangent space.
 
     gl_Position = projection * view * model * vec4(a_Position, 1.0f);
@@ -92,9 +92,9 @@ layout (std140, binding = 0) uniform matrices
 layout(binding = 0) uniform sampler2D map_Diffuse_Texture;
 layout(binding = 1) uniform sampler2D map_Normal_Map;
 
-uniform float u_Specular_Strength;
-uniform float u_Specular_Exponent;
-uniform float u_Opacity;
+uniform float u_Specular_Strength = 1.0f;
+uniform float u_Specular_Exponent = 64.0f;
+uniform float u_Opacity = 1.0f;
 
 out vec4 o_Color;
 

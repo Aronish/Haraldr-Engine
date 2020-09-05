@@ -1,6 +1,8 @@
 package sandbox;
 
-public class EntryPoint extends haraldr.main.EntryPoint
+import haraldr.main.EntryPoint;
+
+public class SandboxEntryPoint extends EntryPoint
 {
     static
     {

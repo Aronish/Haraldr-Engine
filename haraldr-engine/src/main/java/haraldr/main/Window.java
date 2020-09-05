@@ -1,8 +1,8 @@
 package haraldr.main;
 
 import haraldr.debug.Logger;
+import haraldr.event.CharTypedEvent;
 import haraldr.event.EventDispatcher;
-import haraldr.event.EventObserver;
 import haraldr.event.KeyPressedEvent;
 import haraldr.event.KeyReleasedEvent;
 import haraldr.event.MouseMovedEvent;
@@ -13,18 +13,15 @@ import haraldr.event.WindowClosedEvent;
 import haraldr.event.WindowFocusEvent;
 import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Framebuffer;
+import haraldr.graphics.Renderer;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_DISABLED;
-import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_HIDDEN;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_MAXIMIZED;
@@ -32,6 +29,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+import static org.lwjgl.glfw.GLFW.GLFW_REPEAT;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_SAMPLES;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
@@ -43,6 +41,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwSetCharCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
@@ -58,30 +57,22 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
-import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT24;
-import static org.lwjgl.opengl.GL30.GL_RGB16F;
 import static org.lwjgl.opengl.GL46.GL_TRUE;
-import static org.lwjgl.opengl.GL46.glViewport;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-/**
- * Represents a GLFW window.
- */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Window
 {
     private long windowHandle;
     private GLFWVidMode vidmode;
-    private boolean vSyncOn;
-    private boolean fullscreen, minimized;
-    private boolean focused = true;
+    private boolean vSyncOn, fullscreen, minimized, cursorVisible;
     private int windowWidth, windowHeight, initWidth, initHeight;
 
-    private List<EventObserver<WindowResizedEvent>> observers = new ArrayList<>();
+    private int mouseX, mouseY;
 
-    private Framebuffer framebuffer;
+    private Framebuffer framebuffer;//TODO: Does not belong in here
 
-    Window(@NotNull WindowProperties windowProperties)
+    public Window(@NotNull WindowProperties windowProperties)
     {
         fullscreen = windowProperties.fullscreen;
         vSyncOn = windowProperties.vsync;
@@ -98,7 +89,6 @@ public class Window
         glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
         glfwWindowHint(GLFW_MAXIMIZED, windowProperties.maximized ? GLFW_TRUE : GLFW_FALSE);
-
         glfwWindowHint(GLFW_SAMPLES, windowProperties.samples);
 
         vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -119,105 +109,104 @@ public class Window
         glfwMakeContextCurrent(windowHandle);
         GL.createCapabilities();
 
-        setCursorVisible(true);
-        setFocus(true);
+        setCursorVisibility(true);
         setVSync(windowProperties.vsync);
         ///// FRAMEBUFFER //////////////
         framebuffer = new Framebuffer();
         if (windowProperties.samples > 0)
         {
-            framebuffer.setColorAttachment(new Framebuffer.MultisampledColorAttachment(initWidth, initHeight, GL_RGB16F, windowProperties.samples));
-            framebuffer.setDepthBuffer(new Framebuffer.MultisampledRenderBuffer(initWidth, initHeight, GL_DEPTH_COMPONENT24, windowProperties.samples));
+            framebuffer.setColorAttachment(new Framebuffer.MultisampledColorAttachment(initWidth, initHeight, Framebuffer.ColorAttachment.Format.RGB16F, windowProperties.samples));
+            framebuffer.setDepthBuffer(new Framebuffer.MultisampledRenderBuffer(initWidth, initHeight, Framebuffer.RenderBuffer.Format.DEPTH_24_STENCIL_8, windowProperties.samples));
         }
         else if (windowProperties.samples == 0)
         {
-            framebuffer.setColorAttachment(new Framebuffer.ColorAttachment(initWidth, initHeight, GL_RGB16F));
-            framebuffer.setDepthBuffer(new Framebuffer.RenderBuffer(initWidth, initHeight, GL_DEPTH_COMPONENT24));
+            framebuffer.setColorAttachment(new Framebuffer.ColorAttachment(initWidth, initHeight, Framebuffer.ColorAttachment.Format.RGB16F));
+            framebuffer.setDepthBuffer(new Framebuffer.RenderBuffer(initWidth, initHeight, Framebuffer.RenderBuffer.Format.DEPTH_24_STENCIL_8));
         }
         else throw new IllegalArgumentException("Multisample sample count cannot be below 0");
 
-        ///// CALLBACKS ///////////////////////////////////////////////////////////
-        glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
-            if (action == GLFW_PRESS){
+        ///// CALLBACKS /////////////////////////////////////////////////////////
+        glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) ->
+        {
+            if (action == GLFW_PRESS || action == GLFW_REPEAT)
+            {
                 EventDispatcher.dispatch(new KeyPressedEvent(key), this);
-            }else if (action == GLFW_RELEASE){
+            } else if (action == GLFW_RELEASE)
+            {
                 EventDispatcher.dispatch(new KeyReleasedEvent(key), this);
             }
         });
 
-        glfwSetMouseButtonCallback(windowHandle, (window, button, action, mods) -> {
-            if (action == GLFW_PRESS){
-                EventDispatcher.dispatch(new MousePressedEvent(button), this);
-            }else if (action == GLFW_RELEASE){
-                EventDispatcher.dispatch(new MouseReleasedEvent(button), this);
+        glfwSetCharCallback(windowHandle, (window, codePoint) ->
+        {
+            EventDispatcher.dispatch(new CharTypedEvent(codePoint), this);
+        });
+
+        glfwSetMouseButtonCallback(windowHandle, (window, button, action, mods) ->
+        {
+            if (action == GLFW_PRESS)
+            {
+                EventDispatcher.dispatch(new MousePressedEvent(button, mouseX, mouseY), this);
+            } else if (action == GLFW_RELEASE)
+            {
+                EventDispatcher.dispatch(new MouseReleasedEvent(button, mouseX, mouseY), this);
             }
         });
 
         glfwSetScrollCallback(windowHandle, (window, xOffset, yOffset) -> EventDispatcher.dispatch(new MouseScrolledEvent(xOffset, yOffset), this));
 
-        glfwSetCursorPosCallback(windowHandle, (window, xPos, yPos) -> EventDispatcher.dispatch(new MouseMovedEvent(xPos, yPos), this));
+        glfwSetCursorPosCallback(windowHandle, (window, xPos, yPos) ->
+        {
+            this.mouseX = (int) xPos;
+            this.mouseY = (int) yPos;
+            EventDispatcher.dispatch(new MouseMovedEvent(xPos, yPos), this);
+        });
 
         glfwSetWindowCloseCallback(windowHandle, (window) -> EventDispatcher.dispatch(new WindowClosedEvent(), this));
 
-        glfwSetWindowSizeCallback(windowHandle, (window, newWidth, newHeight) -> {
+        glfwSetWindowSizeCallback(windowHandle, (window, newWidth, newHeight) ->
+        {
             minimized = newWidth <= 0 || newHeight <= 0;
             windowWidth = newWidth;
             windowHeight = newHeight;
-            for (EventObserver<WindowResizedEvent> observer : observers)
-            {
-                observer.onEvent(new WindowResizedEvent(newWidth, newHeight));
-            }
-            setViewPortSize(newWidth, newHeight);
+            Renderer.setViewPort(0, 0, newWidth, newHeight);
             framebuffer.resize(newWidth, newHeight);
             EventDispatcher.dispatch(new WindowResizedEvent(newWidth, newHeight), this);
         });
 
-        glfwSetWindowFocusCallback(windowHandle, (window, focused) -> {
-            setFocus(focused);
+        glfwSetWindowFocusCallback(windowHandle, (window, focused) ->
+        {
             EventDispatcher.dispatch(new WindowFocusEvent(focused), this);
         });
 
         glfwSetErrorCallback((error, description) -> Logger.info(error + " " + description));
     }
 
-    public void addObserver(EventObserver<WindowResizedEvent> observer)
-    {
-        observers.add(observer);
-    }
-
-    public void removeObserver(EventObserver<WindowResizedEvent> observer)
-    {
-        observers.remove(observer);
-    }
-
-    public void changeFullscreen()
+    public void toggleFullscreen()
     {
         if (fullscreen)
         {
             fullscreen = false;
             glfwSetWindowMonitor(windowHandle, 0, vidmode.width() / 2 - initWidth / 2, vidmode.height() / 2 - initHeight / 2, initWidth, initHeight, 60);
-            setViewPortSize(initWidth, initHeight);
-        }else{
+            Renderer.setViewPort(0, 0, initWidth, initHeight);
+        } else
+        {
             fullscreen = true;
             glfwSetWindowMonitor(windowHandle, glfwGetPrimaryMonitor(), 0, 0, vidmode.width(), vidmode.height(), 60);
-            setViewPortSize(vidmode.width(), vidmode.height());
+            Renderer.setViewPort(0, 0, vidmode.width(), vidmode.height());
         }
     }
 
-    public void setFocus(boolean focused)
+    public void setCursorVisibility(boolean visible)
     {
-        this.focused = focused;
-        glfwSetInputMode(windowHandle, GLFW_CURSOR, focused ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+        cursorVisible = visible;
+        glfwSetInputMode(windowHandle, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
     }
 
-    private void setViewPortSize(int width, int height)
+    public void toggleCursor()
     {
-        glViewport(0, 0, width, height);
-    }
-
-    public void setCursorVisible(boolean visible)
-    {
-        glfwSetInputMode(windowHandle, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN);
+        cursorVisible = !cursorVisible;
+        glfwSetInputMode(windowHandle, GLFW_CURSOR, cursorVisible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
     }
 
     public void setVSync(boolean enabled)
@@ -261,11 +250,6 @@ public class Window
         return initHeight;
     }
 
-    public boolean isFocused()
-    {
-        return focused;
-    }
-
     public boolean vSyncOn()
     {
         return vSyncOn;
@@ -276,6 +260,11 @@ public class Window
         return minimized;
     }
 
+    public boolean isCursorVisible()
+    {
+        return cursorVisible;
+    }
+
     public void delete()
     {
         framebuffer.delete();
@@ -284,7 +273,6 @@ public class Window
 
     public static class WindowProperties
     {
-
         public final int width, height, samples;
         public final boolean maximized, fullscreen, vsync;
 

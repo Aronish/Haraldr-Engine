@@ -1,28 +1,62 @@
 package sandbox;
 
-import haraldr.graphics.Renderer;
+import haraldr.event.Event;
+import haraldr.graphics.Renderer3D;
+import haraldr.input.Input;
+import haraldr.input.Key;
+import haraldr.scene.Camera;
 import haraldr.main.Application;
 import haraldr.main.ProgramArguments;
 import haraldr.main.Window;
+import haraldr.scene.OrbitalCamera;
+import haraldr.scene.Scene3D;
 
 class ExampleApplication extends Application
 {
-    @Override
-    public void start()
+    private Scene3D testScene;
+    private Camera camera;
+
+    public ExampleApplication()
     {
-        int samples = ProgramArguments.isArgumentSet("MSAA") ? Integer.parseInt(ProgramArguments.getStringValue("MSAA")) : 0;
-        Window.WindowProperties windowProperties = new Window.WindowProperties(1280, 720, samples, true, false, false);
-        init(windowProperties);
-        loop();
+        super(new Window.WindowProperties(1280, 720, ProgramArguments.getIntOrDefault("MSAA", 0), false, false, true));
     }
 
     @Override
-    protected void init(Window.WindowProperties windowProperties)
+    protected void clientInit(Window window)
     {
-        super.init(windowProperties);
-        Renderer.setClearColor(0.1f, 0.1f, 0.2f, 1f);
-        //layerStack.pushLayer(new PBRLayer());
-        layerStack.pushLayer(new MaterialLayer());
-        if (EntryPoint.DEBUG) layerStack.pushOverlay(new DebugLayer());
+        testScene = new TestScene();
+        testScene.onActivate();
+        camera = new OrbitalCamera(window.getWidth(), window.getHeight());
+    }
+
+    @Override
+    protected void clientEvent(Event event, Window window)
+    {
+        camera.onEvent(event, window);
+        testScene.onEvent(event, window);
+        if (Input.wasKeyPressed(event, Key.KEY_E)) window.toggleCursor();
+        if (Input.wasKeyPressed(event, Key.KEY_F)) window.toggleFullscreen();
+        if (Input.wasKeyPressed(event, Key.KEY_ESCAPE)) stop();
+    }
+
+    @Override
+    protected void clientUpdate(float deltaTime, Window window)
+    {
+        camera.onUpdate(deltaTime, window);
+        testScene.onUpdate(deltaTime, window);
+    }
+
+    @Override
+    protected void clientRender(Window window)
+    {
+        Renderer3D.begin(window, camera);
+        testScene.onRender();
+        Renderer3D.end(window);
+    }
+
+    @Override
+    public void clientDispose()
+    {
+        
     }
 }

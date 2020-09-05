@@ -12,6 +12,7 @@ public class Vector2f
 
     private float x, y;
 
+    @Contract(pure = true)
     public Vector2f() {}
 
     public Vector2f(float all)
@@ -32,22 +33,30 @@ public class Vector2f
         this.y = (float) y;
     }
 
+    public Vector2f(Vector2f other)
+    {
+        x = other.x;
+        y = other.y;
+    }
+
     public Vector2f(@NotNull JSONArray jsonArray)
     {
         x = (float) jsonArray.getDouble(0);
         y = (float) jsonArray.getDouble(1);
     }
 
-    public void set(float x, float y)
+    public Vector2f set(float x, float y)
     {
         this.x = x;
         this.y = y;
+        return this;
     }
 
-    public void set(double x, double y)
+    public Vector2f set(double x, double y)
     {
         this.x = (float) x;
         this.y = (float) y;
+        return this;
     }
 
     public Vector2f set(float all)
@@ -57,48 +66,63 @@ public class Vector2f
         return this;
     }
 
-    public void set(@NotNull Vector2f other)
+    public Vector2f set(@NotNull Vector2f other)
     {
         x = other.x;
         y = other.y;
+        return this;
     }
 
-    public void setX(float x)
+    public Vector2f setX(float x)
     {
         this.x = x;
+        return this;
     }
 
-    public void setY(float y)
+    public Vector2f setY(float y)
     {
         this.y = y;
+        return this;
     }
 
-    public void add(float all)
+    public Vector2f add(float all)
     {
         x += all;
         y += all;
+        return this;
     }
 
-    public void add(double all)
+    public Vector2f add(double all)
     {
         x += all;
         y += all;
+        return this;
     }
 
-    public void add(@NotNull Vector2f other)
+    public Vector2f add(float x, float y)
+    {
+        this.x += x;
+        this.y += y;
+        return this;
+    }
+
+    public Vector2f add(@NotNull Vector2f other)
     {
         x += other.getX();
         y += other.getY();
+        return this;
     }
 
-    public void addX(float dx)
+    public Vector2f addX(float dx)
     {
         x += dx;
+        return this;
     }
 
-    public void addY(float dy)
+    public Vector2f addY(float dy)
     {
         y += dy;
+        return this;
     }
 
     public float getX()
@@ -111,19 +135,22 @@ public class Vector2f
         return y;
     }
 
-    public void multiply(float scalar)
+    public Vector2f multiply(float scalar)
     {
         x *= scalar;
         y *= scalar;
+        return this;
     }
 
-    public void normalize()
+    public Vector2f normalize()
     {
-        x /= length();
-        y /= length();
+        double length = length();
+        x /= length;
+        y /= length;
+        return this;
     }
 
-    public float length()
+    public double length()
     {
         return (float) Math.sqrt(x * x + y * y);
     }
@@ -137,15 +164,27 @@ public class Vector2f
     }
 
     @Contract("_, _ -> new")
+    public static @NotNull Vector2f add(@NotNull Vector2f vector, float scalar)
+    {
+        return new Vector2f(vector.x + scalar, vector.y + scalar);
+    }
+
+    @Contract("_, _ -> new")
     public static @NotNull Vector2f subtract(@NotNull Vector2f first, @NotNull Vector2f second)
     {
         return new Vector2f(first.x - second.x, first.y - second.y);
     }
 
     @Contract("_, _ -> new")
-    public static @NotNull Vector2f multiply(@NotNull Vector2f first, float scalar)
+    public static @NotNull Vector2f multiply(@NotNull Vector2f vector, float scalar)
     {
-        return new Vector2f(first.x * scalar, first.y * scalar);
+        return new Vector2f(vector.x * scalar, vector.y * scalar);
+    }
+
+    @Contract("_, _ -> new")
+    public static @NotNull Vector2f multiply(@NotNull Vector2f left, Vector2f right)
+    {
+        return new Vector2f(left.x * right.x, left.y * right.y);
     }
 
     @Contract("_ -> new")

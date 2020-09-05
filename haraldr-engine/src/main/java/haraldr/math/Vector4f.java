@@ -10,6 +10,7 @@ public class Vector4f
 {
     private float x, y, z, w;
 
+    @Contract(pure = true)
     public Vector4f() {}
 
     public Vector4f(float all)
@@ -28,6 +29,14 @@ public class Vector4f
         this.w = w;
     }
 
+    public Vector4f(Vector3f vector)
+    {
+        x = vector.getX();
+        y = vector.getY();
+        z = vector.getZ();
+        w = 0f;
+    }
+
     public Vector4f(@NotNull JSONArray jsonArray)
     {
         x = (float) jsonArray.getDouble(0);
@@ -36,92 +45,106 @@ public class Vector4f
         w = (float) jsonArray.getDouble(3);
     }
 
-    public void set(float x, float y, float z, float w)
+    public Vector4f set(float x, float y, float z, float w)
     {
         this.x = x;
         this.y = y;
         this.z = z;
         this.w = w;
+        return this;
     }
 
-    public void set(double x, double y, double z, double w)
+    public Vector4f set(double x, double y, double z, double w)
     {
         this.x = (float) x;
         this.y = (float) y;
         this.z = (float) z;
         this.w = (float) w;
+        return this;
     }
 
-    public void set(@NotNull Vector4f other)
+    public Vector4f set(@NotNull Vector4f other)
     {
         x = other.x;
         y = other.y;
         z = other.z;
         w = other.w;
+        return this;
     }
 
-    public void setX(float x)
+    public Vector4f setX(float x)
     {
         this.x = x;
+        return this;
     }
 
-    public void setY(float y)
+    public Vector4f setY(float y)
     {
         this.y = y;
+        return this;
     }
 
-    public void setZ(float z)
+    public Vector4f setZ(float z)
     {
         this.z = z;
+        return this;
     }
 
-    public void setW(float w)
+    public Vector4f setW(float w)
     {
         this.w = w;
-    }
-    
-    public void add(float x, float y, float z, float w)
-    {
-        this.x += x;
-        this.y += y;
-        this.z += z;
-        this.w += w;
-    }
-    
-    public void add(double x, double y, double z, double w)
-    {
-        this.x += x;
-        this.y += y;
-        this.z += z;
-        this.w += w;
+        return this;
     }
 
-    public void add(@NotNull Vector4f other)
+    public Vector4f add(float x, float y, float z, float w)
+    {
+        this.x += x;
+        this.y += y;
+        this.z += z;
+        this.w += w;
+        return this;
+    }
+
+    public Vector4f add(double x, double y, double z, double w)
+    {
+        this.x += x;
+        this.y += y;
+        this.z += z;
+        this.w += w;
+        return this;
+    }
+
+    public Vector4f add(@NotNull Vector4f other)
     {
         x += other.x;
         y += other.y;
         z += other.z;
         w += other.w;
-    }
-    
-    public void addX(float dx)
-    {
-        x = dx;
+        return this;
     }
 
-    public void addY(float dy)
+    public Vector4f addX(float dx)
     {
-        y = dy;
+        x += dx;
+        return this;
     }
 
-    public void addZ(float dz)
+    public Vector4f addY(float dy)
     {
-        z = dz;
+        y += dy;
+        return this;
     }
 
-    public void addW(float dw)
+    public Vector4f addZ(float dz)
     {
-        w = dw;
+        z += dz;
+        return this;
+    }
+
+    public Vector4f addW(float dw)
+    {
+        w += dw;
+        return this;
     }
 
     public float getX()
@@ -144,21 +167,32 @@ public class Vector4f
         return w;
     }
 
-
-    public void multiply(float scalar)
+    public Vector4f multiply(float scalar)
     {
         x *= scalar;
         y *= scalar;
         z *= scalar;
         w *= scalar;
+        return this;
     }
 
-    public void normalize()
+    public Vector4f divide(float scalar)
     {
-        x /= length();
-        y /= length();
-        z /= length();
-        w /= length();
+        x /= scalar;
+        y /= scalar;
+        z /= scalar;
+        w /= scalar;
+        return this;
+    }
+
+    public Vector4f normalize()
+    {
+        double length = length();
+        x /= length;
+        y /= length;
+        z /= length;
+        w /= length;
+        return this;
     }
 
     public float length()
@@ -172,6 +206,12 @@ public class Vector4f
     public static @NotNull Vector4f add(@NotNull Vector4f first, @NotNull Vector4f second)
     {
         return new Vector4f(first.x + second.x, first.y + second.y, first.z + second.z, first.w + second.w);
+    }
+
+    @Contract("_, _ -> new")
+    public static @NotNull Vector4f subtract(@NotNull Vector4f first, float scalar)
+    {
+        return new Vector4f(first.x - scalar, first.y - scalar, first.z - scalar, first.w - scalar);
     }
 
     @Contract("_, _ -> new")
@@ -206,6 +246,6 @@ public class Vector4f
 
     public void print()
     {
-        Logger.info("X: " + x + " Y: " + y + " Z: " + z);
+        Logger.info("X: " + x + " Y: " + y + " Z: " + z + " W: " + w);
     }
 }

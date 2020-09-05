@@ -1,6 +1,6 @@
 package oldgame.main;
 
-import haraldr.main.OrthographicCamera;
+import haraldr.scene.OrthographicCamera;
 import haraldr.main.EntryPoint;
 import haraldr.math.Matrix4f;
 import haraldr.math.Vector3f;
@@ -24,8 +24,8 @@ public class GameCamera extends OrthographicCamera
 
     public GameCamera(Vector3f position)
     {
-        super(position);
-        scale = zooms[currentZoom];
+        super(/*position*/1280, 720);
+        //scale = zooms[currentZoom];
         calculateChunkRanges();
     }
 
@@ -34,8 +34,8 @@ public class GameCamera extends OrthographicCamera
      */
     private void calculateChunkRanges()
     {
-        chunkXRange = engine.main.EntryPoint.fastCeil((Matrix4f.FIXED_ORTHOGRAPHIC_AXIS / scale) / Grid.GRID_SIZE);
-        chunkYRange = EntryPoint.fastCeil((Matrix4f.dynamicOrthographicAxis / scale) / Grid.GRID_SIZE);
+        //chunkXRange = haraldr.main.EntryPoint.fastCeil((Matrix4f.FIXED_ORTHOGRAPHIC_AXIS / scale) / Grid.GRID_SIZE);
+        //chunkYRange = EntryPoint.fastCeil((Matrix4f.dynamicOrthographicAxis / scale) / Grid.GRID_SIZE);
     }
 
     /**
@@ -45,23 +45,23 @@ public class GameCamera extends OrthographicCamera
      */
     public void isInView(List<Tile> visibleObjects, @NotNull Tile tile)
     {
-        float scaleAdjustedX = position.getX() / scale;
-        float scaleAdjustedY = position.getY() / scale;
-        float xBoundary = 16.0f / scale;
-        float yBoundary = 9.0f / scale;
-        boolean collisionX = tile.getPosition().getX() + tile.getGameObjectType().getModel().getAABB().getWidth() > scaleAdjustedX - xBoundary && tile.getPosition().getX() < scaleAdjustedX + xBoundary;
-        boolean collisionY = tile.getPosition().getY() - tile.getGameObjectType().getModel().getAABB().getHeight() < scaleAdjustedY + yBoundary && tile.getPosition().getY() > scaleAdjustedY - yBoundary;
-        if (collisionX && collisionY)
-        {
-            visibleObjects.add(tile);
-        }
+        //float scaleAdjustedX = position.getX() / scale;
+        //float scaleAdjustedY = position.getY() / scale;
+        //float xBoundary = 16.0f / scale;
+        //float yBoundary = 9.0f / scale;
+        //boolean collisionX = tile.getPosition().getX() + tile.getGameObjectType().getModel().getAABB().getWidth() > scaleAdjustedX - xBoundary && tile.getPosition().getX() < scaleAdjustedX + xBoundary;
+        //boolean collisionY = tile.getPosition().getY() - tile.getGameObjectType().getModel().getAABB().getHeight() < scaleAdjustedY + yBoundary && tile.getPosition().getY() > scaleAdjustedY - yBoundary;
+        //if (collisionX && collisionY)
+        //{
+        //    visibleObjects.add(tile);
+        //}
     }
 
     public void zoomIn()
     {
         ++currentZoom;
         if (currentZoom >= zooms.length) currentZoom = zooms.length - 1;
-        scale = zooms[currentZoom];
+        //scale = zooms[currentZoom];
         calculateViewMatrix();
     }
 
@@ -69,15 +69,15 @@ public class GameCamera extends OrthographicCamera
     {
         --currentZoom;
         if (currentZoom < 0) currentZoom = 0;
-        scale = zooms[currentZoom];
+        //scale = zooms[currentZoom];
         calculateViewMatrix();
         calculateChunkRanges();
     }
 
     public void setScale(float scale)
     {
-        this.scale = scale;
-        scaleVector.set(scale);
+        //this.scale = scale;
+        //scaleVector.set(scale);
         calculateViewMatrix();
         calculateChunkRanges();
     }

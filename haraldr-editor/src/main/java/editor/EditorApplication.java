@@ -25,6 +25,7 @@ import haraldr.math.Vector3f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics3D;
 import haraldr.scene.Camera;
+import haraldr.scene.FPSCamera;
 import haraldr.scene.OrbitalCamera;
 import haraldr.scene.Scene3D;
 
@@ -57,7 +58,8 @@ public class EditorApplication extends Application
 
         scene = new EditorTestScene();
         scene.onActivate();
-        editorCamera = new OrbitalCamera(window.getWidth(), window.getHeight());
+        editorCamera = new FPSCamera(window.getWidth(), window.getHeight());
+        window.setCursorVisibility(false);
     }
 
     @Override
@@ -72,14 +74,14 @@ public class EditorApplication extends Application
         if (Input.wasKeyPressed(event, Key.KEY_ESCAPE)) stop();
         if (Input.wasKeyPressed(event, Key.KEY_F)) window.toggleFullscreen();
         if (event.eventType == EventType.MOUSE_PRESSED)
-        {
+        {/*
             var mousePressedEvent = (MousePressedEvent) event;
             selected = selectEntity(mousePressedEvent.xPos, mousePressedEvent.yPos, window.getWidth(), window.getHeight(), selected, scene.getRegistry());
             if (!selected.equals(Entity.INVALID))
             {
                 editorCamera.setPosition(scene.getRegistry().getComponent(TransformComponent.class, selected).position);
             }
-        }
+        */}
         if (!handled)
         {
             editorCamera.onEvent(event, window);
@@ -135,12 +137,13 @@ public class EditorApplication extends Application
         Renderer3D.begin(window, editorCamera);
         scene.onRender();
         Renderer3D.end(window);
-
+/*
         Renderer.disableDepthTest();
         Renderer2D.begin();
         propertiesPane.render();
         Renderer2D.end();
         propertiesPane.renderText();
+*/
     }
 
     @Override

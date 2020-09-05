@@ -1,14 +1,14 @@
 {
-  "mesh": "default_meshes/suzanne_smooth.obj",
+  "mesh": "default_meshes/sphere.obj",
   "material":
   {
     "type": "PBR",
     "properties":
     {
-      "color": [ 0.4, 0.4, 0.4 ],
+      "color": [ 1.00, 0.57, 0.29 ],
       "metalness": 1.0,
-      "roughness": 0.3,
-      "environment_map": "default_hdris/NorwayForest_4K_hdri_sphere.hdr"
+      "roughness": 0.01,
+      "environment_map": "default_hdris/wooden_lounge_4k.hdr"
     }
   }
 }

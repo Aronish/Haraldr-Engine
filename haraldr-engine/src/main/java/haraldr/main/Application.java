@@ -4,6 +4,7 @@ import haraldr.debug.Logger;
 import haraldr.event.Event;
 import haraldr.event.EventDispatcher;
 import haraldr.event.EventType;
+import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Renderer3D;
@@ -113,6 +114,11 @@ public abstract class Application
         {
             clientEvent(event, window);
             if (event.eventType == EventType.WINDOW_CLOSED) stop();
+            if (event.eventType == EventType.WINDOW_RESIZED)
+            {
+                var windowResizedEvent = (WindowResizedEvent) event;
+                Renderer2D.onWindowResized(windowResizedEvent.width, windowResizedEvent.height);
+            }
         }
     }
 
@@ -176,6 +182,7 @@ public abstract class Application
 
     public void dispose()
     {
+        clientDispose();
         window.delete();
         Renderer2D.dispose();
         Renderer3D.dispose();

@@ -93,7 +93,7 @@ public class Shader
     {
         this.path = path;
         compile();
-        if (EntryPoint.DEBUG) Logger.info("Compiled shader " + path);
+        Logger.info("Compiled shader " + path);
     }
 
     private Shader(@NotNull List<InternalShader> internalShaders)

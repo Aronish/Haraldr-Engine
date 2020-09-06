@@ -3,7 +3,7 @@ package sandbox;
 import haraldr.event.Event;
 import haraldr.graphics.Renderer3D;
 import haraldr.input.Input;
-import haraldr.input.Key;
+import haraldr.input.KeyboardKey;
 import haraldr.scene.Camera;
 import haraldr.main.Application;
 import haraldr.main.ProgramArguments;
@@ -34,9 +34,9 @@ class ExampleApplication extends Application
     {
         camera.onEvent(event, window);
         testScene.onEvent(event, window);
-        if (Input.wasKeyPressed(event, Key.KEY_E)) window.toggleCursor();
-        if (Input.wasKeyPressed(event, Key.KEY_F)) window.toggleFullscreen();
-        if (Input.wasKeyPressed(event, Key.KEY_ESCAPE)) stop();
+        if (Input.wasKeyPressed(event, KeyboardKey.KEY_E)) window.toggleCursor();
+        if (Input.wasKeyPressed(event, KeyboardKey.KEY_F)) window.toggleFullscreen();
+        if (Input.wasKeyPressed(event, KeyboardKey.KEY_ESCAPE)) stop();
     }
 
     @Override

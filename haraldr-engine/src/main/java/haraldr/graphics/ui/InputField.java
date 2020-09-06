@@ -5,9 +5,9 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Renderer2D;
-import haraldr.input.Button;
 import haraldr.input.Input;
-import haraldr.input.Key;
+import haraldr.input.KeyboardKey;
+import haraldr.input.MouseButton;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import org.jetbrains.annotations.Contract;
@@ -26,7 +26,7 @@ public class InputField extends LabeledComponent
     private boolean selected;
 
     private InputType inputType;
-    private String text = "";
+    private String value = "";
     private TextLabel textLabel;
 
     private InputFieldChangeAction inputFieldChangeAction;
@@ -41,12 +41,17 @@ public class InputField extends LabeledComponent
         this(name, parent, InputType.ANY, inputFieldChangeAction);
     }
 
+    public InputField(String name, Pane parent, InputType inputType)
+    {
+        this(name, parent, inputType, ((addedChar, fullText) -> {}));
+    }
+
     public InputField(String name, Pane parent, InputType inputType, InputFieldChangeAction inputFieldChangeAction)
     {
         super(name, parent);
         fieldSize = new Vector2f(parent.getComponentDivisionSize() - 2f * borderWidth, label.getFont().getSize() - 2f * borderWidth);
         borderSize = new Vector2f(parent.getComponentDivisionSize(), label.getFont().getSize());
-        textLabel = parent.textBatch.createTextLabel(text, fieldPosition, new Vector4f(0f, 0f, 0f, 1f));
+        textLabel = parent.textBatch.createTextLabel(value, fieldPosition, new Vector4f(0f, 0f, 0f, 1f));
         this.inputType = inputType;
         this.inputFieldChangeAction = inputFieldChangeAction;
     }
@@ -56,10 +61,10 @@ public class InputField extends LabeledComponent
         this.inputFieldChangeAction = inputFieldChangeAction;
     }
 
-    public void setText(String text)
+    public void setValue(String value)
     {
-        this.text = text;
-        textLabel.setText(text);
+        this.value = value;
+        textLabel.setText(value);
     }
 
     @Override
@@ -84,12 +89,17 @@ public class InputField extends LabeledComponent
         return borderSize.getY();
     }
 
+    public String getValue()
+    {
+        return value;
+    }
+
     @Override
     public void onEvent(Event event)
     {
         if (event.eventType == EventType.MOUSE_PRESSED)
         {
-            if (Input.wasMousePressed(event, Button.MOUSE_BUTTON_1))
+            if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
             {
                 var mousePressedEvent = (MousePressedEvent) event;
                 selected = mousePressedEvent.xPos >= fieldPosition.getX() &&
@@ -97,24 +107,24 @@ public class InputField extends LabeledComponent
                            mousePressedEvent.yPos >= fieldPosition.getY() &&
                            mousePressedEvent.yPos <= fieldPosition.getY() + fieldSize.getY();
             }
-            if (Input.wasMousePressed(event, Button.MOUSE_BUTTON_2) && selected)
+            if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_2) && selected)
             {
-                text = "";
-                textLabel.setText(text);
+                value = "";
+                textLabel.setText(value);
                 parent.textBatch.refreshTextMeshData();
-                inputFieldChangeAction.run('\b', text);
+                inputFieldChangeAction.run('\b', value);
             }
         }
         if (selected)
         {
             if (event.eventType == EventType.KEY_PRESSED)
             {
-                if (Input.wasKeyPressed(event, Key.KEY_BACKSPACE) && text.length() > 0)
+                if (Input.wasKeyPressed(event, KeyboardKey.KEY_BACKSPACE) && value.length() > 0)
                 {
-                    text = text.substring(0, text.length() - 1);
-                    textLabel.setText(text);
+                    value = value.substring(0, value.length() - 1);
+                    textLabel.setText(value);
                     parent.textBatch.refreshTextMeshData();
-                    inputFieldChangeAction.run('\b', text);
+                    inputFieldChangeAction.run('\b', value);
                 }
             }
             if (event.eventType == EventType.CHAR_TYPED)
@@ -122,10 +132,10 @@ public class InputField extends LabeledComponent
                 var charTypedEvent = (CharTypedEvent) event;
                 if (inputType == InputType.ANY || inputType.allowedCharacters.contains(charTypedEvent.character))
                 {
-                    text += charTypedEvent.character;
-                    textLabel.setText(text);
+                    value += charTypedEvent.character;
+                    textLabel.setText(value);
                     parent.textBatch.refreshTextMeshData();
-                    inputFieldChangeAction.run(charTypedEvent.character, text);
+                    inputFieldChangeAction.run(charTypedEvent.character, value);
                 }
             }
         }

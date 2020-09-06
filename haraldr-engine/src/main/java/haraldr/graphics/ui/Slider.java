@@ -5,7 +5,7 @@ import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Renderer2D;
-import haraldr.input.Button;
+import haraldr.input.MouseButton;
 import haraldr.input.Input;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -63,7 +63,7 @@ public class Slider extends LabeledComponent
     {
         if (event.eventType == EventType.MOUSE_PRESSED)
         {
-            if (Input.wasMousePressed(event, Button.MOUSE_BUTTON_1))
+            if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
             {
                 var mousePressedEvent = (MousePressedEvent) event;
                 if (mousePressedEvent.xPos > handlePosition.getX() &&

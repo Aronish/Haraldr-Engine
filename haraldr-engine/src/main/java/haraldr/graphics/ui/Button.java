@@ -48,21 +48,24 @@ public class Button extends LabeledComponent
     @Override
     public void onEvent(Event event)
     {
-        if (event.eventType == EventType.MOUSE_PRESSED)
+        if (enabled)
         {
-            var mousePressedEvent = (MousePressedEvent) event;
-            if (mousePressedEvent.xPos >= buttonPosition.getX() &&
-                mousePressedEvent.xPos <= buttonPosition.getX() + buttonSize.getX() &&
-                mousePressedEvent.yPos >= buttonPosition.getY() &&
-                mousePressedEvent.yPos <= buttonPosition.getY() + buttonSize.getY())
+            if (event.eventType == EventType.MOUSE_PRESSED)
             {
-                active = true;
-                buttonPressAction.run();
+                var mousePressedEvent = (MousePressedEvent) event;
+                if (mousePressedEvent.xPos >= buttonPosition.getX() &&
+                        mousePressedEvent.xPos <= buttonPosition.getX() + buttonSize.getX() &&
+                        mousePressedEvent.yPos >= buttonPosition.getY() &&
+                        mousePressedEvent.yPos <= buttonPosition.getY() + buttonSize.getY())
+                {
+                    active = true;
+                    buttonPressAction.run();
+                }
             }
-        }
-        if (event.eventType == EventType.MOUSE_RELEASED)
-        {
-            active = false;
+            if (event.eventType == EventType.MOUSE_RELEASED)
+            {
+                active = false;
+            }
         }
     }
 

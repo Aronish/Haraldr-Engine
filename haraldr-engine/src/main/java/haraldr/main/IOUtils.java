@@ -1,7 +1,7 @@
 package haraldr.main;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import haraldr.debug.Logger;
+import org.jetbrains.annotations.Contract;
 import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
@@ -25,15 +25,14 @@ public class IOUtils
                 {
                     if (inputStreamClient == null)
                     {
-                        throw new NullPointerException("Resource at path " + path + " not found!");
-                    }
-                    else
+                        Logger.error("Resource at path " + path + " not found!");
+                        return null;
+                    } else
                     {
                         return function.apply(inputStreamClient);
                     }
                 }
-            }
-            else
+            } else
             {
                 return function.apply(inputStream);
             }
@@ -45,7 +44,26 @@ public class IOUtils
         throw new NullPointerException("Couldn't read resource at " + path + "!");
     }
 
-    public static @NotNull String resourceToString(@NotNull InputStream file)
+    public static boolean resourceExists(String path)
+    {
+        try (InputStream inputStream = IOUtils.class.getModule().getResourceAsStream(path))
+        {
+            if (inputStream == null)
+            {
+                try (InputStream inputStreamClient = EntryPoint.application.getClass().getModule().getResourceAsStream(path))
+                {
+                    return inputStreamClient != null;
+                }
+            } else return true;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static String resourceToString(InputStream file)
     {
         StringBuilder stringBuilder = new StringBuilder();
         try
@@ -56,21 +74,22 @@ public class IOUtils
                 stringBuilder.append((char) data);
                 data = file.read();
             }
-        }catch (IOException e)
+        } catch (IOException e)
         {
             e.printStackTrace();
         }
         return stringBuilder.toString();
     }
 
-    public static @NotNull ByteBuffer resourceToByteBuffer(InputStream data, int initialCapacity)
+    public static ByteBuffer resourceToByteBuffer(InputStream data, int initialCapacity)
     {
         ByteBuffer buffer = null;
         try
         {
             ReadableByteChannel rbc = Channels.newChannel(data);
             buffer = createByteBuffer(initialCapacity);
-            while (true) {
+            while (true)
+            {
                 int bytes = rbc.read(buffer);
                 if (bytes == -1) break;
                 if (buffer.remaining() == 0)
@@ -78,12 +97,16 @@ public class IOUtils
                     buffer = resizeBuffer(buffer, buffer.capacity() * 3 / 2); // 50%
                 }
             }
-        }catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
         buffer.flip();
         return buffer;
     }
 
-    private static @NotNull ByteBuffer resizeBuffer(@NotNull ByteBuffer buffer, int newCapacity) {
+    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity)
+    {
         ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
         buffer.flip();
         newBuffer.put(buffer);

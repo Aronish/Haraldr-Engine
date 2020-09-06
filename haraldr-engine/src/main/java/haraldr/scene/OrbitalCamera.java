@@ -5,9 +5,8 @@ import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MouseScrolledEvent;
 import haraldr.event.WindowResizedEvent;
-import haraldr.input.Button;
+import haraldr.input.MouseButton;
 import haraldr.input.Input;
-import haraldr.input.Key;
 import haraldr.main.Window;
 import haraldr.math.Matrix4f;
 import haraldr.math.Vector3f;
@@ -21,7 +20,7 @@ public class OrbitalCamera extends Camera
     private Vector3f up = new Vector3f();
     private Vector3f target = new Vector3f(1f);
     private float pitch, lastPitch, yaw, fov = 60f, aspectRatio, near = 0.1f, far = 100f, zoom = 1f, lastX, lastY;
-    private boolean mouseHeld, shiftHeld;
+    private boolean rotating, moving;
 
     public OrbitalCamera(float width, float height)
     {
@@ -44,34 +43,31 @@ public class OrbitalCamera extends Camera
             aspectRatio = (float) windowResizedEvent.width / (float) windowResizedEvent.height;
             calculateProjectionMatrix();
         }
-        if (Input.wasMousePressed(event, Button.MOUSE_BUTTON_1)) mouseHeld = true;
-        if (Input.wasMouseReleased(event, Button.MOUSE_BUTTON_1)) mouseHeld = false;
-        if (Input.wasKeyPressed(event, Key.KEY_LEFT_SHIFT)) shiftHeld = true;
-        if (Input.wasKeyReleased(event, Key.KEY_LEFT_SHIFT)) shiftHeld = false;
+        if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1)) rotating = true;
+        if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1)) rotating = false;
+        if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_2)) moving = true;
+        if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_2)) moving = false;
         if (event.eventType == EventType.MOUSE_MOVED)
         {
             var mouseMovedEvent = (MouseMovedEvent) event;
-            if (mouseHeld)
+            if (rotating)
             {
-                if (shiftHeld)
-                {
-                    target.add(Vector3f.add(
-                            Vector3f.multiply(right, (float) (lastX - mouseMovedEvent.xPos) / window.getWidth()),
-                            Vector3f.multiply(up, (float) (mouseMovedEvent.yPos - lastY) / window.getHeight())
-                    ).multiply(MOVE_SPEED));
-                    calculateViewMatrix();
-                } else
-                {
-                    float yaw = (float) (mouseMovedEvent.xPos - lastX) / window.getWidth() * 360f;
-                    float pitch = (float) (mouseMovedEvent.yPos) / window.getHeight() * 180f - 90f;
-                    addYaw(yaw);
-                    addPitch(pitch - lastPitch);
-                }
+                float yaw = (float) (mouseMovedEvent.xPos - lastX) / window.getWidth() * 360f;
+                float pitch = (float) (mouseMovedEvent.yPos) / window.getHeight() * 180f - 90f;
+                addYaw(yaw);
+                addPitch(pitch - lastPitch);
+            }
+            if (moving)
+            {
+                target.add(Vector3f.add(
+                        Vector3f.multiply(right, (float) (lastX - mouseMovedEvent.xPos) / window.getWidth()),
+                        Vector3f.multiply(up, (float) (mouseMovedEvent.yPos - lastY) / window.getHeight())
+                ).multiply(MOVE_SPEED));
+                calculateViewMatrix();
             }
             lastPitch = (float)(mouseMovedEvent.yPos) / window.getHeight() * 180f - 90f;
             lastX = (float) mouseMovedEvent.xPos;
             lastY = (float) mouseMovedEvent.yPos;
-            //TODO: Reduce calculations
         }
         if (event.eventType == EventType.MOUSE_SCROLLED)
         {

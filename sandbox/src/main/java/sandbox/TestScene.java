@@ -8,7 +8,7 @@ import haraldr.event.Event;
 import haraldr.graphics.Renderer3D;
 import haraldr.graphics.lighting.PointLight;
 import haraldr.input.Input;
-import haraldr.input.Key;
+import haraldr.input.KeyboardKey;
 import haraldr.main.Window;
 import haraldr.math.Vector3f;
 import haraldr.scene.Scene3D;
@@ -41,10 +41,10 @@ public class TestScene extends Scene3D
     @Override
     protected void onClientUpdate(float deltaTime, Window window)
     {
-        if (Input.isKeyPressed(window, Key.KEY_UP))     Renderer3D.addExposure(deltaTime);
-        if (Input.isKeyPressed(window, Key.KEY_DOWN))   Renderer3D.addExposure(-deltaTime);
-        if (Input.isKeyPressed(window, Key.KEY_KP_9))   interpolation += 1f * deltaTime;
-        if (Input.isKeyPressed(window, Key.KEY_KP_7))   interpolation -= 1f * deltaTime;
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_UP))     Renderer3D.addExposure(deltaTime);
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_DOWN))   Renderer3D.addExposure(-deltaTime);
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_KP_9))   interpolation += 1f * deltaTime;
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_KP_7))   interpolation -= 1f * deltaTime;
         pointLight.setPosition(new Vector3f(Math.sin(interpolation), 0f, Math.cos(interpolation)));
     }
 

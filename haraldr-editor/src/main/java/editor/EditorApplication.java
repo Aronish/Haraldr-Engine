@@ -12,10 +12,12 @@ import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Renderer3D;
+import haraldr.graphics.ui.Button;
 import haraldr.graphics.ui.InfoLabel;
 import haraldr.graphics.ui.Pane;
+import haraldr.input.MouseButton;
 import haraldr.input.Input;
-import haraldr.input.Key;
+import haraldr.input.KeyboardKey;
 import haraldr.main.Application;
 import haraldr.main.ProgramArguments;
 import haraldr.main.Window;
@@ -25,7 +27,6 @@ import haraldr.math.Vector3f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics3D;
 import haraldr.scene.Camera;
-import haraldr.scene.FPSCamera;
 import haraldr.scene.OrbitalCamera;
 import haraldr.scene.Scene3D;
 
@@ -33,6 +34,7 @@ public class EditorApplication extends Application
 {
     private Pane propertiesPane;
     private InfoLabel entityId;
+    private Button centerCamera;
 
     private Camera editorCamera;
     private Scene3D scene;
@@ -51,37 +53,47 @@ public class EditorApplication extends Application
                 window.getWidth(), window.getHeight(),
                 0.25f,
                 0.3f,
+                true,
                 "Properties"
         );
-        entityId = new InfoLabel("Selected:", propertiesPane);
+        entityId = new InfoLabel("Selected", propertiesPane);
         propertiesPane.addChild(entityId);
+
+        centerCamera = new Button("Center Camera", propertiesPane, () ->
+        {
+            if (!selected.equals(Entity.INVALID))
+            {
+                editorCamera.setPosition(scene.getRegistry().getComponent(TransformComponent.class, selected).position);
+            }
+        });
+        propertiesPane.addChild(centerCamera);
 
         scene = new EditorTestScene();
         scene.onActivate();
-        editorCamera = new FPSCamera(window.getWidth(), window.getHeight());
-        window.setCursorVisibility(false);
+        editorCamera = new OrbitalCamera(window.getWidth(), window.getHeight());
     }
 
     @Override
     protected void clientEvent(Event event, Window window)
     {
         boolean handled = propertiesPane.onEvent(event, window); //TODO: Some kind of layering system to handle event fallthrough.
-        if (event.eventType == EventType.WINDOW_RESIZED)
-        {
-            var windowResizedEvent = (WindowResizedEvent) event;
-            propertiesPane.onWindowResized(windowResizedEvent.width, windowResizedEvent.height);
-        }
-        if (Input.wasKeyPressed(event, Key.KEY_ESCAPE)) stop();
-        if (Input.wasKeyPressed(event, Key.KEY_F)) window.toggleFullscreen();
+        if (Input.wasKeyPressed(event, KeyboardKey.KEY_ESCAPE)) stop();
+        if (Input.wasKeyPressed(event, KeyboardKey.KEY_F)) window.toggleFullscreen();
         if (event.eventType == EventType.MOUSE_PRESSED)
-        {/*
+        {
             var mousePressedEvent = (MousePressedEvent) event;
-            selected = selectEntity(mousePressedEvent.xPos, mousePressedEvent.yPos, window.getWidth(), window.getHeight(), selected, scene.getRegistry());
-            if (!selected.equals(Entity.INVALID))
+            if (Input.wasMousePressed(mousePressedEvent, MouseButton.MOUSE_BUTTON_1))
             {
-                editorCamera.setPosition(scene.getRegistry().getComponent(TransformComponent.class, selected).position);
+                selected = selectEntity(mousePressedEvent.xPos, mousePressedEvent.yPos, window.getWidth(), window.getHeight(), selected, scene.getRegistry());
+                if (!selected.equals(Entity.INVALID))
+                {
+                    entityId.setText(String.format("Entity ID: %d", selected.id));
+                } else
+                {
+                    entityId.setText("No entity selected");
+                }
             }
-        */}
+        }
         if (!handled)
         {
             editorCamera.onEvent(event, window);
@@ -137,13 +149,12 @@ public class EditorApplication extends Application
         Renderer3D.begin(window, editorCamera);
         scene.onRender();
         Renderer3D.end(window);
-/*
+
         Renderer.disableDepthTest();
         Renderer2D.begin();
         propertiesPane.render();
         Renderer2D.end();
         propertiesPane.renderText();
-*/
     }
 
     @Override

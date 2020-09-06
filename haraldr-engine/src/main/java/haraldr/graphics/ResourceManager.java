@@ -1,6 +1,7 @@
 package haraldr.graphics;
 
 import haraldr.graphics.ui.TextBatch;
+import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ public class ResourceManager
         return TEXTURES.get(path);
     }
 
+    @Contract(pure = true)
     public static boolean isTextureLoaded(String path)
     {
         return TEXTURES.containsKey(path);
@@ -52,6 +54,7 @@ public class ResourceManager
         return MESHES.get(path);
     }
 
+    @Contract(pure = true)
     public static boolean isMeshLoaded(String path)
     {
         return MESHES.containsKey(path);
@@ -67,6 +70,7 @@ public class ResourceManager
         return SHADERS.get(path);
     }
 
+    @Contract(pure = true)
     public static boolean isShaderLoaded(String path)
     {
         return SHADERS.containsKey(path);
@@ -82,6 +86,7 @@ public class ResourceManager
         return CUBEMAPS.get(path);
     }
 
+    @Contract(pure = true)
     public static boolean isCubeMapLoaded(String path)
     {
         return CUBEMAPS.containsKey(path);
@@ -97,7 +102,7 @@ public class ResourceManager
         TEXTURES.forEach((key, texture) -> texture.delete());
         MESHES.forEach((key, mesh) -> mesh.delete());
         SHADERS.forEach((key, shader) -> shader.delete());
-        //CUBEMAPS.forEach((key, cubeMap) -> cubeMap.delete());
+        CUBEMAPS.forEach((key, cubeMap) -> cubeMap.delete());
         TEXT_BATCHES.forEach(TextBatch::dispose);
     }
 }

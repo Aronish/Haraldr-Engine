@@ -1,5 +1,7 @@
 package haraldr.main;
 
+import org.jetbrains.annotations.Contract;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +14,7 @@ public class ProgramArguments
         programArguments.put(argument, value);
     }
 
+    @Contract(pure = true)
     public static boolean isArgumentSet(String argument)
     {
         return programArguments.containsKey(argument);

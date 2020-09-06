@@ -10,12 +10,12 @@ import haraldr.main.Window;
 import haraldr.math.Matrix4f;
 import haraldr.math.Vector3f;
 
-import static haraldr.input.Key.KEY_A;
-import static haraldr.input.Key.KEY_C;
-import static haraldr.input.Key.KEY_D;
-import static haraldr.input.Key.KEY_S;
-import static haraldr.input.Key.KEY_SPACE;
-import static haraldr.input.Key.KEY_W;
+import static haraldr.input.KeyboardKey.KEY_A;
+import static haraldr.input.KeyboardKey.KEY_C;
+import static haraldr.input.KeyboardKey.KEY_D;
+import static haraldr.input.KeyboardKey.KEY_S;
+import static haraldr.input.KeyboardKey.KEY_SPACE;
+import static haraldr.input.KeyboardKey.KEY_W;
 
 @SuppressWarnings("unused")
 public class FPSCamera extends Camera

@@ -4,7 +4,7 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Renderer2D;
-import haraldr.input.Button;
+import haraldr.input.MouseButton;
 import haraldr.input.Input;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -52,7 +52,7 @@ public class Checkbox extends LabeledComponent
     {
         if (event.eventType == EventType.MOUSE_PRESSED)
         {
-            if (Input.wasMousePressed(event, Button.MOUSE_BUTTON_1))
+            if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
             {
                 var mousePressedEvent = (MousePressedEvent) event;
                 if (mousePressedEvent.xPos > boxPosition.getX() &&

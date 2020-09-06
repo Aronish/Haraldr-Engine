@@ -142,7 +142,7 @@ public class Texture
             result.width = width.get();
             result.height = height.get();
             int components = comps.get();
-            if (EntryPoint.DEBUG) Logger.info(String.format("Loaded texture %s | Width: %d, Height: %d, Components: %d", path, result.width, result.height, components));
+            Logger.info(String.format("Loaded texture %s | Width: %d, Height: %d, Components: %d", path, result.width, result.height, components));
             switch (components)
             {
                 case 1 -> {

@@ -3,7 +3,7 @@ package haraldr.input;
 import org.lwjgl.glfw.GLFW;
 
 @SuppressWarnings("unused")
-public enum Key
+public enum KeyboardKey
 {
     /////PRINTABLE KEYS///////////////////////
     KEY_SPACE			(GLFW.GLFW_KEY_SPACE),
@@ -131,7 +131,7 @@ public enum Key
 
     public final int keyCode;
 
-    Key(int keyCode)
+    KeyboardKey(int keyCode)
     {
         this.keyCode = keyCode;
     }

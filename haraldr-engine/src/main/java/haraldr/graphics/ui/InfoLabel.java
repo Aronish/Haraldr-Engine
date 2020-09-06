@@ -7,13 +7,20 @@ import haraldr.math.Vector4f;
 public class InfoLabel extends LabeledComponent
 {
     private Vector2f valueLabelPosition = new Vector2f();
-    private String value = "6789";
+    private String value = "";
     private TextLabel valueLabel;
 
     public InfoLabel(String name, Pane parent)
     {
         super(name, parent);
-        valueLabel = parent.textBatch.createTextLabel(value, valueLabelPosition, new Vector4f(41f));
+        valueLabel = parent.textBatch.createTextLabel(value, valueLabelPosition, new Vector4f(1f));
+    }
+
+    public void setText(String text)
+    {
+        value = text;
+        valueLabel.setText(value);
+        parent.textBatch.refreshTextMeshData();
     }
 
     @Override

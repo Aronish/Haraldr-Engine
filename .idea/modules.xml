@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/haraldr-editor/haraldr-editor.iml" filepath="$PROJECT_DIR$/haraldr-editor/haraldr-editor.iml" />
       <module fileurl="file://$PROJECT_DIR$/haraldr-engine/haraldr-engine.iml" filepath="$PROJECT_DIR$/haraldr-engine/haraldr-engine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/haraldr-offline-renderer/haraldr-offline-renderer.iml" filepath="$PROJECT_DIR$/haraldr-offline-renderer/haraldr-offline-renderer.iml" />
       <module fileurl="file://$PROJECT_DIR$/oldgame/oldgame.iml" filepath="$PROJECT_DIR$/oldgame/oldgame.iml" />
       <module fileurl="file://$PROJECT_DIR$/sandbox/sandbox.iml" filepath="$PROJECT_DIR$/sandbox/sandbox.iml" />
     </modules>

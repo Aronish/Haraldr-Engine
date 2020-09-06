@@ -33,7 +33,7 @@ public class ObjParser
         else
         {
             VertexArray mesh = IOUtils.readResource(path, ObjParser::loadMesh);
-            if (EntryPoint.DEBUG) Logger.info("Loaded mesh " + path);
+            Logger.info("Loaded mesh " + path);
             ResourceManager.addMesh(path, mesh);
             return mesh;
         }

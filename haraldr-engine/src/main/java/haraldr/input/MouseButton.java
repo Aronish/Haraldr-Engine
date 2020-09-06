@@ -3,7 +3,7 @@ package haraldr.input;
 import org.lwjgl.glfw.GLFW;
 
 @SuppressWarnings("unused")
-public enum Button
+public enum MouseButton
 {
     MOUSE_BUTTON_1			(GLFW.GLFW_MOUSE_BUTTON_1),
     MOUSE_BUTTON_2			(GLFW.GLFW_MOUSE_BUTTON_2),
@@ -20,7 +20,7 @@ public enum Button
 
     public final int buttonCode;
 
-    Button(int buttonCode)
+    MouseButton(int buttonCode)
     {
         this.buttonCode = buttonCode;
     }

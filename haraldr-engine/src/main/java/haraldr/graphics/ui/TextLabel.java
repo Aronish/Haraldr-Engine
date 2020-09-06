@@ -41,6 +41,11 @@ public class TextLabel
         this.position = Vector2f.add(position, new Vector2f(0f, font.getSize() - font.getBaseline()));
     }
 
+    public void setColor(Vector4f color)
+    {
+        this.color = color;
+    }
+
     public Font getFont()
     {
         return font;

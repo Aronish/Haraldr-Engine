@@ -1,11 +1,12 @@
-package haraldr.graphics;
+package offlinerenderer;
 
 import haraldr.debug.Logger;
+import haraldr.graphics.DefaultModels;
+import haraldr.graphics.Shader;
 import haraldr.main.EntryPoint;
 import haraldr.main.IOUtils;
 import haraldr.math.Matrix4f;
 import haraldr.math.Vector3f;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
@@ -13,15 +14,14 @@ import org.lwjgl.system.MemoryStack;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.lwjgl.opengl.GL11.GL_ALWAYS;
 import static org.lwjgl.opengl.GL11.GL_BACK;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_FRONT;
-import static org.lwjgl.opengl.GL11.GL_LEQUAL;
-import static org.lwjgl.opengl.GL11.GL_LESS;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_LINEAR_MIPMAP_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_RGB;
@@ -35,8 +35,6 @@ import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glCullFace;
 import static org.lwjgl.opengl.GL11.glDeleteTextures;
-import static org.lwjgl.opengl.GL11.glDepthFunc;
-import static org.lwjgl.opengl.GL11.glStencilFunc;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -65,49 +63,19 @@ import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
 import static org.lwjgl.opengl.GL45.glBindTextureUnit;
 import static org.lwjgl.opengl.GL45.glCreateTextures;
 
-public class CubeMap
+public class CubeMapGenerator
 {
     private static final Shader MAP_DIFFUSE_IRRADIANCE  = Shader.create("internal_shaders/map_diffuse_irradiance.glsl");
     private static final Shader PREFILTER_CONVOLUTION   = Shader.create("internal_shaders/prefilter_convolution.glsl");
     private static final Shader MAP_CUBEMAP             = Shader.create("internal_shaders/map_cubemap.glsl");
-    private static final Shader SKYBOX                  = Shader.create("default_shaders/skybox.glsl");
 
-    private int cubeMapId;
+    private static Map<String, GeneratedCubeMap> generatedCubeMaps = new HashMap<>();
 
-    @Contract(pure = true)
-    private CubeMap(int cubeMapId)
+    public static GeneratedCubeMap createEnvironmentMap(String path)
     {
-        this.cubeMapId = cubeMapId;
-    }
-
-    public void bind(int unit)
-    {
-        glBindTextureUnit(unit, cubeMapId);
-    }
-
-    public void unbind(int unit)
-    {
-        glBindTextureUnit(unit, 0);
-    }
-
-    public void renderSkyBox()
-    {
-        glDepthFunc(GL_LEQUAL);
-        glCullFace(GL_FRONT);
-        glStencilFunc(GL_ALWAYS, 0, -1);
-        SKYBOX.bind();
-        glBindTextureUnit(0, cubeMapId);
-        DefaultModels.CUBE.bind();
-        DefaultModels.CUBE.drawElements();
-        glDepthFunc(GL_LESS);
-        glCullFace(GL_BACK);
-    }
-
-    public static @NotNull CubeMap createEnvironmentMap(String path)
-    {
-        if (ResourceManager.isCubeMapLoaded(path))
+        if (generatedCubeMaps.containsKey(path))
         {
-            return ResourceManager.getLoadedCubeMap(path);
+            return generatedCubeMaps.get(path);
         }
         else
         {
@@ -138,7 +106,8 @@ public class CubeMap
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             STBImage.stbi_image_free(image);
 
-            int environmentMap = mapToCubeMap(MAP_CUBEMAP, (Shader mappingShader, int framebuffer, int depthRenderBuffer, int colorAttachment, int unused, Matrix4f[] mappingViews, int unused2) ->
+            GeneratedCubeMap cubeMap = new GeneratedCubeMap(mapToCubeMap(MAP_CUBEMAP, texture, size, true,
+            (Shader mappingShader, int framebuffer, int depthRenderBuffer, int colorAttachment, int textureToMap, Matrix4f[] mappingViews, int cubeFaceSize) ->
             {
                 for (int i = 0; i < 6; ++i)
                 {
@@ -148,55 +117,58 @@ public class CubeMap
                     DefaultModels.CUBE.bind();
                     DefaultModels.CUBE.drawElements();
                 }
-            }, texture, size, true);
+            }), size, path);
+            glDeleteTextures(texture);
             glGenerateMipmap(GL_TEXTURE_CUBE_MAP); // Do this after having set the textures. Used by other pbr maps.
 
-            CubeMap cubeMap = new CubeMap(environmentMap);
-            ResourceManager.addCubeMap(path, cubeMap);
+            generatedCubeMaps.put(path, cubeMap);
             Logger.info(String.format("Generated environment map from %s", path));
             return cubeMap;
         }
     }
 
-    public static @NotNull CubeMap createDiffuseIrradianceMap(@NotNull CubeMap environmentMap)
+    public static @NotNull GeneratedCubeMap createDiffuseIrradianceMap(@NotNull GeneratedCubeMap environmentMap, int size)
     {
-        if (ResourceManager.isCubeMapLoaded("DIF_IRR_" + environmentMap.cubeMapId))
+        String name = "DIFF_IRR_" + environmentMap.getCubeMapId();
+        if (generatedCubeMaps.containsKey(name))
         {
-            return ResourceManager.getLoadedCubeMap("DIF_IRR_" + environmentMap.cubeMapId);
+            return generatedCubeMaps.get(name);
         }
         else
         {
-            int size = 32;
-            CubeMap cubeMap = new CubeMap(mapToCubeMap(MAP_DIFFUSE_IRRADIANCE, (Shader mappingShader, int framebuffer, int depthRenderBuffer, int colorAttachment, int unused, Matrix4f[] mappingViews, int unused2) ->
+            GeneratedCubeMap cubeMap = new GeneratedCubeMap(mapToCubeMap(MAP_DIFFUSE_IRRADIANCE, environmentMap.getCubeMapId(), size, false,
+            (Shader mappingShader, int framebuffer, int depthRenderBuffer, int mapTarget, int textureToMap, Matrix4f[] mappingViews, int cubeFaceSize) ->
             {
+                glBindTextureUnit(0, textureToMap);
                 for (int i = 0; i < 6; ++i)
                 {
                     mappingShader.setMatrix4f("mappingView", mappingViews[i]);
-                    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, colorAttachment, 0);
+                    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, mapTarget, 0);
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                     DefaultModels.CUBE.bind();
                     DefaultModels.CUBE.drawElements();
                 }
-            }, environmentMap.cubeMapId, size, false));
-            ResourceManager.addCubeMap("DIF_IRR_" + environmentMap.cubeMapId, cubeMap);
-            Logger.info(String.format("Generated diffuse irradiance map DIF_IRR_%d | Size: %d", cubeMap.cubeMapId, size));
+            }), size, name);
+            generatedCubeMaps.put(name, cubeMap);
+            Logger.info(String.format("Generated diffuse irradiance map DIF_IRR_%d | Size: %d", cubeMap.getCubeMapId(), size));
             return cubeMap;
         }
     }
 
-    public static @NotNull CubeMap createPrefilteredEnvironmentMap(@NotNull CubeMap environmentMap)
+    public static @NotNull GeneratedCubeMap createPrefilteredEnvironmentMap(@NotNull GeneratedCubeMap environmentMap, int size)
     {
-        if (ResourceManager.isCubeMapLoaded("PREF_" + environmentMap.cubeMapId))
+        String name = "PREF_" + environmentMap.getCubeMapId();
+        if (generatedCubeMaps.containsKey(name))
         {
-            return ResourceManager.getLoadedCubeMap("PREF_" + environmentMap.cubeMapId);
+            return generatedCubeMaps.get(name);
         }
         else
         {
-            int size = 128;
-            CubeMap cubeMap = new CubeMap(mapToCubeMap(PREFILTER_CONVOLUTION, (Shader mappingShader, int framebuffer, int depthRenderBuffer, int colorAttachment, int originalEnvironmentMap, Matrix4f[] mappingViews, int cubeFaceSize) ->
+            GeneratedCubeMap cubeMap = new GeneratedCubeMap(mapToCubeMap(PREFILTER_CONVOLUTION, environmentMap.getCubeMapId(), size, true,
+            (Shader mappingShader, int framebuffer, int depthRenderBuffer, int mapTarget, int textureToMap, Matrix4f[] mappingViews, int cubeFaceSize) ->
             {
                 glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-                glBindTextureUnit(0, originalEnvironmentMap);
+                glBindTextureUnit(0, textureToMap);
                 int maxMipLevels = 5;
                 for (int mip = 0; mip < maxMipLevels; ++mip)
                 {
@@ -210,25 +182,25 @@ public class CubeMap
                     for (int i = 0; i < 6; ++i)
                     {
                         mappingShader.setMatrix4f("mappingView", mappingViews[i]);
-                        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, colorAttachment, mip);
+                        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, mapTarget, mip);
                         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                         DefaultModels.CUBE.bind();
                         DefaultModels.CUBE.drawElements();
                     }
                 }
-            }, environmentMap.cubeMapId, size, true));
-            ResourceManager.addCubeMap("PREF_" + environmentMap.cubeMapId, cubeMap);
-            Logger.info(String.format("Generated prefiltered environment map PREF_%d | Size: %d", cubeMap.cubeMapId, size));
+            }), size, name);
+            generatedCubeMaps.put(name, cubeMap);
+            Logger.info(String.format("Generated prefiltered environment map PREF_%d | Size: %d", cubeMap.getCubeMapId(), size));
             return cubeMap;
         }
     }
 
-    private static int mapToCubeMap(Shader mappingShader, MappingFunction mappingFunction, int environmentMap, int size, boolean mipmaps)
+    private static int mapToCubeMap(Shader mappingShader, int textureToMap, int cubeFaceSize, boolean mipmaps, MappingFunction mappingFunction)
     {
         //Create framebuffer for mapping
         int mappingFrameBuffer = glGenFramebuffers(), depthRenderBuffer = glGenRenderbuffers();
         glBindRenderbuffer(GL_RENDERBUFFER, depthRenderBuffer);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, size, size); //Assuming 2:1 equirectangular
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, cubeFaceSize, cubeFaceSize); //Assuming 2:1 equirectangular
         glBindFramebuffer(GL_FRAMEBUFFER, mappingFrameBuffer);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderBuffer);
         if (EntryPoint.DEBUG)
@@ -237,8 +209,8 @@ public class CubeMap
         }
 
         //Allocating memory for cubemap
-        int cubemap = glCreateTextures(GL_TEXTURE_CUBE_MAP);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
+        int mapTarget = glCreateTextures(GL_TEXTURE_CUBE_MAP);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, mapTarget);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -246,7 +218,7 @@ public class CubeMap
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         for (int i = 0; i < 6; ++i)
         {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, size, size, 0, GL_RGB, GL_FLOAT, 0);
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, cubeFaceSize, cubeFaceSize, 0, GL_RGB, GL_FLOAT, 0);
         }
         glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
         //A list of views for all cube faces
@@ -264,28 +236,28 @@ public class CubeMap
         mappingShader.setMatrix4f("model", Matrix4f.identity().scale(new Vector3f(0.5f))); //(Cube .obj is two units in size)
         mappingShader.setMatrix4f("mappingProjection", mappingProjection);
 
-        glViewport(0, 0, size, size);
+        glViewport(0, 0, cubeFaceSize, cubeFaceSize);
         glClearColor(1f, 1f, 1f, 1f);
         glCullFace(GL_FRONT);
 
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
-        mappingFunction.map(mappingShader, mappingFrameBuffer, depthRenderBuffer, cubemap, environmentMap, mappingViews, size);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, mapTarget);
+        mappingFunction.map(mappingShader, mappingFrameBuffer, depthRenderBuffer, mapTarget, textureToMap, mappingViews, cubeFaceSize);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glDeleteFramebuffers(mappingFrameBuffer);
         glDeleteRenderbuffers(depthRenderBuffer);
         glCullFace(GL_BACK);
-        return cubemap;
+        return mapTarget;
     }
 
-    public void delete()
+    public static void dispose()
     {
-        glDeleteTextures(cubeMapId);
+        generatedCubeMaps.forEach((key, value) -> value.delete());
     }
 
     @FunctionalInterface
     private interface MappingFunction
     {
-        void map(Shader mappingShader, int framebuffer, int depthRenderBuffer, int colorAttachment, int environmentMap, Matrix4f[] mappingViews, int cubeFaceSize);
+        void map(Shader mappingShader, int framebuffer, int depthRenderBuffer, int mapTarget, int textureToMap, Matrix4f[] mappingViews, int cubeFaceSize);
     }
 }

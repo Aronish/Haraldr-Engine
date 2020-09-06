@@ -5,7 +5,7 @@ import haraldr.event.EventType;
 import haraldr.event.KeyEvent;
 import haraldr.event.MouseScrolledEvent;
 import haraldr.input.Input;
-import haraldr.input.Key;
+import haraldr.input.KeyboardKey;
 import haraldr.main.Window;
 import haraldr.math.Vector3f;
 import oldgame.gameobject.Player;
@@ -26,45 +26,45 @@ public class EventHandler
     public void processInput(GameCamera camera, Window window, @NotNull Player player, World world)
     {
         player.setMovementType(PlayerMovementType.STAND);
-        player.setRunning(Input.isKeyPressed(window, Key.KEY_LEFT_SHIFT));
-        player.setBoosting(Input.isKeyPressed(window, Key.KEY_LEFT_CONTROL));
-        if (Input.isKeyPressed(window, Key.KEY_A))
+        player.setRunning(Input.isKeyPressed(window, KeyboardKey.KEY_LEFT_SHIFT));
+        player.setBoosting(Input.isKeyPressed(window, KeyboardKey.KEY_LEFT_CONTROL));
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_A))
         {
             player.setMovementType(PlayerMovementType.LEFT);
         }
-        if (Input.isKeyPressed(window, Key.KEY_D))
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_D))
         {
             player.setMovementType(PlayerMovementType.RIGHT);
         }
-        if (Input.isKeyPressed(window, Key.KEY_R))
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_R))
         {
             player.resetGravityAcceleration();
             player.resetPosition();
             camera.setScale(1.0f);
             camera.setPosition(Vector3f.add(player.getPosition(), player.getGameObjectType().getModel().getAABB().getMiddle()));
         }
-        if (Input.isKeyPressed(window, Key.KEY_C))
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_C))
         {
             player.setHasGravity(false);
         }
-        if (Input.isKeyPressed(window, Key.KEY_V))
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_V))
         {
             player.resetGravityAcceleration();
             player.setHasGravity(true);
         }
-        if (Input.isKeyPressed(window, Key.KEY_Z))
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_Z))
         {
             world.resetNoiseScale();
         }
-        if (Input.isKeyPressed(window, Key.KEY_LEFT))
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_LEFT))
         {
             world.increaseNoiseScale(0.001d);
         }
-        if (Input.isKeyPressed(window, Key.KEY_RIGHT))
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_RIGHT))
         {
             world.increaseNoiseScale(-0.001d);
         }
-        if (Input.isKeyPressed(window, Key.KEY_SPACE))
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_SPACE))
         {
             if (!player.isFalling())
             {
@@ -72,11 +72,11 @@ public class EventHandler
                 player.setFalling(true);
             }
         }
-        if (Input.isKeyPressed(window, Key.KEY_G))
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_G))
         {
             world.generateWorld();
         }
-        if (Input.isKeyPressed(window, Key.KEY_H))
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_H))
         {
             world.getGrid().clear();
         }
@@ -86,7 +86,7 @@ public class EventHandler
     {
         if (event.eventType == EventType.KEY_PRESSED)
         {
-            if (event.keyCode == Key.KEY_B.keyCode)
+            if (event.keyCode == KeyboardKey.KEY_B.keyCode)
             {
                 window.setVSync(!window.vSyncOn());
                 Logger.info("VSync: " + window.vSyncOn());

@@ -27,7 +27,7 @@ public class EditorTestScene extends Scene3D
         setSceneLights(
                 pointLight
         );
-        setSkyBox(CubeMap.createEnvironmentMap("default_hdris/wooden_lounge_4k.hdr"));
+        setSkyBox(CubeMap.createEnvironmentMap("default_hdris/w.hdr"));
         new ModelComponent("default_models/model.json");
         registry.addComponent(new ModelComponent("default_models/model.json"), ape);
         registry.addComponent(new BoundingSphereComponent(0.75f), ape);

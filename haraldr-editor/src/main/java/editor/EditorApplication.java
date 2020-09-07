@@ -27,6 +27,7 @@ import haraldr.math.Vector3f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics3D;
 import haraldr.scene.Camera;
+import haraldr.scene.FPSCamera;
 import haraldr.scene.OrbitalCamera;
 import haraldr.scene.Scene3D;
 
@@ -70,7 +71,8 @@ public class EditorApplication extends Application
 
         scene = new EditorTestScene();
         scene.onActivate();
-        editorCamera = new OrbitalCamera(window.getWidth(), window.getHeight());
+        editorCamera = new FPSCamera(window.getWidth(), window.getHeight());
+        window.setCursorVisibility(false);
     }
 
     @Override
@@ -84,7 +86,7 @@ public class EditorApplication extends Application
             var mousePressedEvent = (MousePressedEvent) event;
             if (Input.wasMousePressed(mousePressedEvent, MouseButton.MOUSE_BUTTON_1))
             {
-                selected = selectEntity(mousePressedEvent.xPos, mousePressedEvent.yPos, window.getWidth(), window.getHeight(), selected, scene.getRegistry());
+                //selected = selectEntity(mousePressedEvent.xPos, mousePressedEvent.yPos, window.getWidth(), window.getHeight(), selected, scene.getRegistry());
                 if (!selected.equals(Entity.INVALID))
                 {
                     entityId.setText(String.format("Entity ID: %d", selected.id));

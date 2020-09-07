@@ -4,6 +4,7 @@ import haraldr.graphics.Texture;
 import haraldr.main.IOUtils;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTAlignedQuad;
@@ -207,12 +208,13 @@ public class Font
         fontAtlas.bind(unit);
     }
 
+    @Contract(pure = true)
     private static float scale(float center, float offset, float factor)
     {
         return (offset - center) * factor + center;
     }
 
-    private static int getCodePoint(@NotNull String text, int to, int i, IntBuffer codePointOut)
+    private static int getCodePoint(String text, int to, int i, IntBuffer codePointOut)
     {
         char c1 = text.charAt(i);
         if (Character.isHighSurrogate(c1) && i + 1 < to)

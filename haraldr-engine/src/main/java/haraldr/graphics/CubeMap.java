@@ -153,7 +153,7 @@ public class CubeMap
 
             CubeMap cubeMap = new CubeMap(environmentMap);
             ResourceManager.addCubeMap(path, cubeMap);
-            Logger.info(String.format("Generated environment map from %s", path));
+            Logger.info("Generated environment map from " + path);
             return cubeMap;
         }
     }
@@ -192,7 +192,7 @@ public class CubeMap
         }
         else
         {
-            int size = 128;
+            int size = 512;
             CubeMap cubeMap = new CubeMap(mapToCubeMap(PREFILTER_CONVOLUTION, (Shader mappingShader, int framebuffer, int depthRenderBuffer, int colorAttachment, int originalEnvironmentMap, Matrix4f[] mappingViews, int cubeFaceSize) ->
             {
                 glGenerateMipmap(GL_TEXTURE_CUBE_MAP);

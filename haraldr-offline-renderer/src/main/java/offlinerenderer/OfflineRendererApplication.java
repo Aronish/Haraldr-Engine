@@ -12,8 +12,8 @@ import haraldr.main.Application;
 import haraldr.main.IOUtils;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
-import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.tinyexr.EXRChannelInfo;
 import org.lwjgl.util.tinyexr.EXRHeader;
@@ -21,18 +21,11 @@ import org.lwjgl.util.tinyexr.EXRImage;
 import org.lwjgl.util.tinyexr.TinyEXR;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_RGB;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glGetTexImage;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -45,7 +38,7 @@ public class OfflineRendererApplication extends Application
     private InputField sourcePath;
     private InputField diffuseIrradianceMapSize;
     private InputField prefilteredEnvironmentMapSize;
-    private InputField exportPath;
+    private InputField exportName;
     private InfoLabel environmentMapData;
     private InfoLabel diffuseIrradianceMapData;
     private InfoLabel prefilteredEnvironmentMapdata;
@@ -57,7 +50,6 @@ public class OfflineRendererApplication extends Application
     private GeneratedCubeMap environmentMap;
     private GeneratedCubeMap diffuseIrradianceMap;
     private GeneratedCubeMap prefilteredEnvironmentMap;
-    private int diffIrrSize = 32, prefSize = 128;
     private boolean diffIrrSizeValid, prefSizeValid;
 
     public OfflineRendererApplication()
@@ -75,7 +67,26 @@ public class OfflineRendererApplication extends Application
                 false,
                 "Haraldr Offline Renderer"
         );
+        //Original environment map
         sourcePath = new InputField("Equirectangular HDR path", mainPane);
+        loadHdr = new Button("Load HDR", mainPane, () ->
+        {
+            if (IOUtils.resourceExists(sourcePath.getValue()) && sourcePath.getValue().endsWith("hdr"))
+            {
+                environmentMap = CubeMapGenerator.createEnvironmentMap(sourcePath.getValue());
+                environmentMapData.setText("Loaded: " + environmentMap.getName() + " | Size: " + environmentMap.getSize());
+                glViewport(0, 0, window.getWidth(), window.getHeight());
+            } else
+            {
+                generateIblMaps.setEnabled(false);
+                environmentMapData.setText("");
+                diffuseIrradianceMapData.setText("");
+                prefilteredEnvironmentMapdata.setText("");
+            }
+        });
+        environmentMapData = new InfoLabel("Environment Map", mainPane);
+
+        //IBL maps
         diffuseIrradianceMapSize = new InputField("Diffuse Irradiance Map Size", mainPane, InputField.InputType.NUMBERS, (addedChar, fullText) ->
         {
             if (fullText.length() > 0 && fullText.length() <= 4)
@@ -95,51 +106,44 @@ public class OfflineRendererApplication extends Application
             checkReadiness();
         });
 
-        environmentMapData = new InfoLabel("Environment Map", mainPane);
+        readyToGenerateIblMaps = new InfoLabel("Ready to generate?", mainPane);
         diffuseIrradianceMapData = new InfoLabel("Diffuse Irradiance Map", mainPane);
         prefilteredEnvironmentMapdata = new InfoLabel("Prefiltered Map", mainPane);
-        readyToGenerateIblMaps = new InfoLabel("Ready to generate?", mainPane);
 
         generateIblMaps = new Button("Generate IBL maps", mainPane, () ->
         {
-            diffuseIrradianceMap = CubeMapGenerator.createDiffuseIrradianceMap(environmentMap, diffIrrSize);
-            prefilteredEnvironmentMap = CubeMapGenerator.createPrefilteredEnvironmentMap(environmentMap, prefSize);
-            diffuseIrradianceMapData.setText(diffuseIrradianceMap.getName() +  " | Size: " + diffuseIrradianceMap.getSize());
-            prefilteredEnvironmentMapdata.setText(prefilteredEnvironmentMap.getName() + " | Size: " + prefilteredEnvironmentMap.getSize());
+            diffuseIrradianceMap = CubeMapGenerator.createDiffuseIrradianceMap(environmentMap, Integer.parseInt(diffuseIrradianceMapSize.getValue()));
+            prefilteredEnvironmentMap = CubeMapGenerator.createPrefilteredEnvironmentMap(environmentMap, Integer.parseInt(prefilteredEnvironmentMapSize.getValue()));
+            diffuseIrradianceMapData.setText("Loaded: " + diffuseIrradianceMap.getName() +  " | Size: " + diffuseIrradianceMap.getSize());
+            prefilteredEnvironmentMapdata.setText("Loaded: " + prefilteredEnvironmentMap.getName() + " | Size: " + prefilteredEnvironmentMap.getSize());
             glViewport(0, 0, window.getWidth(), window.getHeight());
         });
         generateIblMaps.setEnabled(false);
 
-        loadHdr = new Button("Load HDR", mainPane, () ->
+        //Export options
+        exportName = new InputField("Name", mainPane, ((addedChar, fullText) ->
         {
-            if (IOUtils.resourceExists(sourcePath.getValue()) && sourcePath.getValue().endsWith("hdr"))
-            {
-                environmentMap = CubeMapGenerator.createEnvironmentMap(sourcePath.getValue());
-                environmentMapData.setText(environmentMap.getName() + " | Size: " + environmentMap.getSize());
-                glViewport(0, 0, window.getWidth(), window.getHeight());
-                generateIblMaps.setEnabled(true);
-            } else
-            {
-                generateIblMaps.setEnabled(false);
-                environmentMapData.setText("");
-                diffuseIrradianceMapData.setText("");
-                prefilteredEnvironmentMapdata.setText("");
-            }
+            export.setEnabled(fullText.length() > 0 && diffuseIrradianceMap != null && prefilteredEnvironmentMap != null);
+        }));
+        export = new Button("Export Maps", mainPane, () ->
+        {
+            exportCubeMap(diffuseIrradianceMap, exportName.getValue() + "_DIFF_IRR.exr");
+            exportCubeMap(prefilteredEnvironmentMap, exportName.getValue() + "_PREF.exr");
         });
-
-        exportPath = new InputField("Export path", mainPane);
-        export = new Button("Export Maps", mainPane, this::exportMaps);
+        export.setEnabled(false);
 
         mainPane.addChild(sourcePath);
         mainPane.addChild(loadHdr);
         mainPane.addChild(environmentMapData);
+
         mainPane.addChild(diffuseIrradianceMapSize);
         mainPane.addChild(prefilteredEnvironmentMapSize);
         mainPane.addChild(readyToGenerateIblMaps);
         mainPane.addChild(generateIblMaps);
         mainPane.addChild(diffuseIrradianceMapData);
         mainPane.addChild(prefilteredEnvironmentMapdata);
-        mainPane.addChild(exportPath);
+
+        mainPane.addChild(exportName);
         mainPane.addChild(export);
         checkReadiness();
 
@@ -148,122 +152,117 @@ public class OfflineRendererApplication extends Application
 
     private void checkReadiness()
     {
-        if (diffIrrSizeValid && prefSizeValid)
+        if (diffIrrSizeValid && prefSizeValid && environmentMap != null)
         {
             readyToGenerateIblMaps.setText("Ready!");
             generateIblMaps.setEnabled(true);
         } else
         {
-            readyToGenerateIblMaps.setText("Invalid sizes! Must be powers of two (2 - 8192)");
+            readyToGenerateIblMaps.setText("Sizes must be powers of two (2 - 8192) and HDR has to be loaded!");
             generateIblMaps.setEnabled(false);
         }
     }
 
-    private void exportMaps()
+    private void exportCubeMap(GeneratedCubeMap cubeMap, String name)
     {
-        //TODO: Found this example (there is basically nothing on the internet about this lib):
-        //http://forum.lwjgl.org/index.php?topic=6757.0
-        EXRHeader header = EXRHeader.create();
-        TinyEXR.InitEXRHeader(header);
+        String path = "C:/dev/Haraldr-Engine/haraldr-offline-renderer/src/main/resources/output/" + name;
 
-        EXRImage image = EXRImage.create();
-        TinyEXR.InitEXRImage(image);
-        image.num_channels(3);
+        //Load cubemap faces
+        int width = cubeMap.getSize();
+        int height = cubeMap.getSize();
 
-        List<List<Float>> images = new ArrayList<>(3);
-        images.add(Stream.generate(() -> 0f).limit(environmentMap.getSize() * environmentMap.getSize()).collect(Collectors.toList()));
-        images.add(Stream.generate(() -> 0f).limit(environmentMap.getSize() * environmentMap.getSize()).collect(Collectors.toList()));
-        images.add(Stream.generate(() -> 0f).limit(environmentMap.getSize() * environmentMap.getSize()).collect(Collectors.toList()));
+        FloatBuffer[] faceData = new FloatBuffer[6]; //Hold raw pixel data from OpenGL
+        int lineOffset = width * 4;
 
-        FloatBuffer data = MemoryUtil.memAllocFloat(environmentMap.getSize() * environmentMap.getSize() * 4 * 2);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, environmentMap.getCubeMapId());
-        glGetTexImage(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGB, GL_FLOAT, data);
-
-        for (int i = 0; i < environmentMap.getSize() * environmentMap.getSize(); ++i)
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap.getCubeMapId());
+        for (int i = 0; i < faceData.length; ++i)
         {
-            images.get(0).set(i, data.get(3 * i));
-            images.get(1).set(i, data.get(3 * i + 1));
-            images.get(2).set(i, data.get(3 * i + 2));
+            FloatBuffer face = MemoryUtil.memAllocFloat(cubeMap.getSize() * cubeMap.getSize() * 3 * 2);
+            glGetTexImage(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, GL_FLOAT, face); //OpenGL stores in RGBA even without alpha.
+            faceData[i] = face;
         }
 
-        try (MemoryStack stack = MemoryStack.stackPush())
+        float[][] channelData = new float[3][faceData.length * width * height]; //Holds raw pixel data for each color channel
+
+        for (int i = 0; i < faceData.length * width * height; ++i) //Separate color channels from all faces
         {
-            PointerBuffer imagePtr = stack.mallocPointer(3);
-            imagePtr.put(0, ByteBuffer.allocateDirect(images.get(2).size()).order(ByteOrder.nativeOrder()).asFloatBuffer());
-            imagePtr.put(1, ByteBuffer.allocateDirect(images.get(1).size()).order(ByteOrder.nativeOrder()).asFloatBuffer());
-            imagePtr.put(2, ByteBuffer.allocateDirect(images.get(0).size()).order(ByteOrder.nativeOrder()).asFloatBuffer());
-            image.images(imagePtr);
-            image.width(environmentMap.getSize());
-            image.height(environmentMap.getSize());
+            int face = i / width % faceData.length;
+            int index = i % width;
+            int line = i / (width * faceData.length);
+            channelData[0][i] = faceData[face].get(4 * index + line * lineOffset);     //B
+            channelData[1][i] = faceData[face].get(4 * index + line * lineOffset + 1); //G
+            channelData[2][i] = faceData[face].get(4 * index + line * lineOffset + 2); //R
         }
 
-        header.num_channels(3);
-        EXRChannelInfo.Buffer channelInfo = EXRChannelInfo.create(3);
-        header.channels(channelInfo);
+        //The internal storage format is BGRA, this reorders it for TinyEXR.
+        FloatBuffer red = MemoryUtil.memAllocFloat(faceData.length * width * height);
+        red.put(channelData[2]);
+        red.flip();
+        FloatBuffer green = MemoryUtil.memAllocFloat(faceData.length * width * height);
+        green.put(channelData[1]);
+        green.flip();
+        FloatBuffer blue = MemoryUtil.memAllocFloat(faceData.length * width * height);
+        blue.put(channelData[0]);
+        blue.flip();
 
-        //Something missing
-        try (MemoryStack stack = MemoryStack.stackPush())
+        //Create EXR image
+        EXRHeader exr_header = EXRHeader.create();
+        TinyEXR.InitEXRHeader(exr_header);
+
+        EXRImage exr_image = EXRImage.create();
+        TinyEXR.InitEXRImage(exr_image);
+
+        int numChannels = 3;
+        exr_image.num_channels(numChannels);
+        exr_header.num_channels(numChannels);
+
+        PointerBuffer imagesPtr = BufferUtils.createPointerBuffer(numChannels);
+        imagesPtr.put(red);
+        imagesPtr.put(green);
+        imagesPtr.put(blue);
+        imagesPtr.flip();
+
+        exr_image.images(imagesPtr);
+        exr_image.width(faceData.length * width);
+        exr_image.height(height);
+
+        EXRChannelInfo.Buffer channelInfos = EXRChannelInfo.create(numChannels);
+        exr_header.channels(channelInfos);
+        channelInfos.get(0).name(stringToByteBuffer("R\0"));
+        channelInfos.get(1).name(stringToByteBuffer("G\0"));
+        channelInfos.get(2).name(stringToByteBuffer("B\0"));
+
+        IntBuffer pixelTypes = BufferUtils.createIntBuffer(exr_header.num_channels());
+        IntBuffer requestedPixelTypes = BufferUtils.createIntBuffer(exr_header.num_channels());
+        exr_header.pixel_types(pixelTypes);
+        exr_header.requested_pixel_types(requestedPixelTypes);
+        for (int i = 0; i < exr_header.num_channels(); i++)
         {
-            IntBuffer pixelType = stack.mallocInt(1);
-            pixelType.put(4 * header.num_channels());
-            header.pixel_types(pixelType);
+            pixelTypes.put(i, TinyEXR.TINYEXR_PIXELTYPE_FLOAT);
+            requestedPixelTypes.put(i, TinyEXR.TINYEXR_PIXELTYPE_FLOAT);
         }
 
-        for (int i = 0; i < header.num_channels(); ++i)
+        PointerBuffer err = BufferUtils.createPointerBuffer(1);
+        int ret = TinyEXR.SaveEXRImageToFile(exr_image, exr_header, path, err);
+        if (ret != TinyEXR.TINYEXR_SUCCESS)
         {
-            header.pixel_types().put(i, TinyEXR.TINYEXR_PIXELTYPE_FLOAT);
-            header.requested_pixel_types().put(i, TinyEXR.TINYEXR_PIXELTYPE_HALF);
+            Logger.error("Could not export EXR + " + path + ": " + err.get(0));
         }
+        Logger.info("Exported EXR to " + path);
 
-        try (MemoryStack stack = MemoryStack.stackPush())
-        {
-            PointerBuffer err = stack.mallocPointer(1);
-            int ret = TinyEXR.SaveEXRImageToFile(image, header, "C:/dev/Haraldr-Engine/haraldr-offline-renderer/src/main/resources/output/test.exr", err);
-            if (ret != TinyEXR.TINYEXR_SUCCESS)
-            {
-                Logger.error("Could not save EXR");
-                TinyEXR.FreeEXRErrorMessage(err.getByteBuffer(1));
-            }
-        }
+        for (FloatBuffer floatBuffer : faceData) MemoryUtil.memFree(floatBuffer);
+        MemoryUtil.memFree(red);
+        MemoryUtil.memFree(green);
+        MemoryUtil.memFree(blue);
+    }
 
-        header.channels().free();
-        header.free();
-
-        MemoryUtil.memFree(data);
-/*
-        int channels = 4;
-        SampleModel sampleModel = new PixelInterleavedSampleModel(
-                DataBuffer.TYPE_FLOAT,
-                environmentMap.getSize(),
-                environmentMap.getSize(),
-                channels,
-                environmentMap.getSize() * channels,
-                new int[] { 0, 1, 2, 3 }
-        );
-
-        DataBuffer dataBuffer = new DataBufferFloat(environmentMap.getSize() * environmentMap.getSize() * channels);
-        WritableRaster raster = Raster.createWritableRaster(sampleModel, dataBuffer, null);
-        ColorSpace colorSpace = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-        ColorModel colorModel = new ComponentColorModel(colorSpace, true, false, Transparency.TRANSLUCENT, DataBuffer.TYPE_FLOAT);
-
-        BufferedImage image = new BufferedImage(colorModel, raster, colorModel.isAlphaPremultiplied(), null);
-
-        File outputFolder = new File("haraldr-offline-renderer/src/main/resources/output");
-        if (Files.exists(outputFolder.toPath()))
-        {
-            Logger.info("Found output");
-            File imageFile = new File("haraldr-offline-renderer/src/main/resources/output/test.tif");
-            Logger.info(imageFile.getAbsolutePath());
-            try
-            {
-                Logger.info(ImageIO.write(image, "TIFF", imageFile));
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        MemoryUtil.memFree(data);
-        */
+    private static ByteBuffer stringToByteBuffer(String s)
+    {
+        byte[] bytes = s.getBytes();
+        ByteBuffer bb = BufferUtils.createByteBuffer(bytes.length);
+        bb.put(bytes);
+        bb.flip();
+        return bb;
     }
 
     @Override

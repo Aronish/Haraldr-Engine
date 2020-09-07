@@ -31,8 +31,6 @@ public class EditorTestScene extends Scene3D
         new ModelComponent("default_models/model.json");
         registry.addComponent(new ModelComponent("default_models/model.json"), ape);
         registry.addComponent(new BoundingSphereComponent(0.75f), ape);
-        registry.addComponent(new ModelComponent("default_models/model.json"), another);
-        registry.addComponent(new BoundingSphereComponent(0.3f), another);
     }
 
     @Override
@@ -45,8 +43,8 @@ public class EditorTestScene extends Scene3D
     {
         if (Input.isKeyPressed(window, KeyboardKey.KEY_UP))     Renderer3D.addExposure(deltaTime);
         if (Input.isKeyPressed(window, KeyboardKey.KEY_DOWN))   Renderer3D.addExposure(-deltaTime);
-        if (Input.isKeyPressed(window, KeyboardKey.KEY_KP_9))   interpolation += 1f * deltaTime;
-        if (Input.isKeyPressed(window, KeyboardKey.KEY_KP_7))   interpolation -= 1f * deltaTime;
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_9))   interpolation += 1f * deltaTime;
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_7))   interpolation -= 1f * deltaTime;
         pointLight.setPosition(new Vector3f(Math.sin(interpolation), 0f, Math.cos(interpolation)));
     }
 

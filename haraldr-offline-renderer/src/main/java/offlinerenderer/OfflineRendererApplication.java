@@ -5,20 +5,22 @@ import haraldr.event.Event;
 import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.ui.Button;
+import haraldr.graphics.ui.HorizontalBreak;
 import haraldr.graphics.ui.InfoLabel;
 import haraldr.graphics.ui.InputField;
 import haraldr.graphics.ui.Pane;
 import haraldr.main.Application;
-import haraldr.main.IOUtils;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.tinyexr.EXRChannelInfo;
 import org.lwjgl.util.tinyexr.EXRHeader;
 import org.lwjgl.util.tinyexr.EXRImage;
 import org.lwjgl.util.tinyexr.TinyEXR;
+import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -32,19 +34,19 @@ import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
 
+//TODO: Naming convention for Haraldr-Engine cubemaps not figured out yet
 public class OfflineRendererApplication extends Application
 {
     private Pane mainPane;
-    private InputField sourcePath;
     private InputField diffuseIrradianceMapSize;
     private InputField prefilteredEnvironmentMapSize;
-    private InputField exportName;
     private InfoLabel environmentMapData;
     private InfoLabel diffuseIrradianceMapData;
     private InfoLabel prefilteredEnvironmentMapdata;
     private InfoLabel readyToGenerateIblMaps;
+    private InfoLabel diffuseIrradianceMapPath;
+    private InfoLabel prefilteredMapPath;
     private Button generateIblMaps;
-    private Button export;
 
     private GeneratedCubeMap environmentMap;
     private GeneratedCubeMap diffuseIrradianceMap;
@@ -53,7 +55,7 @@ public class OfflineRendererApplication extends Application
 
     public OfflineRendererApplication()
     {
-        super(new Window.WindowProperties(800, 600, 0, false, false, true));
+        super(new Window.WindowProperties(1000, 600, 0, false, false, true));
     }
 
     @Override
@@ -66,24 +68,27 @@ public class OfflineRendererApplication extends Application
                 false,
                 "Haraldr Offline Renderer"
         );
+        //TODO: JSONify
         //Original environment map
-        sourcePath = new InputField("Equirectangular HDR path", mainPane);
         Button loadHdr = new Button("Load HDR", mainPane, () ->
         {
-            if (IOUtils.resourceExists(sourcePath.getValue()) && sourcePath.getValue().endsWith("hdr"))
+            String sourcePath;
+            try (MemoryStack stack = MemoryStack.stackPush())
             {
-                environmentMap = CubeMapGenerator.createEnvironmentMap(sourcePath.getValue());
-                environmentMapData.setText("Loaded: " + environmentMap.getName() + " | Size: " + environmentMap.getSize());
+                PointerBuffer filterPatterns = stack.mallocPointer(1);
+                filterPatterns.put(stringToByteBuffer("*.hdr"));
+                sourcePath = TinyFileDialogs.tinyfd_openFileDialog("Select .hdr file", "", filterPatterns, "", false);
+                if (sourcePath == null) sourcePath = "";
+            }
+
+            if (!sourcePath.isBlank() && sourcePath.endsWith(".hdr"))
+            {
+                environmentMap = CubeMapGenerator.createEnvironmentMap(sourcePath);
+                environmentMapData.setText(environmentMap.getName() + " | Size: " + environmentMap.getSize());
                 glViewport(0, 0, window.getWidth(), window.getHeight());
-            } else
-            {
-                generateIblMaps.setEnabled(false);
-                environmentMapData.setText("");
-                diffuseIrradianceMapData.setText("");
-                prefilteredEnvironmentMapdata.setText("");
             }
         });
-        environmentMapData = new InfoLabel("Environment Map", mainPane);
+        environmentMapData = new InfoLabel("", mainPane);
 
         //IBL maps
         diffuseIrradianceMapSize = new InputField("Diffuse Irradiance Map Size", mainPane, InputField.InputType.NUMBERS, (addedChar, fullText) ->
@@ -106,8 +111,8 @@ public class OfflineRendererApplication extends Application
         });
 
         readyToGenerateIblMaps = new InfoLabel("Ready to generate?", mainPane);
-        diffuseIrradianceMapData = new InfoLabel("Diffuse Irradiance Map", mainPane);
-        prefilteredEnvironmentMapdata = new InfoLabel("Prefiltered Map", mainPane);
+        diffuseIrradianceMapData = new InfoLabel("", mainPane);
+        prefilteredEnvironmentMapdata = new InfoLabel("", mainPane);
 
         generateIblMaps = new Button("Generate IBL maps", mainPane, () ->
         {
@@ -120,21 +125,44 @@ public class OfflineRendererApplication extends Application
         generateIblMaps.setEnabled(false);
 
         //Export options
-        exportName = new InputField("Name", mainPane, ((addedChar, fullText) ->
-        {
-            export.setEnabled(fullText.length() > 0 && diffuseIrradianceMap != null && prefilteredEnvironmentMap != null);
-        }));
-        export = new Button("Export Maps", mainPane, () ->
-        {
-            exportCubeMap(diffuseIrradianceMap, exportName.getValue() + "_DIFF_IRR.exr");
-            exportCubeMap(prefilteredEnvironmentMap, exportName.getValue() + "_PREF.exr");
-        });
-        export.setEnabled(false);
+        //Diffuse Irradiance Map
+        Button exportDiffuseIrradianceMap = new Button("Export", mainPane, () -> exportCubeMap(diffuseIrradianceMap, diffuseIrradianceMapPath.getValue()));
+        exportDiffuseIrradianceMap.setEnabled(false);
 
-        mainPane.addChild(sourcePath);
+        Button saveDiffuseIrradianceMapAs = new Button("Save", mainPane, () ->
+        {
+            try (MemoryStack stack = MemoryStack.stackPush())
+            {
+                PointerBuffer filterPatterns = stack.mallocPointer(1);
+                filterPatterns.put(stringToByteBuffer("*.exr"));
+                String path = TinyFileDialogs.tinyfd_saveFileDialog("Save diffuse irradiance map", "", filterPatterns, "");
+                diffuseIrradianceMapPath.setText(path == null ? "" : path);
+            }
+            exportDiffuseIrradianceMap.setEnabled(!diffuseIrradianceMapPath.getValue().isBlank() && diffuseIrradianceMapPath.getValue().endsWith(".exr"));
+        });
+        diffuseIrradianceMapPath = new InfoLabel("Save Path", mainPane);
+
+        //Prefiltered Map
+        Button exportPrefilteredMap = new Button("Export", mainPane, () -> exportCubeMap(prefilteredEnvironmentMap, prefilteredMapPath.getValue()));
+        exportPrefilteredMap.setEnabled(false);
+
+        Button savePrefilteredMap = new Button("Save", mainPane, () ->
+        {
+            try (MemoryStack stack = MemoryStack.stackPush())
+            {
+                PointerBuffer filterPatterns = stack.mallocPointer(1);
+                filterPatterns.put(stringToByteBuffer("*.exr"));
+                String path = TinyFileDialogs.tinyfd_saveFileDialog("Save prefiltered environment map", "", filterPatterns, "");
+                prefilteredMapPath.setText(path == null ? "" : path);
+            }
+            exportPrefilteredMap.setEnabled(!prefilteredMapPath.getValue().isBlank() && prefilteredMapPath.getValue().endsWith(".exr"));
+        });
+        prefilteredMapPath = new InfoLabel("Save Path", mainPane);
+
         mainPane.addChild(loadHdr);
         mainPane.addChild(environmentMapData);
 
+        mainPane.addChild(new HorizontalBreak("PRECOMPUTE CUBEMAPS", mainPane));
         mainPane.addChild(diffuseIrradianceMapSize);
         mainPane.addChild(prefilteredEnvironmentMapSize);
         mainPane.addChild(readyToGenerateIblMaps);
@@ -142,8 +170,15 @@ public class OfflineRendererApplication extends Application
         mainPane.addChild(diffuseIrradianceMapData);
         mainPane.addChild(prefilteredEnvironmentMapdata);
 
-        mainPane.addChild(exportName);
-        mainPane.addChild(export);
+        mainPane.addChild(new HorizontalBreak("DIFFUSE IRRADIANCE MAP", mainPane));
+        mainPane.addChild(saveDiffuseIrradianceMapAs);
+        mainPane.addChild(diffuseIrradianceMapPath);
+        mainPane.addChild(exportDiffuseIrradianceMap);
+
+        mainPane.addChild(new HorizontalBreak("PREFILTERED MAP", mainPane));
+        mainPane.addChild(savePrefilteredMap);
+        mainPane.addChild(prefilteredMapPath);
+        mainPane.addChild(exportPrefilteredMap);
         checkReadiness();
 
         Renderer.disableDepthTest();
@@ -162,10 +197,8 @@ public class OfflineRendererApplication extends Application
         }
     }
 
-    private void exportCubeMap(GeneratedCubeMap cubeMap, String name)
+    private void exportCubeMap(GeneratedCubeMap cubeMap, String path)
     {
-        String path = "C:/dev/Haraldr-Engine/haraldr-offline-renderer/src/main/resources/output/" + name;
-
         //Load cubemap faces
         int width = cubeMap.getSize();
         int height = cubeMap.getSize();
@@ -191,7 +224,7 @@ public class OfflineRendererApplication extends Application
         float[][] channelData = new float[3][6 * width * totalHeight]; //Holds raw pixel data for each color channel
 
         int mipLevelPixelOffset = 0;
-        for (int mipLevel = 0; mipLevel < faceData.length; ++mipLevel)
+        for (int mipLevel = 0; mipLevel < faceData.length; ++mipLevel) // Go through every mipmap
         {
             int mipLevelWidth = (int) (width * Math.pow(0.5f, mipLevel));
             int mipLevelHeight = (int) (height * Math.pow(0.5f, mipLevel));
@@ -209,7 +242,6 @@ public class OfflineRendererApplication extends Application
                 if (mipLevel > 0 && ((i % (6 * mipLevelWidth)) + 1) / (6 * mipLevelWidth) == 1) pos += mipLineOffset + 1;
                 else ++pos;
             }
-            Logger.info(mipLevelPixelOffset);
             mipLevelPixelOffset += 6 * width * mipLevelHeight;
         }
 
@@ -266,8 +298,10 @@ public class OfflineRendererApplication extends Application
         if (ret != TinyEXR.TINYEXR_SUCCESS)
         {
             Logger.error("Could not export EXR + " + path + ": " + err.get(0));
+        } else
+        {
+            Logger.info("Exported EXR to " + path);
         }
-        Logger.info("Exported EXR to " + path);
 
         for (FloatBuffer[] facesAtMipLevel : faceData)
         {

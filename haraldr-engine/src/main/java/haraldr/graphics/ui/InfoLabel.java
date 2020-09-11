@@ -23,6 +23,11 @@ public class InfoLabel extends LabeledComponent
         parent.textBatch.refreshTextMeshData();
     }
 
+    public String getValue()
+    {
+        return value;
+    }
+
     @Override
     protected void setComponentPosition(Vector2f position)
     {

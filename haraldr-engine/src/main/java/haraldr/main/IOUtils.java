@@ -4,6 +4,8 @@ import haraldr.debug.Logger;
 import org.jetbrains.annotations.Contract;
 import org.lwjgl.BufferUtils;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -40,6 +42,18 @@ public class IOUtils
         catch (IOException e)
         {
             e.printStackTrace();
+        }
+        throw new NullPointerException("Couldn't read resource at " + path + "!");
+    }
+
+    public static <R> R readNativeResource(String path, Function<InputStream, R> function)
+    {
+        try (FileInputStream inputStream = new FileInputStream(path))
+        {
+            return function.apply(inputStream);
+        } catch (IOException exception)
+        {
+            exception.printStackTrace();
         }
         throw new NullPointerException("Couldn't read resource at " + path + "!");
     }

@@ -2,6 +2,7 @@ package haraldr.graphics.ui;
 
 import haraldr.event.Event;
 import haraldr.event.EventType;
+import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Renderer2D;
 import haraldr.math.Vector2f;
@@ -11,9 +12,11 @@ public class Button extends LabeledComponent
 {
     private static final Vector4f ON_COLOR = new Vector4f(0.2f, 0.8f, 0.3f, 1f);
     private static final Vector4f OFF_COLOR = new Vector4f(0.8f, 0.2f, 0.3f, 1f);
+    private static final Vector4f HOVER_COLOR = new Vector4f(0.2f, 0.7f, 0.4f, 1f);
+    private static final Vector4f DISABLED_COLOR = new Vector4f(0.4f, 0.4f, 0.4f, 1f);
 
     private Vector2f buttonPosition = new Vector2f(), buttonSize;
-    private boolean active;
+    private Vector4f currentColor = OFF_COLOR;
     private ButtonPressAction buttonPressAction;
 
     public Button(String name, Pane parent)
@@ -31,6 +34,13 @@ public class Button extends LabeledComponent
     public void setPressAction(ButtonPressAction action)
     {
         this.buttonPressAction = action;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled)
+    {
+        super.setEnabled(enabled);
+        currentColor = enabled ? OFF_COLOR : DISABLED_COLOR;
     }
 
     @Override
@@ -54,17 +64,26 @@ public class Button extends LabeledComponent
             {
                 var mousePressedEvent = (MousePressedEvent) event;
                 if (mousePressedEvent.xPos >= buttonPosition.getX() &&
-                        mousePressedEvent.xPos <= buttonPosition.getX() + buttonSize.getX() &&
-                        mousePressedEvent.yPos >= buttonPosition.getY() &&
-                        mousePressedEvent.yPos <= buttonPosition.getY() + buttonSize.getY())
+                    mousePressedEvent.xPos <= buttonPosition.getX() + buttonSize.getX() &&
+                    mousePressedEvent.yPos >= buttonPosition.getY() &&
+                    mousePressedEvent.yPos <= buttonPosition.getY() + buttonSize.getY())
                 {
-                    active = true;
+                    currentColor = ON_COLOR;
                     buttonPressAction.run();
                 }
             }
             if (event.eventType == EventType.MOUSE_RELEASED)
             {
-                active = false;
+                currentColor = OFF_COLOR;
+            }
+            if (event.eventType == EventType.MOUSE_MOVED)
+            {
+                var mouseMovedEvent = (MouseMovedEvent) event;
+                currentColor =
+                (mouseMovedEvent.xPos >= buttonPosition.getX() &&
+                mouseMovedEvent.xPos <= buttonPosition.getX() + buttonSize.getX() &&
+                mouseMovedEvent.yPos >= buttonPosition.getY() &&
+                mouseMovedEvent.yPos <= buttonPosition.getY() + buttonSize.getY()) ? HOVER_COLOR : OFF_COLOR;
             }
         }
     }
@@ -77,7 +96,7 @@ public class Button extends LabeledComponent
     @Override
     public void render()
     {
-        Renderer2D.drawQuad(buttonPosition, buttonSize, active ? ON_COLOR : OFF_COLOR);
+        Renderer2D.drawQuad(buttonPosition, buttonSize, currentColor);
     }
 
     @Override

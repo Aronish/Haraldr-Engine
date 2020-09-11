@@ -43,7 +43,6 @@ public class OfflineRendererApplication extends Application
     private InfoLabel diffuseIrradianceMapData;
     private InfoLabel prefilteredEnvironmentMapdata;
     private InfoLabel readyToGenerateIblMaps;
-    private Button loadHdr;
     private Button generateIblMaps;
     private Button export;
 
@@ -54,7 +53,7 @@ public class OfflineRendererApplication extends Application
 
     public OfflineRendererApplication()
     {
-        super(new Window.WindowProperties(720, 720, 0, false, false, true));
+        super(new Window.WindowProperties(800, 600, 0, false, false, true));
     }
 
     @Override
@@ -69,7 +68,7 @@ public class OfflineRendererApplication extends Application
         );
         //Original environment map
         sourcePath = new InputField("Equirectangular HDR path", mainPane);
-        loadHdr = new Button("Load HDR", mainPane, () ->
+        Button loadHdr = new Button("Load HDR", mainPane, () ->
         {
             if (IOUtils.resourceExists(sourcePath.getValue()) && sourcePath.getValue().endsWith("hdr"))
             {
@@ -170,38 +169,58 @@ public class OfflineRendererApplication extends Application
         //Load cubemap faces
         int width = cubeMap.getSize();
         int height = cubeMap.getSize();
-
-        FloatBuffer[] faceData = new FloatBuffer[6]; //Hold raw pixel data from OpenGL
-        int lineOffset = width * 4;
-
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap.getCubeMapId());
-        for (int i = 0; i < faceData.length; ++i)
+        int totalHeight = 0;
+        for (int mipLevel = 0; mipLevel <= cubeMap.getHighestMipLevel(); ++mipLevel)
         {
-            FloatBuffer face = MemoryUtil.memAllocFloat(cubeMap.getSize() * cubeMap.getSize() * 3 * 2);
-            glGetTexImage(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, GL_FLOAT, face); //OpenGL stores in RGBA even without alpha.
-            faceData[i] = face;
+            totalHeight += cubeMap.getSize() * Math.pow(0.5, mipLevel);
         }
 
-        float[][] channelData = new float[3][faceData.length * width * height]; //Holds raw pixel data for each color channel
+        FloatBuffer[][] faceData = new FloatBuffer[cubeMap.getHighestMipLevel() + 1][6]; //Holds raw pixel data from OpenGL
 
-        for (int i = 0; i < faceData.length * width * height; ++i) //Separate color channels from all faces
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap.getCubeMapId());
+        for (int mipLevel = 0; mipLevel <= cubeMap.getHighestMipLevel(); ++mipLevel)
         {
-            int face = i / width % faceData.length;
-            int index = i % width;
-            int line = i / (width * faceData.length);
-            channelData[0][i] = faceData[face].get(4 * index + line * lineOffset);     //B
-            channelData[1][i] = faceData[face].get(4 * index + line * lineOffset + 1); //G
-            channelData[2][i] = faceData[face].get(4 * index + line * lineOffset + 2); //R
+            for (int i = 0; i < faceData[mipLevel].length; ++i)
+            {
+                FloatBuffer face = MemoryUtil.memAllocFloat(cubeMap.getSize() * cubeMap.getSize() * 3 * 2);
+                glGetTexImage(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, mipLevel, GL_RGBA, GL_FLOAT, face); //OpenGL stores in RGBA even without alpha.
+                faceData[mipLevel][i] = face;
+            }
+        }
+
+        float[][] channelData = new float[3][6 * width * totalHeight]; //Holds raw pixel data for each color channel
+
+        int mipLevelPixelOffset = 0;
+        for (int mipLevel = 0; mipLevel < faceData.length; ++mipLevel)
+        {
+            int mipLevelWidth = (int) (width * Math.pow(0.5f, mipLevel));
+            int mipLevelHeight = (int) (height * Math.pow(0.5f, mipLevel));
+            int lineOffset = mipLevelWidth * 4;
+            int mipLineOffset = 6 * width - 6 * mipLevelWidth;
+
+            for (int i = 0, pos = mipLevelPixelOffset; i < 6 * mipLevelWidth * mipLevelHeight; ++i) //Separate color channels from all faces
+            {
+                int face = i / mipLevelWidth % 6;
+                int index = i % mipLevelWidth;
+                int line = i / (mipLevelWidth * 6);
+                channelData[0][pos] = faceData[mipLevel][face].get(4 * index + line * lineOffset);     //B
+                channelData[1][pos] = faceData[mipLevel][face].get(4 * index + line * lineOffset + 1); //G
+                channelData[2][pos] = faceData[mipLevel][face].get(4 * index + line * lineOffset + 2); //R
+                if (mipLevel > 0 && ((i % (6 * mipLevelWidth)) + 1) / (6 * mipLevelWidth) == 1) pos += mipLineOffset + 1;
+                else ++pos;
+            }
+            Logger.info(mipLevelPixelOffset);
+            mipLevelPixelOffset += 6 * width * mipLevelHeight;
         }
 
         //The internal storage format is BGRA, this reorders it for TinyEXR.
-        FloatBuffer red = MemoryUtil.memAllocFloat(faceData.length * width * height);
+        FloatBuffer red = MemoryUtil.memAllocFloat(6 * width * totalHeight);
         red.put(channelData[2]);
         red.flip();
-        FloatBuffer green = MemoryUtil.memAllocFloat(faceData.length * width * height);
+        FloatBuffer green = MemoryUtil.memAllocFloat(6 * width * totalHeight);
         green.put(channelData[1]);
         green.flip();
-        FloatBuffer blue = MemoryUtil.memAllocFloat(faceData.length * width * height);
+        FloatBuffer blue = MemoryUtil.memAllocFloat(6 * width * totalHeight);
         blue.put(channelData[0]);
         blue.flip();
 
@@ -223,8 +242,8 @@ public class OfflineRendererApplication extends Application
         imagesPtr.flip();
 
         exr_image.images(imagesPtr);
-        exr_image.width(faceData.length * width);
-        exr_image.height(height);
+        exr_image.width(6 * width);
+        exr_image.height(totalHeight);
 
         EXRChannelInfo.Buffer channelInfos = EXRChannelInfo.create(numChannels);
         exr_header.channels(channelInfos);
@@ -250,7 +269,10 @@ public class OfflineRendererApplication extends Application
         }
         Logger.info("Exported EXR to " + path);
 
-        for (FloatBuffer floatBuffer : faceData) MemoryUtil.memFree(floatBuffer);
+        for (FloatBuffer[] facesAtMipLevel : faceData)
+        {
+            for (FloatBuffer buffer : facesAtMipLevel) MemoryUtil.memFree(buffer);
+        }
         MemoryUtil.memFree(red);
         MemoryUtil.memFree(green);
         MemoryUtil.memFree(blue);

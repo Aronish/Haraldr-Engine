@@ -18,7 +18,7 @@ public class Pane
     private static final Vector4f COLOR = new Vector4f(0.3f, 0.3f, 0.3f, 1f);
     private static final Vector4f HEADER_COLOR = new Vector4f(0.2f, 0.2f, 0.2f, 1f);
     private static final Vector4f DIVIDER_COLOR = new Vector4f(0.5f, 0.5f, 0.5f, 1f);
-    private static final Font DEFAULT_FONT = new Font("default_fonts/Roboto-Regular.ttf", 18, 2);
+    private static final Font DEFAULT_FONT = new Font("default_fonts/Roboto-Regular.ttf", 20, 4);
     private static final float LINE_GAP = 5f, SIDE_PADDING = 5f;
 
     protected Vector2f position;

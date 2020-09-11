@@ -117,7 +117,7 @@ public class CubeMapGenerator
                     DefaultModels.CUBE.bind();
                     DefaultModels.CUBE.drawElements();
                 }
-            }), size, path);
+            }), size, 0, path);
             glDeleteTextures(texture);
             glGenerateMipmap(GL_TEXTURE_CUBE_MAP); // Do this after having set the textures. Used by other pbr maps.
 
@@ -148,7 +148,7 @@ public class CubeMapGenerator
                     DefaultModels.CUBE.bind();
                     DefaultModels.CUBE.drawElements();
                 }
-            }), size, name);
+            }), size, 0, name);
             generatedCubeMaps.put(name, cubeMap);
             Logger.info(String.format("Generated diffuse irradiance map DIF_IRR_%d | Size: %d", cubeMap.getCubeMapId(), size));
             return cubeMap;
@@ -158,6 +158,7 @@ public class CubeMapGenerator
     public static @NotNull GeneratedCubeMap createPrefilteredEnvironmentMap(@NotNull GeneratedCubeMap environmentMap, int size)
     {
         String name = "PREF_" + environmentMap.getCubeMapId();
+        final int highestMipLevel = 4;
         if (generatedCubeMaps.containsKey(name))
         {
             return generatedCubeMaps.get(name);
@@ -169,15 +170,14 @@ public class CubeMapGenerator
             {
                 glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
                 glBindTextureUnit(0, textureToMap);
-                int maxMipLevels = 5;
-                for (int mip = 0; mip < maxMipLevels; ++mip)
+                for (int mip = 0; mip <= highestMipLevel; ++mip)
                 {
                     int mipSize = (int) (cubeFaceSize * Math.pow(0.5f, mip));
                     glBindRenderbuffer(GL_RENDERBUFFER, depthRenderBuffer);
                     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipSize, mipSize);
                     glViewport(0, 0, mipSize, mipSize);
 
-                    float roughness = (float) mip / (maxMipLevels - 1);
+                    float roughness = (float) mip / (highestMipLevel + 1);
                     mappingShader.setFloat("u_Roughness", roughness);
                     for (int i = 0; i < 6; ++i)
                     {
@@ -188,7 +188,7 @@ public class CubeMapGenerator
                         DefaultModels.CUBE.drawElements();
                     }
                 }
-            }), size, name);
+            }), size, highestMipLevel, name);
             generatedCubeMaps.put(name, cubeMap);
             Logger.info(String.format("Generated prefiltered environment map PREF_%d | Size: %d", cubeMap.getCubeMapId(), size));
             return cubeMap;

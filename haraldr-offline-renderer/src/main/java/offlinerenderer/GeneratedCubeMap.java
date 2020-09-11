@@ -6,14 +6,15 @@ import static org.lwjgl.opengl.GL11.glDeleteTextures;
 
 public class GeneratedCubeMap
 {
-    private int cubeMapId, size;
+    private int cubeMapId, size, highestMipLevel;
     private String name;
 
     @Contract(pure = true)
-    public GeneratedCubeMap(int cubeMapId, int size, String name)
+    public GeneratedCubeMap(int cubeMapId, int size, int highestMipLevel, String name)
     {
         this.cubeMapId = cubeMapId;
         this.size = size;
+        this.highestMipLevel = highestMipLevel;
         this.name = name;
     }
 
@@ -30,6 +31,11 @@ public class GeneratedCubeMap
     public int getSize()
     {
         return size;
+    }
+
+    public int getHighestMipLevel()
+    {
+        return highestMipLevel;
     }
 
     public String getName()

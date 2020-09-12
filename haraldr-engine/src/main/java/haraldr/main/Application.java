@@ -99,7 +99,6 @@ public abstract class Application
         }
         clientInit(window);
 
-        //Renderer.setClearColor(0f, 0f, 1f, 1f);
         glViewport(0, 0, window.getWidth(), window.getHeight());
         glfwShowWindow(window.getWindowHandle());
         initialized = true;

@@ -2,6 +2,7 @@ package oldgame.main;
 
 import haraldr.debug.Logger;
 import haraldr.main.EntryPoint;
+import haraldr.math.MathUtils;
 import oldgame.gameobject.tile.Tile;
 import oldgame.gameobject.tile.TileTree;
 import oldgame.world.Grid;
@@ -12,8 +13,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
-import static haraldr.main.EntryPoint.fastFloor;
 
 class WorldMapper
 {
@@ -60,14 +59,14 @@ class WorldMapper
                         }
                         if (color != null)
                         {
-                            worldMap.setRGB(fastFloor(tile.getPosition().getX()), height - fastFloor(tile.getPosition().getY()) - 1, color.getRGB());
+                            worldMap.setRGB(MathUtils.fastFloor(tile.getPosition().getX()), height - MathUtils.fastFloor(tile.getPosition().getY()) - 1, color.getRGB());
                         }
                     }else
                     {
                         Color color = new Color(0, 255, 80, 255);
                         for (int z = 0; z > -3; --z)
                         {
-                            worldMap.setRGB(fastFloor(tile.getPosition().getX()), height - fastFloor(tile.getPosition().getY()) - 1 - z, color.getRGB());
+                            worldMap.setRGB(MathUtils.fastFloor(tile.getPosition().getX()), height - MathUtils.fastFloor(tile.getPosition().getY()) - 1 - z, color.getRGB());
                         }
                     }
                 }

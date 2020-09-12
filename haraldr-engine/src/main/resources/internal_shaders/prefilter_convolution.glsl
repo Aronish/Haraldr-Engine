@@ -100,7 +100,7 @@ void main()
             float HdotV = max(dot(H, N), 0.0f);
             float pdf = D * NdotH / (4.0f * HdotV) + 0.0001f;
 
-            float resolution = 2048.0f; // resolution of source cubemap (per face)
+            float resolution = 2048.0f; // resolution of source cubemap (per face) //TODO: HMM
             float saTexel  = 4.0f * PI / (6.0f * resolution * resolution);
             float saSample = 1.0f / (float(SAMPLE_COUNT) * pdf + 0.0001f);
 

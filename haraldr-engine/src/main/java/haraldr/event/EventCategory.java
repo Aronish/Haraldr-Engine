@@ -1,14 +1,14 @@
 package haraldr.event;
 
-import static haraldr.main.EntryPoint.bit;
+import haraldr.math.MathUtils;
 
 public enum EventCategory
 {
-    CATEGORY_INPUT      (bit(0)),
-    CATEGORY_KEYBOARD   (bit(1)),
-    CATEGORY_MOUSE      (bit(2)),
-    CATEGORY_WINDOW     (bit(3)),
-    CATEGORY_APPLICATION(bit(4));
+    CATEGORY_INPUT      (MathUtils.bit(0)),
+    CATEGORY_KEYBOARD   (MathUtils.bit(1)),
+    CATEGORY_MOUSE      (MathUtils.bit(2)),
+    CATEGORY_WINDOW     (MathUtils.bit(3)),
+    CATEGORY_APPLICATION(MathUtils.bit(4));
 
     public final int bitFlag;
 

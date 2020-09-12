@@ -27,8 +27,7 @@ public class EditorTestScene extends Scene3D
         setSceneLights(
                 pointLight
         );
-        setSkyBox(CubeMap.createEnvironmentMap("default_hdris/w.hdr"));
-        new ModelComponent("default_models/model.json");
+        setSkyBox(CubeMap.createEnvironmentMap("default_hdris/NorwayForest_4K_hdri_sphere.hdr"));
         registry.addComponent(new ModelComponent("default_models/model.json"), ape);
         registry.addComponent(new BoundingSphereComponent(0.75f), ape);
     }
@@ -36,6 +35,11 @@ public class EditorTestScene extends Scene3D
     @Override
     protected void onClientEvent(Event event, Window window)
     {
+        if (Input.wasKeyPressed(event, KeyboardKey.KEY_R))
+        {
+            ModelComponent modelComponent = registry.getComponent(ModelComponent.class, ape);
+            modelComponent.model.refresh();
+        }
     }
 
     @Override

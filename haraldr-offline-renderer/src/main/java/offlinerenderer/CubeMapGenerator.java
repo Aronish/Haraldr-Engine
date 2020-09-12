@@ -8,12 +8,20 @@ import haraldr.main.IOUtils;
 import haraldr.math.Matrix4f;
 import haraldr.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.util.tinyexr.EXRChannelInfo;
+import org.lwjgl.util.tinyexr.EXRHeader;
+import org.lwjgl.util.tinyexr.EXRImage;
+import org.lwjgl.util.tinyexr.TinyEXR;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +33,7 @@ import static org.lwjgl.opengl.GL11.GL_FRONT;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_LINEAR_MIPMAP_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_RGB;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
@@ -35,6 +44,7 @@ import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glCullFace;
 import static org.lwjgl.opengl.GL11.glDeleteTextures;
+import static org.lwjgl.opengl.GL11.glGetTexImage;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -118,8 +128,10 @@ public class CubeMapGenerator
                     DefaultModels.CUBE.drawElements();
                 }
             }), size, 0, path);
-            glDeleteTextures(texture);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap.getCubeMapId());
             glGenerateMipmap(GL_TEXTURE_CUBE_MAP); // Do this after having set the textures. Used by other pbr maps.
+            glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+            glDeleteTextures(texture);
 
             generatedCubeMaps.put(path, cubeMap);
             Logger.info(String.format("Generated environment map from %s", path));
@@ -248,6 +260,123 @@ public class CubeMapGenerator
         glDeleteRenderbuffers(depthRenderBuffer);
         glCullFace(GL_BACK);
         return mapTarget;
+    }
+
+    public static void exportCubeMap(GeneratedCubeMap cubeMap, String path)
+    {
+        //Load cubemap faces
+        int faceSize = cubeMap.getSize();
+        int totalHeight = 0;
+        for (int mipLevel = 0; mipLevel <= cubeMap.getHighestMipLevel(); ++mipLevel)
+        {
+            totalHeight += cubeMap.getSize() * Math.pow(0.5, mipLevel);
+        }
+
+        FloatBuffer[][] faceData = new FloatBuffer[cubeMap.getHighestMipLevel() + 1][6]; //Holds raw pixel data from OpenGL
+
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap.getCubeMapId());
+        for (int mipLevel = 0; mipLevel <= cubeMap.getHighestMipLevel(); ++mipLevel)
+        {
+            for (int i = 0; i < faceData[mipLevel].length; ++i)
+            {
+                FloatBuffer face = MemoryUtil.memAllocFloat(cubeMap.getSize() * cubeMap.getSize() * 3 * 2);
+                glGetTexImage(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, mipLevel, GL_RGBA, GL_FLOAT, face); //OpenGL stores in RGBA even without alpha.
+                faceData[mipLevel][i] = face;
+            }
+        }
+
+        float[][] channelData = new float[3][6 * faceSize * totalHeight]; //Holds raw pixel data for each color channel
+        Arrays.fill(channelData[0], 1f);
+        Arrays.fill(channelData[1], 0f);
+        Arrays.fill(channelData[2], 1f);
+
+        int mipLevelPixelOffset = 0;
+        for (int mipLevel = 0; mipLevel < faceData.length; ++mipLevel) // Go through every mipmap
+        {
+            //TODO: No need to have mipLevel(Width/Height)
+            int mipLevelSize = (int) (faceSize * Math.pow(0.5f, mipLevel));
+            int lineOffset = mipLevelSize * 4;
+            int mipLineOffset = 6 * faceSize - 6 * mipLevelSize;
+
+            for (int i = 0, pos = mipLevelPixelOffset; i < 6 * mipLevelSize * mipLevelSize; ++i) //Separate color channels from all faces
+            {
+                int face = i / mipLevelSize % 6;
+                int index = i % mipLevelSize;
+                int line = i / (mipLevelSize * 6);
+                channelData[0][pos] = faceData[mipLevel][face].get(4 * index + line * lineOffset);     //B
+                channelData[1][pos] = faceData[mipLevel][face].get(4 * index + line * lineOffset + 1); //G
+                channelData[2][pos] = faceData[mipLevel][face].get(4 * index + line * lineOffset + 2); //R
+                if (mipLevel > 0 && ((i % (6 * mipLevelSize)) + 1) / (6 * mipLevelSize) == 1) pos += mipLineOffset + 1;
+                else ++pos;
+            }
+            mipLevelPixelOffset += 6 * faceSize * mipLevelSize;
+        }
+
+        //The internal storage format is BGRA, this reorders it for TinyEXR.
+        FloatBuffer red = MemoryUtil.memAllocFloat(6 * faceSize * totalHeight);
+        red.put(channelData[2]);
+        red.flip();
+        FloatBuffer green = MemoryUtil.memAllocFloat(6 * faceSize * totalHeight);
+        green.put(channelData[1]);
+        green.flip();
+        FloatBuffer blue = MemoryUtil.memAllocFloat(6 * faceSize * totalHeight);
+        blue.put(channelData[0]);
+        blue.flip();
+
+        //Create EXR image
+        EXRHeader exr_header = EXRHeader.create();
+        TinyEXR.InitEXRHeader(exr_header);
+
+        EXRImage exr_image = EXRImage.create();
+        TinyEXR.InitEXRImage(exr_image);
+
+        int numChannels = 3;
+        exr_image.num_channels(numChannels);
+        exr_header.num_channels(numChannels);
+
+        PointerBuffer imagesPtr = BufferUtils.createPointerBuffer(numChannels);
+        imagesPtr.put(red);
+        imagesPtr.put(green);
+        imagesPtr.put(blue);
+        imagesPtr.flip();
+
+        exr_image.images(imagesPtr);
+        exr_image.width(6 * faceSize);
+        exr_image.height(totalHeight);
+
+        EXRChannelInfo.Buffer channelInfos = EXRChannelInfo.create(numChannels);
+        exr_header.channels(channelInfos);
+        channelInfos.get(0).name(IOUtils.stringToByteBuffer("R\0"));
+        channelInfos.get(1).name(IOUtils.stringToByteBuffer("G\0"));
+        channelInfos.get(2).name(IOUtils.stringToByteBuffer("B\0"));
+
+        IntBuffer pixelTypes = BufferUtils.createIntBuffer(exr_header.num_channels());
+        IntBuffer requestedPixelTypes = BufferUtils.createIntBuffer(exr_header.num_channels());
+        exr_header.pixel_types(pixelTypes);
+        exr_header.requested_pixel_types(requestedPixelTypes);
+        for (int i = 0; i < exr_header.num_channels(); i++)
+        {
+            pixelTypes.put(i, TinyEXR.TINYEXR_PIXELTYPE_FLOAT);
+            requestedPixelTypes.put(i, TinyEXR.TINYEXR_PIXELTYPE_FLOAT);
+        }
+
+        PointerBuffer err = BufferUtils.createPointerBuffer(1);
+        int ret = TinyEXR.SaveEXRImageToFile(exr_image, exr_header, path, err);
+        if (ret != TinyEXR.TINYEXR_SUCCESS)
+        {
+            Logger.error("Could not export EXR + " + path + ": " + err.get(0));
+        } else
+        {
+            Logger.info("Exported EXR to " + path);
+        }
+
+        for (FloatBuffer[] facesAtMipLevel : faceData)
+        {
+            for (FloatBuffer buffer : facesAtMipLevel) MemoryUtil.memFree(buffer);
+        }
+        MemoryUtil.memFree(red);
+        MemoryUtil.memFree(green);
+        MemoryUtil.memFree(blue);
     }
 
     public static void dispose()

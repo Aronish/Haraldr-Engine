@@ -1,11 +1,11 @@
 package oldgame.gameobject;
 
+import haraldr.math.MathUtils;
 import haraldr.scene.OrthographicCamera;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector3f;
 import oldgame.physics.PlayerMovementType;
 
-import static haraldr.main.EntryPoint.fastFloor;
 import static oldgame.world.Grid.GRID_SIZE;
 
 public class Player extends MovableEntity
@@ -91,7 +91,7 @@ public class Player extends MovableEntity
     public void update(OrthographicCamera camera, float deltaTime)
     {
         super.update(camera, deltaTime);
-        gridPosition.set((float) fastFloor(getPosition().getX() / GRID_SIZE), (float) fastFloor(getPosition().getY() / GRID_SIZE));
+        gridPosition.set((float) MathUtils.fastFloor(getPosition().getX() / GRID_SIZE), (float) MathUtils.fastFloor(getPosition().getY() / GRID_SIZE));
     }
 
     @Override

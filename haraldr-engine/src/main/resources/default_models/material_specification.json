@@ -7,7 +7,7 @@
       {
         "dependants": [ "color" ],
         "shader": "default_shaders/pbr_untextured.glsl",
-        "optional": [ "metalness", "roughness", "opacity"],
+        "optional": [ "metalness", "roughness", "opacity" ],
         "samplers":
         {
           "environment_map": { "extended": true, "unit": 0 }

@@ -71,8 +71,7 @@ public class EditorApplication extends Application
 
         scene = new EditorTestScene();
         scene.onActivate();
-        editorCamera = new FPSCamera(window.getWidth(), window.getHeight());
-        window.setCursorVisibility(false);
+        editorCamera = new OrbitalCamera(window.getWidth(), window.getHeight());
     }
 
     @Override

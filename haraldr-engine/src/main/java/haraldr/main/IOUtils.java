@@ -1,16 +1,15 @@
 package haraldr.main;
 
-import haraldr.debug.Logger;
-import org.jetbrains.annotations.Contract;
 import org.lwjgl.BufferUtils;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Path;
 import java.util.function.Function;
 
 import static org.lwjgl.BufferUtils.createByteBuffer;
@@ -27,8 +26,7 @@ public class IOUtils
                 {
                     if (inputStreamClient == null)
                     {
-                        Logger.error("Resource at path " + path + " not found!");
-                        return null;
+                        throw new NullPointerException("Resource at path " + path + " not found!");
                     } else
                     {
                         return function.apply(inputStreamClient);
@@ -77,6 +75,18 @@ public class IOUtils
         }
     }
 
+    public static String getAbsolutePath(String relativePath)
+    {
+        try
+        {
+            return Path.of(IOUtils.class.getResource(relativePath).toURI()).toAbsolutePath().toString();
+        } catch (URISyntaxException e)
+        {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     public static String resourceToString(InputStream file)
     {
         StringBuilder stringBuilder = new StringBuilder();
@@ -117,6 +127,15 @@ public class IOUtils
         }
         buffer.flip();
         return buffer;
+    }
+
+    public static ByteBuffer stringToByteBuffer(String s)
+    {
+        byte[] bytes = s.getBytes();
+        ByteBuffer bb = BufferUtils.createByteBuffer(bytes.length);
+        bb.put(bytes);
+        bb.flip();
+        return bb;
     }
 
     private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity)

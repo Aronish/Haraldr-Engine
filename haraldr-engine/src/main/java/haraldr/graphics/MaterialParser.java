@@ -30,6 +30,8 @@ public class MaterialParser
 {
     private static final JSONObject specification = new JSONObject(IOUtils.readResource("default_models/material_specification.json", IOUtils::resourceToString));
 
+    private static final String DIFF_IRR_TOKEN = "_DIFF_IRR", PREFILTERED_TOKEN = "_PREF";
+
     @Contract("_ -> new")
     public static @NotNull Material parseMaterial(@NotNull JSONObject materialDefinition) throws JSONException
     {
@@ -102,6 +104,10 @@ public class MaterialParser
     /**
      * Extracts both 2D textures and cubemaps from the material definition. If there are optional ones, optionalSamplerSwitches will be populated
      * with the correct compiler switch.
+     *
+     * Cube map "extensions" for PBR should be stored in a folder with the same name as
+     * the original .hdr file. The diffuse irradiance map should have the suffix _DIFF_IRR and
+     * the prefiltered environment map should have _PREF. The format is .exr and so is the file extension.
      */
     private static @NotNull List<ShaderSampler> extractSamplers(JSONObject materialProperties, JSONObject samplerDefinition, List<String> optionalSamplerSwitches)
     {
@@ -116,14 +122,17 @@ public class MaterialParser
             }
             if (sampler.has("extended")) // Checks for cubemap or 2D texture. ('extended' is only a part of cubemaps)
             {
-                CubeMap environmentMap = CubeMap.createEnvironmentMap(materialProperties.getString("environment_map"));
                 if (sampler.getBoolean("extended")) // Be aware that this occupies 3 sampler units.
                 {
-                    samplers.add(new ShaderSampler.CubeMap(CubeMap.createDiffuseIrradianceMap(environmentMap), 0));
-                    samplers.add(new ShaderSampler.CubeMap(CubeMap.createPrefilteredEnvironmentMap(environmentMap), 1));
+                    String folderPath = materialProperties.getString("environment_map");
+                    String hdrFileName = folderPath.substring(folderPath.lastIndexOf("/"));
+
+                    samplers.add(new ShaderSampler.CubeMap(CubeMap.createDiffuseIrradianceMap(IOUtils.getAbsolutePath("/" + folderPath + hdrFileName + DIFF_IRR_TOKEN + ".exr")), 0));
+                    samplers.add(new ShaderSampler.CubeMap(CubeMap.createPrefilteredEnvironmentMap(IOUtils.getAbsolutePath("/" + folderPath + hdrFileName + PREFILTERED_TOKEN + ".exr")), 1));
                     samplers.add(new ShaderSampler.Texture2D(Texture.BRDF_LUT, 2));
                 } else
                 {
+                    CubeMap environmentMap = CubeMap.createEnvironmentMap(materialProperties.getString("environment_map"));
                     samplers.add(new ShaderSampler.CubeMap(environmentMap, 0));
                 }
             } else

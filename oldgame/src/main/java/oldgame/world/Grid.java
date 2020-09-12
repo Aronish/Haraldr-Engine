@@ -1,5 +1,6 @@
 package oldgame.world;
 
+import haraldr.math.MathUtils;
 import oldgame.gameobject.GameObject;
 import oldgame.gameobject.tile.Tile;
 import org.jetbrains.annotations.NotNull;
@@ -8,8 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static haraldr.main.EntryPoint.fastFloor;
 
 /**
  * Contains all objects int the World in a grid system.
@@ -28,7 +27,7 @@ public class Grid
      */
     void populateGrid(@NotNull List<Tile> tiles)
     {
-        tiles.forEach(entity -> addEntity(fastFloor(entity.getPosition().getX() / GRID_SIZE), fastFloor(entity.getPosition().getY() / GRID_SIZE), entity));
+        tiles.forEach(entity -> addEntity(MathUtils.fastFloor(entity.getPosition().getX() / GRID_SIZE), MathUtils.fastFloor(entity.getPosition().getY() / GRID_SIZE), entity));
         cacheMatrices();
     }
 

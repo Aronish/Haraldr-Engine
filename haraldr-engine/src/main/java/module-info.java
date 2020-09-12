@@ -24,10 +24,13 @@ module haraldr
     //STB
     requires org.lwjgl.stb;
     requires org.lwjgl.stb.natives;
+    //TinyEXR
+    requires org.lwjgl.tinyexr;
+    requires org.lwjgl.tinyexr.natives;
     //Misc
     requires java.desktop;
     requires JsonParser;
-    ///// EXPORTS ///////
+    ///// EXPORTS ////////
     exports haraldr.debug;
     exports haraldr.ecs;
     exports haraldr.event;
@@ -40,6 +43,7 @@ module haraldr
     exports haraldr.physics;
     exports haraldr.scene;
 
+    ///// RESOURCES //////
     opens default_shaders;
     opens default_textures;
     opens default_models;

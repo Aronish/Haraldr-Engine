@@ -8,16 +8,15 @@ import haraldr.ecs.TransformComponent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
-import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Renderer3D;
 import haraldr.graphics.ui.Button;
 import haraldr.graphics.ui.InfoLabel;
 import haraldr.graphics.ui.Pane;
-import haraldr.input.MouseButton;
 import haraldr.input.Input;
 import haraldr.input.KeyboardKey;
+import haraldr.input.MouseButton;
 import haraldr.main.Application;
 import haraldr.main.ProgramArguments;
 import haraldr.main.Window;
@@ -27,7 +26,6 @@ import haraldr.math.Vector3f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics3D;
 import haraldr.scene.Camera;
-import haraldr.scene.FPSCamera;
 import haraldr.scene.OrbitalCamera;
 import haraldr.scene.Scene3D;
 
@@ -35,7 +33,6 @@ public class EditorApplication extends Application
 {
     private Pane propertiesPane;
     private InfoLabel entityId;
-    private Button centerCamera;
 
     private Camera editorCamera;
     private Scene3D scene;
@@ -60,7 +57,7 @@ public class EditorApplication extends Application
         entityId = new InfoLabel("Selected", propertiesPane);
         propertiesPane.addChild(entityId);
 
-        centerCamera = new Button("Center Camera", propertiesPane, () ->
+        Button centerCamera = new Button("Center Camera", propertiesPane, () ->
         {
             if (!selected.equals(Entity.INVALID))
             {
@@ -85,7 +82,7 @@ public class EditorApplication extends Application
             var mousePressedEvent = (MousePressedEvent) event;
             if (Input.wasMousePressed(mousePressedEvent, MouseButton.MOUSE_BUTTON_1))
             {
-                //selected = selectEntity(mousePressedEvent.xPos, mousePressedEvent.yPos, window.getWidth(), window.getHeight(), selected, scene.getRegistry());
+                selected = selectEntity(mousePressedEvent.xPos, mousePressedEvent.yPos, window.getWidth(), window.getHeight(), selected, scene.getRegistry());
                 if (!selected.equals(Entity.INVALID))
                 {
                     entityId.setText(String.format("Entity ID: %d", selected.id));

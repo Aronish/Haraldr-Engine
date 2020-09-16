@@ -249,6 +249,7 @@ public class CubeMap
                 return new CubeMap(cubeMap);
             }));
             ResourceManager.addCubeMap(path, diffuseIrradianceMap);
+            Logger.info("Loaded diffuse irradiance map " + path);
             return diffuseIrradianceMap;
         }
     }
@@ -297,7 +298,7 @@ public class CubeMap
 
                 int cubeMap = glCreateTextures(GL_TEXTURE_CUBE_MAP);
                 glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap);
-                glTexStorage2D(GL_TEXTURE_CUBE_MAP, mipLevels - 1, GL_RGB16F, exrData.faceSize, exrData.faceSize);
+                glTexStorage2D(GL_TEXTURE_CUBE_MAP, mipLevels, GL_RGB16F, exrData.faceSize, exrData.faceSize);
                 for (int mipLevel = 0; mipLevel < mipLevels; ++mipLevel)
                 {
                     int mipLevelSize = (int) (exrData.faceSize * Math.pow(0.5f, mipLevel));
@@ -316,6 +317,7 @@ public class CubeMap
             }));
 
             ResourceManager.addCubeMap(path, prefilteredEnvironmentMap);
+            Logger.info("Loaded prefiltered environment map " + path);
             return prefilteredEnvironmentMap;
         }
     }

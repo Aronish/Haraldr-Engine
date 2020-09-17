@@ -10,7 +10,7 @@ public class GameApplication extends Application
 {
     public GameApplication()
     {
-        super(new Window.WindowProperties(1280, 720, 0, false, false, false));
+        super(new Window.WindowProperties(1280, 720, 0, false, false, true, false));
     }
 
     @Override

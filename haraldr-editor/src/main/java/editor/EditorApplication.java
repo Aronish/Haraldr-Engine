@@ -1,6 +1,5 @@
 package editor;
 
-import haraldr.debug.Logger;
 import haraldr.ecs.BoundingSphereComponent;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
@@ -41,7 +40,11 @@ public class EditorApplication extends Application
 
     public EditorApplication()
     {
-        super(new Window.WindowProperties(1280, 720, ProgramArguments.getIntOrDefault("MSAA", 0), false, false, false));
+        super(new Window.WindowProperties(
+                1280, 720,
+                ProgramArguments.getIntOrDefault("MSAA", 0),
+                false, false, true, false)
+        );
     }
 
     @Override

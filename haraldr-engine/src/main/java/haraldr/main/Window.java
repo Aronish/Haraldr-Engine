@@ -86,7 +86,7 @@ public class Window
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
-        glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+        glfwWindowHint(GLFW_RESIZABLE, windowProperties.resizable ? GLFW_TRUE : GLFW_FALSE);
         glfwWindowHint(GLFW_MAXIMIZED, windowProperties.maximized ? GLFW_TRUE : GLFW_FALSE);
         glfwWindowHint(GLFW_SAMPLES, windowProperties.samples);
 
@@ -254,15 +254,16 @@ public class Window
     public static class WindowProperties
     {
         public final int width, height, samples;
-        public final boolean maximized, fullscreen, vsync;
+        public final boolean maximized, fullscreen, resizable, vsync;
 
-        public WindowProperties(int width, int height, int samples, boolean maximized, boolean fullscreen, boolean vsync)
+        public WindowProperties(int width, int height, int samples, boolean maximized, boolean fullscreen, boolean resizable, boolean vsync)
         {
             this.width = width;
             this.height = height;
             this.samples = samples;
             this.maximized = maximized;
             this.fullscreen = fullscreen;
+            this.resizable = resizable;
             this.vsync = vsync;
         }
     }

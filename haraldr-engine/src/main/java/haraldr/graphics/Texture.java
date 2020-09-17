@@ -6,6 +6,8 @@ import haraldr.main.EntryPoint;
 import haraldr.main.IOUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.EXTTextureCompressionS3TC;
+import org.lwjgl.opengl.EXTTextureSRGB;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
@@ -150,11 +152,11 @@ public class Texture
                     format = GL_RED;
                 }
                 case 3 -> {
-                    internalFormat = isColorData ? GL_SRGB8 : GL_RGB8;
+                    internalFormat = isColorData ? EXTTextureSRGB.GL_COMPRESSED_SRGB_S3TC_DXT1_EXT : EXTTextureCompressionS3TC.GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
                     format = GL_RGB;
                 }
                 case 4 -> {
-                    internalFormat = isColorData ? GL_SRGB8_ALPHA8 : GL_RGBA8;
+                    internalFormat = isColorData ? EXTTextureSRGB.GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT : EXTTextureCompressionS3TC.GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
                     format = GL_RGBA;
                 }
                 default -> {

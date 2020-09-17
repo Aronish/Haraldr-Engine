@@ -72,6 +72,7 @@ public abstract class Application
         /////OPENGL CODE WON'T WORK BEFORE THIS//////////
         EventDispatcher.addCallback(new EventCallback());
         Renderer2D.init(window.getWidth(), window.getHeight());
+        Renderer3D.init(initialWindowProperties);
         Texture.init();
 
         glEnable(GL_CULL_FACE);

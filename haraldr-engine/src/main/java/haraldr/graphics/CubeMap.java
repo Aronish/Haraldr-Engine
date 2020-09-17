@@ -135,8 +135,8 @@ public class CubeMap
                 Logger.info(String.format("Loaded HDR %s | Width: %d, Height: %d, Components: %d", path, width1, size, comps.get()));
             }
             assert image != null : "Image was somehow null here!";
-            int texture = glCreateTextures(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, texture);
+            int equirectangular = glCreateTextures(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, equirectangular);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width1, size, 0, GL_RGB, GL_FLOAT, image);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -198,7 +198,7 @@ public class CubeMap
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glDeleteFramebuffers(mappingFrameBuffer);
             glDeleteRenderbuffers(depthRenderBuffer);
-            glDeleteTextures(texture);
+            glDeleteTextures(equirectangular);
             glCullFace(GL_BACK);
 
             glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
@@ -332,10 +332,12 @@ public class CubeMap
         EXRHeader exr_header = EXRHeader.create();
         TinyEXR.InitEXRHeader(exr_header);
 
+        ByteBuffer exrMemoryData = IOUtils.readResource(path, (stream) -> IOUtils.resourceToByteBuffer(stream, 2));
+
         try (MemoryStack stack = MemoryStack.stackPush())
         {
             PointerBuffer err = stack.mallocPointer(1);
-            int resultCode = TinyEXR.ParseEXRHeaderFromFile(exr_header, exr_version, path, err);
+            int resultCode = TinyEXR.ParseEXRHeaderFromMemory(exr_header, exr_version, exrMemoryData, err);
             if (resultCode != TINYEXR_SUCCESS)
             {
                 throw new RuntimeException("EXR parse error: " + err.get(0));
@@ -356,7 +358,7 @@ public class CubeMap
         try (MemoryStack stack = MemoryStack.stackPush())
         {
             PointerBuffer err = stack.mallocPointer(1);
-            int resultCode = TinyEXR.LoadEXRImageFromFile(exr_image, exr_header, path, err);
+            int resultCode = TinyEXR.LoadEXRImageFromMemory(exr_image, exr_header, exrMemoryData, err);
             if (resultCode != TINYEXR_SUCCESS)
             {
                 throw new RuntimeException("EXR load errror: " + err.get(0));

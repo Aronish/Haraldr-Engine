@@ -11,6 +11,7 @@ public abstract class Camera
     protected Vector3f position = Vector3f.IDENTITY;
     protected float[] rawPosition = new float[3];
     protected Matrix4f viewMatrix, projectionMatrix;
+    protected float aspectRatio;
 
     public abstract void onUpdate(float deltaTime, Window window);
 
@@ -36,6 +37,12 @@ public abstract class Camera
         rawPosition[1] += position.getY();
         rawPosition[2] += position.getZ();
         calculateViewMatrix();
+    }
+
+    public void setAspectRatio(float aspectRatio)
+    {
+        this.aspectRatio = aspectRatio;
+        calculateProjectionMatrix();
     }
 
     public Vector3f getPosition()

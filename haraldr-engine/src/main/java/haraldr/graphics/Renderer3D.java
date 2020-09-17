@@ -11,6 +11,7 @@ import static org.lwjgl.opengl.GL11.glBindTexture;
 public abstract class Renderer3D
 {
     public static final VertexArray SCREEN_QUAD = new VertexArray();
+    private static Framebuffer framebuffer;
 
     static
     {
@@ -33,16 +34,38 @@ public abstract class Renderer3D
     private static Shader postProcessingShader = Shader.create("internal_shaders/hdr_gamma_correct.glsl");
     private static float exposure = 0.5f;
 
+    public static void init(Window.WindowProperties initialWindowProperties)
+    {
+        framebuffer = new Framebuffer();
+        if (initialWindowProperties.samples > 0)
+        {
+            framebuffer.setColorAttachment(new Framebuffer.MultisampledColorAttachment(initialWindowProperties.width, initialWindowProperties.height, Framebuffer.ColorAttachment.Format.RGB16F, initialWindowProperties.samples));
+            framebuffer.setDepthBuffer(new Framebuffer.MultisampledRenderBuffer(initialWindowProperties.width, initialWindowProperties.height, Framebuffer.RenderBuffer.Format.DEPTH_24_STENCIL_8, initialWindowProperties.samples));
+        }
+        else if (initialWindowProperties.samples == 0)
+        {
+            framebuffer.setColorAttachment(new Framebuffer.ColorAttachment(initialWindowProperties.width, initialWindowProperties.height, Framebuffer.ColorAttachment.Format.RGB16F));
+            framebuffer.setDepthBuffer(new Framebuffer.RenderBuffer(initialWindowProperties.width, initialWindowProperties.height, Framebuffer.RenderBuffer.Format.DEPTH_24_STENCIL_8));
+        }
+        else throw new IllegalArgumentException("Multisample sample count cannot be below 0");
+    }
+
     public static void addExposure(float pExposure)
     {
         if (exposure < 0.0001f) exposure = 0.0001f;
         exposure += pExposure * exposure; // Makes it seem more linear towards the lower exposure levels.
     }
 
+    public static void resizeFramebuffer(int width, int height)
+    {
+        framebuffer.resize(width, height);
+    }
+
     public static void dispose()
     {
         SCREEN_QUAD.delete();
         matrixBuffer.delete();
+        framebuffer.delete();
     }
 
     /////RENDERING////////////////////
@@ -53,15 +76,14 @@ public abstract class Renderer3D
         matrixBuffer.setDataUnsafe(camera.getViewMatrix().matrix, 0);
         matrixBuffer.setDataUnsafe(camera.getProjectionMatrix().matrix, 64);
         matrixBuffer.setDataUnsafe(camera.getRawPosition(), 128);
-        window.getFramebuffer().bind();
+        framebuffer.bind();
         Renderer.clear(Renderer.ClearMask.COLOR_DEPTH_STENCIL);
     }
 
-    //TODO: Abstract away render passes
     public static void end(@NotNull Window window)
     {
-        glBindTexture(GL_TEXTURE_2D, window.getFramebuffer().getColorAttachmentTexture());
-        window.getFramebuffer().unbind();
+        glBindTexture(GL_TEXTURE_2D, framebuffer.getColorAttachmentTexture());
+        framebuffer.unbind();
         Renderer.clear(Renderer.ClearMask.COLOR_DEPTH);
         ///// POST PROCESSING //////
         postProcessingShader.bind();

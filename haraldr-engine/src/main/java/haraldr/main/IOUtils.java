@@ -75,6 +75,7 @@ public class IOUtils
         }
     }
 
+    //TODO: Remove, doesn't work with .jar's
     public static String getAbsolutePath(String relativePath)
     {
         try

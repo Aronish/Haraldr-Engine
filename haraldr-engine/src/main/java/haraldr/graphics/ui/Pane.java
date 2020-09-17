@@ -23,7 +23,9 @@ public class Pane
 
     protected Vector2f position;
     private Vector2f size, headerSize;
-    private float widthRatio, divider, dividerRatio, minDivider;
+    private float widthRatio;
+    private float divider;
+    private float minDivider;
     private boolean resizable, resizing;
 
     protected TextBatch textBatch = new TextBatch(DEFAULT_FONT);
@@ -31,15 +33,16 @@ public class Pane
 
     private List<LabeledComponent> components = new ArrayList<>();
 
-    public Pane(Vector2f position, float windowWidth, float windowHeight, float widthRatio, float dividerRatio, boolean resizable, String name)
+    public Pane(Vector2f position, float windowWidth, float windowHeight, float widthRatio, boolean resizable, String name)
     {
         this.position = position;
         size = new Vector2f(windowWidth * widthRatio, windowHeight);
-        this.widthRatio = widthRatio;
-        this.dividerRatio = dividerRatio;
-        this.name = textBatch.createTextLabel(name, position, new Vector4f(1f));
         headerSize = new Vector2f(size.getX(), DEFAULT_FONT.getSize() + 2f);
-        divider = size.getX() * dividerRatio;
+
+        this.widthRatio = widthRatio;
+        divider = size.getX() * 0.5f;
+
+        this.name = textBatch.createTextLabel(name, position, new Vector4f(1f));
         this.resizable = resizable;
     }
 
@@ -71,17 +74,10 @@ public class Pane
             {
                 var mouseMovedEvent = (MouseMovedEvent) event;
                 float width = (float) mouseMovedEvent.xPos;
-                if (width < 0) width = 0;
+                if (width < minDivider) width = minDivider;
                 if (width > window.getWidth()) width = window.getWidth();
-                if (width * dividerRatio > minDivider)
-                {
-                    size.setX(width);
-                    headerSize.setX(size.getX());
-                    divider = width * dividerRatio;
-                } else
-                {
-                    divider = minDivider;
-                }
+                size.setX(width);
+                headerSize.setX(width);
             }
         }
         components.forEach((component) -> component.onEvent(event));

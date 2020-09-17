@@ -1,5 +1,6 @@
 package editor;
 
+import haraldr.debug.Logger;
 import haraldr.ecs.BoundingSphereComponent;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
@@ -50,7 +51,6 @@ public class EditorApplication extends Application
                 new Vector2f(),
                 window.getWidth(), window.getHeight(),
                 0.25f,
-                0.3f,
                 true,
                 "Properties"
         );

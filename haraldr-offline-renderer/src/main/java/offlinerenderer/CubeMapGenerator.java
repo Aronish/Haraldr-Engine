@@ -293,7 +293,6 @@ public class CubeMapGenerator
         int mipLevelPixelOffset = 0;
         for (int mipLevel = 0; mipLevel < faceData.length; ++mipLevel) // Go through every mipmap
         {
-            //TODO: No need to have mipLevel(Width/Height)
             int mipLevelSize = (int) (faceSize * Math.pow(0.5f, mipLevel));
             int lineOffset = mipLevelSize * 4;
             int mipLineOffset = 6 * faceSize - 6 * mipLevelSize;

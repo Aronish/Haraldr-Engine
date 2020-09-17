@@ -14,6 +14,7 @@ import haraldr.event.WindowFocusEvent;
 import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Framebuffer;
 import haraldr.graphics.Renderer;
+import haraldr.graphics.Renderer3D;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -70,8 +71,6 @@ public class Window
 
     private int mouseX, mouseY;
 
-    private Framebuffer framebuffer;//TODO: Does not belong in here
-
     public Window(@NotNull WindowProperties windowProperties)
     {
         fullscreen = windowProperties.fullscreen;
@@ -111,19 +110,6 @@ public class Window
 
         setCursorVisibility(true);
         setVSync(windowProperties.vsync);
-        ///// FRAMEBUFFER //////////////
-        framebuffer = new Framebuffer();
-        if (windowProperties.samples > 0)
-        {
-            framebuffer.setColorAttachment(new Framebuffer.MultisampledColorAttachment(initWidth, initHeight, Framebuffer.ColorAttachment.Format.RGB16F, windowProperties.samples));
-            framebuffer.setDepthBuffer(new Framebuffer.MultisampledRenderBuffer(initWidth, initHeight, Framebuffer.RenderBuffer.Format.DEPTH_24_STENCIL_8, windowProperties.samples));
-        }
-        else if (windowProperties.samples == 0)
-        {
-            framebuffer.setColorAttachment(new Framebuffer.ColorAttachment(initWidth, initHeight, Framebuffer.ColorAttachment.Format.RGB16F));
-            framebuffer.setDepthBuffer(new Framebuffer.RenderBuffer(initWidth, initHeight, Framebuffer.RenderBuffer.Format.DEPTH_24_STENCIL_8));
-        }
-        else throw new IllegalArgumentException("Multisample sample count cannot be below 0");
 
         ///// CALLBACKS /////////////////////////////////////////////////////////
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) ->
@@ -170,7 +156,7 @@ public class Window
             windowWidth = newWidth;
             windowHeight = newHeight;
             Renderer.setViewPort(0, 0, newWidth, newHeight);
-            framebuffer.resize(newWidth, newHeight);
+            Renderer3D.resizeFramebuffer(newWidth, newHeight);
             EventDispatcher.dispatch(new WindowResizedEvent(newWidth, newHeight), this);
         });
 
@@ -225,11 +211,6 @@ public class Window
         return windowHandle;
     }
 
-    public Framebuffer getFramebuffer()
-    {
-        return framebuffer;
-    }
-
     public int getWidth()
     {
         return windowWidth;
@@ -267,7 +248,6 @@ public class Window
 
     public void delete()
     {
-        framebuffer.delete();
         glfwDestroyWindow(windowHandle);
     }
 

@@ -48,7 +48,7 @@ public class OfflineRendererApplication extends Application
         mainPane = new Pane(
                 new Vector2f(),
                 window.getWidth(), window.getHeight(),
-                1f, 0.5f,
+                1f,
                 false,
                 "Haraldr Offline Renderer"
         );

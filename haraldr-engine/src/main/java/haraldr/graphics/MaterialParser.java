@@ -127,8 +127,8 @@ public class MaterialParser
                     String folderPath = materialProperties.getString("environment_map");
                     String hdrFileName = folderPath.substring(folderPath.lastIndexOf("/"));
 
-                    samplers.add(new ShaderSampler.CubeMap(CubeMap.createDiffuseIrradianceMap(IOUtils.getAbsolutePath("/" + folderPath + hdrFileName + DIFF_IRR_TOKEN + ".exr")), 0));
-                    samplers.add(new ShaderSampler.CubeMap(CubeMap.createPrefilteredEnvironmentMap(IOUtils.getAbsolutePath("/" + folderPath + hdrFileName + PREFILTERED_TOKEN + ".exr")), 1));
+                    samplers.add(new ShaderSampler.CubeMap(CubeMap.createDiffuseIrradianceMap(folderPath + hdrFileName + DIFF_IRR_TOKEN + ".exr"), 0));
+                    samplers.add(new ShaderSampler.CubeMap(CubeMap.createPrefilteredEnvironmentMap(folderPath + hdrFileName + PREFILTERED_TOKEN + ".exr"), 1));
                     samplers.add(new ShaderSampler.Texture2D(Texture.BRDF_LUT, 2));
                 } else
                 {

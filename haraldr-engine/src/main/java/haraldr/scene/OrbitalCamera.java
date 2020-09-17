@@ -1,10 +1,12 @@
 package haraldr.scene;
 
+import haraldr.debug.Logger;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MouseScrolledEvent;
 import haraldr.event.WindowResizedEvent;
+import haraldr.input.KeyboardKey;
 import haraldr.input.MouseButton;
 import haraldr.input.Input;
 import haraldr.main.Window;
@@ -19,8 +21,8 @@ public class OrbitalCamera extends Camera
     private Vector3f right = new Vector3f();
     private Vector3f up = new Vector3f();
     private Vector3f target = new Vector3f(1f);
-    private float pitch, lastPitch, yaw, fov = 60f, aspectRatio, near = 0.1f, far = 100f, zoom = 1f, lastX, lastY;
-    private boolean rotating, moving;
+    private float pitch, lastPitch, yaw, fov = 60f, near = 0.1f, far = 100f, zoom = 1f, lastX, lastY;
+    private boolean rotating, moving, movingDirectional;
 
     public OrbitalCamera(float width, float height)
     {
@@ -47,6 +49,8 @@ public class OrbitalCamera extends Camera
         if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1)) rotating = false;
         if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_2)) moving = true;
         if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_2)) moving = false;
+        if (Input.wasKeyPressed(event, KeyboardKey.KEY_LEFT_SHIFT)) movingDirectional = true;
+        if (Input.wasKeyReleased(event, KeyboardKey.KEY_LEFT_SHIFT)) movingDirectional = false;
         if (event.eventType == EventType.MOUSE_MOVED)
         {
             var mouseMovedEvent = (MouseMovedEvent) event;
@@ -59,19 +63,23 @@ public class OrbitalCamera extends Camera
             }
             if (moving)
             {
-                target.add(Vector3f.add(
-                        Vector3f.multiply(right, (float) (lastX - mouseMovedEvent.xPos) / window.getWidth()),
-                        Vector3f.multiply(up, (float) (mouseMovedEvent.yPos - lastY) / window.getHeight())
-                ).multiply(MOVE_SPEED));
+                if (movingDirectional)
+                {
+                    zoom += (float) (mouseMovedEvent.yPos - lastY) / window.getHeight() * MOVE_SPEED;
+                    if (zoom <= 0.0001f) zoom = 0.0001f;
+                    Logger.info(zoom);
+                } else
+                {
+                    target.add(Vector3f.add(
+                            Vector3f.multiply(right, (float) (lastX - mouseMovedEvent.xPos) / window.getWidth()),
+                            Vector3f.multiply(up, (float) (mouseMovedEvent.yPos - lastY) / window.getHeight())
+                    ).multiply(MOVE_SPEED));
+                }
                 calculateViewMatrix();
             }
             lastPitch = (float)(mouseMovedEvent.yPos) / window.getHeight() * 180f - 90f;
             lastX = (float) mouseMovedEvent.xPos;
             lastY = (float) mouseMovedEvent.yPos;
-        }
-        if (event.eventType == EventType.MOUSE_SCROLLED)
-        {
-            addZoom((float) -((MouseScrolledEvent) event).yOffset);
         }
     }
 
@@ -108,21 +116,6 @@ public class OrbitalCamera extends Camera
     {
         target.set(position);
         calculateViewMatrix();
-    }
-
-    private void addZoom(float zoom)
-    {
-        this.zoom += zoom;
-        if (this.zoom < 0.1) this.zoom = 0.1f;
-        calculateViewMatrix();
-    }
-
-    private void addFov(float fov)
-    {
-        this.fov += fov;
-        if (this.fov < 10f) this.fov = 10f;
-        if (this.fov > 179f) this.fov = 179f;
-        calculateProjectionMatrix();
     }
 
     private void addYaw(float yaw)

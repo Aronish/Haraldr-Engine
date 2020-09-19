@@ -8,9 +8,6 @@ import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DockspaceApplication extends Application
 {
     private Dockspace dockspace;

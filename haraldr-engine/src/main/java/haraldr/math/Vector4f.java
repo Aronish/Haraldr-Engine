@@ -248,4 +248,10 @@ public class Vector4f
     {
         Logger.info("X: " + x + " Y: " + y + " Z: " + z + " W: " + w);
     }
+
+    @Override
+    public String toString()
+    {
+        return "X: " + x + " Y: " + y + " Z: " + z + " W: " + w;
+    }
 }

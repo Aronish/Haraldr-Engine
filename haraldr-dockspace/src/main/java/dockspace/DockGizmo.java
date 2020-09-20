@@ -56,6 +56,18 @@ public class DockGizmo
         refreshDockDimensions();
     }
 
+    public void setWidth(float width)
+    {
+        this.parentSize.setX(width);
+        refreshDockDimensions();
+    }
+
+    public void setHeight(float height)
+    {
+        this.parentSize.setY(height);
+        refreshDockDimensions();
+    }
+
     public DockPosition getDockPosition(Vector2f panelPosition)
     {
         if (Physics2D.pointInsideAABB(panelPosition, topPosition, topSize))         return DockPosition.TOP;

@@ -3,46 +3,37 @@ package dockspace;
 import haraldr.debug.Logger;
 import haraldr.event.Event;
 import haraldr.event.EventType;
-import haraldr.event.MouseMovedEvent;
-import haraldr.event.MousePressedEvent;
-import haraldr.event.MouseReleasedEvent;
 import haraldr.graphics.Renderer2D;
 import haraldr.input.Input;
-import haraldr.input.KeyboardKey;
 import haraldr.input.MouseButton;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
-import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.Map;
 
 public class Dockspace
 {
     private static final Vector4f BACKGROUND_COLOR = new Vector4f(0.3f, 0.3f, 0.3f, 1f);
 
-    private Vector2f position, size;
-    private boolean splitting, removing;
+    private Vector2f position;
+    private Vector2f size;
 
-    private List<DockingArea> dockingAreas = new ArrayList<>(); // 0 contains 1, 1 contains 2
-    private DockingArea selectedDockingArea;
-    private float startingSize;
+    private List<DockablePanel> panels = new ArrayList<>();
+    private DockablePanel selectedPanel;
 
-    private LinkedList<DockablePanel> panels = new LinkedList<>();
-    private DockablePanel activePanel;
-    private boolean activePanelMoving, activePanelDocked;
+    private DockingArea rootArea;
 
     public Dockspace(Vector2f position, Vector2f size)
     {
         this.position = position;
         this.size = size;
 
-        dockingAreas.add(new DockingArea(position, size));
+        rootArea = new DockingArea(position, size);
     }
 
     public void addPanel(DockablePanel panel)
@@ -54,208 +45,33 @@ public class Dockspace
     {
         for (DockablePanel panel : panels)
         {
-            if (activePanelMoving = panel.onEvent(event, window)) break;
+            panel.onEvent(event, window);
+
+            if (panel.isHeld())
+            {
+                selectedPanel = panel;
+                break;
+            }
         }
 
-        if (event.eventType == EventType.MOUSE_PRESSED)
+        if (selectedPanel != null && Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
         {
-            var mousePressedEvent = (MousePressedEvent) event;
-            activePanel = null;
-            for (DockablePanel panel : panels)
-            {
-                if (panel.select(mousePressedEvent))
-                {
-                    activePanel = panel;
-                    panels.remove(activePanel);
-                    panels.addFirst(activePanel);
-                    break;
-                }
-            }
+            rootArea.dockPanel(selectedPanel);
+            selectedPanel = null;
         }
 
-        if (event.eventType == EventType.MOUSE_MOVED)
+        if (selectedPanel != null && event.eventType == EventType.MOUSE_MOVED)
         {
-            if (activePanelMoving && activePanelDocked)
-            {
-                activePanelDocked = false;
-                for (Iterator<DockingArea> it = dockingAreas.iterator(); it.hasNext();)
-                {
-                    DockingArea dockingArea = it.next();
-                    if (dockingArea.dockedPanel.equals(activePanel))
-                    {
-                        //Merge the one it was docked in with the next in the list.
-                        Logger.info(dockingArea.positionAtDock + " " + dockingAreas.indexOf(dockingArea));
-                        break;
-                    }
-                }
-            }
+            rootArea.checkHovered(selectedPanel.getPosition());
+            Logger.info(rootArea.getDockedArea(selectedPanel));
         }
-
-        if (activePanel != null && event.eventType == EventType.MOUSE_RELEASED)
-        {
-            var mouseReleasedEvent = (MouseReleasedEvent) event;
-            for (ListIterator<DockingArea> it = dockingAreas.listIterator(); it.hasNext();)
-            {
-                DockingArea dockingArea = it.next();
-                if (Physics2D.pointInsideAABB(new Vector2f(mouseReleasedEvent.xPos, mouseReleasedEvent.yPos), dockingArea.position, dockingArea.size))
-                {
-                    DockingData dockingData = dockingArea.dockPanel(activePanel, window);
-                    if (dockingData.docked)
-                    {
-                        activePanelDocked = true;
-                        DockingArea newDockingArea = splitDockingArea(dockingArea, dockingData.dockPosition);
-                        if (newDockingArea != null)
-                        {
-                            it.add(newDockingArea);
-                        }
-                    }
-                }
-            }
-        }
-/*
-        // Rearranging docking areas, temporary
-        if (Input.wasKeyPressed(event, KeyboardKey.KEY_LEFT_SHIFT)) splitting = true;
-        if (Input.wasKeyReleased(event, KeyboardKey.KEY_LEFT_SHIFT)) splitting = false;
-        if (Input.wasKeyPressed(event, KeyboardKey.KEY_R)) removing = true;
-        if (Input.wasKeyReleased(event, KeyboardKey.KEY_R)) removing = false;
-
-        if (event.eventType == EventType.MOUSE_PRESSED)
-        {
-            var mousePressedEvent = (MousePressedEvent) event;
-            Vector2f clickPosition = new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos);
-
-            if (splitting) // Split old area into old and new at click point
-            {
-                for (ListIterator<DockingArea> it = dockingAreas.listIterator(); it.hasNext(); )
-                {
-                    DockingArea dockingArea = it.next();
-                    boolean intersected = Physics2D.pointInsideAABB(clickPosition, dockingArea.position, dockingArea.size);
-
-                    if (intersected)
-                    {
-                        if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
-                        {
-                            Vector2f oldSize = new Vector2f(dockingArea.size);
-                            dockingArea.setWidth(clickPosition.getX() - dockingArea.position.getX());
-                            DockingArea newDockingArea = new DockingArea(
-                                    new Vector2f(dockingArea.position.getX() + dockingArea.size.getX(), dockingArea.position.getY()),
-                                    new Vector2f((dockingArea.position.getX() + oldSize.getX()) - clickPosition.getX(), dockingArea.size.getY())
-                            );
-                            it.add(newDockingArea);
-                            break;
-                        } else if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_2))
-                        {
-                            Vector2f oldSize = new Vector2f(dockingArea.size);
-                            dockingArea.setHeight(clickPosition.getY() - dockingArea.position.getY());
-                            DockingArea newDockingArea = new DockingArea(
-                                    new Vector2f(dockingArea.position.getX(), dockingArea.position.getY() + dockingArea.size.getY()),
-                                    new Vector2f(dockingArea.size.getX(), (dockingArea.position.getY() + oldSize.getY()) - clickPosition.getY())
-                            );
-                            it.add(newDockingArea);
-                            break;
-                        }
-                    }
-                }
-
-            } else if (removing) // Removed hovered area on click
-            {
-                boolean removed = false;
-                DockingArea removedDockingArea = null;
-                for (Iterator<DockingArea> it = dockingAreas.iterator(); it.hasNext();)
-                {
-                    DockingArea dockingArea = it.next();
-                    if (Physics2D.pointInsideAABB(clickPosition, dockingArea.position, dockingArea.size))
-                    {
-                        removedDockingArea = dockingArea;
-                        it.remove();
-                        removed = true;
-                    }
-
-                    if (removed)
-                    {
-                        dockingArea.setPosition(Vector2f.add(dockingArea.position, new Vector2f(-removedDockingArea.size.getX(), 0f)));
-                    }
-                }
-
-            } else if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1)) // Select an area for resizing
-            {
-                selectedDockingArea = null;
-                for (DockingArea dockingArea : dockingAreas)
-                {
-                    if (Physics2D.pointInsideAABB(clickPosition, dockingArea.position, dockingArea.size))
-                    {
-                        selectedDockingArea = dockingArea;
-                        startingSize = selectedDockingArea.size.getX();
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Resize all subsequent areas when selected is resized
-        if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
-        {
-            if (selectedDockingArea != null)
-            {
-                float sizeDifference = selectedDockingArea.size.getX() - startingSize;
-                for (int index = dockingAreas.indexOf(selectedDockingArea) + 1; index < dockingAreas.size(); ++index)
-                {
-                    DockingArea current = dockingAreas.get(index);
-                    current.setPosition(Vector2f.add(current.position, new Vector2f(sizeDifference, 0f)));
-                }
-                selectedDockingArea = null;
-            }
-        }
-
-        if (event.eventType == EventType.MOUSE_MOVED)
-        {
-            var mouseMovedEvent = (MouseMovedEvent) event;
-            // Resize width of selected
-            if (selectedDockingArea != null)
-            {
-                selectedDockingArea.setWidth((float)mouseMovedEvent.xPos - selectedDockingArea.position.getX());
-            }
-        }
-
- */
-    }
-
-    private DockingArea splitDockingArea(DockingArea dockingArea, DockPosition dockPosition)
-    {
-        switch (dockPosition)
-        {
-            case TOP, BOTTOM -> {
-                Vector2f oldSize = new Vector2f(dockingArea.size);
-                dockingArea.setHeight(activePanel.getSize().getY() - dockingArea.position.getY());
-                return new DockingArea(
-                        new Vector2f(dockingArea.position.getX(), dockingArea.position.getY() + dockingArea.size.getY()),
-                        new Vector2f(dockingArea.size.getX(), (dockingArea.position.getY() + oldSize.getY()) - activePanel.getSize().getY())
-                );
-            }
-            case LEFT, RIGHT -> {
-                Vector2f oldSize = new Vector2f(dockingArea.size);
-                dockingArea.setWidth(activePanel.getSize().getX() - dockingArea.position.getX());
-                return new DockingArea(
-                        new Vector2f(dockingArea.position.getX() + dockingArea.size.getX(), dockingArea.position.getY()),
-                        new Vector2f((dockingArea.position.getX() + oldSize.getX()) - activePanel.getSize().getX(), dockingArea.size.getY())
-                );
-            }
-        }
-        return null;
     }
 
     public void render()
     {
-        for (DockingArea dockingArea : dockingAreas)
-        {
-            Renderer2D.drawQuad(dockingArea.position, dockingArea.size, dockingArea.color);
-            // Render gizmo on area hovered by active panel
-            if (activePanel != null && Physics2D.pointInsideAABB(activePanel.getPosition(), dockingArea.position, dockingArea.size))
-            {
-                dockingArea.dockGizmo.render();
-            }
-        }
-        for (DockablePanel panel : panels) panel.render();
+        Renderer2D.drawQuad(position, size, BACKGROUND_COLOR);
+        panels.forEach(DockablePanel::render);
+        if (selectedPanel != null) rootArea.render();
     }
 
     private static class DockingArea
@@ -263,85 +79,156 @@ public class Dockspace
         private Vector2f position, size;
         private Vector4f color;
 
-        private DockablePanel dockedPanel;
-        private DockPosition positionAtDock;
-
         private DockGizmo dockGizmo;
+        private Map<DockPosition, DockingArea> children = new HashMap<>();
+        private boolean dockable = true, hovered;
+
+        private DockablePanel dockedPanel;
 
         private DockingArea(Vector2f position, Vector2f size)
         {
             this.position = position;
             this.size = size;
+            color = new Vector4f((float) Math.random(), (float) Math.random(), (float) Math.random(), 0.1f);
             dockGizmo = new DockGizmo(position, size);
-
-            color = new Vector4f((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f);
         }
 
-        private DockingData dockPanel(DockablePanel panel, Window window)
+        private boolean dockPanel(DockablePanel panel)
         {
-            DockingData dockingData = switch (dockGizmo.getDockPosition(panel.getPosition()))
+            DockPosition dockPosition = dockGizmo.getDockPosition(panel.getPosition());
+            if (dockPosition == DockPosition.NONE)
             {
-                case TOP -> {
-                    panel.setSize(Vector2f.divide(size, new Vector2f(1f, 2f)));
-                    panel.setPosition(position);
-                    yield new DockingData(true, DockPosition.TOP);
+                dockedPanel = null;
+            }
+            if (hovered && dockable)
+            {
+                return switch (dockPosition)
+                {
+                    case CENTER -> {
+                        panel.setPosition(position);
+                        panel.setSize(size);
+                        dockable = false;
+                        yield true;
+                    }
+                    case LEFT -> {
+                        Vector2f leftSize = Vector2f.divide(size, new Vector2f(2f, 1f));
+                        DockingArea leftDockingArea = new DockingArea(position, leftSize);
+                        children.putIfAbsent(DockPosition.LEFT, leftDockingArea);
+                        children.putIfAbsent(DockPosition.RIGHT, new DockingArea(
+                                Vector2f.add(position, new Vector2f(leftSize.getX(), 0f)),
+                                Vector2f.add(size, new Vector2f(-leftSize.getX(), 0f))
+                        ));
+                        panel.setPosition(leftDockingArea.position);
+                        panel.setSize(leftDockingArea.size);
+                        leftDockingArea.dockable = false;
+                        leftDockingArea.dockedPanel = panel;
+
+                        dockable = false;
+                        yield true;
+                    }
+                    case RIGHT -> {
+                        Vector2f leftSize = Vector2f.divide(size, new Vector2f(2f, 1f));
+                        DockingArea rightDockingArea = new DockingArea(
+                                Vector2f.add(position, new Vector2f(leftSize.getX(), 0f)),
+                                Vector2f.add(size, new Vector2f(-leftSize.getX(), 0f))
+                        );
+                        children.putIfAbsent(DockPosition.LEFT, new DockingArea(position, leftSize));
+                        children.putIfAbsent(DockPosition.RIGHT, rightDockingArea);
+                        panel.setPosition(rightDockingArea.position);
+                        panel.setSize(rightDockingArea.size);
+                        rightDockingArea.dockable = false;
+                        rightDockingArea.dockedPanel = panel;
+
+                        dockable = false;
+                        yield true;
+                    }
+                    case TOP -> {
+                        Vector2f topSize = Vector2f.divide(size, new Vector2f(1f, 2f));
+                        DockingArea topDockingArea = new DockingArea(position, topSize);
+                        children.putIfAbsent(DockPosition.TOP, topDockingArea);
+                        children.putIfAbsent(DockPosition.BOTTOM, new DockingArea(
+                                Vector2f.add(position, new Vector2f(0f, topSize.getY())),
+                                Vector2f.add(size, new Vector2f(0f, -topSize.getY()))
+                        ));
+                        panel.setPosition(topDockingArea.position);
+                        panel.setSize(topDockingArea.size);
+                        topDockingArea.dockable = false;
+                        topDockingArea.dockedPanel = panel;
+
+                        dockable = false;
+                        yield true;
+                    }
+                    case BOTTOM -> {
+                        Vector2f topSize = Vector2f.divide(size, new Vector2f(1f, 2f));
+                        DockingArea bottomDockingArea = new DockingArea(
+                                Vector2f.add(position, new Vector2f(0f, topSize.getY())),
+                                Vector2f.add(size, new Vector2f(0f, -topSize.getY()))
+                        );
+                        children.putIfAbsent(DockPosition.TOP, new DockingArea(position, topSize));
+                        children.putIfAbsent(DockPosition.BOTTOM, bottomDockingArea);
+                        panel.setPosition(bottomDockingArea.position);
+                        panel.setSize(bottomDockingArea.size);
+                        bottomDockingArea.dockable = false;
+                        bottomDockingArea.dockedPanel = panel;
+
+                        dockable = false;
+                        yield true;
+                    }
+                    case NONE -> {
+                        yield false;
+                    }
+                };
+            } else
+            {
+                for (DockingArea dockingArea : children.values())
+                {
+                    if (dockingArea.dockPanel(panel)) break;
                 }
-                case BOTTOM -> {
-                    panel.setSize(Vector2f.divide(size, new Vector2f(1f, 2f)));
-                    panel.setPosition(Vector2f.add(position, new Vector2f(0f, window.getHeight() -panel.getSize().getY())));
-                    yield new DockingData(true, DockPosition.BOTTOM);
-                }
-                case LEFT -> {
-                    panel.setSize(Vector2f.divide(size, new Vector2f(2f, 1f)));
-                    panel.setPosition(position);
-                    yield new DockingData(true, DockPosition.LEFT);
-                }
-                case RIGHT -> {
-                    panel.setSize(Vector2f.divide(size, new Vector2f(2f, 1f)));
-                    panel.setPosition(Vector2f.add(position, new Vector2f(window.getWidth() -panel.getSize().getX(), 0f)));
-                    yield new DockingData(true, DockPosition.RIGHT);
-                }
-                case CENTER -> {
-                    panel.setPosition(position);
-                    panel.setSize(size);
-                    yield new DockingData(true, DockPosition.CENTER);
-                }
-                case NONE -> new DockingData(false, DockPosition.NONE);
-            };
-            if (dockingData.dockPosition != DockPosition.NONE) dockedPanel = panel;
-            positionAtDock = dockingData.dockPosition;
-            return dockingData;
+            }
+            return false;
         }
 
-        private void setPosition(Vector2f position)
+        //TODO: Something is not working
+        private DockingArea getDockedArea(DockablePanel panel)
         {
-            this.position.set(position);
-            dockGizmo.setPosition(this.position);
+            if (dockedPanel != null && dockedPanel.equals(panel)) return this;
+            for (DockingArea dockingArea : children.values())
+            {
+                dockingArea.getDockedArea(panel);
+            }
+            return null;
         }
 
-        private void setWidth(float width)
+        private void checkHovered(Vector2f panelPosition)
         {
-            size.setX(width);
-            dockGizmo.setWidth(width);
+            if (dockable)
+            {
+                hovered = Physics2D.pointInsideAABB(panelPosition, position, size);
+            } else
+            {
+                for (DockingArea dockingArea : children.values())
+                {
+                    dockingArea.checkHovered(panelPosition);
+                }
+            }
         }
 
-        private void setHeight(float height)
+        private void render()
         {
-            size.setY(height);
-            dockGizmo.setHeight(height);
-        }
-    }
-
-    private static class DockingData
-    {
-        private boolean docked;
-        private DockPosition dockPosition;
-
-        @Contract(pure = true)
-        public DockingData(boolean docked, DockPosition dockPosition)
-        {
-            this.docked = docked;
-            this.dockPosition = dockPosition;
+            if (hovered)
+            {
+                if (dockable)
+                {
+                    Renderer2D.drawQuad(position, size, color);
+                    dockGizmo.render();
+                } else
+                {
+                    for (DockingArea dockingArea : children.values())
+                    {
+                        dockingArea.render();
+                    }
+                }
+            }
         }
     }
 }

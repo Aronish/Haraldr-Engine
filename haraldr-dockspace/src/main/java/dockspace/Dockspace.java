@@ -62,8 +62,8 @@ public class Dockspace
 
         if (selectedPanel != null && event.eventType == EventType.MOUSE_MOVED)
         {
-            rootArea.checkHovered(selectedPanel.getPosition());
             Logger.info(rootArea.getDockedArea(selectedPanel));
+            rootArea.checkHovered(selectedPanel.getPosition());
         }
     }
 
@@ -78,8 +78,10 @@ public class Dockspace
     {
         private Vector2f position, size;
         private Vector4f color;
+        private DockPosition dockPosition;
 
         private DockGizmo dockGizmo;
+        private DockingArea parent;
         private Map<DockPosition, DockingArea> children = new HashMap<>();
         private boolean dockable = true, hovered;
 
@@ -122,6 +124,8 @@ public class Dockspace
                         panel.setSize(leftDockingArea.size);
                         leftDockingArea.dockable = false;
                         leftDockingArea.dockedPanel = panel;
+                        leftDockingArea.dockPosition = DockPosition.LEFT;
+                        leftDockingArea.parent = this;
 
                         dockable = false;
                         yield true;
@@ -138,6 +142,8 @@ public class Dockspace
                         panel.setSize(rightDockingArea.size);
                         rightDockingArea.dockable = false;
                         rightDockingArea.dockedPanel = panel;
+                        rightDockingArea.dockPosition = DockPosition.RIGHT;
+                        rightDockingArea.parent = this;
 
                         dockable = false;
                         yield true;
@@ -154,6 +160,8 @@ public class Dockspace
                         panel.setSize(topDockingArea.size);
                         topDockingArea.dockable = false;
                         topDockingArea.dockedPanel = panel;
+                        topDockingArea.dockPosition = DockPosition.TOP;
+                        topDockingArea.parent = this;
 
                         dockable = false;
                         yield true;
@@ -170,6 +178,8 @@ public class Dockspace
                         panel.setSize(bottomDockingArea.size);
                         bottomDockingArea.dockable = false;
                         bottomDockingArea.dockedPanel = panel;
+                        bottomDockingArea.dockPosition = DockPosition.BOTTOM;
+                        bottomDockingArea.parent = this;
 
                         dockable = false;
                         yield true;
@@ -188,13 +198,21 @@ public class Dockspace
             return false;
         }
 
-        //TODO: Something is not working
+        private void undockChild(DockingArea dockingArea)
+        {
+
+        }
+
         private DockingArea getDockedArea(DockablePanel panel)
         {
-            if (dockedPanel != null && dockedPanel.equals(panel)) return this;
+            if (dockedPanel != null && dockedPanel.equals(panel))
+            {
+                return this;
+            }
             for (DockingArea dockingArea : children.values())
             {
-                dockingArea.getDockedArea(panel);
+                DockingArea candidate = dockingArea.getDockedArea(panel);
+                if (candidate != null) return candidate;
             }
             return null;
         }
@@ -229,6 +247,12 @@ public class Dockspace
                     }
                 }
             }
+        }
+
+        @Override
+        public String toString()
+        {
+            return dockPosition.toString();
         }
     }
 }

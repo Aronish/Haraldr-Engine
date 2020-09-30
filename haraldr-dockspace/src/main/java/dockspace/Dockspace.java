@@ -1,6 +1,5 @@
 package dockspace;
 
-import haraldr.debug.Logger;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.graphics.Renderer2D;
@@ -62,7 +61,13 @@ public class Dockspace
 
         if (selectedPanel != null && event.eventType == EventType.MOUSE_MOVED)
         {
-            Logger.info(rootArea.getDockedArea(selectedPanel));
+            DockingArea dockedArea = rootArea.getDockedArea(selectedPanel);
+            if (dockedArea != null)
+            {
+                dockedArea.undock();
+                selectedPanel = null;
+                return;
+            }
             rootArea.checkHovered(selectedPanel.getPosition());
         }
     }
@@ -89,8 +94,8 @@ public class Dockspace
 
         private DockingArea(Vector2f position, Vector2f size)
         {
-            this.position = position;
-            this.size = size;
+            this.position = new Vector2f(position);
+            this.size = new Vector2f(size);
             color = new Vector4f((float) Math.random(), (float) Math.random(), (float) Math.random(), 0.1f);
             dockGizmo = new DockGizmo(position, size);
         }
@@ -98,10 +103,6 @@ public class Dockspace
         private boolean dockPanel(DockablePanel panel)
         {
             DockPosition dockPosition = dockGizmo.getDockPosition(panel.getPosition());
-            if (dockPosition == DockPosition.NONE)
-            {
-                dockedPanel = null;
-            }
             if (hovered && dockable)
             {
                 return switch (dockPosition)
@@ -110,6 +111,8 @@ public class Dockspace
                         panel.setPosition(position);
                         panel.setSize(size);
                         dockable = false;
+                        dockedPanel = panel;
+                        this.dockPosition = DockPosition.CENTER;
                         yield true;
                     }
                     case LEFT -> {
@@ -198,9 +201,31 @@ public class Dockspace
             return false;
         }
 
-        private void undockChild(DockingArea dockingArea)
+        private void undock()
         {
-
+            dockedPanel = null;
+            dockable = true;
+            switch (dockPosition)
+            {
+                case LEFT -> {
+                    Map<DockPosition, DockingArea> rightChildren = parent.children.get(DockPosition.RIGHT).children;
+                    parent.children.clear();
+                    parent.children.putAll(rightChildren);
+                    for (DockingArea dockingArea : parent.children.values())
+                    {
+                        dockingArea.addPosition(new Vector2f(-size.getX(), 0f));
+                    }
+                }
+                case RIGHT -> {
+                    Map<DockPosition, DockingArea> leftChildren = parent.children.get(DockPosition.LEFT).children;
+                    parent.children.clear();
+                    parent.children.putAll(leftChildren);
+                    for (DockingArea dockingArea : parent.children.values())
+                    {
+                        dockingArea.addPosition(new Vector2f(size.getX(), 0f));
+                    }
+                }
+            }
         }
 
         private DockingArea getDockedArea(DockablePanel panel)
@@ -228,6 +253,19 @@ public class Dockspace
                 {
                     dockingArea.checkHovered(panelPosition);
                 }
+            }
+        }
+
+        private void addPosition(Vector2f position)
+        {
+            if (dockedPanel != null)
+            {
+                dockedPanel.getPosition().add(position);
+                dockGizmo.addPosition(position);
+            }
+            for (DockingArea dockingArea : children.values())
+            {
+                dockingArea.addPosition(position);
             }
         }
 

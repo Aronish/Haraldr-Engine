@@ -50,6 +50,12 @@ public class DockGizmo
         refreshDockDimensions();
     }
 
+    public void addPosition(Vector2f position)
+    {
+        parentPosition.add(position);
+        refreshDockDimensions();
+    }
+
     public void setSize(Vector2f parentSize)
     {
         this.parentSize = parentSize;

@@ -50,7 +50,7 @@ layout (binding = 0) uniform samplerCube c_EnvironmentMap;
 layout (binding = 1) uniform sampler2D map_Diffuse_Texture;
 layout (binding = 2) uniform sampler2D map_Refraction_Map;
 
-uniform float u_Opacity;
+uniform float u_Opacity = 1.0f;
 
 out vec4 o_Color;
 

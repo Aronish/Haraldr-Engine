@@ -1,15 +1,15 @@
 {
-  "mesh": "default_meshes/sphere.obj",
+  "mesh": "default_meshes/suzanne_smooth.obj",
   "material":
   {
-    "type": "PBR",
+    "type": "REFRACTIVE",
     "properties":
     {
-      "albedo": "default_textures/Tiles_Glass_1K_albedo.png",
-      "normal": "default_textures/Tiles_Glass_1K_normal.png",
-      "metalness": "default_textures/Tiles_Glass_1K_metallic.png",
-      "roughness": "default_textures/Tiles_Glass_1K_roughness.png",
-      "environment_map": "default_hdris/NorwayForest_4K_hdri_sphere"
+      "begin_medium": 1.00,
+      "end_medium": 5.0,
+      "diffuse_texture": "default_textures/MetalSpottyDiscoloration001_COL_4K_SPECULAR.jpg",
+      "refraction_map": "default_textures/MetalSpottyDiscoloration001_REFL_4K_SPECULAR.jpg",
+      "environment_map": "default_hdris/NorwayForest_4K_hdri_sphere.hdr"
     }
   }
 }

@@ -27,6 +27,7 @@ public class DockspaceApplication extends Application
 
         dockspace.addPanel(new DockablePanel(new Vector2f(), new Vector2f(300f, 400f), new Vector4f(0.8f, 0.2f, 0.3f,0.5f)));
         dockspace.addPanel(new DockablePanel(new Vector2f(500f, 300f), new Vector2f(300f, 200f), new Vector4f(0.3f, 0.8f, 0.2f, 1f)));
+        dockspace.addPanel(new DockablePanel(new Vector2f(500f, 300f), new Vector2f(300f, 200f), new Vector4f(0.3f, 0.8f, 0.2f, 1f)));
 
         Renderer.disableDepthTest();
     }

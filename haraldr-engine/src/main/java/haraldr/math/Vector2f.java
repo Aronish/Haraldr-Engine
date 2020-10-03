@@ -142,6 +142,13 @@ public class Vector2f
         return this;
     }
 
+    public Vector2f multiply(Vector2f vector)
+    {
+        x *= vector.x;
+        y *= vector.y;
+        return this;
+    }
+
     public Vector2f normalize()
     {
         double length = length();

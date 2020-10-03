@@ -1,5 +1,6 @@
 package dockspace;
 
+import haraldr.debug.Logger;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.graphics.Renderer2D;
@@ -88,14 +89,29 @@ public class Dockspace
         private DockGizmo dockGizmo;
         private DockingArea parent;
         private Map<DockPosition, DockingArea> children = new HashMap<>();
-        private boolean dockable = true, hovered;
+        private boolean dockable, hovered, vertical;
 
         private DockablePanel dockedPanel;
 
         private DockingArea(Vector2f position, Vector2f size)
         {
+            this(position, size, false);
+        }
+
+        private DockingArea(Vector2f position, Vector2f size, boolean vertical)
+        {
+            this(position, size, true, null, DockPosition.NONE, vertical, null);
+        }
+
+        private DockingArea(Vector2f position, Vector2f size, boolean dockable, DockablePanel dockedPanel, DockPosition dockPosition, boolean vertical, DockingArea parent)
+        {
             this.position = new Vector2f(position);
+            this.dockable = dockable;
+            this.dockedPanel = dockedPanel;
+            this.dockPosition = dockPosition;
+            this.parent = parent;
             this.size = new Vector2f(size);
+            this.vertical = vertical;
             color = new Vector4f((float) Math.random(), (float) Math.random(), (float) Math.random(), 0.1f);
             dockGizmo = new DockGizmo(position, size);
         }
@@ -105,9 +121,9 @@ public class Dockspace
             DockPosition dockPosition = dockGizmo.getDockPosition(panel.getPosition());
             if (hovered && dockable)
             {
-                return switch (dockPosition)
+                return switch (dockPosition) //TODO: Clean up
                 {
-                    case CENTER -> {
+                    case CENTER -> { //TODO: Let panels have own dockspaces and make center dock inside that panel
                         panel.setPosition(position);
                         panel.setSize(size);
                         dockable = false;
@@ -117,7 +133,7 @@ public class Dockspace
                     }
                     case LEFT -> {
                         Vector2f leftSize = Vector2f.divide(size, new Vector2f(2f, 1f));
-                        DockingArea leftDockingArea = new DockingArea(position, leftSize);
+                        DockingArea leftDockingArea = new DockingArea(position, leftSize, false, panel, DockPosition.LEFT, false, this);
                         children.putIfAbsent(DockPosition.LEFT, leftDockingArea);
                         children.putIfAbsent(DockPosition.RIGHT, new DockingArea(
                                 Vector2f.add(position, new Vector2f(leftSize.getX(), 0f)),
@@ -125,10 +141,6 @@ public class Dockspace
                         ));
                         panel.setPosition(leftDockingArea.position);
                         panel.setSize(leftDockingArea.size);
-                        leftDockingArea.dockable = false;
-                        leftDockingArea.dockedPanel = panel;
-                        leftDockingArea.dockPosition = DockPosition.LEFT;
-                        leftDockingArea.parent = this;
 
                         dockable = false;
                         yield true;
@@ -137,34 +149,28 @@ public class Dockspace
                         Vector2f leftSize = Vector2f.divide(size, new Vector2f(2f, 1f));
                         DockingArea rightDockingArea = new DockingArea(
                                 Vector2f.add(position, new Vector2f(leftSize.getX(), 0f)),
-                                Vector2f.add(size, new Vector2f(-leftSize.getX(), 0f))
+                                Vector2f.add(size, new Vector2f(-leftSize.getX(), 0f)),
+                                false, panel, DockPosition.RIGHT, false, this
                         );
                         children.putIfAbsent(DockPosition.LEFT, new DockingArea(position, leftSize));
                         children.putIfAbsent(DockPosition.RIGHT, rightDockingArea);
                         panel.setPosition(rightDockingArea.position);
                         panel.setSize(rightDockingArea.size);
-                        rightDockingArea.dockable = false;
-                        rightDockingArea.dockedPanel = panel;
-                        rightDockingArea.dockPosition = DockPosition.RIGHT;
-                        rightDockingArea.parent = this;
 
                         dockable = false;
                         yield true;
                     }
                     case TOP -> {
                         Vector2f topSize = Vector2f.divide(size, new Vector2f(1f, 2f));
-                        DockingArea topDockingArea = new DockingArea(position, topSize);
+                        DockingArea topDockingArea = new DockingArea(position, topSize, false, panel, DockPosition.TOP, true, this);
                         children.putIfAbsent(DockPosition.TOP, topDockingArea);
                         children.putIfAbsent(DockPosition.BOTTOM, new DockingArea(
                                 Vector2f.add(position, new Vector2f(0f, topSize.getY())),
-                                Vector2f.add(size, new Vector2f(0f, -topSize.getY()))
+                                Vector2f.add(size, new Vector2f(0f, -topSize.getY())),
+                                true
                         ));
                         panel.setPosition(topDockingArea.position);
                         panel.setSize(topDockingArea.size);
-                        topDockingArea.dockable = false;
-                        topDockingArea.dockedPanel = panel;
-                        topDockingArea.dockPosition = DockPosition.TOP;
-                        topDockingArea.parent = this;
 
                         dockable = false;
                         yield true;
@@ -173,16 +179,13 @@ public class Dockspace
                         Vector2f topSize = Vector2f.divide(size, new Vector2f(1f, 2f));
                         DockingArea bottomDockingArea = new DockingArea(
                                 Vector2f.add(position, new Vector2f(0f, topSize.getY())),
-                                Vector2f.add(size, new Vector2f(0f, -topSize.getY()))
+                                Vector2f.add(size, new Vector2f(0f, -topSize.getY())),
+                                false, panel, DockPosition.BOTTOM, true, this
                         );
-                        children.putIfAbsent(DockPosition.TOP, new DockingArea(position, topSize));
+                        children.putIfAbsent(DockPosition.TOP, new DockingArea(position, topSize, true));
                         children.putIfAbsent(DockPosition.BOTTOM, bottomDockingArea);
                         panel.setPosition(bottomDockingArea.position);
                         panel.setSize(bottomDockingArea.size);
-                        bottomDockingArea.dockable = false;
-                        bottomDockingArea.dockedPanel = panel;
-                        bottomDockingArea.dockPosition = DockPosition.BOTTOM;
-                        bottomDockingArea.parent = this;
 
                         dockable = false;
                         yield true;
@@ -203,27 +206,108 @@ public class Dockspace
 
         private void undock()
         {
-            dockedPanel = null;
-            dockable = true;
-            switch (dockPosition)
+            switch (dockPosition) //TODO: Clean up
             {
                 case LEFT -> {
                     Map<DockPosition, DockingArea> rightChildren = parent.children.get(DockPosition.RIGHT).children;
-                    parent.children.clear();
-                    parent.children.putAll(rightChildren);
-                    for (DockingArea dockingArea : parent.children.values())
+                    if (rightChildren.size() == 0 && parent.children.get(DockPosition.RIGHT).dockedPanel == null)
                     {
-                        dockingArea.addPosition(new Vector2f(-size.getX(), 0f));
+                        parent.dockable = true;
+                        parent.children.clear();
+                    } else if (parent.children.get(DockPosition.RIGHT).dockedPanel != null)
+                    {
+                        parent.dockedPanel = parent.children.get(DockPosition.RIGHT).dockedPanel;
+                        parent.dockedPanel.setPosition(parent.position);
+                        parent.dockedPanel.setSize(parent.size);
+                        parent.dockPosition = DockPosition.CENTER;
+                        parent.children.clear();
+                    } else
+                    {
+                        parent.children.clear();
+                        parent.children.putAll(rightChildren);
+                        for (DockingArea dockingArea : parent.children.values())
+                        {
+                            dockingArea.parent = parent;
+                            dockingArea.onUndock(size, dockPosition);
+                        }
                     }
                 }
                 case RIGHT -> {
                     Map<DockPosition, DockingArea> leftChildren = parent.children.get(DockPosition.LEFT).children;
-                    parent.children.clear();
-                    parent.children.putAll(leftChildren);
-                    for (DockingArea dockingArea : parent.children.values())
+                    if (leftChildren.size() == 0 && parent.children.get(DockPosition.LEFT).dockedPanel == null)
                     {
-                        dockingArea.addPosition(new Vector2f(size.getX(), 0f));
+                        parent.dockable = true;
+                        parent.children.clear();
+                    } else if (parent.children.get(DockPosition.LEFT).dockedPanel != null)
+                    {
+                        parent.dockedPanel = parent.children.get(DockPosition.LEFT).dockedPanel;
+                        parent.dockedPanel.setPosition(parent.position);
+                        parent.dockedPanel.setSize(parent.size);
+                        parent.dockPosition = DockPosition.CENTER;
+                        parent.children.clear();
+                    } else
+                    {
+                        parent.children.clear();
+                        parent.children.putAll(leftChildren);
+                        for (DockingArea dockingArea : parent.children.values())
+                        {
+                            dockingArea.parent = parent;
+                            dockingArea.onUndock(size, dockPosition);
+                        }
                     }
+                }
+                case TOP -> {
+                    Map<DockPosition, DockingArea> bottomChildren = parent.children.get(DockPosition.BOTTOM).children;
+                    if (bottomChildren.size() == 0 && parent.children.get(DockPosition.BOTTOM).dockedPanel == null)
+                    {
+                        parent.dockable = true;
+                        parent.children.clear();
+                    } else if (parent.children.get(DockPosition.BOTTOM).dockedPanel != null)
+                    {
+                        parent.dockedPanel = parent.children.get(DockPosition.BOTTOM).dockedPanel;
+                        parent.dockedPanel.setPosition(parent.position);
+                        parent.dockedPanel.setSize(parent.size);
+                        parent.dockPosition = DockPosition.CENTER;
+                        parent.children.clear();
+                    } else
+                    {
+                        parent.children.clear();
+                        parent.children.putAll(bottomChildren);
+                        for (DockingArea dockingArea : parent.children.values())
+                        {
+                            dockingArea.parent = parent;
+                            dockingArea.onUndock(size, dockPosition);
+                        }
+                    }
+                }
+                case BOTTOM -> {
+                    Map<DockPosition, DockingArea> bottomChildren = parent.children.get(DockPosition.TOP).children;
+                    if (bottomChildren.size() == 0 && parent.children.get(DockPosition.TOP).dockedPanel == null)
+                    {
+                        parent.dockable = true;
+                        parent.children.clear();
+                    } else if (parent.children.get(DockPosition.TOP).dockedPanel != null)
+                    {
+                        parent.dockedPanel = parent.children.get(DockPosition.TOP).dockedPanel;
+                        parent.dockedPanel.setPosition(parent.position);
+                        parent.dockedPanel.setSize(parent.size);
+                        parent.dockPosition = DockPosition.CENTER;
+                        parent.children.clear();
+                    } else
+                    {
+                        parent.children.clear();
+                        parent.children.putAll(bottomChildren);
+                        for (DockingArea dockingArea : parent.children.values())
+                        {
+                            dockingArea.parent = parent;
+                            dockingArea.onUndock(size, dockPosition);
+                        }
+                    }
+                }
+                case CENTER -> {
+                    dockable = true;
+                    dockedPanel = null;
+                    dockPosition = DockPosition.NONE;
                 }
             }
         }
@@ -266,6 +350,62 @@ public class Dockspace
             for (DockingArea dockingArea : children.values())
             {
                 dockingArea.addPosition(position);
+            }
+        }
+
+        private void onUndock(Vector2f undockedSize, DockPosition undockedPosition)
+        {
+            Logger.info(vertical);
+            switch (undockedPosition)
+            {
+                case LEFT -> {
+                    position.setX((position.getX() - undockedSize.getX()) * 2f);
+                    size.setX(vertical ? undockedSize.getX() * 2f : undockedSize.getX());
+                    dockGizmo.setPosition(position);
+                    dockGizmo.setSize(size);
+                    if (dockedPanel != null)
+                    {
+                        dockedPanel.setPosition(position);
+                        dockedPanel.setSize(size);
+                    }
+                }
+                case RIGHT -> {
+                    position.setX(position.getX() * 2f);
+                    size.setX(vertical ? undockedSize.getX() * 2f : undockedSize.getX());
+                    dockGizmo.setPosition(position);
+                    dockGizmo.setSize(size);
+                    if (dockedPanel != null)
+                    {
+                        dockedPanel.setPosition(position);
+                        dockedPanel.setSize(size);
+                    }
+                }
+                case TOP -> {
+                    position.setY((position.getY() - undockedSize.getY()) * 2f);
+                    size.setY(vertical ? undockedSize.getY() : undockedSize.getY() * 2f);
+                    dockGizmo.setPosition(position);
+                    dockGizmo.setSize(size);
+                    if (dockedPanel != null)
+                    {
+                        dockedPanel.setPosition(position);
+                        dockedPanel.setSize(size);
+                    }
+                }
+                case BOTTOM -> {
+                    position.setY(position.getY() * 2f);
+                    size.setY(vertical ? undockedSize.getY() : undockedSize.getY() * 2f);
+                    dockGizmo.setPosition(position);
+                    dockGizmo.setSize(size);
+                    if (dockedPanel != null)
+                    {
+                        dockedPanel.setPosition(position);
+                        dockedPanel.setSize(size);
+                    }
+                }
+            }
+            for (DockingArea dockingArea : children.values())
+            {
+                dockingArea.onUndock(undockedSize, undockedPosition);
             }
         }
 

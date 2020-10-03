@@ -64,6 +64,12 @@ public class DockablePanel
         headerSize.setX(size.getX());
     }
 
+    public void addSize(Vector2f size)
+    {
+        this.size.add(size);
+        this.headerSize.addX(size.getX());
+    }
+
     public Vector2f getPosition()
     {
         return position;

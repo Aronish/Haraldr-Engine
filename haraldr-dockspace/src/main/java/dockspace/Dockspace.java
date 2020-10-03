@@ -3,6 +3,7 @@ package dockspace;
 import haraldr.debug.Logger;
 import haraldr.event.Event;
 import haraldr.event.EventType;
+import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Renderer2D;
 import haraldr.input.Input;
 import haraldr.input.KeyboardKey;
@@ -43,6 +44,12 @@ public class Dockspace
 
     public void onEvent(Event event, Window window)
     {
+        if (event.eventType == EventType.WINDOW_RESIZED)
+        {
+            var windowResizedEvent = (WindowResizedEvent) event;
+            setSize(new Vector2f(windowResizedEvent.width, windowResizedEvent.height));
+        }
+
         if (Input.wasKeyPressed(event, KeyboardKey.KEY_TAB))
         {
             panels.addFirst(panels.removeLast());
@@ -80,6 +87,13 @@ public class Dockspace
             }
             rootArea.checkHovered(selectedPanel.getPosition());
         }
+    }
+
+    private void setSize(Vector2f size)
+    {
+        Vector2f difference = Vector2f.subtract(this.size, size).negate();
+        this.size.set(size);
+        rootArea.addSize(difference);
     }
 
     public void render()
@@ -353,6 +367,21 @@ public class Dockspace
             for (DockingArea dockingArea : children.values())
             {
                 dockingArea.onUndock(undockedSize, undockedPosition);
+            }
+        }
+
+        private void addSize(Vector2f size)
+        {
+            this.size.add(size);
+            dockGizmo.setSize(this.size);
+            if (dockedPanel != null)
+            {
+                dockedPanel.addSize(size);
+            }
+
+            for (DockingArea dockingArea : children.values())
+            {
+                dockingArea.addSize(size);
             }
         }
 

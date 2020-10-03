@@ -14,7 +14,7 @@ public class DockspaceApplication extends Application
 
     public DockspaceApplication()
     {
-        super(new Window.WindowProperties(1280, 720, 0, false, false, false, true));
+        super(new Window.WindowProperties(1280, 720, 0, false, false, true, true));
     }
 
     @Override

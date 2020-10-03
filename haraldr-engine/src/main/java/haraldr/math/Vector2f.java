@@ -157,6 +157,20 @@ public class Vector2f
         return this;
     }
 
+    public Vector2f negate()
+    {
+        x = -x;
+        y = -y;
+        return this;
+    }
+
+    public Vector2f abs()
+    {
+        x = Math.abs(x);
+        y = Math.abs(y);
+        return this;
+    }
+
     public double length()
     {
         return (float) Math.sqrt(x * x + y * y);

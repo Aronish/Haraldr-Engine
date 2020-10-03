@@ -58,21 +58,10 @@ public class DockablePanel
         position.set(parentPosition);
     }
 
-    public boolean isHeld()
-    {
-        return held;
-    }
-
     public void setSize(Vector2f size)
     {
         this.size.set(size);
         headerSize.setX(size.getX());
-    }
-
-    public void addSize(Vector2f size)
-    {
-        this.size.add(size);
-        headerSize.addX(size.getX());
     }
 
     public Vector2f getPosition()
@@ -85,9 +74,8 @@ public class DockablePanel
         return size;
     }
 
-    @Override
-    public String toString()
+    public boolean isHeld()
     {
-        return color.toString();
+        return held;
     }
 }

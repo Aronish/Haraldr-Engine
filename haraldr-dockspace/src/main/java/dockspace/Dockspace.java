@@ -5,15 +5,15 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.graphics.Renderer2D;
 import haraldr.input.Input;
+import haraldr.input.KeyboardKey;
 import haraldr.input.MouseButton;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class Dockspace
@@ -23,7 +23,7 @@ public class Dockspace
     private Vector2f position;
     private Vector2f size;
 
-    private List<DockablePanel> panels = new ArrayList<>();
+    private LinkedList<DockablePanel> panels = new LinkedList<>();
     private DockablePanel selectedPanel;
 
     private DockingArea rootArea;
@@ -43,6 +43,11 @@ public class Dockspace
 
     public void onEvent(Event event, Window window)
     {
+        if (Input.wasKeyPressed(event, KeyboardKey.KEY_TAB))
+        {
+            panels.addFirst(panels.removeLast());
+        }
+
         for (DockablePanel panel : panels)
         {
             panel.onEvent(event, window);
@@ -50,6 +55,8 @@ public class Dockspace
             if (panel.isHeld())
             {
                 selectedPanel = panel;
+                panels.remove(selectedPanel);
+                panels.addFirst(selectedPanel);
                 break;
             }
         }
@@ -62,10 +69,12 @@ public class Dockspace
 
         if (selectedPanel != null && event.eventType == EventType.MOUSE_MOVED)
         {
+            // Undock the selected panel if it is docked and is moved.
             DockingArea dockedArea = rootArea.getDockedArea(selectedPanel);
             if (dockedArea != null)
             {
                 dockedArea.undock();
+                selectedPanel.setSize(new Vector2f(250f));
                 selectedPanel = null;
                 return;
             }
@@ -76,10 +85,13 @@ public class Dockspace
     public void render()
     {
         Renderer2D.drawQuad(position, size, BACKGROUND_COLOR);
-        panels.forEach(DockablePanel::render);
+        panels.descendingIterator().forEachRemaining(DockablePanel::render);
         if (selectedPanel != null) rootArea.render();
     }
 
+    /**
+     * A node in a tree hierarchy of dockable areas. Can contain DockablePanels.
+     */
     private static class DockingArea
     {
         private Vector2f position, size;
@@ -89,7 +101,7 @@ public class Dockspace
         private DockGizmo dockGizmo;
         private DockingArea parent;
         private Map<DockPosition, DockingArea> children = new HashMap<>();
-        private boolean dockable, hovered, vertical;
+        private boolean dockable, hovered, vertical; // vertical is used to add extra size in the perpendicular axis in certain undocking configurations.
 
         private DockablePanel dockedPanel;
 
@@ -116,12 +128,20 @@ public class Dockspace
             dockGizmo = new DockGizmo(position, size);
         }
 
+        /**
+         * Attempts to dock a panel to a certain position in the docking area currently hovered.
+         * When docking, the area splits into two: One containing the panel and an empty one for the leftover area.
+         * These become children of the area for which the docking attempt occurred.
+         * Recurses through children until success.
+         * @param panel the panel to dock.
+         * @return whether it was docked successfully.
+         */
         private boolean dockPanel(DockablePanel panel)
         {
             DockPosition dockPosition = dockGizmo.getDockPosition(panel.getPosition());
             if (hovered && dockable)
             {
-                return switch (dockPosition) //TODO: Clean up
+                return switch (dockPosition)
                 {
                     case CENTER -> { //TODO: Let panels have own dockspaces and make center dock inside that panel
                         panel.setPosition(position);
@@ -190,9 +210,7 @@ public class Dockspace
                         dockable = false;
                         yield true;
                     }
-                    case NONE -> {
-                        yield false;
-                    }
+                    case NONE -> false;
                 };
             } else
             {
@@ -204,19 +222,22 @@ public class Dockspace
             return false;
         }
 
+        /**
+         * Undocks this panel and updates the opposite area on the same level and its children accordingly.
+         */
         private void undock()
         {
-            switch (dockPosition) //TODO: Clean up
+            switch (dockPosition)
             {
-                case LEFT -> {
-                    Map<DockPosition, DockingArea> rightChildren = parent.children.get(DockPosition.RIGHT).children;
-                    if (rightChildren.size() == 0 && parent.children.get(DockPosition.RIGHT).dockedPanel == null)
+                case LEFT, RIGHT, TOP, BOTTOM -> {
+                    Map<DockPosition, DockingArea> rightChildren = parent.children.get(dockPosition.getOpposite()).children;
+                    if (rightChildren.size() == 0 && parent.children.get(dockPosition.getOpposite()).dockedPanel == null)
                     {
                         parent.dockable = true;
                         parent.children.clear();
-                    } else if (parent.children.get(DockPosition.RIGHT).dockedPanel != null)
+                    } else if (parent.children.get(dockPosition.getOpposite()).dockedPanel != null)
                     {
-                        parent.dockedPanel = parent.children.get(DockPosition.RIGHT).dockedPanel;
+                        parent.dockedPanel = parent.children.get(dockPosition.getOpposite()).dockedPanel;
                         parent.dockedPanel.setPosition(parent.position);
                         parent.dockedPanel.setSize(parent.size);
                         parent.dockPosition = DockPosition.CENTER;
@@ -232,78 +253,6 @@ public class Dockspace
                         }
                     }
                 }
-                case RIGHT -> {
-                    Map<DockPosition, DockingArea> leftChildren = parent.children.get(DockPosition.LEFT).children;
-                    if (leftChildren.size() == 0 && parent.children.get(DockPosition.LEFT).dockedPanel == null)
-                    {
-                        parent.dockable = true;
-                        parent.children.clear();
-                    } else if (parent.children.get(DockPosition.LEFT).dockedPanel != null)
-                    {
-                        parent.dockedPanel = parent.children.get(DockPosition.LEFT).dockedPanel;
-                        parent.dockedPanel.setPosition(parent.position);
-                        parent.dockedPanel.setSize(parent.size);
-                        parent.dockPosition = DockPosition.CENTER;
-                        parent.children.clear();
-                    } else
-                    {
-                        parent.children.clear();
-                        parent.children.putAll(leftChildren);
-                        for (DockingArea dockingArea : parent.children.values())
-                        {
-                            dockingArea.parent = parent;
-                            dockingArea.onUndock(size, dockPosition);
-                        }
-                    }
-                }
-                case TOP -> {
-                    Map<DockPosition, DockingArea> bottomChildren = parent.children.get(DockPosition.BOTTOM).children;
-                    if (bottomChildren.size() == 0 && parent.children.get(DockPosition.BOTTOM).dockedPanel == null)
-                    {
-                        parent.dockable = true;
-                        parent.children.clear();
-                    } else if (parent.children.get(DockPosition.BOTTOM).dockedPanel != null)
-                    {
-                        parent.dockedPanel = parent.children.get(DockPosition.BOTTOM).dockedPanel;
-                        parent.dockedPanel.setPosition(parent.position);
-                        parent.dockedPanel.setSize(parent.size);
-                        parent.dockPosition = DockPosition.CENTER;
-                        parent.children.clear();
-                    } else
-                    {
-                        parent.children.clear();
-                        parent.children.putAll(bottomChildren);
-                        for (DockingArea dockingArea : parent.children.values())
-                        {
-                            dockingArea.parent = parent;
-                            dockingArea.onUndock(size, dockPosition);
-                        }
-                    }
-                }
-                case BOTTOM -> {
-                    Map<DockPosition, DockingArea> bottomChildren = parent.children.get(DockPosition.TOP).children;
-                    if (bottomChildren.size() == 0 && parent.children.get(DockPosition.TOP).dockedPanel == null)
-                    {
-                        parent.dockable = true;
-                        parent.children.clear();
-                    } else if (parent.children.get(DockPosition.TOP).dockedPanel != null)
-                    {
-                        parent.dockedPanel = parent.children.get(DockPosition.TOP).dockedPanel;
-                        parent.dockedPanel.setPosition(parent.position);
-                        parent.dockedPanel.setSize(parent.size);
-                        parent.dockPosition = DockPosition.CENTER;
-                        parent.children.clear();
-                    } else
-                    {
-                        parent.children.clear();
-                        parent.children.putAll(bottomChildren);
-                        for (DockingArea dockingArea : parent.children.values())
-                        {
-                            dockingArea.parent = parent;
-                            dockingArea.onUndock(size, dockPosition);
-                        }
-                    }
-                }
                 case CENTER -> {
                     dockable = true;
                     dockedPanel = null;
@@ -312,6 +261,9 @@ public class Dockspace
             }
         }
 
+        /**
+         * @return the area containing panel or null if not found.
+         */
         private DockingArea getDockedArea(DockablePanel panel)
         {
             if (dockedPanel != null && dockedPanel.equals(panel))
@@ -326,33 +278,28 @@ public class Dockspace
             return null;
         }
 
-        private void checkHovered(Vector2f panelPosition)
+        /**
+         * Checks if a dockable area is hovered.
+         */
+        private void checkHovered(Vector2f mousePosition)
         {
             if (dockable)
             {
-                hovered = Physics2D.pointInsideAABB(panelPosition, position, size);
+                hovered = Physics2D.pointInsideAABB(mousePosition, position, size);
             } else
             {
                 for (DockingArea dockingArea : children.values())
                 {
-                    dockingArea.checkHovered(panelPosition);
+                    dockingArea.checkHovered(mousePosition);
                 }
             }
         }
 
-        private void addPosition(Vector2f position)
-        {
-            if (dockedPanel != null)
-            {
-                dockedPanel.getPosition().add(position);
-                dockGizmo.addPosition(position);
-            }
-            for (DockingArea dockingArea : children.values())
-            {
-                dockingArea.addPosition(position);
-            }
-        }
-
+        /**
+         * Updates dimensions of this area and its children when the area adjacent to parent has been undocked.
+         * @param undockedSize the size of the undocked area.
+         * @param undockedPosition the position of the undocked area in relation to its parent.
+         */
         private void onUndock(Vector2f undockedSize, DockPosition undockedPosition)
         {
             Logger.info(vertical);
@@ -425,12 +372,6 @@ public class Dockspace
                     }
                 }
             }
-        }
-
-        @Override
-        public String toString()
-        {
-            return dockPosition.toString();
         }
     }
 }

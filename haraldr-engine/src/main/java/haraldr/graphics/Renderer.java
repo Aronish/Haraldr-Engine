@@ -1,11 +1,14 @@
 package haraldr.graphics;
 
+import static org.lwjgl.opengl.GL11.GL_BACK;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_FRONT;
 import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glCullFace;
 import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -38,6 +41,16 @@ public class Renderer
     public static void disableDepthTest()
     {
         glDisable(GL_DEPTH_TEST);
+    }
+
+    public static void cullFront()
+    {
+        glCullFace(GL_FRONT);
+    }
+
+    public static void cullBack()
+    {
+        glCullFace(GL_BACK);
     }
 
     public enum ClearMask

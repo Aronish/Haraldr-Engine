@@ -1,4 +1,4 @@
-package dockspace;
+package haraldr.dockspace;
 
 import haraldr.main.EntryPoint;
 

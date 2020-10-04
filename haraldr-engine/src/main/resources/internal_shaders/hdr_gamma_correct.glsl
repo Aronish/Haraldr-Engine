@@ -4,12 +4,14 @@
 layout (location = 0) in vec2 a_Position;
 layout (location = 1) in vec2 a_TextureCoordinate;
 
+uniform mat4 projection = mat4(1.0f);
+
 out vec2 v_TextureCoordinate;
 
 void main()
 {
     v_TextureCoordinate = a_TextureCoordinate;
-    gl_Position = vec4(a_Position, 0.0f, 1.0f);
+    gl_Position = projection * vec4(a_Position, 0.0f, 1.0f);
 }
 
 #shader frag
@@ -17,7 +19,7 @@ void main()
 
 in vec2 v_TextureCoordinate;
 
-uniform sampler2D colorAttachment;
+layout (binding = 0) uniform sampler2D colorAttachment;
 uniform float u_Exposure;
 
 out vec4 o_Color;

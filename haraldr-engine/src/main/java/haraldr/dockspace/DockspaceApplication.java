@@ -1,4 +1,4 @@
-package dockspace;
+package haraldr.dockspace;
 
 import haraldr.event.Event;
 import haraldr.graphics.Renderer;

@@ -1,4 +1,4 @@
-package dockspace;
+package haraldr.dockspace;
 
 import org.jetbrains.annotations.Contract;
 

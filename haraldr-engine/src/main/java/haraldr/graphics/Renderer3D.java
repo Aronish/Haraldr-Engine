@@ -6,12 +6,13 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL45.glBindTextureUnit;
 
 @SuppressWarnings("unused")
 public abstract class Renderer3D
 {
     public static final VertexArray SCREEN_QUAD = new VertexArray();
-    private static Framebuffer rawFramebuffer;
+    private static Framebuffer currentFramebuffer;
 
     static
     {
@@ -36,18 +37,18 @@ public abstract class Renderer3D
 
     public static void init(Window.WindowProperties initialWindowProperties)
     {
-        rawFramebuffer = new Framebuffer();
-        if (initialWindowProperties.samples > 0)
-        {
-            rawFramebuffer.setColorAttachment(new Framebuffer.MultisampledColorAttachment(initialWindowProperties.width, initialWindowProperties.height, Framebuffer.ColorAttachment.Format.RGB16F, initialWindowProperties.samples));
-            rawFramebuffer.setDepthBuffer(new Framebuffer.MultisampledRenderBuffer(initialWindowProperties.width, initialWindowProperties.height, Framebuffer.RenderBuffer.Format.DEPTH_24_STENCIL_8, initialWindowProperties.samples));
-        }
-        else if (initialWindowProperties.samples == 0)
-        {
-            rawFramebuffer.setColorAttachment(new Framebuffer.ColorAttachment(initialWindowProperties.width, initialWindowProperties.height, Framebuffer.ColorAttachment.Format.RGB16F));
-            rawFramebuffer.setDepthBuffer(new Framebuffer.RenderBuffer(initialWindowProperties.width, initialWindowProperties.height, Framebuffer.RenderBuffer.Format.DEPTH_24_STENCIL_8));
-        }
-        else throw new IllegalArgumentException("Multisample sample count cannot be below 0");
+        //currentFramebuffer = new Framebuffer();
+        //if (initialWindowProperties.samples > 0)
+        //{
+        //    currentFramebuffer.setColorAttachment(new Framebuffer.MultisampledColorAttachment(initialWindowProperties.width, initialWindowProperties.height, Framebuffer.ColorAttachment.Format.RGB16F, initialWindowProperties.samples));
+        //    currentFramebuffer.setDepthBuffer(new Framebuffer.MultisampledRenderBuffer(initialWindowProperties.width, initialWindowProperties.height, Framebuffer.RenderBuffer.Format.DEPTH_24_STENCIL_8, initialWindowProperties.samples));
+        //}
+        //else if (initialWindowProperties.samples == 0)
+        //{
+        //    currentFramebuffer.setColorAttachment(new Framebuffer.ColorAttachment(initialWindowProperties.width, initialWindowProperties.height, Framebuffer.ColorAttachment.Format.RGB16F));
+        //    currentFramebuffer.setDepthBuffer(new Framebuffer.RenderBuffer(initialWindowProperties.width, initialWindowProperties.height, Framebuffer.RenderBuffer.Format.DEPTH_24_STENCIL_8));
+        //}
+        //else throw new IllegalArgumentException("Multisample sample count cannot be below 0");
     }
 
     public static void addExposure(float pExposure)
@@ -56,16 +57,21 @@ public abstract class Renderer3D
         exposure += pExposure * exposure; // Makes it seem more linear towards the lower exposure levels.
     }
 
+    public static void setFramebuffer(Framebuffer framebuffer)
+    {
+        currentFramebuffer = framebuffer;
+    }
+
     public static void resizeFramebuffer(int width, int height)
     {
-        rawFramebuffer.resize(width, height);
+        currentFramebuffer.resize(width, height);
     }
 
     public static void dispose()
     {
         SCREEN_QUAD.delete();
         matrixBuffer.delete();
-        rawFramebuffer.delete();
+        currentFramebuffer.delete();
     }
 
     /////RENDERING/////////////////////////////////////////////////
@@ -76,19 +82,19 @@ public abstract class Renderer3D
         matrixBuffer.setDataUnsafe(camera.getViewMatrix().matrix, 0);
         matrixBuffer.setDataUnsafe(camera.getProjectionMatrix().matrix, 64);
         matrixBuffer.setDataUnsafe(camera.getRawPosition(), 128);
-        rawFramebuffer.bind();
+        currentFramebuffer.bind();
         Renderer.clear(Renderer.ClearMask.COLOR_DEPTH_STENCIL);
     }
 
     public static void end(@NotNull Window window)
     {
-        glBindTexture(GL_TEXTURE_2D, rawFramebuffer.getColorAttachmentTexture());
-        rawFramebuffer.unbind();
+        glBindTextureUnit(0, currentFramebuffer.getColorAttachmentTexture());
+        currentFramebuffer.unbind();
         Renderer.clear(Renderer.ClearMask.COLOR_DEPTH);
         ///// POST PROCESSING //////
-        postProcessingShader.bind();
-        postProcessingShader.setFloat("u_Exposure", exposure);
-        SCREEN_QUAD.bind();
-        SCREEN_QUAD.drawElements();
+        //postProcessingShader.bind();
+        //postProcessingShader.setFloat("u_Exposure", exposure);
+        //SCREEN_QUAD.bind();
+        //SCREEN_QUAD.drawElements();
     }
 }

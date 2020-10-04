@@ -1,4 +1,4 @@
-package dockspace;
+package haraldr.dockspace;
 
 import haraldr.event.Event;
 import haraldr.event.EventType;
@@ -78,6 +78,11 @@ public class DockablePanel
     public Vector2f getSize()
     {
         return size;
+    }
+
+    public float getHeaderHeight()
+    {
+        return headerSize.getY();
     }
 
     public boolean isHeld()

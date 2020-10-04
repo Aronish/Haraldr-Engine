@@ -1,4 +1,4 @@
-package dockspace;
+package haraldr.dockspace;
 
 import haraldr.graphics.Renderer2D;
 import haraldr.math.Vector2f;

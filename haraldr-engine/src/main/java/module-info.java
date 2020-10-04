@@ -47,4 +47,5 @@ module haraldr
     opens default_shaders;
     opens default_textures;
     opens default_models;
+    exports haraldr.dockspace;
 }

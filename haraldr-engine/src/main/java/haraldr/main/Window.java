@@ -155,8 +155,8 @@ public class Window
             minimized = newWidth <= 0 || newHeight <= 0;
             windowWidth = newWidth;
             windowHeight = newHeight;
-            Renderer.setViewPort(0, 0, newWidth, newHeight);
-            Renderer3D.resizeFramebuffer(newWidth, newHeight);
+            //Renderer.setViewPort(0, 0, newWidth, newHeight);
+            //Renderer3D.resizeFramebuffer(newWidth, newHeight);
             EventDispatcher.dispatch(new WindowResizedEvent(newWidth, newHeight), this);
         });
 

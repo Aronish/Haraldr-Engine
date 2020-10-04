@@ -1,8 +1,10 @@
-package dockspace;
+package haraldr.dockspace;
 
 import haraldr.debug.Logger;
 import haraldr.event.Event;
 import haraldr.event.EventType;
+import haraldr.event.MouseMovedEvent;
+import haraldr.event.MousePressedEvent;
 import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Renderer2D;
 import haraldr.input.Input;
@@ -91,9 +93,8 @@ public class Dockspace
 
     private void setSize(Vector2f size)
     {
-        Vector2f difference = Vector2f.subtract(this.size, size).negate();
         this.size.set(size);
-        rootArea.addSize(difference);
+        rootArea.setSize(this.size);
     }
 
     public void render()
@@ -115,18 +116,23 @@ public class Dockspace
         private DockGizmo dockGizmo;
         private DockingArea parent;
         private Map<DockPosition, DockingArea> children = new HashMap<>();
-        private boolean dockable, hovered, vertical; // vertical is used to add extra size in the perpendicular axis in certain undocking configurations.
+        private boolean dockable, hovered, vertical, resizing; // vertical is used to add extra size in the perpendicular axis in certain undocking configurations.
 
         private DockablePanel dockedPanel;
 
         private DockingArea(Vector2f position, Vector2f size)
         {
-            this(position, size, false);
+            this(position, size, DockPosition.NONE, false);
         }
 
-        private DockingArea(Vector2f position, Vector2f size, boolean vertical)
+        private DockingArea(Vector2f position, Vector2f size, DockPosition dockPosition)
         {
-            this(position, size, true, null, DockPosition.NONE, vertical, null);
+            this(position, size, true, null, dockPosition, false, null);
+        }
+
+        private DockingArea(Vector2f position, Vector2f size, DockPosition dockPosition, boolean vertical)
+        {
+            this(position, size, true, null, dockPosition, vertical, null);
         }
 
         private DockingArea(Vector2f position, Vector2f size, boolean dockable, DockablePanel dockedPanel, DockPosition dockPosition, boolean vertical, DockingArea parent)
@@ -140,6 +146,77 @@ public class Dockspace
             this.vertical = vertical;
             color = new Vector4f((float) Math.random(), (float) Math.random(), (float) Math.random(), 0.1f);
             dockGizmo = new DockGizmo(position, size);
+        }
+
+        private void onEvent(Event event, Window window)
+        {
+            if (parent != null)
+            {
+                if (event.eventType == EventType.MOUSE_PRESSED)
+                {
+                    var mousePressedEvent = (MousePressedEvent) event;
+                    switch (dockPosition)
+                    {
+                        case LEFT -> resizing = Physics2D.pointInsideAABB(
+                                new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos),
+                                new Vector2f(position.getX() + size.getX() - 20f, position.getY()),
+                                new Vector2f(20f, size.getY())
+                        );
+                        case TOP -> resizing = Physics2D.pointInsideAABB(
+                                new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos),
+                                new Vector2f(position.getX(), position.getY() + size.getY() - 20f),
+                                new Vector2f(size.getX(), 20f)
+                        );
+                    }
+                }
+                if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1)) resizing = false;
+                if (event.eventType == EventType.MOUSE_MOVED)
+                {
+                    var mouseMovedEvent = (MouseMovedEvent) event;
+                    if (resizing)
+                    {
+                        //TODO: This is hell
+                    }
+                }
+            }
+            for (DockingArea dockingArea : children.values())
+            {
+                dockingArea.onEvent(event, window);
+            }
+        }
+
+        private void setSize(Vector2f size)
+        {
+            this.size.set(size);
+            dockGizmo.setSize(this.size);
+            if (dockedPanel != null)
+            {
+                dockedPanel.addSize(size);
+            }
+        }
+
+        private void addPosition(Vector2f position)
+        {
+            this.position.add(position);
+            dockGizmo.setPosition(this.position);
+            if (dockedPanel != null) dockedPanel.setPosition(this.position);
+
+            for (DockingArea dockingArea : children.values())
+            {
+                dockingArea.addPosition(position);
+            }
+        }
+
+        private void addSize(Vector2f size)
+        {
+            this.size.add(size);
+            dockGizmo.setSize(this.size);
+            if (dockedPanel != null) dockedPanel.setSize(this.size);
+
+            for (DockingArea dockingArea : children.values())
+            {
+                dockingArea.addSize(size);
+            }
         }
 
         /**
@@ -171,7 +248,8 @@ public class Dockspace
                         children.putIfAbsent(DockPosition.LEFT, leftDockingArea);
                         children.putIfAbsent(DockPosition.RIGHT, new DockingArea(
                                 Vector2f.add(position, new Vector2f(leftSize.getX(), 0f)),
-                                Vector2f.add(size, new Vector2f(-leftSize.getX(), 0f))
+                                Vector2f.add(size, new Vector2f(-leftSize.getX(), 0f)),
+                                DockPosition.RIGHT
                         ));
                         panel.setPosition(leftDockingArea.position);
                         panel.setSize(leftDockingArea.size);
@@ -186,7 +264,7 @@ public class Dockspace
                                 Vector2f.add(size, new Vector2f(-leftSize.getX(), 0f)),
                                 false, panel, DockPosition.RIGHT, false, this
                         );
-                        children.putIfAbsent(DockPosition.LEFT, new DockingArea(position, leftSize));
+                        children.putIfAbsent(DockPosition.LEFT, new DockingArea(position, leftSize, DockPosition.LEFT));
                         children.putIfAbsent(DockPosition.RIGHT, rightDockingArea);
                         panel.setPosition(rightDockingArea.position);
                         panel.setSize(rightDockingArea.size);
@@ -201,7 +279,7 @@ public class Dockspace
                         children.putIfAbsent(DockPosition.BOTTOM, new DockingArea(
                                 Vector2f.add(position, new Vector2f(0f, topSize.getY())),
                                 Vector2f.add(size, new Vector2f(0f, -topSize.getY())),
-                                true
+                                DockPosition.BOTTOM, true
                         ));
                         panel.setPosition(topDockingArea.position);
                         panel.setSize(topDockingArea.size);
@@ -216,7 +294,7 @@ public class Dockspace
                                 Vector2f.add(size, new Vector2f(0f, -topSize.getY())),
                                 false, panel, DockPosition.BOTTOM, true, this
                         );
-                        children.putIfAbsent(DockPosition.TOP, new DockingArea(position, topSize, true));
+                        children.putIfAbsent(DockPosition.TOP, new DockingArea(position, topSize, DockPosition.TOP, true));
                         children.putIfAbsent(DockPosition.BOTTOM, bottomDockingArea);
                         panel.setPosition(bottomDockingArea.position);
                         panel.setSize(bottomDockingArea.size);
@@ -367,21 +445,6 @@ public class Dockspace
             for (DockingArea dockingArea : children.values())
             {
                 dockingArea.onUndock(undockedSize, undockedPosition);
-            }
-        }
-
-        private void addSize(Vector2f size)
-        {
-            this.size.add(size);
-            dockGizmo.setSize(this.size);
-            if (dockedPanel != null)
-            {
-                dockedPanel.addSize(size);
-            }
-
-            for (DockingArea dockingArea : children.values())
-            {
-                dockingArea.addSize(size);
             }
         }
 

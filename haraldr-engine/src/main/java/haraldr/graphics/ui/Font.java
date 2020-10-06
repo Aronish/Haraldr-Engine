@@ -102,7 +102,7 @@ public class Font
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        this.fontAtlas = Texture.wrapFontBitmap(fontAtlas);
+        this.fontAtlas = Texture.wrapTextureHandle("font_", fontAtlas);
     }
 
     public List<Float> createTextMesh(@NotNull String text, Vector2f position, Vector4f color)

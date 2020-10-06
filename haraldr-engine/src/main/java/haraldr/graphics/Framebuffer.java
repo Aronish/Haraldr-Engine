@@ -22,7 +22,6 @@ import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT24;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30.GL_DEPTH24_STENCIL8;
-import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
 import static org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL_ATTACHMENT;
 import static org.lwjgl.opengl.GL30.GL_DRAW_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
@@ -92,9 +91,9 @@ public class Framebuffer
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    public int getColorAttachmentTexture()
+    public Texture getColorAttachmentTexture()
     {
-        return colorAttachment.getTextureId(this);
+        return Texture.wrapTextureHandle("col_att_", colorAttachment.getTextureId(this));
     }
 
     public ColorAttachment getColorAttachment()

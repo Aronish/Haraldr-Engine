@@ -1,14 +1,12 @@
 package haraldr.scene;
 
-import haraldr.debug.Logger;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
-import haraldr.event.MouseScrolledEvent;
 import haraldr.event.WindowResizedEvent;
+import haraldr.input.Input;
 import haraldr.input.KeyboardKey;
 import haraldr.input.MouseButton;
-import haraldr.input.Input;
 import haraldr.main.Window;
 import haraldr.math.Matrix4f;
 import haraldr.math.Vector3f;
@@ -67,7 +65,6 @@ public class OrbitalCamera extends Camera
                 {
                     zoom += (float) (mouseMovedEvent.yPos - lastY) / window.getHeight() * MOVE_SPEED;
                     if (zoom <= 0.0001f) zoom = 0.0001f;
-                    Logger.info(zoom);
                 } else
                 {
                     target.add(Vector3f.add(

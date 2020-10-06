@@ -74,6 +74,13 @@ public class VertexBuffer
         glBindBuffer(target, 0);
     }
 
+    public void setSubData(float[] data, int offset)
+    {
+        glBindBuffer(target, vertexBufferID);
+        glBufferSubData(target, offset, data);
+        glBindBuffer(target, 0);
+    }
+
     public void setSubDataUnsafe(int[] data)
     {
         glBufferSubData(target, 0, data);

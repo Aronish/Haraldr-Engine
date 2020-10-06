@@ -21,6 +21,8 @@ public class DockablePanel
     private Vector4f color;
     private boolean held;
 
+    private PanelDimensionChangeAction panelDimensionChangeAction = (position, size) -> {};
+
     public DockablePanel(Vector2f position, Vector2f size, Vector4f color)
     {
         this.position = new Vector2f(position);
@@ -53,21 +55,38 @@ public class DockablePanel
         Renderer2D.drawQuad(position, headerSize, HEADER_COLOR);
     }
 
+    public void setPanelResizeAction(PanelDimensionChangeAction panelDimensionChangeAction)
+    {
+        this.panelDimensionChangeAction = panelDimensionChangeAction;
+    }
+
     public void setPosition(Vector2f parentPosition)
     {
         position.set(parentPosition);
+        panelDimensionChangeAction.run(
+                Vector2f.add(position, new Vector2f(0f, headerSize.getY())),
+                Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
+        );
     }
 
     public void setSize(Vector2f size)
     {
         this.size.set(size);
         headerSize.setX(size.getX());
+        panelDimensionChangeAction.run(
+                Vector2f.add(position, new Vector2f(0f, headerSize.getY())),
+                Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
+        );
     }
 
     public void addSize(Vector2f size)
     {
         this.size.add(size);
         this.headerSize.addX(size.getX());
+        panelDimensionChangeAction.run(
+                Vector2f.add(position, new Vector2f(0f, headerSize.getY())),
+                Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
+        );
     }
 
     public Vector2f getPosition()
@@ -88,5 +107,10 @@ public class DockablePanel
     public boolean isHeld()
     {
         return held;
+    }
+
+    public interface PanelDimensionChangeAction
+    {
+        void run(Vector2f position, Vector2f size);
     }
 }

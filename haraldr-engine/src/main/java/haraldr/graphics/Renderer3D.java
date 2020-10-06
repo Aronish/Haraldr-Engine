@@ -12,7 +12,6 @@ import static org.lwjgl.opengl.GL45.glBindTextureUnit;
 public abstract class Renderer3D
 {
     public static final VertexArray SCREEN_QUAD = new VertexArray();
-    private static Framebuffer currentFramebuffer;
 
     static
     {
@@ -57,40 +56,28 @@ public abstract class Renderer3D
         exposure += pExposure * exposure; // Makes it seem more linear towards the lower exposure levels.
     }
 
-    public static void setFramebuffer(Framebuffer framebuffer)
-    {
-        currentFramebuffer = framebuffer;
-    }
-
-    public static void resizeFramebuffer(int width, int height)
-    {
-        currentFramebuffer.resize(width, height);
-    }
-
     public static void dispose()
     {
         SCREEN_QUAD.delete();
         matrixBuffer.delete();
-        currentFramebuffer.delete();
     }
 
     /////RENDERING/////////////////////////////////////////////////
 
-    public static void begin(@NotNull Window window, Camera camera)
+    public static void begin(@NotNull Window window, Camera camera, Framebuffer framebuffer) //TODO: Unnecessary in current form?
     {
         matrixBuffer.bind(0);
         matrixBuffer.setDataUnsafe(camera.getViewMatrix().matrix, 0);
         matrixBuffer.setDataUnsafe(camera.getProjectionMatrix().matrix, 64);
         matrixBuffer.setDataUnsafe(camera.getRawPosition(), 128);
-        currentFramebuffer.bind();
+        framebuffer.bind();
         Renderer.clear(Renderer.ClearMask.COLOR_DEPTH_STENCIL);
     }
 
-    public static void end(@NotNull Window window)
+    public static void end(@NotNull Window window, Framebuffer framebuffer)
     {
-        glBindTextureUnit(0, currentFramebuffer.getColorAttachmentTexture());
-        currentFramebuffer.unbind();
-        Renderer.clear(Renderer.ClearMask.COLOR_DEPTH);
+        framebuffer.unbind();
+        Renderer.clear(Renderer.ClearMask.COLOR_DEPTH_STENCIL);
         ///// POST PROCESSING //////
         //postProcessingShader.bind();
         //postProcessingShader.setFloat("u_Exposure", exposure);

@@ -13,6 +13,7 @@ import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.Objects;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
@@ -92,9 +93,9 @@ public class Texture
     @Contract(pure = true)
     private Texture() {}
 
-    public static Texture wrapFontBitmap(int fontAtlasHandle)
+    public static Texture wrapTextureHandle(String prefix, int fontAtlasHandle)
     {
-        String key = "font_" + fontAtlasHandle;
+        String key = prefix + fontAtlasHandle;
         if (ResourceManager.isTextureLoaded(key))
         {
             return ResourceManager.getLoadedTexture(key);
@@ -274,5 +275,21 @@ public class Texture
     public void delete()
     {
         glDeleteTextures(textureHandle);
+    }
+
+    @Contract(value = "null -> false", pure = true)
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Texture texture = (Texture) o;
+        return textureHandle == texture.textureHandle;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(textureHandle);
     }
 }

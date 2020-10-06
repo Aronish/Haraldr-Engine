@@ -2,6 +2,7 @@ package haraldr.graphics;
 
 import jsonparser.JSONException;
 import jsonparser.JSONObject;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class Material
     private List<ShaderUniform> uniforms;
     private List<ShaderSampler> samplers;
 
+    @Contract(pure = true)
     public Material(@NotNull Shader shader, @NotNull List<ShaderUniform> uniforms, List<ShaderSampler> samplers)
     {
         this.shader = shader;
@@ -42,7 +44,8 @@ public class Material
         return shader;
     }
 
-    public static Material create(@NotNull JSONObject materialDefinition) throws JSONException
+    @Contract("_ -> new")
+    public static @NotNull Material create(@NotNull JSONObject materialDefinition) throws JSONException
     {
         return MaterialParser.parseMaterial(materialDefinition);
     }

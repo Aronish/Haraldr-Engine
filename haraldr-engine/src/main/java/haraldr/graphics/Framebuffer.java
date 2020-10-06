@@ -74,7 +74,7 @@ public class Framebuffer
         depthBuffer.attach(this);
     }
 
-    public void resize(int width, int height)
+    public void setSize(int width, int height)
     {
         if (width <= 0 || height <= 0) return;
         colorAttachment.resize(width, height);

@@ -1,5 +1,6 @@
-package haraldr.graphics.ui;
+package haraldr.dockspace.uicomponents;
 
+import haraldr.dockspace.ControlPanel;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
@@ -16,21 +17,28 @@ public class Slider extends LabeledComponent
     private Vector2f sliderPosition = new Vector2f(), sliderSize;
     private Vector2f handlePosition = new Vector2f(), handleSize;
 
-    private float value;
+    private float value, min, max;
     private boolean held;
     private SliderChangeAction sliderChangeAction;
 
-    public Slider(String name, Pane parent)
+    public Slider(String name, ControlPanel parent)
     {
         this(name, parent, (value) -> {});
     }
 
-    public Slider(String name, Pane parent, SliderChangeAction sliderChangeAction)
+    public Slider(String name, ControlPanel parent, SliderChangeAction sliderChangeAction)
+    {
+        this(name, parent, 0f, 1f, sliderChangeAction);
+    }
+
+    public Slider(String name, ControlPanel parent, float min, float max, SliderChangeAction sliderChangeAction)
     {
         super(name, parent);
         sliderSize = new Vector2f(parent.getComponentDivisionSize(), label.getFont().getSize());
         handleSize = new Vector2f(20f, label.getFont().getSize());
         this.sliderChangeAction = sliderChangeAction;
+        this.min = min;
+        this.max = max;
     }
 
     public void setValue(float value)
@@ -85,15 +93,11 @@ public class Slider extends LabeledComponent
                 if (position < sliderPosition.getX()) position = sliderPosition.getX();
                 if (position > sliderPosition.getX() + sliderSize.getX() - handleSize.getX()) position = sliderPosition.getX() + sliderSize.getX() - handleSize.getX();
                 handlePosition.setX(position);
-                value = (position - sliderPosition.getX()) / (sliderSize.getX() - handleSize.getX());
+                float normalizedValue = (position - sliderPosition.getX()) / (sliderSize.getX() - handleSize.getX());
+                value = min + (max - min) * normalizedValue;
                 sliderChangeAction.run(value);
             }
         }
-    }
-
-    @Override
-    public void onUpdate(float deltaTime)
-    {
     }
 
     @Override

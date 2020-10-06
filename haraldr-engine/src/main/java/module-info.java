@@ -32,11 +32,12 @@ module haraldr
     requires JsonParser;
     ///// EXPORTS ////////
     exports haraldr.debug;
+    exports haraldr.dockspace;
+    exports haraldr.dockspace.uicomponents;
     exports haraldr.ecs;
     exports haraldr.event;
     exports haraldr.graphics;
     exports haraldr.graphics.lighting;
-    exports haraldr.graphics.ui;
     exports haraldr.input;
     exports haraldr.main;
     exports haraldr.math;
@@ -47,5 +48,4 @@ module haraldr
     opens default_shaders;
     opens default_textures;
     opens default_models;
-    exports haraldr.dockspace;
 }

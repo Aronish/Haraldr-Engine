@@ -15,11 +15,11 @@ import haraldr.physics.Physics2D;
 public class DockablePanel
 {
     private static final float HEADER_SIZE = 20f;
-    private static final Vector4f HEADER_COLOR = new Vector4f(0.2f, 0.2f, 0.2f, 1f);
+    protected static final Vector4f HEADER_COLOR = new Vector4f(0.2f, 0.2f, 0.2f, 1f);
 
-    private Vector2f position, size, headerSize;
+    protected Vector2f position, size, headerSize;
     private Vector4f color;
-    private boolean held;
+    private boolean held, pressed;
 
     private PanelDimensionChangeAction panelDimensionChangeAction = (position, size) -> {};
 
@@ -36,15 +36,18 @@ public class DockablePanel
         if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
         {
             var mousePressedEvent = (MousePressedEvent) event;
-            held = Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), position, headerSize);
+            Vector2f mousePoint = new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos);
+            held = Physics2D.pointInsideAABB(mousePoint, position, headerSize);
+            pressed = Physics2D.pointInsideAABB(mousePoint, position, size);
         }
         if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1)) held = false;
         if (event.eventType == EventType.MOUSE_MOVED)
         {
+            var mouseMovedEvent = (MouseMovedEvent) event;
+            Vector2f mousePoint = new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos);
             if (held)
             {
-                var mouseMovedEvent = (MouseMovedEvent) event;
-                setPosition(new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos));
+                setPosition(mousePoint);
             }
         }
     }
@@ -60,11 +63,11 @@ public class DockablePanel
         this.panelDimensionChangeAction = panelDimensionChangeAction;
     }
 
-    public void setPosition(Vector2f parentPosition)
+    public void setPosition(Vector2f position)
     {
-        position.set(parentPosition);
+        this.position.set(position);
         panelDimensionChangeAction.run(
-                Vector2f.add(position, new Vector2f(0f, headerSize.getY())),
+                Vector2f.add(this.position, new Vector2f(0f, headerSize.getY())),
                 Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
         );
     }
@@ -107,6 +110,11 @@ public class DockablePanel
     public boolean isHeld()
     {
         return held;
+    }
+
+    public boolean isPressed()
+    {
+        return pressed;
     }
 
     public interface PanelDimensionChangeAction

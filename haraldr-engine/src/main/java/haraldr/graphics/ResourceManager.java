@@ -1,6 +1,6 @@
 package haraldr.graphics;
 
-import haraldr.graphics.ui.TextBatch;
+import haraldr.dockspace.uicomponents.TextBatch;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;

@@ -2,13 +2,11 @@
   "mesh": "default_meshes/suzanne_smooth.obj",
   "material":
   {
-    "type": "REFRACTIVE",
+    "type": "REFLECTIVE",
     "properties":
     {
-      "begin_medium": 1.00,
-      "end_medium": 5.0,
       "diffuse_texture": "default_textures/MetalSpottyDiscoloration001_COL_4K_SPECULAR.jpg",
-      "refraction_map": "default_textures/MetalSpottyDiscoloration001_REFL_4K_SPECULAR.jpg",
+      "reflection_map": "default_textures/MetalSpottyDiscoloration001_REFL_4K_SPECULAR.jpg",
       "environment_map": "default_hdris/NorwayForest_4K_hdri_sphere.hdr"
     }
   }

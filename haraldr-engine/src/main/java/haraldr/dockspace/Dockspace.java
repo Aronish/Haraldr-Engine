@@ -83,7 +83,7 @@ public class Dockspace
             if (dockedArea != null)
             {
                 dockedArea.undock();
-                selectedPanel.setSize(new Vector2f(250f));
+                selectedPanel.setSize(new Vector2f(300f));
                 selectedPanel = null;
                 return;
             }
@@ -102,6 +102,11 @@ public class Dockspace
         Renderer2D.drawQuad(position, size, BACKGROUND_COLOR);
         panels.descendingIterator().forEachRemaining(DockablePanel::render);
         if (selectedPanel != null) rootArea.render();
+    }
+
+    public Vector2f getSize()
+    {
+        return size;
     }
 
     /**

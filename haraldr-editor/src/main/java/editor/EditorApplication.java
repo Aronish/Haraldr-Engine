@@ -1,19 +1,26 @@
 package editor;
 
+import haraldr.dockspace.ControlPanel;
 import haraldr.dockspace.DockablePanel;
 import haraldr.dockspace.Dockspace;
 import haraldr.ecs.BoundingSphereComponent;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
 import haraldr.ecs.ModelComponent;
+import haraldr.ecs.TransformComponent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
-import haraldr.event.WindowResizedEvent;
+import haraldr.event.MousePressedEvent;
+import haraldr.graphics.HDRGammaCorrectionPass;
 import haraldr.graphics.RenderTexture;
-import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Renderer3D;
-import haraldr.graphics.Shader;
+import haraldr.dockspace.uicomponents.Button;
+import haraldr.dockspace.uicomponents.InfoLabel;
+import haraldr.dockspace.uicomponents.Slider;
+import haraldr.input.Input;
+import haraldr.input.KeyboardKey;
+import haraldr.input.MouseButton;
 import haraldr.main.Application;
 import haraldr.main.ProgramArguments;
 import haraldr.main.Window;
@@ -35,10 +42,10 @@ public class EditorApplication extends Application
     private Dockspace dockSpace;
     private DockablePanel scenePanel;
 
-    private Shader postProcessingShader;
-    private float exposure = 0.5f;
-    private Matrix4f pixelOrthographic;
+    private ControlPanel propertiesPanel;
+    private InfoLabel selectedEntityTag;
 
+    private HDRGammaCorrectionPass hdrGammaCorrectionPass;
     private RenderTexture sceneTexture;
 
     public EditorApplication()
@@ -53,18 +60,18 @@ public class EditorApplication extends Application
     @Override
     protected void clientInit(Window window)
     {
-        pixelOrthographic = Matrix4f.orthographic(0, window.getWidth(), window.getHeight(), 0f, -1, 1f);
-        postProcessingShader = Shader.create("internal_shaders/hdr_gamma_correct.glsl");
-
         scene = new EditorTestScene();
         scene.onActivate();
 
+        hdrGammaCorrectionPass = new HDRGammaCorrectionPass(0.5f);
+
         dockSpace = new Dockspace(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()));
-        dockSpace.addPanel(scenePanel = new DockablePanel(new Vector2f(), new Vector2f(250f), new Vector4f(0.8f, 0.2f, 0.3f, 1f)));
+        dockSpace.addPanel(scenePanel = new DockablePanel(new Vector2f(400f, 10f), new Vector2f(400f, 600f), new Vector4f(0.8f, 0.2f, 0.3f, 1f)));
         scenePanel.setPanelResizeAction((position, size) ->
         {
             sceneTexture.setPosition(position);
             sceneTexture.setSize(size.getX(), size.getY());
+            editorCamera.setAspectRatio(size.getX() / size.getY());
         });
 
         sceneTexture = new RenderTexture(
@@ -73,36 +80,63 @@ public class EditorApplication extends Application
         );
 
         editorCamera = new OrbitalCamera(scenePanel.getSize().getX(), scenePanel.getSize().getY());
+
+        // Properties Panel
+        dockSpace.addPanel(propertiesPanel = new ControlPanel(new Vector2f(20f), new Vector2f(300f, 400f), "Properties"));
+        propertiesPanel.addChild(selectedEntityTag = new InfoLabel("Selected Entity", propertiesPanel));
+        propertiesPanel.addChild(new Button("Center Camera", propertiesPanel, () ->
+        {
+            if (!selected.equals(Entity.INVALID))
+            {
+                editorCamera.setPosition(scene.getRegistry().getComponent(TransformComponent.class, selected).position);
+            }
+        }));
+
+        InfoLabel sliderValue;
+        propertiesPanel.addChild(sliderValue = new InfoLabel("Exposure Value", propertiesPanel));
+        propertiesPanel.addChild(new Slider("Exposure", propertiesPanel, 0f, 2f, value ->
+        {
+            hdrGammaCorrectionPass.setExposure(value);
+            sliderValue.setText(Float.toString(value));
+        }));
     }
 
     @Override
     protected void clientEvent(Event event, Window window)
     {
         dockSpace.onEvent(event, window);
-        editorCamera.onEvent(event, window);
         scene.onEvent(event, window);
+        if (scenePanel.isPressed() && !scenePanel.isHeld())
+        {
+            editorCamera.onEvent(event, window);
+            if (event.eventType == EventType.MOUSE_PRESSED)
+            {
+                var mousePressedEvent = (MousePressedEvent) event;
+                if (Input.wasMousePressed(mousePressedEvent, MouseButton.MOUSE_BUTTON_1))
+                {
+                    selected = selectEntity(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), new Vector2f(window.getWidth(), window.getHeight()), selected, scene.getRegistry());
+                    if (!selected.equals(Entity.INVALID))
+                    {
+                        selectedEntityTag.setText(String.format("Entity ID: %d", selected.id));
+                    } else
+                    {
+                        selectedEntityTag.setText("No entity selected");
+                    }
+                }
+            }
+        }
+
+        if (Input.wasKeyPressed(event, KeyboardKey.KEY_F)) window.toggleFullscreen();
 
         if (event.eventType == EventType.WINDOW_RESIZED)
         {
             editorCamera.setAspectRatio(sceneTexture.getSize().getX() / sceneTexture.getSize().getY());
-            pixelOrthographic = Matrix4f.orthographic(0f, window.getWidth(), window.getHeight(), 0f, -1f, 1f);
         }
     }
 
-    private Entity selectEntity(int mouseX, int mouseY, int width, int height, Entity lastSelected, EntityRegistry registry)
+    private Entity selectEntity(Vector2f mousePoint, Vector2f windowSize, Entity lastSelected, EntityRegistry registry)
     {
-        Vector4f rayClipSpace = new Vector4f(
-                (2f * mouseX) / width - 1f,
-                1f - (2f * mouseY) / height,
-                -1f,
-                1f
-        );
-        Vector4f rayEyeSpace = Matrix4f.multiply(Matrix4f.invert(editorCamera.getProjectionMatrix()), rayClipSpace);
-        rayEyeSpace.setZ(-1f);
-        rayEyeSpace.setW(0f);
-
-        Vector3f rayWorldSpace = new Vector3f(Matrix4f.multiply(Matrix4f.invert(editorCamera.getViewMatrix()), rayEyeSpace));
-        rayWorldSpace.normalize();
+        Vector3f ray = Physics3D.castRayFromMouse(mousePoint, windowSize, editorCamera.getViewMatrix(), editorCamera.getProjectionMatrix());
 
         Entity selected;
         if (!lastSelected.equals(Entity.INVALID))
@@ -112,7 +146,7 @@ public class EditorApplication extends Application
         }
 
         selected = registry.view(BoundingSphereComponent.class).find(((transform, bsphere) ->
-                Physics3D.rayIntersectsSphere(editorCamera.getPosition(), rayWorldSpace, transform.position, bsphere.radius)), registry);
+                Physics3D.rayIntersectsSphere(editorCamera.getPosition(), ray, transform.position, bsphere.radius)), registry);
 
         if (!selected.equals(Entity.INVALID))
         {
@@ -132,24 +166,14 @@ public class EditorApplication extends Application
     @Override
     protected void clientRender(Window window)
     {
-        Renderer.setViewPort(0, 0, (int)sceneTexture.getSize().getX(), (int)sceneTexture.getSize().getY());
-        Renderer.enableDepthTest();
-        Renderer3D.begin(window, editorCamera, sceneTexture.getFramebuffer());
-        scene.onRender();
-        Renderer3D.end(window, sceneTexture.getFramebuffer());
+        Renderer3D.renderSceneToTexture(window, editorCamera, scene, sceneTexture);
 
-        Renderer.setViewPort(0, 0, window.getWidth(), window.getHeight());
-        Renderer.disableDepthTest();
         Renderer2D.begin();
         dockSpace.render();
         Renderer2D.end();
+        propertiesPanel.renderText();
 
-        postProcessingShader.bind();
-        postProcessingShader.setFloat("u_Exposure", exposure);
-        postProcessingShader.setMatrix4f("projection", pixelOrthographic);
-        sceneTexture.getFramebuffer().getColorAttachmentTexture().bind(0);
-        sceneTexture.getQuad().bind();
-        sceneTexture.getQuad().drawElements();
+        hdrGammaCorrectionPass.render(sceneTexture, Renderer2D.pixelOrthographic);
     }
 
     @Override

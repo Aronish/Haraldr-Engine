@@ -35,6 +35,7 @@ public class RenderTexture
     {
         size.set(width, height);
         quadData.setSubData(createQuadData(position, size), 0);
+        framebuffer.setSize((int)width, (int)height);
     }
 
     public void setPosition(Vector2f position)

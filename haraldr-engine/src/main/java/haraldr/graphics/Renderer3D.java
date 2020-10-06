@@ -2,6 +2,7 @@ package haraldr.graphics;
 
 import haraldr.scene.Camera;
 import haraldr.main.Window;
+import haraldr.scene.Scene3D;
 import org.jetbrains.annotations.NotNull;
 
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
@@ -71,7 +72,17 @@ public abstract class Renderer3D
         matrixBuffer.setDataUnsafe(camera.getProjectionMatrix().matrix, 64);
         matrixBuffer.setDataUnsafe(camera.getRawPosition(), 128);
         framebuffer.bind();
+        Renderer.enableDepthTest();
         Renderer.clear(Renderer.ClearMask.COLOR_DEPTH_STENCIL);
+    }
+
+    public static void renderSceneToTexture(Window window, Camera camera, Scene3D scene, RenderTexture renderTexture)
+    {
+        begin(window, camera, renderTexture.getFramebuffer());
+        Renderer.setViewPort(0, 0, (int)renderTexture.getSize().getX(), (int)renderTexture.getSize().getY());
+        scene.onRender();
+        end(window, renderTexture.getFramebuffer());
+        Renderer.setViewPort(0, 0, window.getWidth(), window.getHeight());
     }
 
     public static void end(@NotNull Window window, Framebuffer framebuffer)

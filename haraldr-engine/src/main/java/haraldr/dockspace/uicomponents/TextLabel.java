@@ -1,4 +1,4 @@
-package haraldr.graphics.ui;
+package haraldr.dockspace.uicomponents;
 
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;

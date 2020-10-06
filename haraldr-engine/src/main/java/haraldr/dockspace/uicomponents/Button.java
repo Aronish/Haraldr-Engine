@@ -1,5 +1,6 @@
-package haraldr.graphics.ui;
+package haraldr.dockspace.uicomponents;
 
+import haraldr.dockspace.ControlPanel;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
@@ -19,12 +20,12 @@ public class Button extends LabeledComponent
     private Vector4f currentColor = OFF_COLOR;
     private ButtonPressAction buttonPressAction;
 
-    public Button(String name, Pane parent)
+    public Button(String name, ControlPanel parent)
     {
         this(name, parent, () -> {});
     }
 
-    public Button(String name, Pane parent, ButtonPressAction buttonPressAction)
+    public Button(String name, ControlPanel parent, ButtonPressAction buttonPressAction)
     {
         super(name, parent);
         buttonSize = new Vector2f(parent.getComponentDivisionSize(), label.getFont().getSize());
@@ -86,11 +87,6 @@ public class Button extends LabeledComponent
                 mouseMovedEvent.yPos <= buttonPosition.getY() + buttonSize.getY()) ? HOVER_COLOR : OFF_COLOR;
             }
         }
-    }
-
-    @Override
-    public void onUpdate(float deltaTime)
-    {
     }
 
     @Override

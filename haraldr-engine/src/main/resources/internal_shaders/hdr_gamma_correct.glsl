@@ -4,14 +4,14 @@
 layout (location = 0) in vec2 a_Position;
 layout (location = 1) in vec2 a_TextureCoordinate;
 
-uniform mat4 projection = mat4(1.0f);
+uniform mat4 u_Projection = mat4(1.0f);
 
 out vec2 v_TextureCoordinate;
 
 void main()
 {
     v_TextureCoordinate = a_TextureCoordinate;
-    gl_Position = projection * vec4(a_Position, 0.0f, 1.0f);
+    gl_Position = u_Projection * vec4(a_Position, 0.0f, 1.0f);
 }
 
 #shader frag

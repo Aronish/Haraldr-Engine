@@ -1,5 +1,6 @@
-package haraldr.graphics.ui;
+package haraldr.dockspace.uicomponents;
 
+import haraldr.dockspace.ControlPanel;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
@@ -18,12 +19,12 @@ public class Checkbox extends LabeledComponent
 
     private CheckboxStateChangeAction checkboxStateChangeAction;
 
-    public Checkbox(String name, Pane parent)
+    public Checkbox(String name, ControlPanel parent)
     {
         this(name, parent, (state) -> {});
     }
 
-    public Checkbox(String name, Pane parent, CheckboxStateChangeAction checkboxStateChangeAction)
+    public Checkbox(String name, ControlPanel parent, CheckboxStateChangeAction checkboxStateChangeAction)
     {
         super(name, parent);
         boxSize = new Vector2f(parent.getComponentDivisionSize(), label.getFont().getSize());
@@ -65,11 +66,6 @@ public class Checkbox extends LabeledComponent
                 }
             }
         }
-    }
-
-    @Override
-    public void onUpdate(float deltaTime)
-    {
     }
 
     @Override

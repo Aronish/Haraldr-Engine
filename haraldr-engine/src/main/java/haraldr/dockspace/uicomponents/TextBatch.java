@@ -1,4 +1,4 @@
-package haraldr.graphics.ui;
+package haraldr.dockspace.uicomponents;
 
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.ResourceManager;
@@ -9,7 +9,6 @@ import haraldr.graphics.VertexBuffer;
 import haraldr.graphics.VertexBufferElement;
 import haraldr.graphics.VertexBufferLayout;
 import haraldr.main.ArrayUtils;
-import haraldr.math.Matrix4f;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 

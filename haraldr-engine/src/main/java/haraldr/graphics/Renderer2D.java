@@ -46,6 +46,7 @@ public class Renderer2D
 
     public static void begin()
     {
+        Renderer.disableDepthTest();
         indexCount = 0;
         insertIndex = 0;
         textureIndex = 1;

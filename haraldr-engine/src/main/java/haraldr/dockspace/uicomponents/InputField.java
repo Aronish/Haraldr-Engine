@@ -1,5 +1,6 @@
-package haraldr.graphics.ui;
+package haraldr.dockspace.uicomponents;
 
+import haraldr.dockspace.ControlPanel;
 import haraldr.event.CharTypedEvent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Contract;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings("unused")
 public class InputField extends LabeledComponent
 {
     private static final Vector4f SELECTED_COLOR = new Vector4f(1f), UNSELECTED_COLOR = new Vector4f(0f, 0f, 0f, 1f);
@@ -31,27 +32,27 @@ public class InputField extends LabeledComponent
 
     private InputFieldChangeAction inputFieldChangeAction;
 
-    public InputField(String name, Pane parent)
+    public InputField(String name, ControlPanel parent)
     {
         this(name, parent, InputType.ANY, ((addedChar, fullText) -> {}));
     }
 
-    public InputField(String name, Pane parent, InputFieldChangeAction inputFieldChangeAction)
+    public InputField(String name, ControlPanel parent, InputFieldChangeAction inputFieldChangeAction)
     {
         this(name, parent, InputType.ANY, inputFieldChangeAction);
     }
 
-    public InputField(String name, Pane parent, InputType inputType)
+    public InputField(String name, ControlPanel parent, InputType inputType)
     {
         this(name, parent, inputType, ((addedChar, fullText) -> {}));
     }
 
-    public InputField(String name, Pane parent, InputType inputType, InputFieldChangeAction inputFieldChangeAction)
+    public InputField(String name, ControlPanel parent, InputType inputType, InputFieldChangeAction inputFieldChangeAction)
     {
         super(name, parent);
         fieldSize = new Vector2f(parent.getComponentDivisionSize() - 2f * borderWidth, label.getFont().getSize() - 2f * borderWidth);
         borderSize = new Vector2f(parent.getComponentDivisionSize(), label.getFont().getSize());
-        textLabel = parent.textBatch.createTextLabel(value, fieldPosition, new Vector4f(0f, 0f, 0f, 1f));
+        textLabel = parent.getTextBatch().createTextLabel(value, fieldPosition, new Vector4f(0f, 0f, 0f, 1f));
         this.inputType = inputType;
         this.inputFieldChangeAction = inputFieldChangeAction;
     }
@@ -80,7 +81,7 @@ public class InputField extends LabeledComponent
     {
         borderSize.setX(width);
         fieldSize.setX(width - 2f * borderWidth);
-        parent.textBatch.refreshTextMeshData();
+        parent.getTextBatch().refreshTextMeshData();
     }
 
     @Override
@@ -111,7 +112,7 @@ public class InputField extends LabeledComponent
             {
                 value = "";
                 textLabel.setText(value);
-                parent.textBatch.refreshTextMeshData();
+                parent.getTextBatch().refreshTextMeshData();
                 inputFieldChangeAction.run('\b', value);
             }
         }
@@ -123,7 +124,7 @@ public class InputField extends LabeledComponent
                 {
                     value = value.substring(0, value.length() - 1);
                     textLabel.setText(value);
-                    parent.textBatch.refreshTextMeshData();
+                    parent.getTextBatch().refreshTextMeshData();
                     inputFieldChangeAction.run('\b', value);
                 }
             }
@@ -134,16 +135,11 @@ public class InputField extends LabeledComponent
                 {
                     value += charTypedEvent.character;
                     textLabel.setText(value);
-                    parent.textBatch.refreshTextMeshData();
+                    parent.getTextBatch().refreshTextMeshData();
                     inputFieldChangeAction.run(charTypedEvent.character, value);
                 }
             }
         }
-    }
-
-    @Override
-    public void onUpdate(float deltaTime)
-    {
     }
 
     @Override

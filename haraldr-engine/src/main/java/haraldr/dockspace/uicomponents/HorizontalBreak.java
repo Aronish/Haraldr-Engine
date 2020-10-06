@@ -1,5 +1,6 @@
-package haraldr.graphics.ui;
+package haraldr.dockspace.uicomponents;
 
+import haraldr.dockspace.ControlPanel;
 import haraldr.event.Event;
 import haraldr.math.Vector2f;
 
@@ -7,12 +8,12 @@ public class HorizontalBreak extends LabeledComponent
 {
     private int height = 20;
 
-    public HorizontalBreak(String name, Pane parent)
+    public HorizontalBreak(String name, ControlPanel parent)
     {
         super(name, parent);
     }
 
-    public HorizontalBreak(String name, Pane parent, int height)
+    public HorizontalBreak(String name, ControlPanel parent, int height)
     {
         this(name, parent);
         this.height = height;
@@ -36,11 +37,6 @@ public class HorizontalBreak extends LabeledComponent
 
     @Override
     public void onEvent(Event event)
-    {
-    }
-
-    @Override
-    public void onUpdate(float deltaTime)
     {
     }
 

@@ -1,5 +1,6 @@
-package haraldr.graphics.ui;
+package haraldr.dockspace.uicomponents;
 
+import haraldr.dockspace.ControlPanel;
 import haraldr.event.Event;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -10,17 +11,17 @@ public class InfoLabel extends LabeledComponent
     private String value = "";
     private TextLabel valueLabel;
 
-    public InfoLabel(String name, Pane parent)
+    public InfoLabel(String name, ControlPanel parent)
     {
         super(name, parent);
-        valueLabel = parent.textBatch.createTextLabel(value, valueLabelPosition, new Vector4f(1f));
+        valueLabel = parent.getTextBatch().createTextLabel(value, valueLabelPosition, new Vector4f(1f));
     }
 
     public void setText(String text)
     {
         value = text;
         valueLabel.setText(value);
-        parent.textBatch.refreshTextMeshData();
+        parent.getTextBatch().refreshTextMeshData();
     }
 
     public String getValue()
@@ -32,7 +33,7 @@ public class InfoLabel extends LabeledComponent
     protected void setComponentPosition(Vector2f position)
     {
         valueLabel.setPosition(position);
-        parent.textBatch.refreshTextMeshData();
+        parent.getTextBatch().refreshTextMeshData();
     }
 
     @Override
@@ -48,11 +49,6 @@ public class InfoLabel extends LabeledComponent
 
     @Override
     public void onEvent(Event event)
-    {
-    }
-
-    @Override
-    public void onUpdate(float deltaTime)
     {
     }
 

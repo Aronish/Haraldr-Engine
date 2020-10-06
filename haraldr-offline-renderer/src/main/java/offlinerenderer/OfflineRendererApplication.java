@@ -1,13 +1,14 @@
 package offlinerenderer;
 
+import haraldr.dockspace.ControlPanel;
+import haraldr.dockspace.Dockspace;
 import haraldr.event.Event;
 import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
-import haraldr.graphics.ui.Button;
-import haraldr.graphics.ui.HorizontalBreak;
-import haraldr.graphics.ui.InfoLabel;
-import haraldr.graphics.ui.InputField;
-import haraldr.graphics.ui.Pane;
+import haraldr.dockspace.uicomponents.Button;
+import haraldr.dockspace.uicomponents.HorizontalBreak;
+import haraldr.dockspace.uicomponents.InfoLabel;
+import haraldr.dockspace.uicomponents.InputField;
 import haraldr.main.Application;
 import haraldr.main.IOUtils;
 import haraldr.main.Window;
@@ -21,7 +22,8 @@ import static org.lwjgl.opengl.GL11.glViewport;
 //TODO: Naming convention for Haraldr-Engine cubemaps not figured out yet
 public class OfflineRendererApplication extends Application
 {
-    private Pane mainPane;
+    private Dockspace dockspace;
+    private ControlPanel mainPane;
     private InputField diffuseIrradianceMapSize;
     private InputField prefilteredEnvironmentMapSize;
     private InfoLabel environmentMapData;
@@ -45,13 +47,8 @@ public class OfflineRendererApplication extends Application
     @Override
     protected void clientInit(Window window)
     {
-        mainPane = new Pane(
-                new Vector2f(),
-                window.getWidth(), window.getHeight(),
-                1f,
-                false,
-                "Haraldr Offline Renderer"
-        );
+        dockspace = new Dockspace(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()));
+        dockspace.addPanel(mainPane = new ControlPanel(new Vector2f(), dockspace.getSize(), "Haraldr Offline Renderer"));
         //TODO: JSONify
         //Original environment map
         Button loadHdr = new Button("Load HDR", mainPane, () ->
@@ -197,7 +194,7 @@ public class OfflineRendererApplication extends Application
     protected void clientRender(Window window)
     {
         Renderer2D.begin();
-        mainPane.render();
+        dockspace.render();
         Renderer2D.end();
         mainPane.renderText();
     }

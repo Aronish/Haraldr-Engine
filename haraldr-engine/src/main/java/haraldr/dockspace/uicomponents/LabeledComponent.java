@@ -2,6 +2,7 @@ package haraldr.dockspace.uicomponents;
 
 import haraldr.dockspace.ControlPanel;
 import haraldr.event.Event;
+import haraldr.graphics.Batch2D;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 
@@ -49,5 +50,5 @@ public abstract class LabeledComponent
 
     public abstract void onEvent(Event event);
 
-    public abstract void render();
+    public abstract void render(Batch2D batch);
 }

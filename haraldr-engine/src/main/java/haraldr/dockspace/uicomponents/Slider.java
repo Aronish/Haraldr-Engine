@@ -5,7 +5,7 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
-import haraldr.graphics.Renderer2D;
+import haraldr.graphics.Batch2D;
 import haraldr.input.MouseButton;
 import haraldr.input.Input;
 import haraldr.math.Vector2f;
@@ -101,10 +101,10 @@ public class Slider extends LabeledComponent
     }
 
     @Override
-    public void render()
+    public void render(Batch2D batch)
     {
-        Renderer2D.drawQuad(sliderPosition, sliderSize, new Vector4f(0.5f, 0.5f, 0.5f, 1f));
-        Renderer2D.drawQuad(handlePosition, handleSize, new Vector4f(1f));
+        batch.drawQuad(sliderPosition, sliderSize, new Vector4f(0.5f, 0.5f, 0.5f, 1f));
+        batch.drawQuad(handlePosition, handleSize, new Vector4f(1f));
     }
 
     @Override

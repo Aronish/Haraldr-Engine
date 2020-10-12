@@ -1,6 +1,6 @@
 package haraldr.dockspace;
 
-import haraldr.graphics.Renderer2D;
+import haraldr.graphics.Batch2D;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
@@ -84,12 +84,12 @@ public class DockGizmo
         return DockPosition.NONE;
     }
 
-    public void render()
+    public void render(Batch2D batch)
     {
-        Renderer2D.drawQuad(topPosition, topSize, GIZMO_COLOR);
-        Renderer2D.drawQuad(bottomPosition, bottomSize, GIZMO_COLOR);
-        Renderer2D.drawQuad(leftPosition, leftSize, GIZMO_COLOR);
-        Renderer2D.drawQuad(rightPosition, rightSize, GIZMO_COLOR);
-        Renderer2D.drawQuad(centerPosition, centerSize, GIZMO_COLOR);
+        batch.drawQuad(topPosition, topSize, GIZMO_COLOR);
+        batch.drawQuad(bottomPosition, bottomSize, GIZMO_COLOR);
+        batch.drawQuad(leftPosition, leftSize, GIZMO_COLOR);
+        batch.drawQuad(rightPosition, rightSize, GIZMO_COLOR);
+        batch.drawQuad(centerPosition, centerSize, GIZMO_COLOR);
     }
 }

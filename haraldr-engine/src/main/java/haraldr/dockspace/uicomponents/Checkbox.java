@@ -4,7 +4,7 @@ import haraldr.dockspace.ControlPanel;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
-import haraldr.graphics.Renderer2D;
+import haraldr.graphics.Batch2D;
 import haraldr.input.MouseButton;
 import haraldr.input.Input;
 import haraldr.math.Vector2f;
@@ -69,9 +69,9 @@ public class Checkbox extends LabeledComponent
     }
 
     @Override
-    public void render()
+    public void render(Batch2D batch)
     {
-        Renderer2D.drawQuad(boxPosition, boxSize, state ? ON_COLOR : OFF_COLOR);
+        batch.drawQuad(boxPosition, boxSize, state ? ON_COLOR : OFF_COLOR);
     }
 
     @Override

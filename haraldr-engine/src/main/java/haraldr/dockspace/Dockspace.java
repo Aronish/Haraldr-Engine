@@ -5,9 +5,8 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
-import haraldr.event.WindowFocusEvent;
 import haraldr.event.WindowResizedEvent;
-import haraldr.graphics.Renderer2D;
+import haraldr.graphics.Batch2D;
 import haraldr.input.Input;
 import haraldr.input.KeyboardKey;
 import haraldr.input.MouseButton;
@@ -29,8 +28,9 @@ public class Dockspace
 
     private LinkedList<DockablePanel> panels = new LinkedList<>();
     private DockablePanel selectedPanel;
-
     private DockingArea rootArea;
+
+    private Batch2D renderBatch = new Batch2D(); //TODO: Could do more dirty flagging, but not really necessary yet.
 
     public Dockspace(Vector2f position, Vector2f size)
     {
@@ -38,11 +38,13 @@ public class Dockspace
         this.size = size;
 
         rootArea = new DockingArea(position, size);
+        renderToBatch();
     }
 
     public void addPanel(DockablePanel panel)
     {
         panels.add(panel);
+        renderToBatch();
     }
 
     public void onEvent(Event event, Window window)
@@ -92,6 +94,7 @@ public class Dockspace
             }
             rootArea.checkHovered(selectedPanel.getPosition());
         }
+        renderToBatch();
     }
 
     private void setSize(Vector2f size)
@@ -100,11 +103,26 @@ public class Dockspace
         rootArea.setSize(this.size);
     }
 
+    public void renderToBatch()
+    {
+        renderBatch.begin();
+        renderBatch.drawQuad(position, size, BACKGROUND_COLOR);
+        for (DockablePanel panel : panels)
+        {
+            panel.render(renderBatch);
+        }
+        if (selectedPanel != null) rootArea.render(renderBatch);
+        renderBatch.end();
+    }
+
     public void render()
     {
-        Renderer2D.drawQuad(position, size, BACKGROUND_COLOR);
-        panels.descendingIterator().forEachRemaining(DockablePanel::render);
-        if (selectedPanel != null) rootArea.render();
+        renderBatch.render();
+    }
+
+    public void dispose()
+    {
+        renderBatch.dispose();
     }
 
     public Vector2f getSize()
@@ -458,19 +476,19 @@ public class Dockspace
             }
         }
 
-        private void render()
+        private void render(Batch2D batch)
         {
             if (hovered)
             {
                 if (dockable)
                 {
-                    Renderer2D.drawQuad(position, size, color);
-                    dockGizmo.render();
+                    batch.drawQuad(position, size, color);
+                    dockGizmo.render(batch);
                 } else
                 {
                     for (DockingArea dockingArea : children.values())
                     {
-                        dockingArea.render();
+                        dockingArea.render(batch);
                     }
                 }
             }

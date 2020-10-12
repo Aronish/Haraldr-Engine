@@ -48,8 +48,7 @@ public class OfflineRendererApplication extends Application
     protected void clientInit(Window window)
     {
         dockspace = new Dockspace(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()));
-        dockspace.addPanel(mainPane = new ControlPanel(new Vector2f(), dockspace.getSize(), "Haraldr Offline Renderer"));
-        //TODO: JSONify
+        mainPane = new ControlPanel(new Vector2f(), dockspace.getSize(), "Haraldr Offline Renderer");
         //Original environment map
         Button loadHdr = new Button("Load HDR", mainPane, () ->
         {
@@ -161,6 +160,7 @@ public class OfflineRendererApplication extends Application
         mainPane.addChild(savePrefilteredMap);
         mainPane.addChild(prefilteredMapPath);
         mainPane.addChild(exportPrefilteredMap);
+        dockspace.addPanel(mainPane);
         checkReadiness();
 
         Renderer.disableDepthTest();
@@ -183,6 +183,7 @@ public class OfflineRendererApplication extends Application
     protected void clientEvent(Event event, Window window)
     {
         mainPane.onEvent(event, window);
+        dockspace.renderToBatch();
     }
 
     @Override
@@ -193,15 +194,14 @@ public class OfflineRendererApplication extends Application
     @Override
     protected void clientRender(Window window)
     {
-        Renderer2D.begin();
         dockspace.render();
-        Renderer2D.end();
         mainPane.renderText();
     }
 
     @Override
     public void clientDispose()
     {
+        dockspace.dispose();
         CubeMapGenerator.dispose();
     }
 }

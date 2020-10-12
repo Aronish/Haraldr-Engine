@@ -18,7 +18,7 @@ import java.util.List;
 public class TextBatch
 {
     private static final int MAX_CHARACTERS = 1000, VERTEX_SIZE = 8;
-    private static final Shader TEXT_PASS = Shader.create("default_shaders/textpass.glsl");
+    private static final Shader TEXT_PASS = Shader.create("internal_shaders/textpass.glsl");
 
     private List<TextLabel> textLabels = new ArrayList<>();
     private Font font;

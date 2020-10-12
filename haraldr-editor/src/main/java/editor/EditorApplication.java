@@ -16,6 +16,7 @@ import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.HDRGammaCorrectionPass;
 import haraldr.graphics.RenderTexture;
+import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Renderer3D;
 import haraldr.input.Input;
@@ -168,11 +169,11 @@ public class EditorApplication extends Application
     @Override
     protected void clientRender(Window window)
     {
+        Renderer.enableDepthTest();
         Renderer3D.renderSceneToTexture(window, editorCamera, scene, sceneTexture);
 
-        Renderer2D.begin();
+        Renderer.disableDepthTest();
         dockSpace.render();
-        Renderer2D.end();
         propertiesPanel.renderText();
 
         hdrGammaCorrectionPass.render(sceneTexture, Renderer2D.pixelOrthographic);
@@ -181,6 +182,7 @@ public class EditorApplication extends Application
     @Override
     public void clientDispose()
     {
+        dockSpace.dispose();
         scene.onDispose();
         sceneTexture.delete();
     }

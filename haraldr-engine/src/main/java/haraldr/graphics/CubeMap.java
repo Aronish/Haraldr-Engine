@@ -76,7 +76,7 @@ import static org.lwjgl.util.tinyexr.TinyEXR.TINYEXR_SUCCESS;
 public class CubeMap
 {
     private static final Shader MAP_CUBEMAP = Shader.create("internal_shaders/map_cubemap.glsl");
-    private static final Shader SKYBOX      = Shader.create("default_shaders/skybox.glsl");
+    private static final Shader SKYBOX      = Shader.create("internal_shaders/skybox.glsl");
 
     private int cubeMapId;
 

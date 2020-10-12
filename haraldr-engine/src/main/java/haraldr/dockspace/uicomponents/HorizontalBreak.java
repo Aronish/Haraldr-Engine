@@ -2,6 +2,7 @@ package haraldr.dockspace.uicomponents;
 
 import haraldr.dockspace.ControlPanel;
 import haraldr.event.Event;
+import haraldr.graphics.Batch2D;
 import haraldr.math.Vector2f;
 
 public class HorizontalBreak extends LabeledComponent
@@ -41,7 +42,7 @@ public class HorizontalBreak extends LabeledComponent
     }
 
     @Override
-    public void render()
+    public void render(Batch2D batch)
     {
     }
 }

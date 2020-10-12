@@ -1,7 +1,7 @@
 package haraldr.dockspace;
 
 import haraldr.event.Event;
-import haraldr.graphics.Renderer2D;
+import haraldr.graphics.Batch2D;
 import haraldr.dockspace.uicomponents.Font;
 import haraldr.dockspace.uicomponents.LabeledComponent;
 import haraldr.dockspace.uicomponents.TextBatch;
@@ -88,20 +88,21 @@ public class ControlPanel extends DockablePanel
         orderComponents();
     }
 
-    public void render()
+    @Override
+    public void render(Batch2D batch)
     {
-        renderSelf();
-        for (LabeledComponent child : components)
+        renderSelf(batch);
+        for (LabeledComponent component : components)
         {
-            child.render();
+            component.render(batch);
         }
     }
 
-    private void renderSelf()
+    private void renderSelf(Batch2D batch)
     {
-        Renderer2D.drawQuad(position, headerSize, HEADER_COLOR);
-        Renderer2D.drawQuad(position, size, color);
-        Renderer2D.drawQuad(Vector2f.add(position, new Vector2f(divider - 2f, headerSize.getY())), new Vector2f(2f, size.getY() - headerSize.getY()), DIVIDER_COLOR);
+        batch.drawQuad(position, headerSize, HEADER_COLOR);
+        batch.drawQuad(position, size, color);
+        batch.drawQuad(Vector2f.add(position, new Vector2f(divider - 2f, headerSize.getY())), new Vector2f(2f, size.getY() - headerSize.getY()), DIVIDER_COLOR);
     }
 
     public void renderText()

@@ -5,7 +5,7 @@ import haraldr.event.CharTypedEvent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
-import haraldr.graphics.Renderer2D;
+import haraldr.graphics.Batch2D;
 import haraldr.input.Input;
 import haraldr.input.KeyboardKey;
 import haraldr.input.MouseButton;
@@ -143,10 +143,10 @@ public class InputField extends LabeledComponent
     }
 
     @Override
-    public void render()
+    public void render(Batch2D batch)
     {
-        Renderer2D.drawQuad(borderPosition, borderSize, selected ? SELECTED_COLOR : UNSELECTED_COLOR);
-        Renderer2D.drawQuad(fieldPosition, fieldSize, new Vector4f(0.8f, 0.8f, 0.8f, 1f));
+        batch.drawQuad(borderPosition, borderSize, selected ? SELECTED_COLOR : UNSELECTED_COLOR);
+        batch.drawQuad(fieldPosition, fieldSize, new Vector4f(0.8f, 0.8f, 0.8f, 1f));
     }
 
     public enum InputType

@@ -184,7 +184,6 @@ public abstract class Application
     {
         clientDispose();
         window.delete();
-        Renderer2D.dispose();
         Renderer3D.dispose();
         ResourceManager.dispose();
         glfwTerminate();

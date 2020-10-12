@@ -60,6 +60,11 @@ public class RenderTexture
         return quad;
     }
 
+    public Vector2f getPosition()
+    {
+        return position;
+    }
+
     public Vector2f getSize()
     {
         return size;

@@ -5,7 +5,6 @@ import haraldr.event.Event;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 
-// These are to be contained in a Pane, they cannot be freely positioned.
 public abstract class LabeledComponent
 {
     private static final Vector4f ENABLED_COLOR = new Vector4f(1f), DISABLED_COLOR = new Vector4f(0.7f, 0.7f, 0.7f, 1f);

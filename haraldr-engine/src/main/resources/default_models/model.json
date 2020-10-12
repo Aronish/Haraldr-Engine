@@ -2,12 +2,13 @@
   "mesh": "default_meshes/suzanne_smooth.obj",
   "material":
   {
-    "type": "REFLECTIVE",
+    "type": "PBR",
     "properties":
     {
-      "diffuse_texture": "default_textures/MetalSpottyDiscoloration001_COL_4K_SPECULAR.jpg",
-      "reflection_map": "default_textures/MetalSpottyDiscoloration001_REFL_4K_SPECULAR.jpg",
-      "environment_map": "default_hdris/NorwayForest_4K_hdri_sphere.hdr"
+      "color": [ 1.0, 1.0, 1.0 ],
+      "metalness": 1.0,
+      "roughness": 1.0,
+      "environment_map": "default_hdris/NorwayForest_4K_hdri_sphere"
     }
   }
 }

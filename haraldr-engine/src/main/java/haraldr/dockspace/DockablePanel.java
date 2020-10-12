@@ -15,10 +15,10 @@ import haraldr.physics.Physics2D;
 public class DockablePanel
 {
     private static final float HEADER_SIZE = 20f;
-    protected static final Vector4f HEADER_COLOR = new Vector4f(0.2f, 0.2f, 0.2f, 1f);
+    protected static final Vector4f HEADER_COLOR = new Vector4f(0.15f, 0.15f, 0.15f, 1f);
 
     protected Vector2f position, size, headerSize;
-    private Vector4f color;
+    protected Vector4f color;
     private boolean held, pressed;
 
     private PanelDimensionChangeAction panelDimensionChangeAction = (position, size) -> {};

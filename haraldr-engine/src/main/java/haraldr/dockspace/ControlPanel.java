@@ -100,6 +100,7 @@ public class ControlPanel extends DockablePanel
     private void renderSelf()
     {
         Renderer2D.drawQuad(position, headerSize, HEADER_COLOR);
+        Renderer2D.drawQuad(position, size, color);
         Renderer2D.drawQuad(Vector2f.add(position, new Vector2f(divider - 2f, headerSize.getY())), new Vector2f(2f, size.getY() - headerSize.getY()), DIVIDER_COLOR);
     }
 

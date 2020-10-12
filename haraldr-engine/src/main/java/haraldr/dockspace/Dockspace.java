@@ -5,6 +5,7 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
+import haraldr.event.WindowFocusEvent;
 import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Renderer2D;
 import haraldr.input.Input;
@@ -56,6 +57,8 @@ public class Dockspace
         {
             panels.addFirst(panels.removeLast());
         }
+
+        rootArea.onEvent(event, window);
 
         for (DockablePanel panel : panels)
         {
@@ -160,17 +163,19 @@ public class Dockspace
                 if (event.eventType == EventType.MOUSE_PRESSED)
                 {
                     var mousePressedEvent = (MousePressedEvent) event;
-                    switch (dockPosition)
+                    Vector2f mousePoint = new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos);
+                    if (vertical)
                     {
-                        case LEFT -> resizing = Physics2D.pointInsideAABB(
-                                new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos),
-                                new Vector2f(position.getX() + size.getX() - 20f, position.getY()),
+                        resizing = Physics2D.pointInsideAABB(
+                                mousePoint,
+                                Vector2f.add(position, new Vector2f(0f, size.getY() - 20f)),
+                                new Vector2f(size.getX(), 20f));
+                    } else
+                    {
+                        resizing = Physics2D.pointInsideAABB(
+                                mousePoint,
+                                Vector2f.add(position, new Vector2f(size.getX() - 20f, 0f)),
                                 new Vector2f(20f, size.getY())
-                        );
-                        case TOP -> resizing = Physics2D.pointInsideAABB(
-                                new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos),
-                                new Vector2f(position.getX(), position.getY() + size.getY() - 20f),
-                                new Vector2f(size.getX(), 20f)
                         );
                     }
                 }
@@ -180,7 +185,7 @@ public class Dockspace
                     var mouseMovedEvent = (MouseMovedEvent) event;
                     if (resizing)
                     {
-                        //TODO: This is hell
+                        Logger.info("RESIZED", dockPosition);
                     }
                 }
             }

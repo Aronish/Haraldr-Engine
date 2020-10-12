@@ -3,6 +3,9 @@ package editor;
 import haraldr.dockspace.ControlPanel;
 import haraldr.dockspace.DockablePanel;
 import haraldr.dockspace.Dockspace;
+import haraldr.dockspace.uicomponents.Button;
+import haraldr.dockspace.uicomponents.InfoLabel;
+import haraldr.dockspace.uicomponents.Slider;
 import haraldr.ecs.BoundingSphereComponent;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
@@ -15,16 +18,12 @@ import haraldr.graphics.HDRGammaCorrectionPass;
 import haraldr.graphics.RenderTexture;
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Renderer3D;
-import haraldr.dockspace.uicomponents.Button;
-import haraldr.dockspace.uicomponents.InfoLabel;
-import haraldr.dockspace.uicomponents.Slider;
 import haraldr.input.Input;
 import haraldr.input.KeyboardKey;
 import haraldr.input.MouseButton;
 import haraldr.main.Application;
 import haraldr.main.ProgramArguments;
 import haraldr.main.Window;
-import haraldr.math.Matrix4f;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector3f;
 import haraldr.math.Vector4f;
@@ -114,7 +113,10 @@ public class EditorApplication extends Application
                 var mousePressedEvent = (MousePressedEvent) event;
                 if (Input.wasMousePressed(mousePressedEvent, MouseButton.MOUSE_BUTTON_1))
                 {
-                    selected = selectEntity(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), new Vector2f(window.getWidth(), window.getHeight()), selected, scene.getRegistry());
+                    selected = selectEntity(
+                            new Vector2f(mousePressedEvent.xPos - sceneTexture.getPosition().getX(), mousePressedEvent.yPos - sceneTexture.getPosition().getY()),
+                            sceneTexture.getSize(),
+                            selected, scene.getRegistry());
                     if (!selected.equals(Entity.INVALID))
                     {
                         selectedEntityTag.setText(String.format("Entity ID: %d", selected.id));

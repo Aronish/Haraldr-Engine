@@ -417,7 +417,6 @@ public class Dockspace
                         parent.children.putAll(adjacentChildren);
                         for (DockingArea dockingArea : parent.children.values())
                         {
-                            parent.vertical = dockingArea.vertical;
                             dockingArea.parent = parent;
                             dockingArea.onUndock(size, dockPosition);
                         }

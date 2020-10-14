@@ -68,9 +68,7 @@ public class EditorApplication extends Application
         hdrGammaCorrectionPass = new HDRGammaCorrectionPass(0.5f);
 
         dockSpace = new Dockspace(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()));
-        dockSpace.addPanel(new DockablePanel(new Vector2f(400f, 100f), new Vector2f(400f), new Vector4f(0.3f, 0.2f, 0.9f, 1f))); // Test panel
         dockSpace.addPanel(scenePanel = new DockablePanel(new Vector2f(400f, 50f), new Vector2f(400f, 600f), new Vector4f(0.8f, 0.2f, 0.3f, 1f)));
-        dockSpace.addPanel(scenePanel = new DockablePanel(new Vector2f(600f, 50f), new Vector2f(400f, 600f), new Vector4f(0.8f, 0.2f, 0.3f, 1f)));
         scenePanel.setPanelResizeAction((position, size) ->
         {
             sceneTexture.setPosition(position);

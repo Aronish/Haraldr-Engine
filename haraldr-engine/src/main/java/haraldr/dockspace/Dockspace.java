@@ -209,16 +209,16 @@ public class Dockspace
                 {
                     if (vertical)
                     {
-                        float difference = (float)((MouseMovedEvent) event).yPos - position.getY() - children.get(DockPosition.TOP).size.getY();
-                        children.get(DockPosition.TOP).addSize(new Vector2f(0f, difference));
-                        children.get(DockPosition.BOTTOM).addSize(new Vector2f(0f, -difference));
-                        children.get(DockPosition.BOTTOM).addPosition(new Vector2f(0f, difference));
+                        float difference = children.get(DockPosition.TOP).size.getY() - (float)((MouseMovedEvent) event).yPos - position.getY();
+                        children.get(DockPosition.TOP).addSize(new Vector2f(0f, -difference));
+                        children.get(DockPosition.BOTTOM).addSize(new Vector2f(0f, difference));
+                        children.get(DockPosition.BOTTOM).addPosition(new Vector2f(0f, -difference));
                     } else
                     {
-                        float difference = (float)((MouseMovedEvent) event).xPos - position.getX() - children.get(DockPosition.LEFT).size.getX();
-                        children.get(DockPosition.LEFT).addSize(new Vector2f(difference, 0f));
-                        children.get(DockPosition.RIGHT).addSize(new Vector2f(-difference, 0f));
-                        children.get(DockPosition.RIGHT).addPosition(new Vector2f(difference, 0f));
+                        float difference = children.get(DockPosition.LEFT).size.getX() - (float)((MouseMovedEvent) event).xPos - position.getX();
+                        children.get(DockPosition.LEFT).addSize(new Vector2f(-difference, 0f));
+                        children.get(DockPosition.RIGHT).addSize(new Vector2f(difference, 0f));
+                        children.get(DockPosition.RIGHT).addPosition(new Vector2f(-difference, 0f));
                     }
                 }
             }
@@ -257,7 +257,13 @@ public class Dockspace
 
             for (DockingArea dockingArea : children.values())
             {
-                dockingArea.addPosition(position);
+                if (dockingArea.dockPosition == DockPosition.RIGHT || dockingArea.dockPosition == DockPosition.BOTTOM)
+                {
+                    dockingArea.addPosition(Vector2f.divide(position, 2f));
+                } else
+                {
+                    dockingArea.addPosition(position);
+                }
             }
         }
 
@@ -269,7 +275,7 @@ public class Dockspace
 
             for (DockingArea dockingArea : children.values())
             {
-                dockingArea.addSize(size);
+                dockingArea.addSize(Vector2f.divide(size, 2f));
             }
         }
 
@@ -393,8 +399,8 @@ public class Dockspace
             switch (dockPosition)
             {
                 case LEFT, RIGHT, TOP, BOTTOM -> {
-                    Map<DockPosition, DockingArea> rightChildren = parent.children.get(dockPosition.getOpposite()).children;
-                    if (rightChildren.size() == 0 && parent.children.get(dockPosition.getOpposite()).dockedPanel == null)
+                    Map<DockPosition, DockingArea> adjacentChildren = parent.children.get(dockPosition.getOpposite()).children;
+                    if (adjacentChildren.size() == 0 && parent.children.get(dockPosition.getOpposite()).dockedPanel == null)
                     {
                         parent.dockable = true;
                         parent.children.clear();
@@ -408,9 +414,10 @@ public class Dockspace
                     } else
                     {
                         parent.children.clear();
-                        parent.children.putAll(rightChildren);
+                        parent.children.putAll(adjacentChildren);
                         for (DockingArea dockingArea : parent.children.values())
                         {
+                            parent.vertical = dockingArea.vertical;
                             dockingArea.parent = parent;
                             dockingArea.onUndock(size, dockPosition);
                         }
@@ -465,7 +472,6 @@ public class Dockspace
          */
         private void onUndock(Vector2f undockedSize, DockPosition undockedPosition)
         {
-            Logger.info(vertical);
             switch (undockedPosition)
             {
                 case LEFT -> {

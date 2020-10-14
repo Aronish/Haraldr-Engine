@@ -1,5 +1,5 @@
 {
-  "mesh": "default_meshes/suzanne_smooth.obj",
+  "mesh": "default_meshes/sphere.obj",
   "material":
   {
     "type": "PBR",
@@ -7,7 +7,7 @@
     {
       "color": [ 1.0, 1.0, 1.0 ],
       "metalness": 1.0,
-      "roughness": 1.0,
+      "roughness": 0.4,
       "environment_map": "default_hdris/NorwayForest_4K_hdri_sphere"
     }
   }

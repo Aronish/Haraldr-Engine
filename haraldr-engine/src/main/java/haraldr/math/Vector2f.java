@@ -149,6 +149,13 @@ public class Vector2f
         return this;
     }
 
+    public Vector2f divide(float scalar)
+    {
+        x /= scalar;
+        y /= scalar;
+        return this;
+    }
+
     public Vector2f normalize()
     {
         double length = length();
@@ -212,6 +219,12 @@ public class Vector2f
     public static @NotNull Vector2f divide(@NotNull Vector2f left, @NotNull Vector2f right)
     {
         return new Vector2f(left.x / right.x, left.y / right.y);
+    }
+
+    @Contract("_, _ -> new")
+    public static @NotNull Vector2f divide(@NotNull Vector2f vector, float scalar)
+    {
+        return new Vector2f(vector.x / scalar, vector.y / scalar);
     }
 
     @Contract("_ -> new")

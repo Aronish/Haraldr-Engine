@@ -4,6 +4,7 @@ import haraldr.dockspace.ControlPanel;
 import haraldr.dockspace.DockablePanel;
 import haraldr.dockspace.Dockspace;
 import haraldr.dockspace.uicomponents.Button;
+import haraldr.dockspace.uicomponents.Checkbox;
 import haraldr.dockspace.uicomponents.InfoLabel;
 import haraldr.dockspace.uicomponents.Slider;
 import haraldr.ecs.BoundingSphereComponent;
@@ -44,6 +45,7 @@ public class EditorApplication extends Application
 
     private ControlPanel propertiesPanel;
     private InfoLabel selectedEntityTag;
+    private Checkbox selecting;
 
     private HDRGammaCorrectionPass hdrGammaCorrectionPass;
     private RenderTexture sceneTexture;
@@ -67,7 +69,8 @@ public class EditorApplication extends Application
 
         dockSpace = new Dockspace(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()));
         dockSpace.addPanel(new DockablePanel(new Vector2f(400f, 100f), new Vector2f(400f), new Vector4f(0.3f, 0.2f, 0.9f, 1f))); // Test panel
-        dockSpace.addPanel(scenePanel = new DockablePanel(new Vector2f(400f, 10f), new Vector2f(400f, 600f), new Vector4f(0.8f, 0.2f, 0.3f, 1f)));
+        dockSpace.addPanel(scenePanel = new DockablePanel(new Vector2f(400f, 50f), new Vector2f(400f, 600f), new Vector4f(0.8f, 0.2f, 0.3f, 1f)));
+        dockSpace.addPanel(scenePanel = new DockablePanel(new Vector2f(600f, 50f), new Vector2f(400f, 600f), new Vector4f(0.8f, 0.2f, 0.3f, 1f)));
         scenePanel.setPanelResizeAction((position, size) ->
         {
             sceneTexture.setPosition(position);
@@ -100,6 +103,8 @@ public class EditorApplication extends Application
             hdrGammaCorrectionPass.setExposure(value);
             sliderValue.setText(Float.toString(value));
         }));
+
+        propertiesPanel.addChild(selecting = new Checkbox("Selecting", propertiesPanel));
     }
 
     @Override
@@ -110,22 +115,21 @@ public class EditorApplication extends Application
         if (scenePanel.isPressed() && !scenePanel.isHeld())
         {
             editorCamera.onEvent(event, window);
-            if (event.eventType == EventType.MOUSE_PRESSED)
+
+            // Select an entity
+            if (selecting.isChecked() && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
             {
                 var mousePressedEvent = (MousePressedEvent) event;
-                if (Input.wasMousePressed(mousePressedEvent, MouseButton.MOUSE_BUTTON_1))
+                selected = selectEntity(
+                        new Vector2f(mousePressedEvent.xPos - sceneTexture.getPosition().getX(), mousePressedEvent.yPos - sceneTexture.getPosition().getY()),
+                        sceneTexture.getSize(),
+                        selected, scene.getRegistry());
+                if (!selected.equals(Entity.INVALID))
                 {
-                    selected = selectEntity(
-                            new Vector2f(mousePressedEvent.xPos - sceneTexture.getPosition().getX(), mousePressedEvent.yPos - sceneTexture.getPosition().getY()),
-                            sceneTexture.getSize(),
-                            selected, scene.getRegistry());
-                    if (!selected.equals(Entity.INVALID))
-                    {
-                        selectedEntityTag.setText(String.format("Entity ID: %d", selected.id));
-                    } else
-                    {
-                        selectedEntityTag.setText("No entity selected");
-                    }
+                    selectedEntityTag.setText(String.format("Entity ID: %d", selected.id));
+                } else
+                {
+                    selectedEntityTag.setText("No entity selected");
                 }
             }
         }

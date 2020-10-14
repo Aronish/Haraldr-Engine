@@ -80,6 +80,11 @@ public class Checkbox extends LabeledComponent
         return boxSize.getY();
     }
 
+    public boolean isChecked()
+    {
+        return state;
+    }
+
     @FunctionalInterface
     public interface CheckboxStateChangeAction
     {

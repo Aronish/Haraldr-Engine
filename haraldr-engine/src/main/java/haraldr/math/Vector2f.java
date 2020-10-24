@@ -214,6 +214,12 @@ public class Vector2f
         return new Vector2f(left.x / right.x, left.y / right.y);
     }
 
+    @Contract("_, _ -> new")
+    public static @NotNull Vector2f divide(@NotNull Vector2f vector, float scalar)
+    {
+        return new Vector2f(vector.x / scalar, vector.y / scalar);
+    }
+
     @Contract("_ -> new")
     public static @NotNull Vector2f negate(@NotNull Vector2f vector)
     {

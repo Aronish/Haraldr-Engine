@@ -177,7 +177,7 @@ public class EditorApplication extends Application
         dockSpace.render();
         propertiesPanel.renderText();
 
-        hdrGammaCorrectionPass.render(sceneTexture, Renderer2D.pixelOrthographic);
+        hdrGammaCorrectionPass.render(sceneTexture, Renderer2D.pixelOrthographic); //TODO: Allow for being rendered below other panels
     }
 
     @Override

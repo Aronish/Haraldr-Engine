@@ -1,5 +1,6 @@
 package haraldr.dockspace;
 
+import haraldr.debug.Logger;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
@@ -142,7 +143,7 @@ public class Dockspace
         private DockGizmo dockGizmo;
         private DockingArea parent;
         private Map<DockPosition, DockingArea> children = new LinkedHashMap<>();
-        private boolean dockable, hovered, resizing, perpendicular, vertical;
+        private boolean dockable, hovered, resizing, resizingRight, perpendicular, vertical;
 
         private DockablePanel dockedPanel;
 
@@ -194,11 +195,23 @@ public class Dockspace
                     } else
                     {
                         DockingArea left = children.get(DockPosition.LEFT);
-                        resizing = Physics2D.pointInsideAABB(
-                                mousePoint,
-                                Vector2f.add(left.position, new Vector2f(left.size.getX() - 20f, 0f)),
-                                new Vector2f(20f, left.size.getY())
-                        );
+                        if (mousePoint.getX() > left.position.getX() + left.size.getX())
+                        {
+                            DockingArea right = children.get(DockPosition.RIGHT);
+                            resizingRight = resizing = Physics2D.pointInsideAABB(
+                                    mousePoint,
+                                    right.position,
+                                    new Vector2f(20f, right.size.getY())
+                            );
+                        } else
+                        {
+                            resizingRight = false;
+                            resizing = Physics2D.pointInsideAABB(
+                                    mousePoint,
+                                    Vector2f.add(left.position, new Vector2f(left.size.getX() - 20f, 0f)),
+                                    new Vector2f(20f, left.size.getY())
+                            );
+                        }
                     }
                 }
             }
@@ -215,10 +228,19 @@ public class Dockspace
                         children.get(DockPosition.BOTTOM).addPosition(new Vector2f(0f, difference));
                     } else
                     {
-                        float difference = (float)((MouseMovedEvent) event).xPos - position.getX() - children.get(DockPosition.LEFT).size.getX();
-                        children.get(DockPosition.LEFT).addSize(new Vector2f(difference, 0f));
-                        children.get(DockPosition.RIGHT).addSize(new Vector2f(-difference, 0f));
-                        children.get(DockPosition.RIGHT).addPosition(new Vector2f(difference, 0f));
+                        if (resizingRight) // Resizing from right is fucked
+                        {
+                            float difference = (float) ((MouseMovedEvent) event).xPos - position.getX() - children.get(DockPosition.RIGHT).position.getX();
+                            children.get(DockPosition.RIGHT).addPosition(new Vector2f(difference, 0f));
+                            children.get(DockPosition.RIGHT).addSize(new Vector2f(-difference, 0f));
+                            children.get(DockPosition.LEFT).addSize(new Vector2f(difference, 0f));
+                        } else
+                        {
+                            float difference = (float) ((MouseMovedEvent) event).xPos - position.getX() - children.get(DockPosition.LEFT).size.getX();
+                            children.get(DockPosition.RIGHT).addPosition(new Vector2f(difference, 0f));
+                            children.get(DockPosition.RIGHT).addSize(new Vector2f(-difference, 0f));
+                            children.get(DockPosition.LEFT).addSize(new Vector2f(difference, 0f));
+                        }
                     }
                 }
             }
@@ -260,12 +282,12 @@ public class Dockspace
             {
                 Iterator<DockingArea> iterator = children.values().iterator();
                 iterator.next().addPosition(position);
-                if (perpendicular)
+                if (perpendicular) // Wrong
                 {
                     iterator.next().addPosition(position);
                 } else
                 {
-                    iterator.next().addPosition(Vector2f.divide(position, new Vector2f(2f)));
+                    iterator.next().addPosition(Vector2f.divide(position, 2f));
                 }
             }
         }
@@ -402,6 +424,7 @@ public class Dockspace
 
         /**
          * Undocks this panel and updates the opposite area on the same level and its children accordingly.
+         * Remember that this is called for the area that will disappear.
          */
         private void undock()
         {
@@ -424,17 +447,16 @@ public class Dockspace
                     parent.perpendicular = parent.children.get(dockPosition.getOpposite()).perpendicular;
                     parent.children.clear();
                     parent.children.putAll(adjacentChildren);
-
+                    // Expand areas with recovered space. A bit ugly, but difficult to compact.
                     switch (dockPosition)
                     {
                         case LEFT -> {
-                            // Doesn't work recursively yet
                             Iterator<DockingArea> iterator = parent.children.values().iterator();
                             // Left
                             DockingArea left = iterator.next();
                             left.parent = parent;
-                            left.position.addX(-size.getX());
-                            left.size.addX(parent.perpendicular ? size.getX() : size.getX() / 2f);
+                            left.addPosition(new Vector2f(-size.getX(), 0f));
+                            left.addSize(new Vector2f(parent.perpendicular ? size.getX() : size.getX() / 2f, 0f));
                             left.dockGizmo.setPosition(left.position);
                             left.dockGizmo.setSize(left.size);
                             if (left.dockedPanel != null)
@@ -445,8 +467,8 @@ public class Dockspace
                             // Right
                             DockingArea right = iterator.next();
                             right.parent = parent;
-                            right.position.addX(parent.perpendicular ? -size.getX() : -size.getX() / 2f);
-                            right.size.addX(parent.perpendicular ? size.getX() : size.getX() / 2f);
+                            right.addPosition(new Vector2f(parent.perpendicular ? -size.getX() : -size.getX() / 2f, 0f));
+                            right.addSize(new Vector2f(parent.perpendicular ? size.getX() : size.getX() / 2f, 0f));
                             right.dockGizmo.setPosition(right.position);
                             right.dockGizmo.setSize(right.size);
                             if (right.dockedPanel != null)
@@ -460,8 +482,8 @@ public class Dockspace
                             // Left
                             DockingArea top = iterator.next();
                             top.parent = parent;
-                            top.position.addY(-size.getY());
-                            top.size.addY(size.getY() / 2f);
+                            top.addPosition(new Vector2f(0f, -size.getY()));
+                            top.addSize(new Vector2f(0f, size.getY() / 2f));
                             top.dockGizmo.setPosition(top.position);
                             top.dockGizmo.setSize(top.size);
                             if (top.dockedPanel != null)
@@ -472,8 +494,8 @@ public class Dockspace
                             // Right
                             DockingArea bottom = iterator.next();
                             bottom.parent = parent;
-                            bottom.position.addY(-size.getY() / 2f);
-                            bottom.size.addY(size.getY() / 2f);
+                            bottom.addPosition(new Vector2f(0f, -size.getY() / 2f));
+                            bottom.addSize(new Vector2f(0f, size.getY() / 2f));
                             bottom.dockGizmo.setPosition(bottom.position);
                             bottom.dockGizmo.setSize(bottom.size);
                             if (bottom.dockedPanel != null)
@@ -487,7 +509,7 @@ public class Dockspace
                             // Left
                             DockingArea left = iterator.next();
                             left.parent = parent;
-                            left.size.addX(size.getX() / 2f);
+                            left.addSize(new Vector2f(size.getX() / 2f, 0f));
                             left.dockGizmo.setPosition(left.position);
                             left.dockGizmo.setSize(left.size);
                             if (left.dockedPanel != null)
@@ -498,8 +520,8 @@ public class Dockspace
                             // Right
                             DockingArea right = iterator.next();
                             right.parent = parent;
-                            right.position.addX(size.getX() / 2f);
-                            right.size.addX(size.getX() / 2f);
+                            right.addPosition(new Vector2f(size.getX() / 2f, 0f));
+                            right.addSize(new Vector2f(size.getX() / 2f, 0f));
                             right.dockGizmo.setPosition(right.position);
                             right.dockGizmo.setSize(right.size);
                             if (right.dockedPanel != null)
@@ -513,7 +535,7 @@ public class Dockspace
                             // Left
                             DockingArea top = iterator.next();
                             top.parent = parent;
-                            top.size.addY(size.getY() / 2f);
+                            top.addSize(new Vector2f(0f, size.getY() / 2f));
                             top.dockGizmo.setPosition(top.position);
                             top.dockGizmo.setSize(top.size);
                             if (top.dockedPanel != null)
@@ -524,8 +546,8 @@ public class Dockspace
                             // Right
                             DockingArea bottom = iterator.next();
                             bottom.parent = parent;
-                            bottom.position.addY(size.getY() / 2f);
-                            bottom.size.addY(size.getY() / 2f);
+                            bottom.addPosition(new Vector2f(0f, size.getY() / 2f));
+                            bottom.addSize(new Vector2f(0f, size.getY() / 2f));
                             bottom.dockGizmo.setPosition(bottom.position);
                             bottom.dockGizmo.setSize(bottom.size);
                             if (bottom.dockedPanel != null)

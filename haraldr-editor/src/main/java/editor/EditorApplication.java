@@ -70,6 +70,7 @@ public class EditorApplication extends Application
         hdrGammaCorrectionPass = new HDRGammaCorrectionPass(0.5f);
 
         dockSpace = new Dockspace(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()));
+        dockSpace.addPanel(new DockablePanel(new Vector2f(200f), new Vector2f(200f), new Vector4f(0.9f, 0.9f, 0.9f, 1f)));
         dockSpace.addPanel(scenePanel = new DockablePanel(new Vector2f(700f, 30f), new Vector2f(200f, 200f), new Vector4f(0.8f, 0.2f, 0.3f, 1f)));
         dockSpace.getRootArea().dockPanel(scenePanel, DockPosition.RIGHT);
 

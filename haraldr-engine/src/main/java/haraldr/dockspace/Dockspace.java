@@ -100,7 +100,7 @@ public class Dockspace
     private void setSize(Vector2f size)
     {
         this.size.set(size);
-        rootArea.setSize(this.size);
+        //rootArea.setSize(this.size);
     }
 
     public void renderToBatch()
@@ -147,26 +147,22 @@ public class Dockspace
         private DockGizmo dockGizmo;
         private DockingArea parent;
         private Map<DockPosition, DockingArea> children = new LinkedHashMap<>();
+        private Vector2f splitAreaPosition = new Vector2f(), splitAreaSize = new Vector2f();
         private boolean dockable, hovered, resizing, perpendicular, vertical;
 
         private DockablePanel dockedPanel;
 
         private DockingArea(Vector2f position, Vector2f size)
         {
-            this(position, size, DockPosition.NONE, false, null);
+            this(position, size, DockPosition.NONE, null);
         }
 
         private DockingArea(Vector2f position, Vector2f size, DockPosition dockPosition, DockingArea parent)
         {
-            this(position, size, true, null, dockPosition, false, parent);
+            this(position, size, true, null, dockPosition, parent);
         }
 
-        private DockingArea(Vector2f position, Vector2f size, DockPosition dockPosition, boolean vertical, DockingArea parent)
-        {
-            this(position, size, true, null, dockPosition, vertical, parent);
-        }
-
-        private DockingArea(Vector2f position, Vector2f size, boolean dockable, DockablePanel dockedPanel, DockPosition dockPosition, boolean vertical, DockingArea parent)
+        private DockingArea(Vector2f position, Vector2f size, boolean dockable, DockablePanel dockedPanel, DockPosition dockPosition, DockingArea parent)
         {
             this.position = new Vector2f(position);
             this.dockable = dockable;
@@ -174,7 +170,6 @@ public class Dockspace
             this.dockPosition = dockPosition;
             this.parent = parent;
             this.size = new Vector2f(size);
-            this.vertical = vertical;
             color = new Vector4f((float) Math.random(), (float) Math.random(), (float) Math.random(), 0.1f);
             dockGizmo = new DockGizmo(position, size);
         }
@@ -186,7 +181,7 @@ public class Dockspace
             {
                 var mousePressedEvent = (MousePressedEvent) event;
                 Vector2f mousePoint = new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos);
-                if (children.size() > 0)
+                /*if (children.size() > 0)
                 {
                     if (children.containsKey(DockPosition.TOP))
                     {
@@ -206,12 +201,15 @@ public class Dockspace
                         );
                     }
                 }
+                */
+                resizing = children.size() != 0 && Physics2D.pointInsideAABB(mousePoint, splitAreaPosition, splitAreaSize);
             }
             if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1)) resizing = false;
             if (event.eventType == EventType.MOUSE_MOVED)
             {
                 if (resizing)
                 {
+                    /*
                     if (children.containsKey(DockPosition.TOP))
                     {
                         float difference = children.get(DockPosition.TOP).size.getY() - (float)((MouseMovedEvent) event).yPos - position.getY();
@@ -225,6 +223,20 @@ public class Dockspace
                         children.get(DockPosition.RIGHT).addSize(new Vector2f(-difference, 0f));
                         children.get(DockPosition.LEFT).addSize(new Vector2f(difference, 0f));
                     }
+                    */
+                    if (vertical)
+                    {
+                        float difference = (float) ((MouseMovedEvent) event).yPos - splitAreaPosition.getY();
+                        splitAreaPosition.addY(difference);
+                        children.get(DockPosition.TOP).resizeDominantArea(new Vector2f(), new Vector2f(0f, difference));
+                        children.get(DockPosition.BOTTOM).resizeNondominantArea(new Vector2f(0f, difference), new Vector2f(0f, -difference));
+                    } else
+                    {
+                        float difference = (float) ((MouseMovedEvent) event).xPos - splitAreaPosition.getX();
+                        splitAreaPosition.addX(difference);
+                        children.get(DockPosition.LEFT).resizeDominantArea(new Vector2f(), new Vector2f(difference, 0f));
+                        children.get(DockPosition.RIGHT).resizeNondominantArea(new Vector2f(difference, 0f), new Vector2f(-difference, 0f));
+                    }
                 }
             }
 
@@ -232,26 +244,51 @@ public class Dockspace
             {
                 dockingArea.onEvent(event, window);
             }
-
         }
 
-        private void setPosition(Vector2f position)
+        private void resizeDominantArea(Vector2f positionDifference, Vector2f sizeDifference)
         {
-            this.position.set(position);
+            this.position.add(positionDifference);
             dockGizmo.setPosition(this.position);
+
+            this.size.add(sizeDifference);
+            splitAreaPosition.addX(sizeDifference.getX() / 2f);
+            dockGizmo.setSize(this.size);
+
             if (dockedPanel != null)
             {
-                dockedPanel.setPosition(position);
+                dockedPanel.setPosition(this.position);
+                dockedPanel.setSize(this.size);
+            }
+
+            if (children.size() > 0)
+            {
+                Iterator<DockingArea> iterator = children.values().iterator();
+                iterator.next().resizeDominantArea(positionDifference, Vector2f.divide(sizeDifference, 2f));
+                iterator.next().resizeNondominantArea(Vector2f.divide(sizeDifference, new Vector2f(2f)), Vector2f.divide(sizeDifference, 2f));
             }
         }
 
-        private void setSize(Vector2f size)
+        private void resizeNondominantArea(Vector2f positionDifference, Vector2f sizeDifference)
         {
-            this.size.set(size);
+            this.position.add(positionDifference);
+            dockGizmo.setPosition(this.position);
+
+            this.size.add(sizeDifference);
+            splitAreaPosition.addX(-sizeDifference.getX() / 2f);
             dockGizmo.setSize(this.size);
+
             if (dockedPanel != null)
             {
-                dockedPanel.setSize(size);
+                dockedPanel.setPosition(this.position);
+                dockedPanel.setSize(this.size);
+            }
+
+            if (children.size() > 0)
+            {
+                Iterator<DockingArea> iterator = children.values().iterator();
+                iterator.next().resizeDominantArea(positionDifference, Vector2f.divide(sizeDifference, 2f));
+                iterator.next().resizeNondominantArea(Vector2f.divide(positionDifference, 2f), Vector2f.divide(sizeDifference, 2f));
             }
         }
 
@@ -265,13 +302,7 @@ public class Dockspace
             {
                 Iterator<DockingArea> iterator = children.values().iterator();
                 iterator.next().addPosition(position);
-                if (perpendicular) // Wrong on a few levels
-                {
-                    iterator.next().addPosition(position);
-                } else
-                {
-                    iterator.next().addPosition(Vector2f.divide(position, 2f));
-                }
+                iterator.next().addPosition(Vector2f.multiply(position, 2f));
             }
         }
 
@@ -281,17 +312,51 @@ public class Dockspace
             dockGizmo.setSize(this.size);
             if (dockedPanel != null) dockedPanel.setSize(this.size);
 
-            for (DockingArea dockingArea : children.values())
+            if (children.size() > 0)
             {
-                if (perpendicular)
-                {
-                    dockingArea.addSize(size);
-                } else
-                {
-                    dockingArea.addSize(Vector2f.divide(size, new Vector2f(2f)));
-                }
+                Iterator<DockingArea> iterator = children.values().iterator();
+                iterator.next().addSize(Vector2f.divide(size, 2f));
+                // Compensate with position due to not adding extra position while resizing.
+                DockingArea lessSignificantArea = iterator.next();
+                lessSignificantArea.addSize(Vector2f.divide(size, 2f));
+                lessSignificantArea.addPosition(Vector2f.divide(size, 2f));
             }
         }
+/*
+        private void resizeSignificantArea(Vector2f sizeDifference)
+        {
+            this.size.add(sizeDifference);
+            dockGizmo.setSize(this.size);
+            if (dockedPanel != null) dockedPanel.setSize(this.size);
+
+            if (children.size() > 0)
+            {
+
+            }
+        }
+
+        private void resizeAreasRecursive(Vector2f positionDifference, Vector2f sizeDifference)
+        {
+            this.position.add(positionDifference);
+            dockGizmo.setPosition(this.position);
+
+            this.size.add(sizeDifference);
+            dockGizmo.setSize(this.size);
+
+            if (dockedPanel != null)
+            {
+                dockedPanel.setPosition(this.position);
+                dockedPanel.setSize(this.size);
+            }
+
+            if (children.size() > 0)
+            {
+                Iterator<DockingArea> iterator = children.values().iterator();
+                iterator.next().resizeAreasRecursive(new Vector2f(sizeDifference).negate(), Vector2f.divide(sizeDifference, 2f));
+                iterator.next().resizeAreasRecursive(Vector2f.divide(sizeDifference, 2f).negate(), Vector2f.divide(sizeDifference, 2f));
+            }
+        }
+*/
 
         /**
          * Attempts to dock a panel to a certain position in the docking area currently hovered.
@@ -358,7 +423,7 @@ public class Dockspace
                 }
                 case LEFT -> {
                     Vector2f leftSize = Vector2f.divide(size, new Vector2f(2f, 1f));
-                    DockingArea leftDockingArea = new DockingArea(position, leftSize, false, panel, DockPosition.LEFT, false, this);
+                    DockingArea leftDockingArea = new DockingArea(position, leftSize, false, panel, DockPosition.LEFT, this);
                     children.putIfAbsent(DockPosition.LEFT, leftDockingArea);
                     children.putIfAbsent(DockPosition.RIGHT, new DockingArea(
                             Vector2f.add(position, new Vector2f(leftSize.getX(), 0f)),
@@ -367,6 +432,9 @@ public class Dockspace
                     ));
                     panel.setPosition(leftDockingArea.position);
                     panel.setSize(leftDockingArea.size);
+
+                    splitAreaPosition.set(leftDockingArea.position.getX() + leftDockingArea.size.getX() - 10f, leftDockingArea.position.getY());
+                    splitAreaSize.set(20f, leftDockingArea.size.getY());
 
                     dockable = false;
                     perpendicular = parent != null && parent.perpendicular;
@@ -377,12 +445,15 @@ public class Dockspace
                     DockingArea rightDockingArea = new DockingArea(
                             Vector2f.add(position, new Vector2f(leftSize.getX(), 0f)),
                             Vector2f.add(size, new Vector2f(-leftSize.getX(), 0f)),
-                            false, panel, DockPosition.RIGHT, false, this
+                            false, panel, DockPosition.RIGHT, this
                     );
                     children.putIfAbsent(DockPosition.LEFT, new DockingArea(position, leftSize, DockPosition.LEFT, this));
                     children.putIfAbsent(DockPosition.RIGHT, rightDockingArea);
                     panel.setPosition(rightDockingArea.position);
                     panel.setSize(rightDockingArea.size);
+
+                    splitAreaPosition.set(rightDockingArea.position.getX() - 10f, rightDockingArea.position.getY());
+                    splitAreaSize.set(20f, rightDockingArea.size.getY());
 
                     dockable = false;
                     perpendicular = parent != null && parent.perpendicular;
@@ -390,16 +461,20 @@ public class Dockspace
                 }
                 case TOP -> {
                     Vector2f topSize = Vector2f.divide(size, new Vector2f(1f, 2f));
-                    DockingArea topDockingArea = new DockingArea(position, topSize, false, panel, DockPosition.TOP, true, this);
+                    DockingArea topDockingArea = new DockingArea(position, topSize, false, panel, DockPosition.TOP, this);
                     children.putIfAbsent(DockPosition.TOP, topDockingArea);
                     children.putIfAbsent(DockPosition.BOTTOM, new DockingArea(
                             Vector2f.add(position, new Vector2f(0f, topSize.getY())),
                             Vector2f.add(size, new Vector2f(0f, -topSize.getY())),
-                            DockPosition.BOTTOM, true, this
+                            DockPosition.BOTTOM, this
                     ));
                     panel.setPosition(topDockingArea.position);
                     panel.setSize(topDockingArea.size);
 
+                    splitAreaPosition.set(topDockingArea.position.getX(), topDockingArea.position.getY() + topDockingArea.size.getY() - 10f);
+                    splitAreaSize.set(topDockingArea.size.getX(), 20f);
+
+                    vertical = true;
                     dockable = false;
                     perpendicular = parent == null || !parent.perpendicular;
                     yield true;
@@ -409,13 +484,17 @@ public class Dockspace
                     DockingArea bottomDockingArea = new DockingArea(
                             Vector2f.add(position, new Vector2f(0f, topSize.getY())),
                             Vector2f.add(size, new Vector2f(0f, -topSize.getY())),
-                            false, panel, DockPosition.BOTTOM, true, this
+                            false, panel, DockPosition.BOTTOM, this
                     );
-                    children.putIfAbsent(DockPosition.TOP, new DockingArea(position, topSize, DockPosition.TOP, true, this));
+                    children.putIfAbsent(DockPosition.TOP, new DockingArea(position, topSize, DockPosition.TOP, this));
                     children.putIfAbsent(DockPosition.BOTTOM, bottomDockingArea);
                     panel.setPosition(bottomDockingArea.position);
                     panel.setSize(bottomDockingArea.size);
 
+                    splitAreaPosition.set(bottomDockingArea.position.getX(), bottomDockingArea.position.getY() - 10f);
+                    splitAreaSize.set(bottomDockingArea.size.getX(), 20f);
+
+                    vertical = true;
                     dockable = false;
                     perpendicular = parent == null || !parent.perpendicular;
                     yield true;
@@ -433,16 +512,17 @@ public class Dockspace
             if (dockPosition != DockPosition.CENTER)
             {
                 Map<DockPosition, DockingArea> adjacentChildren = parent.children.get(dockPosition.getOpposite()).children;
-                if (adjacentChildren.size() == 0 && parent.children.get(dockPosition.getOpposite()).dockedPanel == null)
+                if (adjacentChildren.size() == 0) // Only one adjacent area
                 {
+                    if (parent.children.get(dockPosition.getOpposite()).dockedPanel != null)
+                    {
+                        parent.dockedPanel = parent.children.get(dockPosition.getOpposite()).dockedPanel;
+                        parent.dockedPanel.setPosition(parent.position);
+                        parent.dockedPanel.setSize(parent.size);
+                        parent.dockPosition = DockPosition.CENTER;
+                        parent.children.clear();
+                    }
                     parent.dockable = true;
-                    parent.children.clear();
-                } else if (parent.children.get(dockPosition.getOpposite()).dockedPanel != null) // Only one adjacent area
-                {
-                    parent.dockedPanel = parent.children.get(dockPosition.getOpposite()).dockedPanel;
-                    parent.dockedPanel.setPosition(parent.position);
-                    parent.dockedPanel.setSize(parent.size);
-                    parent.dockPosition = DockPosition.CENTER;
                     parent.children.clear();
                 } else // Two adjacent areas
                 {
@@ -604,18 +684,16 @@ public class Dockspace
 
         private void render(Batch2D batch)
         {
-            if (hovered)
+            batch.drawQuad(splitAreaPosition, splitAreaSize, new Vector4f(1f));
+            if (dockable)
             {
-                if (dockable)
+                batch.drawQuad(position, size, color);
+                dockGizmo.render(batch);
+            } else
+            {
+                for (DockingArea dockingArea : children.values())
                 {
-                    batch.drawQuad(position, size, color);
-                    dockGizmo.render(batch);
-                } else
-                {
-                    for (DockingArea dockingArea : children.values())
-                    {
-                        dockingArea.render(batch);
-                    }
+                    dockingArea.render(batch);
                 }
             }
         }

@@ -41,7 +41,7 @@ public class OfflineRendererApplication extends Application
 
     public OfflineRendererApplication()
     {
-        super(new Window.WindowProperties(1000, 600, 0, false, false, true, true));
+        super(new Window.WindowProperties("Haraldr Offline Renderer", 1000, 600, 0, false, false, true, true));
     }
 
     @Override

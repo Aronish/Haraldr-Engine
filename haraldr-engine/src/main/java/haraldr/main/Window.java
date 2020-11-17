@@ -12,9 +12,7 @@ import haraldr.event.MouseScrolledEvent;
 import haraldr.event.WindowClosedEvent;
 import haraldr.event.WindowFocusEvent;
 import haraldr.event.WindowResizedEvent;
-import haraldr.graphics.Framebuffer;
 import haraldr.graphics.Renderer;
-import haraldr.graphics.Renderer3D;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -97,7 +95,7 @@ public class Window
         windowWidth     = windowProperties.fullscreen ? vidmode.width()  : (windowProperties.maximized ? vidmode.width() : windowProperties.width);
         windowHeight    = windowProperties.fullscreen ? vidmode.height() : (windowProperties.maximized ? vidmode.height() - 63 : windowProperties.height);
 
-        windowHandle = glfwCreateWindow(windowWidth, windowHeight, "OpenGL Game", (windowProperties.fullscreen ? glfwGetPrimaryMonitor() : NULL), NULL);
+        windowHandle = glfwCreateWindow(windowWidth, windowHeight, windowProperties.title, (windowProperties.fullscreen ? glfwGetPrimaryMonitor() : NULL), NULL);
         if (windowHandle == NULL)
         {
             glfwTerminate();
@@ -253,11 +251,13 @@ public class Window
 
     public static class WindowProperties
     {
+        public final String title;
         public final int width, height, samples;
         public final boolean maximized, fullscreen, resizable, vsync;
 
-        public WindowProperties(int width, int height, int samples, boolean maximized, boolean fullscreen, boolean resizable, boolean vsync)
+        public WindowProperties(String title, int width, int height, int samples, boolean maximized, boolean fullscreen, boolean resizable, boolean vsync)
         {
+            this.title = title;
             this.width = width;
             this.height = height;
             this.samples = samples;

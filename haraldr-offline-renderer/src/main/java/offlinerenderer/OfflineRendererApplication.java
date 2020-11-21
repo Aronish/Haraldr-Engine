@@ -13,6 +13,7 @@ import haraldr.main.Application;
 import haraldr.main.IOUtils;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
+import haraldr.math.Vector4f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
@@ -48,7 +49,7 @@ public class OfflineRendererApplication extends Application
     protected void clientInit(Window window)
     {
         dockspace = new Dockspace(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()));
-        mainPane = new ControlPanel(new Vector2f(), dockspace.getSize(), "Haraldr Offline Renderer");
+        mainPane = new ControlPanel(new Vector2f(), dockspace.getSize(), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Haraldr Offline Renderer");
         //Original environment map
         Button loadHdr = new Button("Load HDR", mainPane, () ->
         {

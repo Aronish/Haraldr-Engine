@@ -1,6 +1,5 @@
 package editor;
 
-import haraldr.debug.Logger;
 import haraldr.dockspace.ControlPanel;
 import haraldr.dockspace.DockPosition;
 import haraldr.dockspace.DockablePanel;
@@ -43,7 +42,7 @@ public class EditorApplication extends Application
     private Entity selected = Entity.INVALID;
 
     private Dockspace dockSpace;
-    private DockablePanel scenePanel;
+    private DockablePanel scenePanel, consolePanel;
 
     private ControlPanel propertiesPanel;
     private InfoLabel selectedEntityTag;
@@ -57,7 +56,7 @@ public class EditorApplication extends Application
         super(new Window.WindowProperties(
                 "Haraldr Editor", 1280, 720,
                 ProgramArguments.getIntOrDefault("MSAA", 0),
-                false, false, true, false)
+                true, false, true, false)
         );
     }
 
@@ -70,10 +69,8 @@ public class EditorApplication extends Application
         hdrGammaCorrectionPass = new HDRGammaCorrectionPass(0.5f);
 
         dockSpace = new Dockspace(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()));
-        dockSpace.addPanel(new DockablePanel(new Vector2f(200f), new Vector2f(200f), new Vector4f(0.9f, 0.9f, 0.9f, 1f)));
-        dockSpace.addPanel(new DockablePanel(new Vector2f(200f), new Vector2f(200f), new Vector4f(0.8f, 0.2f, 0.3f, 1f)));
-        dockSpace.addPanel(scenePanel = new DockablePanel(new Vector2f(700f, 30f), new Vector2f(200f, 200f), new Vector4f(0.8f, 0.2f, 0.3f, 1f)));
-        dockSpace.getRootArea().dockPanel(scenePanel, DockPosition.RIGHT);
+        dockSpace.addPanel(consolePanel = new DockablePanel(new Vector2f(200f), new Vector2f(200f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Console (TEST)"));
+        dockSpace.addPanel(scenePanel = new DockablePanel(new Vector2f(700f, 30f), new Vector2f(200f, 200f), new Vector4f(0.8f, 0.2f, 0.3f, 1f), "Scene <name here?>"));
 
         scenePanel.setPanelResizeAction((position, size) ->
         {
@@ -90,7 +87,7 @@ public class EditorApplication extends Application
         editorCamera = new OrbitalCamera(scenePanel.getSize().getX(), scenePanel.getSize().getY());
 
         // Properties Panel
-        dockSpace.addPanel(propertiesPanel = new ControlPanel(new Vector2f(20f), new Vector2f(300f, 400f), "Properties"));
+        dockSpace.addPanel(propertiesPanel = new ControlPanel(new Vector2f(20f), new Vector2f(300f, 400f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Properties"));
         propertiesPanel.addChild(selectedEntityTag = new InfoLabel("Selected Entity", propertiesPanel));
         propertiesPanel.addChild(new Button("Center Camera", propertiesPanel, () ->
         {
@@ -109,6 +106,13 @@ public class EditorApplication extends Application
         }));
 
         propertiesPanel.addChild(selecting = new Checkbox("Selecting", propertiesPanel));
+
+        // Pre-docking
+        dockSpace.dockPanel(propertiesPanel, DockPosition.LEFT);
+        dockSpace.dockPanel(scenePanel, DockPosition.TOP);
+        dockSpace.dockPanel(consolePanel, DockPosition.CENTER);
+        dockSpace.resizePanel(propertiesPanel, 320f);
+        dockSpace.resizePanel(scenePanel, window.getHeight() - 200f);
     }
 
     @Override
@@ -184,6 +188,8 @@ public class EditorApplication extends Application
         Renderer.disableDepthTest();
         dockSpace.render();
         propertiesPanel.renderText();
+        scenePanel.renderText();
+        consolePanel.renderText();
 
         hdrGammaCorrectionPass.render(sceneTexture, Renderer2D.pixelOrthographic); //TODO: Allow for being rendered below other panels
     }

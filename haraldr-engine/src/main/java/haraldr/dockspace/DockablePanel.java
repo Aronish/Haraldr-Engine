@@ -1,5 +1,8 @@
 package haraldr.dockspace;
 
+import haraldr.dockspace.uicomponents.Font;
+import haraldr.dockspace.uicomponents.TextBatch;
+import haraldr.dockspace.uicomponents.TextLabel;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
@@ -16,19 +19,24 @@ public class DockablePanel
 {
     private static final float HEADER_SIZE = 20f;
     protected static final Vector4f HEADER_COLOR = new Vector4f(0.15f, 0.15f, 0.15f, 1f);
+    private static final Font DEFAULT_FONT = new Font("default_fonts/Roboto-Regular.ttf", 20, 4);
 
     protected Vector2f position, size, headerSize;
     protected Vector4f color;
     private boolean held, pressed;
 
+    private TextBatch textBatch = new TextBatch(DEFAULT_FONT);
+    protected TextLabel name;
+
     private PanelDimensionChangeAction panelDimensionChangeAction = (position, size) -> {};
 
-    public DockablePanel(Vector2f position, Vector2f size, Vector4f color)
+    public DockablePanel(Vector2f position, Vector2f size, Vector4f color, String name)
     {
         this.position = new Vector2f(position);
         headerSize = new Vector2f(size.getX(), HEADER_SIZE);
         this.size = size;
         this.color = color;
+        this.name = textBatch.createTextLabel(name, position, new Vector4f(1f));
     }
 
     public void onEvent(Event event, Window window)
@@ -66,6 +74,8 @@ public class DockablePanel
     public void setPosition(Vector2f position)
     {
         this.position.set(position);
+        name.setPosition(position);
+        textBatch.refreshTextMeshData();
         panelDimensionChangeAction.run(
                 Vector2f.add(this.position, new Vector2f(0f, headerSize.getY())),
                 Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
@@ -82,14 +92,9 @@ public class DockablePanel
         );
     }
 
-    public void addSize(Vector2f size)
+    public void renderText()
     {
-        this.size.add(size);
-        this.headerSize.addX(size.getX());
-        panelDimensionChangeAction.run(
-                Vector2f.add(position, new Vector2f(0f, headerSize.getY())),
-                Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
-        );
+        textBatch.render();
     }
 
     public Vector2f getPosition()
@@ -115,6 +120,11 @@ public class DockablePanel
     public boolean isPressed()
     {
         return pressed;
+    }
+
+    public TextBatch getTextBatch()
+    {
+        return textBatch;
     }
 
     public interface PanelDimensionChangeAction

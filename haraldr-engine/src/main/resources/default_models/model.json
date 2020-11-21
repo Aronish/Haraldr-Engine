@@ -1,13 +1,13 @@
 {
-  "mesh": "default_meshes/sphere.obj",
+  "mesh": "default_meshes/suzanne.obj",
   "material":
   {
     "type": "PBR",
     "properties":
     {
-      "color": [ 1.0, 1.0, 1.0 ],
+      "color": [ 0.8, 0.2, 0.3 ],
       "metalness": 1.0,
-      "roughness": 0.1,
+      "roughness": 0.3,
       "environment_map": "default_hdris/NorwayForest_4K_hdri_sphere"
     }
   }

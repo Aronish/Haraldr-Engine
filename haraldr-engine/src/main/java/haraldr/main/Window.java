@@ -23,6 +23,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_DISABLED;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
+import static org.lwjgl.glfw.GLFW.GLFW_HRESIZE_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_MAXIMIZED;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
@@ -33,14 +34,18 @@ import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_SAMPLES;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
 import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
+import static org.lwjgl.glfw.GLFW.GLFW_VRESIZE_CURSOR;
+import static org.lwjgl.glfw.GLFW.glfwCreateStandardCursor;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
+import static org.lwjgl.glfw.GLFW.glfwDestroyCursor;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSetCharCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetCursor;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
@@ -68,6 +73,8 @@ public class Window
     private int windowWidth, windowHeight, initWidth, initHeight;
 
     private int mouseX, mouseY;
+
+    private static long hResizeCursor, vResizeCursor;
 
     public Window(@NotNull WindowProperties windowProperties)
     {
@@ -109,6 +116,10 @@ public class Window
         setCursorVisibility(true);
         setVSync(windowProperties.vsync);
 
+        // Create standard cursors
+        hResizeCursor = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
+        vResizeCursor = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
+
         ///// CALLBACKS /////////////////////////////////////////////////////////
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) ->
         {
@@ -143,6 +154,7 @@ public class Window
         {
             this.mouseX = (int) xPos;
             this.mouseY = (int) yPos;
+            setCursorType(CursorType.NORMAL); // Maybe not
             EventDispatcher.dispatch(new MouseMovedEvent(xPos, yPos), this);
         });
 
@@ -153,8 +165,6 @@ public class Window
             minimized = newWidth <= 0 || newHeight <= 0;
             windowWidth = newWidth;
             windowHeight = newHeight;
-            //Renderer.setViewPort(0, 0, newWidth, newHeight);
-            //Renderer3D.resizeFramebuffer(newWidth, newHeight);
             EventDispatcher.dispatch(new WindowResizedEvent(newWidth, newHeight), this);
         });
 
@@ -191,6 +201,16 @@ public class Window
     {
         cursorVisible = !cursorVisible;
         glfwSetInputMode(windowHandle, GLFW_CURSOR, cursorVisible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+    }
+
+    public void setCursorType(CursorType cursorType)
+    {
+        switch (cursorType)
+        {
+            case NORMAL -> glfwSetCursor(windowHandle, NULL);
+            case RESIZE_HORIZONTAL -> glfwSetCursor(windowHandle, hResizeCursor);
+            case RESIZE_VERTICAL -> glfwSetCursor(windowHandle, vResizeCursor);
+        }
     }
 
     public void setVSync(boolean enabled)
@@ -246,6 +266,8 @@ public class Window
 
     public void delete()
     {
+        glfwDestroyCursor(hResizeCursor);
+        glfwDestroyCursor(vResizeCursor);
         glfwDestroyWindow(windowHandle);
     }
 
@@ -266,5 +288,10 @@ public class Window
             this.resizable = resizable;
             this.vsync = vsync;
         }
+    }
+
+    public enum CursorType
+    {
+        NORMAL, RESIZE_HORIZONTAL, RESIZE_VERTICAL
     }
 }

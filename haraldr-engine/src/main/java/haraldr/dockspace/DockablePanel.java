@@ -23,7 +23,7 @@ public class DockablePanel
 
     protected Vector2f position, size, headerSize;
     protected Vector4f color;
-    private boolean held, pressed;
+    private boolean held, pressed; // held = moving, held by header ; pressed = content area pressed
 
     private TextBatch textBatch = new TextBatch(DEFAULT_FONT);
     protected TextLabel name;

@@ -56,7 +56,7 @@ public class EditorApplication extends Application
         super(new Window.WindowProperties(
                 "Haraldr Editor", 1280, 720,
                 ProgramArguments.getIntOrDefault("MSAA", 0),
-                true, false, true, false)
+                false, false, true, false)
         );
     }
 

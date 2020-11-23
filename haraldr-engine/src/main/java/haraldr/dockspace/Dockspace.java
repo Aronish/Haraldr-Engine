@@ -144,7 +144,10 @@ public class Dockspace
     private void setSize(Vector2f size)
     {
         this.size.set(size);
-        //rootArea.setSize(this.size); //TODO: Add resizing support for whole dockspace
+        Vector2f scaleFactors = Vector2f.divide(size, rootArea.size);
+        rootArea.scalePosition(scaleFactors, new Vector2f());
+        rootArea.scaleSize(scaleFactors);
+        rootArea.recalculateSplitArea();
     }
 
     public void renderToBatch()

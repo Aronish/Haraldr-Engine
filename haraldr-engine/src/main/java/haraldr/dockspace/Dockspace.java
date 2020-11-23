@@ -32,21 +32,24 @@ public class Dockspace
     private DockablePanel selectedPanel;
     private DockingArea rootArea;
 
+    private WindowHeader windowHeader;
+
     private Batch2D renderBatch = new Batch2D(); //Could do more dirty flagging, but not really necessary yet.
 
     public Dockspace(Vector2f position, Vector2f size)
     {
-        this.position = position;
-        this.size = size;
+        windowHeader = new WindowHeader(position, size.getX(), new Vector4f(0.4f, 0.4f, 0.4f, 1f));
+        this.position = Vector2f.add(position, new Vector2f(0f, windowHeader.getSize().getY()));
+        this.size = Vector2f.add(size, new Vector2f(0f, -windowHeader.getSize().getY()));
 
-        rootArea = new DockingArea(position, size);
-        renderToBatch();
+        rootArea = new DockingArea(this.position, this.size);
+        //renderToBatch();
     }
 
     public void addPanel(DockablePanel panel)
     {
         panels.add(panel);
-        renderToBatch();
+        //renderToBatch();
     }
 
     public void dockPanel(DockablePanel panel, DockPosition dockPosition)
@@ -87,7 +90,7 @@ public class Dockspace
                 {
                     if (!dockedArea.parent.resizing)
                     {
-                        panel.onEvent(event, window);
+                        panel.onEvent(event, window); // Wtf is this nested statement?
                     }
                 } else
                 {
@@ -138,21 +141,23 @@ public class Dockspace
             }
             rootArea.checkHovered(selectedPanel.getPosition());
         }
-        renderToBatch();
+        //renderToBatch();
     }
 
     private void setSize(Vector2f size)
     {
-        this.size.set(size);
+        this.size.set(Vector2f.add(size, new Vector2f(0f, -windowHeader.getSize().getY())));
         Vector2f scaleFactors = Vector2f.divide(size, rootArea.size);
-        rootArea.scalePosition(scaleFactors, new Vector2f());
+        rootArea.scalePosition(scaleFactors, new Vector2f(0f, -(windowHeader.getSize().getY() * scaleFactors.getY() - windowHeader.getSize().getY())));
         rootArea.scaleSize(scaleFactors);
         rootArea.recalculateSplitArea();
+        windowHeader.getSize().setX(rootArea.size.getX());
     }
 
-    public void renderToBatch()
+    /*private void renderToBatch()
     {
         renderBatch.begin();
+        windowHeader.render(renderBatch);
         renderBatch.drawQuad(position, size, BACKGROUND_COLOR);
         for (DockablePanel panel : panels)
         {
@@ -160,11 +165,21 @@ public class Dockspace
         }
         if (selectedPanel != null) rootArea.render(renderBatch);
         renderBatch.end();
-    }
+    }*/
 
     public void render()
     {
+        /*
         renderBatch.render();
+        for (DockablePanel dockablePanel : panels)
+        {
+            dockablePanel.getTextBatch().render();
+        }*/
+        for (DockablePanel dockablePanel : panels)
+        {
+            dockablePanel.renderBatch.render();
+            dockablePanel.getTextBatch().render();
+        }
     }
 
     public void dispose()

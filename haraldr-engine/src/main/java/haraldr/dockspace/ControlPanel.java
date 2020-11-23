@@ -30,40 +30,6 @@ public class ControlPanel extends DockablePanel
     public void onEvent(Event event, Window window)
     {
         super.onEvent(event, window);
-        /*
-        if (event.eventType == EventType.WINDOW_RESIZED)
-        {
-            var windowResizedEvent = (WindowResizedEvent) event;
-            size.set(windowResizedEvent.width * widthRatio, windowResizedEvent.height);
-            headerSize.setX(size.getX());
-            orderComponents();
-        }
-        if (event.eventType == EventType.MOUSE_PRESSED)
-        {
-            var mousePressedEvent = (MousePressedEvent) event;
-            resizing = resizable && mousePressedEvent.xPos > size.getX() - 10f && mousePressedEvent.xPos < size.getX() + 10f;
-        }
-        if (event.eventType == EventType.MOUSE_RELEASED)
-        {
-            if (resizing)
-            {
-                resizing = false;
-                orderComponents();
-            }
-        }
-        if (event.eventType == EventType.MOUSE_MOVED)
-        {
-            if (resizing)
-            {
-                var mouseMovedEvent = (MouseMovedEvent) event;
-                float width = (float) mouseMovedEvent.xPos;
-                if (width < minDivider) width = minDivider;
-                if (width > window.getWidth()) width = window.getWidth();
-                size.setX(width);
-                headerSize.setX(width);
-            }
-        }
-        */
         components.forEach((component) -> component.onEvent(event));
     }
 
@@ -86,12 +52,12 @@ public class ControlPanel extends DockablePanel
     }
 
     @Override
-    public void render(Batch2D batch)
+    protected void renderToBatch()
     {
-        renderSelf(batch);
+        renderSelf(renderBatch);
         for (LabeledComponent component : components)
         {
-            component.render(batch);
+            component.render(renderBatch);
         }
     }
 

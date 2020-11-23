@@ -28,6 +28,8 @@ public class DockablePanel
     private TextBatch textBatch = new TextBatch(DEFAULT_FONT);
     protected TextLabel name;
 
+    protected Batch2D renderBatch = new Batch2D();
+
     private PanelDimensionChangeAction panelDimensionChangeAction = (position, size) -> {};
 
     public DockablePanel(Vector2f position, Vector2f size, Vector4f color, String name)
@@ -46,7 +48,7 @@ public class DockablePanel
             var mousePressedEvent = (MousePressedEvent) event;
             Vector2f mousePoint = new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos);
             held = Physics2D.pointInsideAABB(mousePoint, position, headerSize);
-            pressed = Physics2D.pointInsideAABB(mousePoint, position, size);
+            pressed = Physics2D.pointInsideAABB(mousePoint, Vector2f.add(position, new Vector2f(0f, HEADER_SIZE)), Vector2f.add(size, new Vector2f(0f, -HEADER_SIZE)));
         }
         if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1)) held = false;
         if (event.eventType == EventType.MOUSE_MOVED)
@@ -60,10 +62,10 @@ public class DockablePanel
         }
     }
 
-    public void render(Batch2D batch)
+    protected void renderToBatch()
     {
-        batch.drawQuad(position, size, color);
-        batch.drawQuad(position, headerSize, HEADER_COLOR);
+        renderBatch.drawQuad(position, size, color);
+        renderBatch.drawQuad(position, headerSize, HEADER_COLOR);
     }
 
     public void setPanelResizeAction(PanelDimensionChangeAction panelDimensionChangeAction)
@@ -125,6 +127,11 @@ public class DockablePanel
     public TextBatch getTextBatch()
     {
         return textBatch;
+    }
+
+    public Batch2D getRenderBatch()
+    {
+        return renderBatch;
     }
 
     public interface PanelDimensionChangeAction

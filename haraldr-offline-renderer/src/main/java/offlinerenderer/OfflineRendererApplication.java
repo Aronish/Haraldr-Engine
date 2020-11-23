@@ -20,7 +20,6 @@ import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
 import static org.lwjgl.opengl.GL11.glViewport;
 
-//TODO: Naming convention for Haraldr-Engine cubemaps not figured out yet
 public class OfflineRendererApplication extends Application
 {
     private Dockspace dockspace;
@@ -183,8 +182,7 @@ public class OfflineRendererApplication extends Application
     @Override
     protected void clientEvent(Event event, Window window)
     {
-        mainPane.onEvent(event, window);
-        dockspace.renderToBatch();
+        dockspace.onEvent(event, window);
     }
 
     @Override

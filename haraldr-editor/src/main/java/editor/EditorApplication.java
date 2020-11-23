@@ -187,9 +187,6 @@ public class EditorApplication extends Application
 
         Renderer.disableDepthTest();
         dockSpace.render();
-        propertiesPanel.renderText();
-        scenePanel.renderText();
-        consolePanel.renderText();
 
         hdrGammaCorrectionPass.render(sceneTexture, Renderer2D.pixelOrthographic); //TODO: Allow for being rendered below other panels
     }

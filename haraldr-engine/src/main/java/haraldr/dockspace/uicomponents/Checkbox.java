@@ -9,6 +9,7 @@ import haraldr.input.MouseButton;
 import haraldr.input.Input;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
+import haraldr.physics.Physics2D;
 
 public class Checkbox extends LabeledComponent
 {
@@ -49,23 +50,23 @@ public class Checkbox extends LabeledComponent
     }
 
     @Override
-    public void onEvent(Event event)
+    public boolean onEvent(Event event)
     {
+        boolean requireRedraw = false;
         if (event.eventType == EventType.MOUSE_PRESSED)
         {
             if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
             {
                 var mousePressedEvent = (MousePressedEvent) event;
-                if (mousePressedEvent.xPos > boxPosition.getX() &&
-                    mousePressedEvent.xPos < boxPosition.getX() + boxSize.getX() &&
-                    mousePressedEvent.yPos > boxPosition.getY() &&
-                    mousePressedEvent.yPos < boxPosition.getY() + boxSize.getY())
+                if (Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), boxPosition, boxSize))
                 {
                     state = !state;
                     checkboxStateChangeAction.run(state);
+                    requireRedraw = true;
                 }
             }
         }
+        return requireRedraw;
     }
 
     @Override

@@ -30,35 +30,34 @@ public class ControlPanel extends DockablePanel
     public void onEvent(Event event, Window window)
     {
         super.onEvent(event, window);
-        components.forEach((component) -> component.onEvent(event));
+        for (LabeledComponent component : components)
+        {
+            if (component.onEvent(event)) renderToBatch();
+        }
     }
 
     @Override
     public void setPosition(Vector2f position)
     {
-        super.setPosition(position);
         for (LabeledComponent component : components)
         {
-            component.setPosition(this.position, divider);
+            component.setPosition(position, divider);
         }
-        orderComponents();
-    }
-
-    @Override
-    public void setSize(Vector2f size)
-    {
-        super.setSize(size);
-        orderComponents();
+        super.setPosition(position);
     }
 
     @Override
     protected void renderToBatch()
     {
+        if (components == null) return;
+        orderComponents();
+        renderBatch.begin();
         renderSelf(renderBatch);
         for (LabeledComponent component : components)
         {
             component.render(renderBatch);
         }
+        renderBatch.end();
     }
 
     private void renderSelf(Batch2D batch)
@@ -81,6 +80,7 @@ public class ControlPanel extends DockablePanel
 
     private void orderComponents()
     {
+        if (components == null) return;
         float nextY = headerSize.getY() + LINE_GAP;
         for (LabeledComponent component : components)
         {

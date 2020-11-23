@@ -12,8 +12,8 @@ public class Batch2D
     private VertexArray vertexArray;
     private VertexBuffer vertexBuffer;
 
-    private static float[] vertexData = new float[MAX_QUADS * VERTEX_SIZE * 4];
-    private static int insertIndex, indexCount;
+    private float[] vertexData = new float[MAX_QUADS * VERTEX_SIZE * 4];
+    private int insertIndex, indexCount;
 
     public Batch2D()
     {

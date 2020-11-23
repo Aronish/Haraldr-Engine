@@ -16,10 +16,7 @@ import haraldr.ecs.TransformComponent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
-import haraldr.graphics.HDRGammaCorrectionPass;
-import haraldr.graphics.RenderTexture;
 import haraldr.graphics.Renderer;
-import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Renderer3D;
 import haraldr.input.Input;
 import haraldr.input.KeyboardKey;
@@ -42,14 +39,12 @@ public class EditorApplication extends Application
     private Entity selected = Entity.INVALID;
 
     private Dockspace dockSpace;
-    private DockablePanel scenePanel, consolePanel;
+    private DockablePanel consolePanel;
+    private Scene3DPanel scene3DPanel;
 
     private ControlPanel propertiesPanel;
     private InfoLabel selectedEntityTag;
     private Checkbox selecting;
-
-    private HDRGammaCorrectionPass hdrGammaCorrectionPass;
-    private RenderTexture sceneTexture;
 
     public EditorApplication()
     {
@@ -66,25 +61,18 @@ public class EditorApplication extends Application
         scene = new EditorTestScene();
         scene.onActivate();
 
-        hdrGammaCorrectionPass = new HDRGammaCorrectionPass(0.5f);
-
         dockSpace = new Dockspace(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()));
         dockSpace.addPanel(consolePanel = new DockablePanel(new Vector2f(200f), new Vector2f(200f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Console (TEST)"));
-        dockSpace.addPanel(scenePanel = new DockablePanel(new Vector2f(700f, 30f), new Vector2f(200f, 200f), new Vector4f(0.8f, 0.2f, 0.3f, 1f), "Scene <name here?>"));
+        dockSpace.addPanel(scene3DPanel = new Scene3DPanel(new Vector2f(700f, 30f), new Vector2f(200f, 200f), "Scene <name here?>"));
 
-        scenePanel.setPanelResizeAction((position, size) ->
+        scene3DPanel.setPanelResizeAction((position, size) ->
         {
-            sceneTexture.setPosition(position);
-            sceneTexture.setSize(size.getX(), size.getY());
+            scene3DPanel.getSceneTexture().setPosition(position);
+            scene3DPanel.getSceneTexture().setSize(size.getX(), size.getY());
             editorCamera.setAspectRatio(size.getX() / size.getY());
         });
 
-        sceneTexture = new RenderTexture(
-                Vector2f.add(scenePanel.getPosition(), new Vector2f(0f, scenePanel.getHeaderHeight())),
-                Vector2f.add(scenePanel.getSize(), new Vector2f(0f, -scenePanel.getHeaderHeight()))
-        );
-
-        editorCamera = new OrbitalCamera(scenePanel.getSize().getX(), scenePanel.getSize().getY());
+        editorCamera = new OrbitalCamera(scene3DPanel.getSize().getX(), scene3DPanel.getSize().getY());
 
         // Properties Panel
         dockSpace.addPanel(propertiesPanel = new ControlPanel(new Vector2f(20f), new Vector2f(300f, 400f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Properties"));
@@ -101,7 +89,7 @@ public class EditorApplication extends Application
         propertiesPanel.addChild(sliderValue = new InfoLabel("Exposure Value", propertiesPanel));
         propertiesPanel.addChild(new Slider("Exposure", propertiesPanel, 0f, 2f, value ->
         {
-            hdrGammaCorrectionPass.setExposure(value);
+            scene3DPanel.getHdrGammaCorrectionPass().setExposure(value);
             sliderValue.setText(Float.toString(value));
         }));
 
@@ -109,10 +97,10 @@ public class EditorApplication extends Application
 
         // Pre-docking
         dockSpace.dockPanel(propertiesPanel, DockPosition.LEFT);
-        dockSpace.dockPanel(scenePanel, DockPosition.TOP);
+        dockSpace.dockPanel(scene3DPanel, DockPosition.TOP);
         dockSpace.dockPanel(consolePanel, DockPosition.CENTER);
         dockSpace.resizePanel(propertiesPanel, 320f);
-        dockSpace.resizePanel(scenePanel, window.getHeight() - 200f);
+        dockSpace.resizePanel(scene3DPanel, window.getHeight() - 200f);
     }
 
     @Override
@@ -120,7 +108,7 @@ public class EditorApplication extends Application
     {
         dockSpace.onEvent(event, window);
         scene.onEvent(event, window);
-        if (scenePanel.isPressed() && !scenePanel.isHeld())
+        if (scene3DPanel.isPressed() && !scene3DPanel.isHeld())
         {
             editorCamera.onEvent(event, window);
 
@@ -129,8 +117,8 @@ public class EditorApplication extends Application
             {
                 var mousePressedEvent = (MousePressedEvent) event;
                 selected = selectEntity(
-                        new Vector2f(mousePressedEvent.xPos - sceneTexture.getPosition().getX(), mousePressedEvent.yPos - sceneTexture.getPosition().getY()),
-                        sceneTexture.getSize(),
+                        new Vector2f(mousePressedEvent.xPos - scene3DPanel.getSceneTexture().getPosition().getX(), mousePressedEvent.yPos - scene3DPanel.getSceneTexture().getPosition().getY()),
+                        scene3DPanel.getSceneTexture().getSize(),
                         selected, scene.getRegistry());
                 if (!selected.equals(Entity.INVALID))
                 {
@@ -146,7 +134,7 @@ public class EditorApplication extends Application
 
         if (event.eventType == EventType.WINDOW_RESIZED)
         {
-            editorCamera.setAspectRatio(sceneTexture.getSize().getX() / sceneTexture.getSize().getY());
+            editorCamera.setAspectRatio(scene3DPanel.getSceneTexture().getSize().getX() / scene3DPanel.getSceneTexture().getSize().getY());
         }
     }
 
@@ -183,12 +171,10 @@ public class EditorApplication extends Application
     protected void clientRender(Window window)
     {
         Renderer.enableDepthTest();
-        Renderer3D.renderSceneToTexture(window, editorCamera, scene, sceneTexture);
+        Renderer3D.renderSceneToTexture(window, editorCamera, scene, scene3DPanel.getSceneTexture());
 
         Renderer.disableDepthTest();
         dockSpace.render();
-
-        hdrGammaCorrectionPass.render(sceneTexture, Renderer2D.pixelOrthographic); //TODO: Allow for being rendered below other panels
     }
 
     @Override
@@ -196,6 +182,6 @@ public class EditorApplication extends Application
     {
         dockSpace.dispose();
         scene.onDispose();
-        sceneTexture.delete();
+        scene3DPanel.getSceneTexture().delete();
     }
 }

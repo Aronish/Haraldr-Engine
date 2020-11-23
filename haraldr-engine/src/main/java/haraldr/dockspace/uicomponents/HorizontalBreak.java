@@ -37,8 +37,9 @@ public class HorizontalBreak extends LabeledComponent
     }
 
     @Override
-    public void onEvent(Event event)
+    public boolean onEvent(Event event)
     {
+        return false;
     }
 
     @Override

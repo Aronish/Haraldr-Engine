@@ -48,7 +48,10 @@ public abstract class LabeledComponent
 
     public abstract float getVerticalSize();
 
-    public abstract void onEvent(Event event);
+    /**
+     * @return true if an event requires a ControlPanel to redraw.
+     */
+    public abstract boolean onEvent(Event event);
 
     public abstract void render(Batch2D batch);
 }

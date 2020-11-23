@@ -39,6 +39,7 @@ public class DockablePanel
         this.size = size;
         this.color = color;
         this.name = textBatch.createTextLabel(name, position, new Vector4f(1f));
+        renderToBatch();
     }
 
     public void onEvent(Event event, Window window)
@@ -64,8 +65,15 @@ public class DockablePanel
 
     protected void renderToBatch()
     {
+        renderBatch.begin();
         renderBatch.drawQuad(position, size, color);
         renderBatch.drawQuad(position, headerSize, HEADER_COLOR);
+        renderBatch.end();
+    }
+
+    public void render()
+    {
+        renderBatch.render();
     }
 
     public void setPanelResizeAction(PanelDimensionChangeAction panelDimensionChangeAction)
@@ -82,6 +90,7 @@ public class DockablePanel
                 Vector2f.add(this.position, new Vector2f(0f, headerSize.getY())),
                 Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
         );
+        renderToBatch();
     }
 
     public void setSize(Vector2f size)
@@ -92,6 +101,7 @@ public class DockablePanel
                 Vector2f.add(position, new Vector2f(0f, headerSize.getY())),
                 Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
         );
+        renderToBatch();
     }
 
     public void renderText()
@@ -127,11 +137,6 @@ public class DockablePanel
     public TextBatch getTextBatch()
     {
         return textBatch;
-    }
-
-    public Batch2D getRenderBatch()
-    {
-        return renderBatch;
     }
 
     public interface PanelDimensionChangeAction

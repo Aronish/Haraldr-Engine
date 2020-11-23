@@ -8,6 +8,7 @@ import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Batch2D;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
+import haraldr.physics.Physics2D;
 
 public class Button extends LabeledComponent
 {
@@ -57,36 +58,34 @@ public class Button extends LabeledComponent
     }
 
     @Override
-    public void onEvent(Event event)
+    public boolean onEvent(Event event)
     {
+        boolean requireRedraw = false;
         if (enabled)
         {
             if (event.eventType == EventType.MOUSE_PRESSED)
             {
                 var mousePressedEvent = (MousePressedEvent) event;
-                if (mousePressedEvent.xPos >= buttonPosition.getX() &&
-                    mousePressedEvent.xPos <= buttonPosition.getX() + buttonSize.getX() &&
-                    mousePressedEvent.yPos >= buttonPosition.getY() &&
-                    mousePressedEvent.yPos <= buttonPosition.getY() + buttonSize.getY())
+                if (Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), buttonPosition, buttonSize))
                 {
                     currentColor = ON_COLOR;
                     buttonPressAction.run();
+                    requireRedraw = true;
                 }
             }
             if (event.eventType == EventType.MOUSE_RELEASED)
             {
                 currentColor = OFF_COLOR;
+                requireRedraw = true;
             }
             if (event.eventType == EventType.MOUSE_MOVED)
             {
                 var mouseMovedEvent = (MouseMovedEvent) event;
-                currentColor =
-                (mouseMovedEvent.xPos >= buttonPosition.getX() &&
-                mouseMovedEvent.xPos <= buttonPosition.getX() + buttonSize.getX() &&
-                mouseMovedEvent.yPos >= buttonPosition.getY() &&
-                mouseMovedEvent.yPos <= buttonPosition.getY() + buttonSize.getY()) ? HOVER_COLOR : OFF_COLOR;
+                currentColor = (Physics2D.pointInsideAABB(new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos), buttonPosition, buttonSize)) ? HOVER_COLOR : OFF_COLOR;
+                requireRedraw = true;
             }
         }
+        return requireRedraw;
     }
 
     @Override

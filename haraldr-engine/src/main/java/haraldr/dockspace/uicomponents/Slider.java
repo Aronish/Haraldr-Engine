@@ -10,6 +10,7 @@ import haraldr.input.MouseButton;
 import haraldr.input.Input;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
+import haraldr.physics.Physics2D;
 
 @SuppressWarnings("unused")
 public class Slider extends LabeledComponent
@@ -57,7 +58,9 @@ public class Slider extends LabeledComponent
     public void setComponentPosition(Vector2f position)
     {
         sliderPosition = position;
-        handlePosition = new Vector2f(sliderPosition);
+        float normalizedValue = (value - min) / (max - min);
+        float handlePosition = normalizedValue * (sliderSize.getX() - handleSize.getX()) + sliderPosition.getX();
+        this.handlePosition.set(handlePosition, position.getY());
     }
 
     @Override
@@ -67,17 +70,15 @@ public class Slider extends LabeledComponent
     }
 
     @Override
-    public void onEvent(Event event)
+    public boolean onEvent(Event event)
     {
+        boolean requireRedraw = false;
         if (event.eventType == EventType.MOUSE_PRESSED)
         {
             if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
             {
                 var mousePressedEvent = (MousePressedEvent) event;
-                if (mousePressedEvent.xPos > handlePosition.getX() &&
-                        mousePressedEvent.xPos < handlePosition.getX() + handleSize.getX() &&
-                        mousePressedEvent.yPos > handlePosition.getY() &&
-                        mousePressedEvent.yPos < handlePosition.getY() + handleSize.getY())
+                if (Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), handlePosition, handleSize))
                 {
                     held = true;
                 }
@@ -96,8 +97,10 @@ public class Slider extends LabeledComponent
                 float normalizedValue = (position - sliderPosition.getX()) / (sliderSize.getX() - handleSize.getX());
                 value = min + (max - min) * normalizedValue;
                 sliderChangeAction.run(value);
+                requireRedraw = true;
             }
         }
+        return requireRedraw;
     }
 
     @Override

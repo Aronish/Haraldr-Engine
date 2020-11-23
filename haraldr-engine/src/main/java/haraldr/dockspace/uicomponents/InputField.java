@@ -11,6 +11,7 @@ import haraldr.input.KeyboardKey;
 import haraldr.input.MouseButton;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
+import haraldr.physics.Physics2D;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -96,17 +97,16 @@ public class InputField extends LabeledComponent
     }
 
     @Override
-    public void onEvent(Event event)
+    public boolean onEvent(Event event)
     {
+        boolean requireRedraw = false;
         if (event.eventType == EventType.MOUSE_PRESSED)
         {
             if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
             {
                 var mousePressedEvent = (MousePressedEvent) event;
-                selected = mousePressedEvent.xPos >= fieldPosition.getX() &&
-                           mousePressedEvent.xPos <= fieldPosition.getX() + fieldSize.getX() &&
-                           mousePressedEvent.yPos >= fieldPosition.getY() &&
-                           mousePressedEvent.yPos <= fieldPosition.getY() + fieldSize.getY();
+                selected = Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), fieldPosition, fieldSize);
+                requireRedraw = true;
             }
             if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_2) && selected)
             {
@@ -140,6 +140,7 @@ public class InputField extends LabeledComponent
                 }
             }
         }
+        return requireRedraw;
     }
 
     @Override

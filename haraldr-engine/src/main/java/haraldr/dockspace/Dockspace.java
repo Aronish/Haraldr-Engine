@@ -132,7 +132,7 @@ public class Dockspace
     {
         renderBatch.begin();
         renderBatch.drawQuad(position, size, new Vector4f(0.3f, 0.3f, 0.3f, 1f));
-        windowHeader.render(renderBatch);
+        windowHeader.renderToBatch(renderBatch);
         if (selectedPanel != null) rootArea.render(renderBatch);
         renderBatch.end();
     }
@@ -140,6 +140,7 @@ public class Dockspace
     public void render()
     {
         renderBatch.render();
+        windowHeader.renderText();
         for (DockablePanel dockablePanel : panels)
         {
             dockablePanel.render();
@@ -149,7 +150,7 @@ public class Dockspace
 
     public void dispose()
     {
-        renderBatch.dispose();
+        panels.forEach(DockablePanel::dispose);
     }
 
     public Vector2f getSize()

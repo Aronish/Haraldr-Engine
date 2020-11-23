@@ -15,6 +15,7 @@ public class ResourceManager
     private static final Map<String, Shader> SHADERS        = new HashMap<>();
     private static final Map<String, CubeMap> CUBEMAPS      = new HashMap<>();
     private static final List<TextBatch> TEXT_BATCHES       = new ArrayList<>();
+    private static final List<Batch2D> BATCH_2_D_LIST       = new ArrayList<>();
 
     public static VertexArray getMesh(String path)
     {
@@ -97,6 +98,11 @@ public class ResourceManager
         TEXT_BATCHES.add(textBatch);
     }
 
+    public static void addBatch2D(Batch2D batch)
+    {
+        BATCH_2_D_LIST.add(batch);
+    }
+
     public static void dispose()
     {
         TEXTURES.forEach((key, texture) -> texture.delete());
@@ -104,5 +110,6 @@ public class ResourceManager
         SHADERS.forEach((key, shader) -> shader.delete());
         CUBEMAPS.forEach((key, cubeMap) -> cubeMap.delete());
         TEXT_BATCHES.forEach(TextBatch::dispose);
+        BATCH_2_D_LIST.forEach(Batch2D::dispose);
     }
 }

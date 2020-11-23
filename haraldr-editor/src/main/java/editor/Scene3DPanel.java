@@ -29,6 +29,13 @@ public class Scene3DPanel extends DockablePanel
         hdrGammaCorrectionPass.render(sceneTexture, Renderer2D.pixelOrthographic);
     }
 
+    @Override
+    public void dispose()
+    {
+        super.dispose();
+        sceneTexture.delete();
+    }
+
     public RenderTexture getSceneTexture()
     {
         return sceneTexture;

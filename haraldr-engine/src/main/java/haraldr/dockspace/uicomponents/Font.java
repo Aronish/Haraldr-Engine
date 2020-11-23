@@ -44,6 +44,8 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Font
 {
+    public static final Font DEFAULT_FONT = new Font("default_fonts/Roboto-Regular.ttf", 20, 4);
+
     public static final int WIDTH = 512, HEIGHT = 512;
 
     private float scaleFactor;

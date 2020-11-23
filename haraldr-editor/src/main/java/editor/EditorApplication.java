@@ -182,6 +182,5 @@ public class EditorApplication extends Application
     {
         dockSpace.dispose();
         scene.onDispose();
-        scene3DPanel.getSceneTexture().delete();
     }
 }

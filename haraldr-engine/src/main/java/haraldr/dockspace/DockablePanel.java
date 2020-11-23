@@ -19,13 +19,12 @@ public class DockablePanel
 {
     private static final float HEADER_SIZE = 20f;
     protected static final Vector4f HEADER_COLOR = new Vector4f(0.15f, 0.15f, 0.15f, 1f);
-    private static final Font DEFAULT_FONT = new Font("default_fonts/Roboto-Regular.ttf", 20, 4);
 
     protected Vector2f position, size, headerSize;
     protected Vector4f color;
     private boolean held, pressed; // held = moving, held by header ; pressed = content area pressed
 
-    private TextBatch textBatch = new TextBatch(DEFAULT_FONT);
+    private TextBatch textBatch = new TextBatch(Font.DEFAULT_FONT);
     protected TextLabel name;
 
     protected Batch2D renderBatch = new Batch2D();
@@ -102,6 +101,10 @@ public class DockablePanel
                 Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
         );
         renderToBatch();
+    }
+
+    public void dispose()
+    {
     }
 
     public void renderText()

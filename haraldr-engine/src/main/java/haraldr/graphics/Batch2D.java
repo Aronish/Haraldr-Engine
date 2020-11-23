@@ -26,6 +26,8 @@ public class Batch2D
         vertexArray = new VertexArray();
         vertexArray.setIndexBufferData(VertexBuffer.createQuadIndices(MAX_INDICES));
         vertexArray.setVertexBuffers(vertexBuffer);
+
+        ResourceManager.addBatch2D(this);
     }
 
     public void begin()

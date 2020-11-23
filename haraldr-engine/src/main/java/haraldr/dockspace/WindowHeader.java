@@ -3,9 +3,13 @@ package haraldr.dockspace;
 import haraldr.dockspace.uicomponents.Font;
 import haraldr.dockspace.uicomponents.TextBatch;
 import haraldr.dockspace.uicomponents.TextLabel;
+import haraldr.event.Event;
+import haraldr.event.EventType;
+import haraldr.event.MouseMovedEvent;
 import haraldr.graphics.Batch2D;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
+import haraldr.physics.Physics2D;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +25,8 @@ public class WindowHeader
     private List<MenuButton> menuButtons = new ArrayList<>();
     private TextBatch textBatch = new TextBatch(Font.DEFAULT_FONT);
 
+    private Batch2D renderBatch = new Batch2D();
+
     public WindowHeader(Vector2f position, float size, Vector4f color)
     {
         this.position = position;
@@ -34,29 +40,41 @@ public class WindowHeader
 
     private void addMenuButton(String name)
     {
-        MenuButton menuButton = new MenuButton(textBatch.createTextLabel(
-                name,
-                Vector2f.add(position, new Vector2f(currentButtonPosition + MENU_BUTTON_PADDING / 2f, 0f)),
-                new Vector4f(1f)
-        ));
+        MenuButton menuButton = new MenuButton(name, Vector2f.add(position, new Vector2f(currentButtonPosition, position.getY())));
         menuButtons.add(menuButton);
         currentButtonPosition += menuButton.name.getPixelWidth() + MENU_BUTTON_PADDING;
+
+        renderToBatch();
     }
 
-    public void renderToBatch(Batch2D batch)
+    public void setWidth(float width)
     {
-        batch.drawQuad(position, size, color);
-        float currentButtonPosition = position.getX();
+        size.setX(width);
+        renderToBatch();
+    }
+
+    public void onEvent(Event event)
+    {
         for (MenuButton menuButton : menuButtons)
         {
-            float buttonWidth = menuButton.name.getPixelWidth() + MENU_BUTTON_PADDING;
-            batch.drawQuad(Vector2f.add(position, new Vector2f(currentButtonPosition, position.getY())), new Vector2f(buttonWidth, size.getY()), new Vector4f(0.5f, 0.5f, 0.5f, 1f));
-            currentButtonPosition += buttonWidth;
+            if (menuButton.onEvent(event)) renderToBatch();
         }
     }
 
-    public void renderText()
+    private void renderToBatch()
     {
+        renderBatch.begin();
+        renderBatch.drawQuad(position, size, color);
+        for (MenuButton menuButton : menuButtons)
+        {
+            renderBatch.drawQuad(menuButton.position, menuButton.size, menuButton.hovered ? new Vector4f(0.6f, 0.6f, 0.6f, 1f) : new Vector4f(0.5f, 0.5f, 0.5f, 1f));
+        }
+        renderBatch.end();
+    }
+
+    public void render()
+    {
+        renderBatch.render();
         textBatch.render();
     }
 
@@ -65,18 +83,30 @@ public class WindowHeader
         return size;
     }
 
-    public TextBatch getTextBatch()
-    {
-        return textBatch;
-    }
-
-    private static class MenuButton
+    private class MenuButton
     {
         private TextLabel name;
+        private Vector2f position, size;
+        private boolean hovered;
 
-        private MenuButton(TextLabel name)
+        private MenuButton(String name, Vector2f position)
         {
-            this.name = name;
+            this.name = WindowHeader.this.textBatch.createTextLabel(name, Vector2f.add(position, new Vector2f(MENU_BUTTON_PADDING / 2f, 0f)), new Vector4f(1f));
+            this.position = position;
+            size = new Vector2f(this.name.getPixelWidth() + MENU_BUTTON_PADDING, WindowHeader.this.size.getY());
+        }
+
+        private boolean onEvent(Event event)
+        {
+            boolean requireRedraw = false;
+            if (event.eventType == EventType.MOUSE_MOVED)
+            {
+                var mouseMovedEvent = (MouseMovedEvent) event;
+                boolean previousHoveredState = hovered;
+                hovered = Physics2D.pointInsideAABB(new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos), position, size);
+                requireRedraw = previousHoveredState != hovered;
+            }
+            return requireRedraw;
         }
     }
 }

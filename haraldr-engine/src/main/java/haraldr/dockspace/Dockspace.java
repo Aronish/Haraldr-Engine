@@ -64,6 +64,8 @@ public class Dockspace
 
     public void onEvent(Event event, Window window)
     {
+        windowHeader.onEvent(event);
+
         if (event.eventType == EventType.WINDOW_RESIZED)
         {
             var windowResizedEvent = (WindowResizedEvent) event;
@@ -124,7 +126,7 @@ public class Dockspace
         rootArea.scalePosition(scaleFactors, new Vector2f(0f, -(windowHeader.getSize().getY() * scaleFactors.getY() - windowHeader.getSize().getY())));
         rootArea.scaleSize(scaleFactors);
         rootArea.recalculateSplitArea();
-        windowHeader.getSize().setX(rootArea.size.getX());
+        windowHeader.setWidth(rootArea.size.getX());
         renderToBatch();
     }
 
@@ -132,7 +134,6 @@ public class Dockspace
     {
         renderBatch.begin();
         renderBatch.drawQuad(position, size, new Vector4f(0.3f, 0.3f, 0.3f, 1f));
-        windowHeader.renderToBatch(renderBatch);
         if (selectedPanel != null) rootArea.render(renderBatch);
         renderBatch.end();
     }
@@ -140,11 +141,11 @@ public class Dockspace
     public void render()
     {
         renderBatch.render();
-        windowHeader.renderText();
+        windowHeader.render();
         for (DockablePanel dockablePanel : panels)
         {
             dockablePanel.render();
-            dockablePanel.getTextBatch().render();
+            dockablePanel.renderText();
         }
     }
 

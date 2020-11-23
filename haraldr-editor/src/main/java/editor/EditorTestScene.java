@@ -16,7 +16,6 @@ import haraldr.scene.Scene3D;
 public class EditorTestScene extends Scene3D
 {
     private Entity ape = registry.createEntity(new Vector3f(0f, 0f, 0f), new Vector3f(0.5f));
-    private Entity another = registry.createEntity(new Vector3f(4f, 0f, 0f), new Vector3f(0.3f));
     private float interpolation;
 
     private PointLight pointLight = new PointLight(new Vector3f(), new Vector3f(5f, 3f, 1f));

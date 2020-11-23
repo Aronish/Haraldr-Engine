@@ -1,5 +1,7 @@
 package haraldr.ecs;
 
+import org.jetbrains.annotations.Contract;
+
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -9,6 +11,7 @@ public class View<T>
     private List<TransformComponent> transforms;
     private List<T> components;
 
+    @Contract(pure = true)
     public View(List<TransformComponent> transforms, List<T> components)
     {
         this.transforms = transforms;

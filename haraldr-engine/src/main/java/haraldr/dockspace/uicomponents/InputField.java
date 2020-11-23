@@ -105,8 +105,9 @@ public class InputField extends LabeledComponent
             if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
             {
                 var mousePressedEvent = (MousePressedEvent) event;
+                boolean lastSelectedState = selected;
                 selected = Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), fieldPosition, fieldSize);
-                requireRedraw = true;
+                requireRedraw = lastSelectedState != selected;
             }
             if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_2) && selected)
             {

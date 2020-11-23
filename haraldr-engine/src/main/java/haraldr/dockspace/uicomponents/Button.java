@@ -1,5 +1,6 @@
 package haraldr.dockspace.uicomponents;
 
+import haraldr.debug.Logger;
 import haraldr.dockspace.ControlPanel;
 import haraldr.event.Event;
 import haraldr.event.EventType;
@@ -75,14 +76,15 @@ public class Button extends LabeledComponent
             }
             if (event.eventType == EventType.MOUSE_RELEASED)
             {
+                requireRedraw = currentColor != OFF_COLOR;
                 currentColor = OFF_COLOR;
-                requireRedraw = true;
             }
             if (event.eventType == EventType.MOUSE_MOVED)
             {
                 var mouseMovedEvent = (MouseMovedEvent) event;
+                Vector4f lastColor = currentColor;
                 currentColor = (Physics2D.pointInsideAABB(new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos), buttonPosition, buttonSize)) ? HOVER_COLOR : OFF_COLOR;
-                requireRedraw = true;
+                requireRedraw = lastColor != currentColor;
             }
         }
         return requireRedraw;

@@ -39,7 +39,7 @@ public class EditorApplication extends Application
     private Entity selected = Entity.INVALID;
 
     private Dockspace dockSpace;
-    private DockablePanel consolePanel;
+    private EntityHierarchyPanel entityHierarchyPanel;
     private Scene3DPanel scene3DPanel;
 
     private ControlPanel propertiesPanel;
@@ -62,8 +62,8 @@ public class EditorApplication extends Application
         scene.onActivate();
 
         dockSpace = new Dockspace(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()));
-        dockSpace.addPanel(consolePanel = new DockablePanel(new Vector2f(200f), new Vector2f(200f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Console (TEST)"));
-        dockSpace.addPanel(scene3DPanel = new Scene3DPanel(new Vector2f(700f, 30f), new Vector2f(200f, 200f), "Scene <name here?>"));
+        dockSpace.addPanel(entityHierarchyPanel = new EntityHierarchyPanel(new Vector2f(200f), new Vector2f(200f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Hierarchy"));
+        dockSpace.addPanel(scene3DPanel = new Scene3DPanel(new Vector2f(700f, 30f), new Vector2f(200f, 200f), "Scene"));
 
         scene3DPanel.setPanelResizeAction((position, size) ->
         {
@@ -96,11 +96,10 @@ public class EditorApplication extends Application
         propertiesPanel.addChild(selecting = new Checkbox("Selecting", propertiesPanel));
 
         // Pre-docking
-        dockSpace.dockPanel(propertiesPanel, DockPosition.LEFT);
-        dockSpace.dockPanel(scene3DPanel, DockPosition.TOP);
-        dockSpace.dockPanel(consolePanel, DockPosition.CENTER);
-        dockSpace.resizePanel(propertiesPanel, 320f);
-        dockSpace.resizePanel(scene3DPanel, window.getHeight() - 200f);
+        dockSpace.dockPanel(scene3DPanel, DockPosition.RIGHT);
+        dockSpace.dockPanel(entityHierarchyPanel, DockPosition.TOP);
+        dockSpace.dockPanel(propertiesPanel, DockPosition.CENTER);
+        dockSpace.resizePanel(scene3DPanel, 300f);
     }
 
     @Override

@@ -24,7 +24,7 @@ public class DockablePanel
     protected Vector4f color;
     private boolean held, pressed; // held = moving, held by header ; pressed = content area pressed
 
-    private TextBatch textBatch = new TextBatch(Font.DEFAULT_FONT);
+    protected TextBatch textBatch = new TextBatch(Font.DEFAULT_FONT);
     protected TextLabel name;
 
     protected Batch2D renderBatch = new Batch2D();
@@ -75,6 +75,11 @@ public class DockablePanel
         renderBatch.render();
     }
 
+    public void renderText()
+    {
+        textBatch.render();
+    }
+
     public void setPanelResizeAction(PanelDimensionChangeAction panelDimensionChangeAction)
     {
         this.panelDimensionChangeAction = panelDimensionChangeAction;
@@ -105,11 +110,6 @@ public class DockablePanel
 
     public void dispose()
     {
-    }
-
-    public void renderText()
-    {
-        textBatch.render();
     }
 
     public Vector2f getPosition()

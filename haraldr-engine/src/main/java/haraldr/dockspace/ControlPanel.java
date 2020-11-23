@@ -37,16 +37,6 @@ public class ControlPanel extends DockablePanel
     }
 
     @Override
-    public void setPosition(Vector2f position)
-    {
-        for (LabeledComponent component : components)
-        {
-            component.setPosition(position, divider);
-        }
-        super.setPosition(position);
-    }
-
-    @Override
     protected void renderToBatch()
     {
         if (components == null) return;
@@ -62,8 +52,8 @@ public class ControlPanel extends DockablePanel
 
     private void renderSelf(Batch2D batch)
     {
+        batch.drawQuad(position, size, color);
         batch.drawQuad(position, headerSize, HEADER_COLOR);
-        batch.drawQuad(Vector2f.add(position, new Vector2f(0f, headerSize.getY())), Vector2f.add(size, new Vector2f(0f, -headerSize.getY())), color);
         batch.drawQuad(Vector2f.add(position, new Vector2f(divider - 2f, headerSize.getY())), new Vector2f(2f, size.getY() - headerSize.getY()), DIVIDER_COLOR);
     }
 

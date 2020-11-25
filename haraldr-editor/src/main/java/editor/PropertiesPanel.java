@@ -1,7 +1,8 @@
 package editor;
 
 import haraldr.dockspace.DockablePanel;
-import haraldr.dockspace.uicomponents.UIComponentList;
+import haraldr.event.Event;
+import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 
@@ -17,6 +18,13 @@ public class PropertiesPanel extends DockablePanel
     public void setUiComponentList(UIComponentList uiComponentList)
     {
         this.uiComponentList = uiComponentList;
+    }
+
+    @Override
+    public void onEvent(Event event, Window window)
+    {
+        super.onEvent(event, window);
+        if (uiComponentList.onEvent(event)) renderToBatch();
     }
 
     @Override

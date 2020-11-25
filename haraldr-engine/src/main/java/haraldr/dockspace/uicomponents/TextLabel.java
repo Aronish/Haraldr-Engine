@@ -14,6 +14,7 @@ public class TextLabel
     private String text;
     private Vector4f color;
     private Vector2f position;
+    private boolean enabled = true;
     private List<Float> textMeshData = new ArrayList<>();
 
     public TextLabel(@NotNull String text, Vector2f position, Vector4f color, Font font)
@@ -39,6 +40,11 @@ public class TextLabel
     public void setPosition(Vector2f position)
     {
         this.position.set(Vector2f.add(position, new Vector2f(0f, font.getSize() - font.getBaseline())));
+    }
+
+    public void setEnabled(boolean enabled)
+    {
+        this.enabled = enabled;
     }
 
     public void addPosition(Vector2f position)
@@ -69,6 +75,6 @@ public class TextLabel
 
     public List<Float> getTextMeshData()
     {
-        return textMeshData;
+        return enabled ? textMeshData : new ArrayList<>();
     }
 }

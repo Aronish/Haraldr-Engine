@@ -1,19 +1,16 @@
 package editor;
 
-import haraldr.dockspace.ControlPanel;
+import haraldr.debug.Logger;
 import haraldr.dockspace.DockPosition;
 import haraldr.dockspace.Dockspace;
-import haraldr.dockspace.uicomponents.Button;
 import haraldr.dockspace.uicomponents.Checkbox;
 import haraldr.dockspace.uicomponents.InfoLabel;
-import haraldr.dockspace.uicomponents.Slider;
-import haraldr.dockspace.uicomponents.UIComponentList;
-import haraldr.dockspace.uicomponents.UnLabeledComponent;
+import haraldr.dockspace.uicomponents.UnlabeledCheckbox;
+import haraldr.dockspace.uicomponents.UnlabeledComponent;
 import haraldr.ecs.BoundingSphereComponent;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
 import haraldr.ecs.ModelComponent;
-import haraldr.ecs.TransformComponent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
@@ -77,8 +74,14 @@ public class EditorApplication extends Application
 
         // Properties Panel
         dockSpace.addPanel(propertiesPanel = new PropertiesPanel(new Vector2f(), new Vector2f(), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Properties"));
-        UIComponentList uiComponentList = new UIComponentList(propertiesPanel);
-        uiComponentList.addComponent("Test", new UnLabeledComponent());
+        UIComponentList uiComponentList = new UIComponentList("Component", propertiesPanel);
+        uiComponentList.addComponent("Test", new UnlabeledCheckbox());
+        uiComponentList.addComponent("Waow cool button", new UnlabeledCheckbox());
+        UnlabeledCheckbox testBox = new UnlabeledCheckbox((state) ->
+        {
+            Logger.info("Checked: " + state);
+        });
+        uiComponentList.addComponent("Nonii", testBox);
         propertiesPanel.setUiComponentList(uiComponentList);
         /*
         dockSpace.addPanel(propertiesPanel = new ControlPanel(new Vector2f(20f), new Vector2f(300f, 400f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Properties"));
@@ -105,11 +108,13 @@ public class EditorApplication extends Application
         // Hierarchy Panel
         dockSpace.addPanel(entityHierarchyPanel = new EntityHierarchyPanel(new Vector2f(200f), new Vector2f(200f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Hierarchy"));
         entityHierarchyPanel.refreshEntityList(scene.getRegistry());
+        /*
         entityHierarchyPanel.setEntitySelectedAction((selectedEntity ->
         {
             selected = selectedEntity;
             selectedEntityTag.setText(String.format("Entity ID: %d", selected.id));
         }));
+        */
 
         // Pre-docking
         dockSpace.dockPanel(scene3DPanel, DockPosition.RIGHT);
@@ -126,7 +131,7 @@ public class EditorApplication extends Application
         if (scene3DPanel.isPressed() && !scene3DPanel.isHeld())
         {
             editorCamera.onEvent(event, window);
-
+/*
             // Select an entity
             if (selecting.isChecked() && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
             {
@@ -143,6 +148,7 @@ public class EditorApplication extends Application
                     selectedEntityTag.setText("No entity selected");
                 }
             }
+*/
         }
 
         if (Input.wasKeyPressed(event, KeyboardKey.KEY_F)) window.toggleFullscreen();

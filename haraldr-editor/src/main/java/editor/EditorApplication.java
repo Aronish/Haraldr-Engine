@@ -7,6 +7,8 @@ import haraldr.dockspace.uicomponents.Button;
 import haraldr.dockspace.uicomponents.Checkbox;
 import haraldr.dockspace.uicomponents.InfoLabel;
 import haraldr.dockspace.uicomponents.Slider;
+import haraldr.dockspace.uicomponents.UIComponentList;
+import haraldr.dockspace.uicomponents.UnLabeledComponent;
 import haraldr.ecs.BoundingSphereComponent;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
@@ -41,7 +43,7 @@ public class EditorApplication extends Application
     private EntityHierarchyPanel entityHierarchyPanel;
     private Scene3DPanel scene3DPanel;
 
-    private ControlPanel propertiesPanel;
+    private PropertiesPanel propertiesPanel;
     private InfoLabel selectedEntityTag;
     private Checkbox selecting;
 
@@ -74,6 +76,11 @@ public class EditorApplication extends Application
         editorCamera = new OrbitalCamera(scene3DPanel.getSize().getX(), scene3DPanel.getSize().getY());
 
         // Properties Panel
+        dockSpace.addPanel(propertiesPanel = new PropertiesPanel(new Vector2f(), new Vector2f(), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Properties"));
+        UIComponentList uiComponentList = new UIComponentList(propertiesPanel);
+        uiComponentList.addComponent("Test", new UnLabeledComponent());
+        propertiesPanel.setUiComponentList(uiComponentList);
+        /*
         dockSpace.addPanel(propertiesPanel = new ControlPanel(new Vector2f(20f), new Vector2f(300f, 400f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Properties"));
         propertiesPanel.addChild(selectedEntityTag = new InfoLabel("Selected Entity", propertiesPanel));
         propertiesPanel.addChild(new Button("Center Camera", propertiesPanel, () ->
@@ -93,6 +100,7 @@ public class EditorApplication extends Application
         }));
 
         propertiesPanel.addChild(selecting = new Checkbox("Selecting", propertiesPanel));
+        */
 
         // Hierarchy Panel
         dockSpace.addPanel(entityHierarchyPanel = new EntityHierarchyPanel(new Vector2f(200f), new Vector2f(200f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Hierarchy"));

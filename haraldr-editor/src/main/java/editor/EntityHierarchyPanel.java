@@ -2,9 +2,15 @@ package editor;
 
 import haraldr.dockspace.DockablePanel;
 import haraldr.dockspace.uicomponents.TextLabel;
+import haraldr.ecs.Entity;
+import haraldr.ecs.EntityRegistry;
+import haraldr.ecs.TagComponent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
+import haraldr.event.MousePressedEvent;
+import haraldr.input.Input;
+import haraldr.input.MouseButton;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -18,16 +24,21 @@ public class EntityHierarchyPanel extends DockablePanel
     private List<EntityListItem> entityListItems = new ArrayList<>();
     private float currentListHeight;
 
+    private EntitySelectedAction entitySelectedAction = (selectedEntity) -> {};
+
     public EntityHierarchyPanel(Vector2f position, Vector2f size, Vector4f color, String name)
     {
         super(position, size, color, name);
-        addEntity("TEST");
-        addEntity("HELLO");
     }
 
-    private void addEntity(String name)
+    public void setEntitySelectedAction(EntitySelectedAction entitySelectedAction)
     {
-        EntityListItem entityListItem = new EntityListItem(name, Vector2f.add(position, new Vector2f(0f, currentListHeight + headerSize.getY())));
+        this.entitySelectedAction = entitySelectedAction;
+    }
+
+    private void addEntity(String name, Entity entity)
+    {
+        EntityListItem entityListItem = new EntityListItem(name, Vector2f.add(position, new Vector2f(0f, currentListHeight + headerSize.getY())), entity);
         currentListHeight += entityListItem.tag.getFont().getSize();
         entityListItems.add(entityListItem);
     }
@@ -37,8 +48,20 @@ public class EntityHierarchyPanel extends DockablePanel
         super.onEvent(event, window);
         for (EntityListItem entityListItem : entityListItems)
         {
-            if (entityListItem.onEvent(event)) renderToBatch();
+            if (entityListItem.onEvent(event))
+            {
+                renderToBatch();
+                if (entityListItem.pressed) entitySelectedAction.run(entityListItem.entity);
+            }
         }
+    }
+
+    public void refreshEntityList(EntityRegistry entityRegistry)
+    {
+        entityRegistry.view(TagComponent.class).forEach(((transformComponent, tagComponent) ->
+        {
+            addEntity(tagComponent.tag, entityRegistry.getEntityOf(tagComponent));
+        }));
     }
 
     @Override
@@ -50,7 +73,7 @@ public class EntityHierarchyPanel extends DockablePanel
         renderBatch.drawQuad(position, headerSize, HEADER_COLOR);
         for (EntityListItem entityListItem : entityListItems)
         {
-            renderBatch.drawQuad(entityListItem.tag.getPosition(), new Vector2f(size.getX(), entityListItem.tag.getFont().getSize()), entityListItem.hovered ? new Vector4f(0.3f, 0.3f, 0.3f, 1f) : new Vector4f(0f));
+            renderBatch.drawQuad(entityListItem.position, entityListItem.size, entityListItem.hovered ? new Vector4f(0.3f, 0.3f, 0.3f, 1f) : new Vector4f(0f));
         }
         renderBatch.end();
     }
@@ -60,22 +83,39 @@ public class EntityHierarchyPanel extends DockablePanel
     {
         for (int i = 0; i < entityListItems.size(); ++i)
         {
-            entityListItems.get(i).tag.setPosition(Vector2f.add(position, new Vector2f(0f, i * textBatch.getFont().getSize() + headerSize.getY())));
+            entityListItems.get(i).setPosition(Vector2f.add(position, new Vector2f(0f, i * textBatch.getFont().getSize() + headerSize.getY())));
         }
         super.setPosition(position);
+    }
+
+    @Override
+    public void setSize(Vector2f size)
+    {
+        for (EntityListItem entityListItem : entityListItems)
+        {
+            entityListItem.size.setX(size.getX());
+        }
+        super.setSize(size);
+    }
+
+    public interface EntitySelectedAction
+    {
+        void run(Entity selectedEntity);
     }
 
     private class EntityListItem
     {
         private TextLabel tag;
         private Vector2f position, size;
-        private boolean hovered;
+        private boolean hovered, pressed;
+        private Entity entity;
 
-        private EntityListItem(String name, Vector2f position)
+        private EntityListItem(String name, Vector2f position, Entity entity)
         {
             this.tag = EntityHierarchyPanel.this.textBatch.createTextLabel(name, position, new Vector4f(1f));
             this.position = position;
             size = new Vector2f(EntityHierarchyPanel.this.size.getX(), tag.getFont().getSize());
+            this.entity = entity;
         }
 
         private boolean onEvent(Event event)
@@ -88,7 +128,25 @@ public class EntityHierarchyPanel extends DockablePanel
                 hovered = Physics2D.pointInsideAABB(new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos), position, size);
                 requireRedraw = previousHoveredState != hovered;
             }
+            if (event.eventType == EventType.MOUSE_PRESSED && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
+            {
+                var mousePressedEvent = (MousePressedEvent) event;
+                boolean lastPressed = pressed;
+                pressed = Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), position, size);
+                requireRedraw = lastPressed != pressed;
+            }
+            if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
+            {
+                requireRedraw = pressed;
+                pressed = false;
+            }
             return requireRedraw;
+        }
+
+        private void setPosition(Vector2f position)
+        {
+            this.position.set(position);
+            tag.setPosition(position);
         }
     }
 }

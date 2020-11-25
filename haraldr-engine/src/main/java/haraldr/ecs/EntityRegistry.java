@@ -18,6 +18,7 @@ public class EntityRegistry
 
     public EntityRegistry()
     {
+        registerComponent(TagComponent.class);
         registerComponent(ModelComponent.class);
         registerComponent(TransformComponent.class);
         registerComponent(BoundingSphereComponent.class);

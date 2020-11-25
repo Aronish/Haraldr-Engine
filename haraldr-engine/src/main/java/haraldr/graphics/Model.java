@@ -64,7 +64,7 @@ public class Model
     public void render(TransformComponent transform)
     {
         Matrix4f transformationMatrix = Matrix4f.identity().translate(transform.position).scale(transform.scale);
-        if (outlined)
+        if (outlined) //TODO: Not the best
         {
             glEnable(GL_STENCIL_TEST);
             glStencilFunc(GL_ALWAYS, 1, 0xFF);

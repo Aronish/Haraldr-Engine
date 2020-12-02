@@ -22,7 +22,7 @@ public class DockablePanel
 
     protected Vector2f position, size, headerSize;
     protected Vector4f color;
-    private boolean held, pressed; // held = moving, held by header ; pressed = content area pressed
+    protected boolean held, pressed, hovered; // held = moving, held by header ; pressed = content area pressed
 
     protected TextBatch textBatch = new TextBatch(Font.DEFAULT_FONT);
     protected TextLabel name;
@@ -38,7 +38,7 @@ public class DockablePanel
         this.size = size;
         this.color = color;
         this.name = textBatch.createTextLabel(name, position, new Vector4f(1f));
-        renderToBatch();
+        renderToBatch(); //TODO: Could be structured to avoid null checks in subclasses
     }
 
     public void onEvent(Event event, Window window)
@@ -55,6 +55,7 @@ public class DockablePanel
         {
             var mouseMovedEvent = (MouseMovedEvent) event;
             Vector2f mousePoint = new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos);
+            hovered = Physics2D.pointInsideAABB(mousePoint, position, size);
             if (held)
             {
                 setPosition(mousePoint);

@@ -6,19 +6,16 @@ import haraldr.dockspace.Dockspace;
 import haraldr.dockspace.uicomponents.Checkbox;
 import haraldr.dockspace.uicomponents.InfoLabel;
 import haraldr.dockspace.uicomponents.UnlabeledCheckbox;
-import haraldr.dockspace.uicomponents.UnlabeledComponent;
 import haraldr.ecs.BoundingSphereComponent;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
 import haraldr.ecs.ModelComponent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
-import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer3D;
 import haraldr.input.Input;
 import haraldr.input.KeyboardKey;
-import haraldr.input.MouseButton;
 import haraldr.main.Application;
 import haraldr.main.ProgramArguments;
 import haraldr.main.Window;
@@ -29,6 +26,9 @@ import haraldr.physics.Physics3D;
 import haraldr.scene.Camera;
 import haraldr.scene.OrbitalCamera;
 import haraldr.scene.Scene3D;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EditorApplication extends Application
 {
@@ -63,26 +63,28 @@ public class EditorApplication extends Application
 
         // Scene Panel
         dockSpace.addPanel(scene3DPanel = new Scene3DPanel(new Vector2f(700f, 30f), new Vector2f(200f, 200f), "Scene"));
+        editorCamera = new OrbitalCamera(scene3DPanel.getSize().getX(), scene3DPanel.getSize().getY());
         scene3DPanel.setPanelResizeAction((position, size) ->
         {
             scene3DPanel.getSceneTexture().setPosition(position);
             scene3DPanel.getSceneTexture().setSize(size.getX(), size.getY());
             editorCamera.setAspectRatio(size.getX() / size.getY());
         });
-
-        editorCamera = new OrbitalCamera(scene3DPanel.getSize().getX(), scene3DPanel.getSize().getY());
+        dockSpace.dockPanel(scene3DPanel, DockPosition.RIGHT);
+        dockSpace.resizePanel(scene3DPanel, 300f);
 
         // Properties Panel
         dockSpace.addPanel(propertiesPanel = new PropertiesPanel(new Vector2f(), new Vector2f(), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Properties"));
-        UIComponentList uiComponentList = new UIComponentList("Component", propertiesPanel);
-        uiComponentList.addComponent("Test", new UnlabeledCheckbox());
-        uiComponentList.addComponent("Waow cool button", new UnlabeledCheckbox());
-        UnlabeledCheckbox testBox = new UnlabeledCheckbox((state) ->
+        dockSpace.dockPanel(propertiesPanel, DockPosition.BOTTOM);
+
+        for (int i = 0; i < 4; ++i)
         {
-            Logger.info("Checked: " + state);
-        });
-        uiComponentList.addComponent("Nonii", testBox);
-        propertiesPanel.setUiComponentList(uiComponentList);
+            UIComponentList uiComponentList = new UIComponentList("Component", propertiesPanel);
+            uiComponentList.addComponent("Test", new UnlabeledCheckbox());
+            uiComponentList.addComponent("Waow cool button", new UnlabeledCheckbox());
+            uiComponentList.addComponent("Nonii", new UnlabeledCheckbox());
+            propertiesPanel.addComponentList(uiComponentList);
+        }
         /*
         dockSpace.addPanel(propertiesPanel = new ControlPanel(new Vector2f(20f), new Vector2f(300f, 400f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Properties"));
         propertiesPanel.addChild(selectedEntityTag = new InfoLabel("Selected Entity", propertiesPanel));
@@ -115,12 +117,7 @@ public class EditorApplication extends Application
             selectedEntityTag.setText(String.format("Entity ID: %d", selected.id));
         }));
         */
-
-        // Pre-docking
-        dockSpace.dockPanel(scene3DPanel, DockPosition.RIGHT);
-        dockSpace.dockPanel(entityHierarchyPanel, DockPosition.TOP);
-        dockSpace.dockPanel(propertiesPanel, DockPosition.CENTER);
-        dockSpace.resizePanel(scene3DPanel, 300f);
+        dockSpace.dockPanel(entityHierarchyPanel, DockPosition.CENTER);
     }
 
     @Override

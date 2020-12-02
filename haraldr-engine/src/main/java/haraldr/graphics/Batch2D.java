@@ -6,7 +6,7 @@ import haraldr.math.Vector4f;
 
 public class Batch2D
 {
-    private static final int MAX_QUADS = 250, MAX_INDICES = MAX_QUADS * 6, VERTEX_SIZE = 6;
+    private static final int MAX_QUADS = 200, MAX_INDICES = MAX_QUADS * 6, VERTEX_SIZE = 6;
     private static final Shader BATCH_SHADER_2D = Shader.create("internal_shaders/batch_shader_2d.glsl");
 
     private VertexArray vertexArray;

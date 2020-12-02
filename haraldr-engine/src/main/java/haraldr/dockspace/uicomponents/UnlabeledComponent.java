@@ -13,6 +13,11 @@ public abstract class UnlabeledComponent
         this.position.set(position);
     }
 
+    public void addPosition(Vector2f position)
+    {
+        this.position.add(position);
+    }
+
     public abstract void setWidth(float width);
 
     public abstract float getVerticalSize();

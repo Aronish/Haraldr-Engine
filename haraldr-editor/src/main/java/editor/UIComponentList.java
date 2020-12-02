@@ -18,7 +18,8 @@ import java.util.Map;
 
 public class UIComponentList
 {
-    private static final float LINE_HEIGHT = 25f, PADDING = 5f, MARGIN = 2f;
+    private static final float PADDING = 0f, MARGIN = 0f;
+    private final float LINE_HEIGHT;
 
     private DockablePanel parent;
     private Vector2f position, size, headerSize;
@@ -35,6 +36,7 @@ public class UIComponentList
         size = Vector2f.add(parent.getSize(), new Vector2f(-2f * MARGIN, 0f));
         headerSize = new Vector2f(size.getX(), parent.getHeaderHeight());
         this.name = parent.getTextBatch().createTextLabel(name, position, new Vector4f(1f));
+        LINE_HEIGHT = parent.getTextBatch().getFont().getSize();
     }
 
     public boolean onEvent(Event event)
@@ -56,9 +58,12 @@ public class UIComponentList
             }
         }
 
-        for (UnlabeledComponent unlabeledComponent : components.values())
+        if (!collapsed)
         {
-            if (unlabeledComponent.onEvent(event)) requireRedraw = true;
+            for (UnlabeledComponent unlabeledComponent : components.values())
+            {
+                if (unlabeledComponent.onEvent(event)) requireRedraw = true;
+            }
         }
         return requireRedraw;
     }
@@ -79,6 +84,7 @@ public class UIComponentList
     {
         this.position.set(Vector2f.add(position, MARGIN));
         float nextY = headerSize.getY() + PADDING + MARGIN;
+
         name.setPosition(this.position);
         for (Map.Entry<TextLabel, UnlabeledComponent> entry : components.entrySet())
         {
@@ -86,6 +92,19 @@ public class UIComponentList
             entry.getValue().setPosition(Vector2f.add(position, new Vector2f(divider + PADDING, nextY)));
             nextY += LINE_HEIGHT;
         }
+        parent.getTextBatch().refreshTextMeshData();
+    }
+
+    public void addPosition(Vector2f position)
+    {
+        this.position.add(position);
+        name.addPosition(position);
+        for (Map.Entry<TextLabel, UnlabeledComponent> entry : components.entrySet())
+        {
+            entry.getKey().addPosition(position);
+            entry.getValue().addPosition(position);
+        }
+        parent.getTextBatch().refreshTextMeshData();
     }
 
     public void setSize(Vector2f size)
@@ -96,6 +115,7 @@ public class UIComponentList
         {
             unlabeledComponent.setWidth(size.getX() - divider - MARGIN * PADDING);
         }
+        parent.getTextBatch().refreshTextMeshData();
     }
 
     public void render(Batch2D batch)
@@ -106,5 +126,10 @@ public class UIComponentList
             components.values().forEach(component -> component.render(batch));
         }
         batch.drawQuad(position, headerSize, new Vector4f(0.15f, 0.15f, 0.15f, 1f));
+    }
+
+    public Vector2f getSize()
+    {
+        return collapsed ? headerSize : size;
     }
 }

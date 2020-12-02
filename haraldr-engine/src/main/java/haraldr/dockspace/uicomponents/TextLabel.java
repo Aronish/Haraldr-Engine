@@ -49,8 +49,7 @@ public class TextLabel
 
     public void addPosition(Vector2f position)
     {
-        position.print();
-        this.position.add(Vector2f.add(position, new Vector2f(0f, font.getSize() - font.getBaseline())));
+        this.position.add(position);
     }
 
     public void setColor(Vector4f color)

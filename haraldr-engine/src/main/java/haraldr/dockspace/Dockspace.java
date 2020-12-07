@@ -140,8 +140,8 @@ public class Dockspace
 
     public void render()
     {
-        renderBatch.render();
         windowHeader.render();
+        renderBatch.render();
         for (DockablePanel dockablePanel : panels)
         {
             dockablePanel.render();
@@ -220,6 +220,7 @@ public class Dockspace
             {
                 var mouseMovedEvent = (MouseMovedEvent) event;
                 Vector2f mousePoint = new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos);
+
                 if (Physics2D.pointInsideAABB(mousePoint, splitAreaPosition, splitAreaSize))
                 {
                     window.setCursorType(vertical ? Window.CursorType.RESIZE_VERTICAL : Window.CursorType.RESIZE_HORIZONTAL);
@@ -262,6 +263,10 @@ public class Dockspace
                 for (DockingArea dockingArea : firstResizingAreas)
                 {
                     dockingArea.addSize(new Vector2f(0f, amount));
+                    if (dockingArea.children.size() != 0 && !dockingArea.vertical)
+                    {
+                        dockingArea.splitAreaSize.addY(amount);
+                    }
                 }
                 for (DockingArea dockingArea : secondResizingAreas)
                 {
@@ -280,6 +285,10 @@ public class Dockspace
                 for (DockingArea dockingArea : firstResizingAreas)
                 {
                     dockingArea.addSize(new Vector2f(amount, 0f));
+                    if (dockingArea.children.size() != 0 && dockingArea.vertical)
+                    {
+                        dockingArea.splitAreaSize.addX(amount);
+                    }
                 }
                 for (DockingArea dockingArea : secondResizingAreas)
                 {

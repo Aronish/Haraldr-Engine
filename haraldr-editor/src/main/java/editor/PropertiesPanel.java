@@ -43,7 +43,7 @@ public class PropertiesPanel extends DockablePanel
             uiComponentList.setSize(size);
             currentHeight += uiComponentList.getSize().getY() + 5f;
         }
-        listHeight = currentHeight;
+        listHeight = currentHeight - scrollOffset;
     }
 
     @Override
@@ -63,26 +63,17 @@ public class PropertiesPanel extends DockablePanel
         if (hovered && event.eventType == EventType.MOUSE_SCROLLED)
         {
             var mouseScrolledEvent = (MouseScrolledEvent) event;
-            scrollOffset += mouseScrolledEvent.yOffset * SCROLL_SENSITIVITY;
-            boolean canScroll = true;
-            Logger.info(scrollOffset + " " + listHeight);
 
-            if (scrollOffset > 0f)
-            {
-                scrollOffset = 0f;
-                canScroll = false;
-            }
-            if (listHeight < size.getY())
-            {
-                canScroll = false;
-            } //TODO: FIX
+            boolean canScroll = false;
+            if (listHeight > size.getY()) canScroll = true;
 
             if (canScroll)
             {
-                for (UIComponentList uiComponentList : uiComponentLists)
-                {
-                    uiComponentList.addPosition(new Vector2f(0f, mouseScrolledEvent.yOffset * SCROLL_SENSITIVITY));
-                }
+                scrollOffset += mouseScrolledEvent.yOffset * SCROLL_SENSITIVITY;
+                Logger.info(scrollOffset);
+                if (scrollOffset > 0f) scrollOffset = 0f;
+
+                orderComponentLists(position);
                 requireRedraw = true;
             }
         }
@@ -104,6 +95,7 @@ public class PropertiesPanel extends DockablePanel
             uiComponentList.setSize(size);
         }
         super.setSize(size);
+        if (listHeight < size.getY()) scrollOffset = 0f;
     }
 
     @Override

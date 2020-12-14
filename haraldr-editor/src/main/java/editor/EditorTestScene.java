@@ -33,7 +33,6 @@ public class EditorTestScene extends Scene3D
         registry.addComponent(new BoundingSphereComponent(0.75f), ape);
         registry.addComponent(new TagComponent("Suzanne"), ape);
         registry.addComponent(new ModelComponent("default_models/model.json"), ape2);
-        registry.addComponent(new BoundingSphereComponent(0.75f), ape2);
         registry.addComponent(new TagComponent("Ball"), ape2);
     }
 

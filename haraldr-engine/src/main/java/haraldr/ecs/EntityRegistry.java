@@ -4,10 +4,13 @@ import haraldr.debug.Logger;
 import haraldr.math.Vector3f;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+@SuppressWarnings("WeakerAccess")
 public class EntityRegistry
 {
     private static int entityCount;
@@ -151,5 +154,10 @@ public class EntityRegistry
             }
         }
         return group;
+    }
+
+    public Set<Class<?>> getRegisteredComponentTypes()
+    {
+        return registeredComponents.keySet();
     }
 }

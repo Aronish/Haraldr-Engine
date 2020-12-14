@@ -1,21 +1,23 @@
 package editor;
 
-import haraldr.debug.Logger;
 import haraldr.dockspace.DockPosition;
 import haraldr.dockspace.Dockspace;
-import haraldr.dockspace.uicomponents.Checkbox;
-import haraldr.dockspace.uicomponents.InfoLabel;
+import haraldr.dockspace.uicomponents.InputField;
 import haraldr.dockspace.uicomponents.UnlabeledCheckbox;
+import haraldr.dockspace.uicomponents.UnlabeledInputField;
 import haraldr.ecs.BoundingSphereComponent;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
 import haraldr.ecs.ModelComponent;
+import haraldr.ecs.SerializeField;
 import haraldr.event.Event;
 import haraldr.event.EventType;
+import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer3D;
 import haraldr.input.Input;
 import haraldr.input.KeyboardKey;
+import haraldr.input.MouseButton;
 import haraldr.main.Application;
 import haraldr.main.ProgramArguments;
 import haraldr.main.Window;
@@ -27,8 +29,7 @@ import haraldr.scene.Camera;
 import haraldr.scene.OrbitalCamera;
 import haraldr.scene.Scene3D;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Field;
 
 public class EditorApplication extends Application
 {
@@ -41,8 +42,6 @@ public class EditorApplication extends Application
     private Scene3DPanel scene3DPanel;
 
     private PropertiesPanel propertiesPanel;
-    private InfoLabel selectedEntityTag;
-    private Checkbox selecting;
 
     public EditorApplication()
     {
@@ -77,47 +76,75 @@ public class EditorApplication extends Application
         dockSpace.addPanel(propertiesPanel = new PropertiesPanel(new Vector2f(), new Vector2f(), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Properties"));
         dockSpace.dockPanel(propertiesPanel, DockPosition.BOTTOM);
 
-        for (int i = 0; i < 4; ++i)
-        {
-            UIComponentList uiComponentList = new UIComponentList("Component", propertiesPanel);
-            uiComponentList.addComponent("Test", new UnlabeledCheckbox());
-            uiComponentList.addComponent("Waow cool button", new UnlabeledCheckbox());
-            uiComponentList.addComponent("Nonii", new UnlabeledCheckbox());
-            propertiesPanel.addComponentList(uiComponentList);
-        }
-        /*
-        dockSpace.addPanel(propertiesPanel = new ControlPanel(new Vector2f(20f), new Vector2f(300f, 400f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Properties"));
-        propertiesPanel.addChild(selectedEntityTag = new InfoLabel("Selected Entity", propertiesPanel));
-        propertiesPanel.addChild(new Button("Center Camera", propertiesPanel, () ->
-        {
-            if (!selected.equals(Entity.INVALID))
-            {
-                editorCamera.setPosition(scene.getRegistry().getComponent(TransformComponent.class, selected).position);
-            }
-        }));
-
-        InfoLabel sliderValue;
-        propertiesPanel.addChild(sliderValue = new InfoLabel("Exposure Value", propertiesPanel));
-        propertiesPanel.addChild(new Slider("Exposure", propertiesPanel, 0f, 2f, value ->
-        {
-            scene3DPanel.getHdrGammaCorrectionPass().setExposure(value);
-            sliderValue.setText(Float.toString(value));
-        }));
-
-        propertiesPanel.addChild(selecting = new Checkbox("Selecting", propertiesPanel));
-        */
-
         // Hierarchy Panel
         dockSpace.addPanel(entityHierarchyPanel = new EntityHierarchyPanel(new Vector2f(200f), new Vector2f(200f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Hierarchy"));
         entityHierarchyPanel.refreshEntityList(scene.getRegistry());
-        /*
-        entityHierarchyPanel.setEntitySelectedAction((selectedEntity ->
+        entityHierarchyPanel.setEntitySelectedAction(selectedEntity ->
         {
+            if (!selected.equals(Entity.INVALID))
+            {
+                ModelComponent lastModel = scene.getRegistry().getComponent(ModelComponent.class, selected);
+                lastModel.model.setOutlined(false);
+            }
             selected = selectedEntity;
-            selectedEntityTag.setText(String.format("Entity ID: %d", selected.id));
-        }));
-        */
+            propertiesPanel.clear();
+            if (!selected.equals(Entity.INVALID))
+            {
+                ModelComponent model = scene.getRegistry().getComponent(ModelComponent.class, selected);
+                model.model.setOutlined(true);
+                try
+                {
+                    populatePropertiesPanel();
+                } catch (IllegalAccessException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
         dockSpace.dockPanel(entityHierarchyPanel, DockPosition.CENTER);
+    }
+
+    private void populatePropertiesPanel() throws IllegalAccessException
+    {
+        for (Class<?> componentType : scene.getRegistry().getRegisteredComponentTypes())
+        {
+            if (scene.getRegistry().hasComponent(componentType, selected))
+            {
+                UIComponentList uiComponentList = new UIComponentList(componentType.getSimpleName(), propertiesPanel);
+                for (Field field : componentType.getDeclaredFields())
+                {
+                    if (field.isAnnotationPresent(SerializeField.class))
+                    {
+                        field.setAccessible(true);
+                        uiComponentList.addComponent(field.getName(), switch (field.getType().getSimpleName())
+                        {
+                            case "String" -> new UnlabeledInputField(propertiesPanel.getTextBatch(), (String)field.get(scene.getRegistry().getComponent(componentType, selected)), (((addedChar, fullText) ->
+                            {
+                                try
+                                {
+                                    field.set(scene.getRegistry().getComponent(componentType, selected), fullText);
+                                } catch (IllegalAccessException e)
+                                {
+                                    e.printStackTrace();
+                                }
+                            })));
+                            case "float" -> new UnlabeledInputField(propertiesPanel.getTextBatch(), (String)field.get(scene.getRegistry().getComponent(componentType, selected)), InputField.InputType.NUMBERS, (((addedChar, fullText) ->
+                            {
+                                try
+                                {
+                                    field.set(scene.getRegistry().getComponent(componentType, selected), fullText);
+                                } catch (IllegalAccessException e)
+                                {
+                                    e.printStackTrace();
+                                }
+                            })));
+                            default -> new UnlabeledCheckbox();
+                        });
+                    }
+                }
+                propertiesPanel.addComponentList(uiComponentList);
+            }
+        }
     }
 
     @Override
@@ -128,24 +155,15 @@ public class EditorApplication extends Application
         if (scene3DPanel.isPressed() && !scene3DPanel.isHeld())
         {
             editorCamera.onEvent(event, window);
-/*
             // Select an entity
-            if (selecting.isChecked() && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
+            if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
             {
                 var mousePressedEvent = (MousePressedEvent) event;
-                selected = selectEntity(
+                selected = selectEntityWithMouse(
                         new Vector2f(mousePressedEvent.xPos - scene3DPanel.getSceneTexture().getPosition().getX(), mousePressedEvent.yPos - scene3DPanel.getSceneTexture().getPosition().getY()),
                         scene3DPanel.getSceneTexture().getSize(),
                         selected, scene.getRegistry());
-                if (!selected.equals(Entity.INVALID))
-                {
-                    selectedEntityTag.setText(String.format("Entity ID: %d", selected.id));
-                } else
-                {
-                    selectedEntityTag.setText("No entity selected");
-                }
             }
-*/
         }
 
         if (Input.wasKeyPressed(event, KeyboardKey.KEY_F)) window.toggleFullscreen();
@@ -156,7 +174,7 @@ public class EditorApplication extends Application
         }
     }
 
-    private Entity selectEntity(Vector2f mousePoint, Vector2f windowSize, Entity lastSelected, EntityRegistry registry)
+    private Entity selectEntityWithMouse(Vector2f mousePoint, Vector2f windowSize, Entity lastSelected, EntityRegistry registry)
     {
         Vector3f ray = Physics3D.castRayFromMouse(mousePoint, windowSize, editorCamera.getViewMatrix(), editorCamera.getProjectionMatrix());
 

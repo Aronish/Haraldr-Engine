@@ -32,8 +32,7 @@ public class Batch2D
 
     public void begin()
     {
-        indexCount = 0;
-        insertIndex = 0;
+        insertIndex = indexCount = 0;
         vertexData = new float[MAX_QUADS * VERTEX_SIZE * 4];
     }
 
@@ -91,6 +90,14 @@ public class Batch2D
         BATCH_SHADER_2D.setMatrix4f("projection", Renderer2D.pixelOrthographic);
         vertexArray.bind();
         vertexArray.drawElements(indexCount);
+    }
+
+    public void clear() //BUG: GL_INVALID_VALUE somewhere
+    {
+        vertexBuffer.setData(new float[] {});
+        vertexData = null;
+        Logger.info(insertIndex + " " + indexCount);
+        insertIndex = indexCount = 0;
     }
 
     public void dispose()

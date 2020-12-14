@@ -34,6 +34,12 @@ public class PropertiesPanel extends DockablePanel
         renderToBatch();
     }
 
+    public void clear()
+    {
+        uiComponentLists.clear();
+        textBatch.clear();
+    }
+
     private void orderComponentLists(Vector2f position)
     {
         float currentHeight = scrollOffset;
@@ -70,7 +76,6 @@ public class PropertiesPanel extends DockablePanel
             if (canScroll)
             {
                 scrollOffset += mouseScrolledEvent.yOffset * SCROLL_SENSITIVITY;
-                Logger.info(scrollOffset);
                 if (scrollOffset > 0f) scrollOffset = 0f;
 
                 orderComponentLists(position);

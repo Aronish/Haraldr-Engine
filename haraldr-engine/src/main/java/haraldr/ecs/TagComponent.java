@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Contract;
 
 public class TagComponent
 {
+    @SerializeField
     public String tag;
 
     @Contract(pure = true)

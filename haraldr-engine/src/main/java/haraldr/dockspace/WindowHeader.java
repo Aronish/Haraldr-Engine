@@ -1,5 +1,6 @@
 package haraldr.dockspace;
 
+import haraldr.debug.Logger;
 import haraldr.dockspace.uicomponents.Font;
 import haraldr.dockspace.uicomponents.TextBatch;
 import haraldr.dockspace.uicomponents.TextLabel;
@@ -7,6 +8,7 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.graphics.Batch2D;
+import haraldr.graphics.Renderer;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;

@@ -23,7 +23,7 @@ public abstract class UnlabeledComponent
     public abstract float getVerticalSize();
 
     /**
-     * @return true if an event requires a ControlPanel to redraw.
+     * @return true if an event requires a redraw.
      */
     public abstract boolean onEvent(Event event);
 

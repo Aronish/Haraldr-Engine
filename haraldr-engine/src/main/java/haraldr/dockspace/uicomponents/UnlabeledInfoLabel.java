@@ -1,27 +1,28 @@
 package haraldr.dockspace.uicomponents;
 
-import haraldr.dockspace.ControlPanel;
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 
-public class InfoLabel extends LabeledComponent
+public class UnlabeledInfoLabel extends UnlabeledComponent
 {
-    private String value = "";
+    private String value;
     private TextLabel valueLabel;
+    private TextBatch parentTextBatch;
 
-    public InfoLabel(String name, ControlPanel parent)
+    public UnlabeledInfoLabel(String value, TextBatch parentTextBatch)
     {
-        super(name, parent);
-        valueLabel = parent.getTextBatch().createTextLabel(value, new Vector2f(), new Vector4f(1f));
+        this.value = value;
+        this.parentTextBatch = parentTextBatch;
+        valueLabel = parentTextBatch.createTextLabel(value, position, new Vector4f(1f));
     }
 
-    public void setText(String text)
+    public void setValue(String value)
     {
-        value = text;
+        this.value = value;
         valueLabel.setText(value);
-        parent.getTextBatch().refreshTextMeshData();
+        parentTextBatch.refreshTextMeshData();
     }
 
     public String getValue()
@@ -30,10 +31,11 @@ public class InfoLabel extends LabeledComponent
     }
 
     @Override
-    protected void setComponentPosition(Vector2f position)
+    public void setPosition(Vector2f position)
     {
+        super.setPosition(position);
         valueLabel.setPosition(position);
-        parent.getTextBatch().refreshTextMeshData();
+        parentTextBatch.refreshTextMeshData();
     }
 
     @Override
@@ -44,7 +46,7 @@ public class InfoLabel extends LabeledComponent
     @Override
     public float getVerticalSize()
     {
-        return parent.getTextBatch().getFont().getSize();
+        return valueLabel.getFont().getSize();
     }
 
     @Override

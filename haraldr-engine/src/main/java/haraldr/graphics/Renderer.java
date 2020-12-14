@@ -28,6 +28,7 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glCullFace;
 import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL11.glStencilFunc;
 import static org.lwjgl.opengl.GL11.glStencilMask;
 import static org.lwjgl.opengl.GL11.glStencilOp;
@@ -96,6 +97,11 @@ public class Renderer
     public static void cullBack()
     {
         glCullFace(GL_BACK);
+    }
+
+    public static int getError()
+    {
+        return glGetError();
     }
 
     public enum ClearMask

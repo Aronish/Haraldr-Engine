@@ -4,7 +4,7 @@ import haraldr.graphics.Model;
 
 public class ModelComponent
 {
-    public Model model;
+    public Model model; //TODO: Add serialization
 
     public ModelComponent(String path)
     {

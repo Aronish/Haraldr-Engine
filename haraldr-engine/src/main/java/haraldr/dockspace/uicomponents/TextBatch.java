@@ -1,5 +1,7 @@
 package haraldr.dockspace.uicomponents;
 
+import haraldr.debug.Logger;
+import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.ResourceManager;
 import haraldr.graphics.Shader;
@@ -75,6 +77,13 @@ public class TextBatch
         font.bind(0);
         texts.bind();
         texts.drawElements(indexCount);
+    }
+
+    public void clear()
+    {
+        textMeshData.setData(new float[] {});
+        textLabels.clear();
+        indexCount = 0;
     }
 
     public Font getFont()

@@ -1,6 +1,5 @@
 package haraldr.dockspace.uicomponents;
 
-import haraldr.dockspace.ControlPanel;
 import haraldr.event.CharTypedEvent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
@@ -12,53 +11,55 @@ import haraldr.input.MouseButton;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
-import org.jetbrains.annotations.Contract;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@SuppressWarnings("unused")
-public class InputField extends LabeledComponent
+public class UnlabeledInputField extends UnlabeledComponent
 {
     private static final Vector4f SELECTED_COLOR = new Vector4f(1f), UNSELECTED_COLOR = new Vector4f(0f, 0f, 0f, 1f);
 
-    private Vector2f borderPosition = new Vector2f(), borderSize;
+    private Vector2f borderSize;
     private Vector2f fieldPosition = new Vector2f(), fieldSize;
     private float borderWidth = 2f;
     private boolean selected;
 
-    private InputType inputType;
+    private InputField.InputType inputType;
     private String value = "";
     private TextLabel textLabel;
+    private TextBatch parentTextBatch;
 
-    private InputFieldChangeAction inputFieldChangeAction;
+    private InputField.InputFieldChangeAction inputFieldChangeAction;
 
-    public InputField(String name, ControlPanel parent)
+    public UnlabeledInputField(TextBatch parentTextBatch)
     {
-        this(name, parent, InputType.ANY, ((addedChar, fullText) -> {}));
+        this(parentTextBatch, "", InputField.InputType.ANY, (((addedChar, fullText) -> {})));
     }
 
-    public InputField(String name, ControlPanel parent, InputFieldChangeAction inputFieldChangeAction)
+    public UnlabeledInputField(TextBatch parentTextBatch, String defaultValue)
     {
-        this(name, parent, InputType.ANY, inputFieldChangeAction);
+        this(parentTextBatch, defaultValue, InputField.InputType.ANY, ((addedChar, fullText) -> {}));
     }
 
-    public InputField(String name, ControlPanel parent, InputType inputType)
+    public UnlabeledInputField(TextBatch parentTextBatch, String defaultValue, InputField.InputFieldChangeAction inputFieldChangeAction)
     {
-        this(name, parent, inputType, ((addedChar, fullText) -> {}));
+        this(parentTextBatch, defaultValue, InputField.InputType.ANY, inputFieldChangeAction);
     }
 
-    public InputField(String name, ControlPanel parent, InputType inputType, InputFieldChangeAction inputFieldChangeAction)
+    public UnlabeledInputField(TextBatch parentTextBatch, String defaultValue, InputField.InputType inputType)
     {
-        super(name, parent);
-        fieldSize = new Vector2f(parent.getComponentDivisionSize() - 2f * borderWidth, label.getFont().getSize() - 2f * borderWidth);
-        borderSize = new Vector2f(parent.getComponentDivisionSize(), label.getFont().getSize());
-        textLabel = parent.getTextBatch().createTextLabel(value, fieldPosition, new Vector4f(0f, 0f, 0f, 1f));
+        this(parentTextBatch, defaultValue, inputType, ((addedChar, fullText) -> {}));
+    }
+
+    public UnlabeledInputField(TextBatch parentTextBatch, String defaultValue, InputField.InputType inputType, InputField.InputFieldChangeAction inputFieldChangeAction)
+    {
+        fieldSize = new Vector2f(0f, parentTextBatch.getFont().getSize() - 2f * borderWidth);
+        borderSize = new Vector2f(0f, parentTextBatch.getFont().getSize());
+        textLabel = parentTextBatch.createTextLabel(defaultValue, fieldPosition, new Vector4f(0f, 0f, 0f, 1f));
+        value = defaultValue;
         this.inputType = inputType;
         this.inputFieldChangeAction = inputFieldChangeAction;
+        this.parentTextBatch = parentTextBatch;
     }
 
-    public void setInputFieldChangeAction(InputFieldChangeAction inputFieldChangeAction)
+    public void setInputFieldChangeAction(InputField.InputFieldChangeAction inputFieldChangeAction)
     {
         this.inputFieldChangeAction = inputFieldChangeAction;
     }
@@ -67,33 +68,28 @@ public class InputField extends LabeledComponent
     {
         this.value = value;
         textLabel.setText(value);
+        parentTextBatch.refreshTextMeshData();
     }
 
     @Override
-    public void setComponentPosition(Vector2f position)
+    public void setPosition(Vector2f position)
     {
-        fieldPosition = Vector2f.add(position, borderWidth);
-        borderPosition = position;
-        textLabel.setPosition(fieldPosition);
+        super.setPosition(position);
+        fieldPosition.set(Vector2f.add(position, borderWidth));
+        textLabel.setPosition(position);
     }
 
     @Override
     public void setWidth(float width)
     {
-        borderSize.setX(width);
         fieldSize.setX(width - 2f * borderWidth);
-        parent.getTextBatch().refreshTextMeshData();
+        borderSize.setX(width);
     }
 
     @Override
     public float getVerticalSize()
     {
         return borderSize.getY();
-    }
-
-    public String getValue()
-    {
-        return value;
     }
 
     @Override
@@ -113,7 +109,7 @@ public class InputField extends LabeledComponent
             {
                 value = "";
                 textLabel.setText(value);
-                parent.getTextBatch().refreshTextMeshData();
+                parentTextBatch.refreshTextMeshData();
                 inputFieldChangeAction.run('\b', value);
             }
         }
@@ -125,18 +121,18 @@ public class InputField extends LabeledComponent
                 {
                     value = value.substring(0, value.length() - 1);
                     textLabel.setText(value);
-                    parent.getTextBatch().refreshTextMeshData();
+                    parentTextBatch.refreshTextMeshData();
                     inputFieldChangeAction.run('\b', value);
                 }
             }
             if (event.eventType == EventType.CHAR_TYPED)
             {
                 var charTypedEvent = (CharTypedEvent) event;
-                if (inputType == InputType.ANY || inputType.allowedCharacters.contains(charTypedEvent.character))
+                if (inputType == InputField.InputType.ANY || inputType.allowedCharacters.contains(charTypedEvent.character))
                 {
                     value += charTypedEvent.character;
                     textLabel.setText(value);
-                    parent.getTextBatch().refreshTextMeshData();
+                    parentTextBatch.refreshTextMeshData();
                     inputFieldChangeAction.run(charTypedEvent.character, value);
                 }
             }
@@ -147,26 +143,7 @@ public class InputField extends LabeledComponent
     @Override
     public void render(Batch2D batch)
     {
-        batch.drawQuad(borderPosition, borderSize, selected ? SELECTED_COLOR : UNSELECTED_COLOR);
+        batch.drawQuad(position, borderSize, selected ? SELECTED_COLOR : UNSELECTED_COLOR);
         batch.drawQuad(fieldPosition, fieldSize, new Vector4f(0.8f, 0.8f, 0.8f, 1f));
-    }
-
-    public enum InputType
-    {
-        ANY(new ArrayList<>()),
-        NUMBERS(List.of('1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.'));
-
-        public final List<Character> allowedCharacters;
-
-        @Contract(pure = true)
-        InputType(List<Character> allowedCharacters)
-        {
-            this.allowedCharacters = allowedCharacters;
-        }
-    }
-
-    public interface InputFieldChangeAction
-    {
-        void run(char addedChar, String fullText);
     }
 }

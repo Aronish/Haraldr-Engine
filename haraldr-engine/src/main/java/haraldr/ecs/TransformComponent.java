@@ -5,7 +5,9 @@ import org.jetbrains.annotations.Contract;
 
 public class TransformComponent
 {
+    @SerializeField
     public Vector3f position;
+    @SerializeField
     public Vector3f scale;
 
     @Contract(pure = true)

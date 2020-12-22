@@ -154,7 +154,7 @@ public class InputField extends LabeledComponent
     public enum InputType
     {
         ANY(new ArrayList<>()),
-        NUMBERS(List.of('1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.'));
+        NUMBERS(List.of('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'));
 
         public final List<Character> allowedCharacters;
 

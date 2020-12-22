@@ -1,5 +1,5 @@
 {
-  "mesh": "default_meshes/suzanne.obj",
+  "mesh": "default_meshes/suzanne_smooth.obj",
   "material":
   {
     "type": "PBR",

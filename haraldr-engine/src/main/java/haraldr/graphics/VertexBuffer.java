@@ -1,6 +1,7 @@
 package haraldr.graphics;
 
 import haraldr.main.ArrayUtils;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class VertexBuffer
     private float[] data;
     private int vertexAmount;
 
-    public VertexBuffer(@NotNull float[] data, @NotNull VertexBufferLayout layout, @NotNull Usage usage)
+    public VertexBuffer(float[] data, @NotNull VertexBufferLayout layout, @NotNull Usage usage)
     {
         target = GL_ARRAY_BUFFER;
         this.usage = usage.VALUE;
@@ -145,6 +146,7 @@ public class VertexBuffer
 
         public final int VALUE;
 
+        @Contract(pure = true)
         Usage(int value)
         {
             VALUE = value;

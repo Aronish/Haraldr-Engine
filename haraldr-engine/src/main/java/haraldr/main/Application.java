@@ -58,7 +58,7 @@ public abstract class Application
         loop();
     }
 
-    protected void stop()
+    private void stop()
     {
         glfwSetWindowShouldClose(window.getWindowHandle(), true);
     }

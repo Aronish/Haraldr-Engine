@@ -2,6 +2,7 @@ package editor;
 
 import haraldr.debug.Logger;
 import haraldr.dockspace.DockablePanel;
+import haraldr.dockspace.uicomponents.ComponentPropertyList;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseScrolledEvent;
@@ -19,7 +20,7 @@ public class PropertiesPanel extends DockablePanel
     private static final float SCROLL_SENSITIVITY = 10f;
 
     private Batch2D listBatch = new Batch2D();
-    private List<UIComponentList> uiComponentLists = new ArrayList<>();
+    private List<ComponentPropertyList> componentPropertyLists = new ArrayList<>();
     private float scrollOffset, listHeight;
 
     public PropertiesPanel(Vector2f position, Vector2f size, Vector4f color, String name)
@@ -27,27 +28,29 @@ public class PropertiesPanel extends DockablePanel
         super(position, size, color, name);
     }
 
-    public void addComponentList(UIComponentList uiComponentList)
+    public void addComponentList(ComponentPropertyList componentPropertyList)
     {
-        uiComponentLists.add(uiComponentList);
+        componentPropertyLists.add(componentPropertyList);
         orderComponentLists(position);
         renderToBatch();
     }
 
     public void clear()
     {
-        uiComponentLists.clear();
+        componentPropertyLists.clear();
+        listBatch.clear();
         textBatch.clear();
+        textBatch.addTextLabel(name);
     }
 
     private void orderComponentLists(Vector2f position)
     {
         float currentHeight = scrollOffset;
-        for (UIComponentList uiComponentList : uiComponentLists)
+        for (ComponentPropertyList componentPropertyList : componentPropertyLists)
         {
-            uiComponentList.setPosition(Vector2f.add(position, new Vector2f(0f, currentHeight + headerSize.getY())));
-            uiComponentList.setSize(size);
-            currentHeight += uiComponentList.getSize().getY() + 5f;
+            componentPropertyList.setPosition(Vector2f.add(position, new Vector2f(0f, currentHeight + headerSize.getY())));
+            componentPropertyList.setSize(size);
+            currentHeight += componentPropertyList.getSize().getY() + 5f;
         }
         listHeight = currentHeight - scrollOffset;
     }
@@ -57,9 +60,9 @@ public class PropertiesPanel extends DockablePanel
     {
         boolean requireRedraw = false;
         super.onEvent(event, window);
-        for (UIComponentList uiComponentList : uiComponentLists)
+        for (ComponentPropertyList componentPropertyList : componentPropertyLists)
         {
-            if (uiComponentList.onEvent(event))
+            if (componentPropertyList.onEvent(event))
             {
                 orderComponentLists(position);
                 requireRedraw = true;
@@ -95,9 +98,9 @@ public class PropertiesPanel extends DockablePanel
     @Override
     public void setSize(Vector2f size)
     {
-        for (UIComponentList uiComponentList : uiComponentLists)
+        for (ComponentPropertyList componentPropertyList : componentPropertyLists)
         {
-            uiComponentList.setSize(size);
+            componentPropertyList.setSize(size);
         }
         super.setSize(size);
         if (listHeight < size.getY()) scrollOffset = 0f;
@@ -106,13 +109,13 @@ public class PropertiesPanel extends DockablePanel
     @Override
     protected void renderToBatch() // TODO: Render only visible
     {
-        if (uiComponentLists == null) return;
+        if (componentPropertyLists == null) return;
         super.renderToBatch();
 
         listBatch.begin();
-        for (UIComponentList uiComponentList : uiComponentLists)
+        for (ComponentPropertyList componentPropertyList : componentPropertyLists)
         {
-            uiComponentList.render(listBatch);
+            componentPropertyList.render(listBatch);
         }
         listBatch.end();
     }

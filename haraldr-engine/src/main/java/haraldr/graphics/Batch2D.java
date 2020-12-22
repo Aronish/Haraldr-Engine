@@ -92,11 +92,9 @@ public class Batch2D
         vertexArray.drawElements(indexCount);
     }
 
-    public void clear() //BUG: GL_INVALID_VALUE somewhere
+    public void clear() //BUG: GL_INVALID_VALUE somewhere if VertexBuffer#setData is used.
     {
-        vertexBuffer.setData(new float[] {});
-        vertexData = null;
-        Logger.info(insertIndex + " " + indexCount);
+        vertexBuffer.setSubData(new float[] {}, 0);
         insertIndex = indexCount = 0;
     }
 

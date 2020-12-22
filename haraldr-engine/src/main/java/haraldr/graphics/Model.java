@@ -63,7 +63,7 @@ public class Model
 
     public void render(TransformComponent transform)
     {
-        Matrix4f transformationMatrix = Matrix4f.identity().translate(transform.position).scale(transform.scale);
+        Matrix4f transformationMatrix = Matrix4f.identity().translate(transform.position).rotate(transform.rotation).scale(transform.scale);
         if (outlined) //TODO: Not the best
         {
             glEnable(GL_STENCIL_TEST);
@@ -79,7 +79,7 @@ public class Model
             OUTLINE_SHADER.bind();
             OUTLINE_SHADER.setMatrix4f("model", transformationMatrix);
             OUTLINE_SHADER.setFloat("u_Outline_Size", 0.05f);
-            OUTLINE_SHADER.setBoolean("u_Expand_Normals", true);
+            OUTLINE_SHADER.setBoolean("u_Expand_Normals", false);
             mesh.drawElements();
             glStencilFunc(GL_ALWAYS, 1, 0xFF);
             glStencilMask(0xFF);

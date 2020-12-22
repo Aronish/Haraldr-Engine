@@ -16,8 +16,8 @@ import haraldr.scene.Scene3D;
 
 public class EditorTestScene extends Scene3D
 {
-    private Entity ape = registry.createEntity(new Vector3f(0f, 0f, 0f), new Vector3f(0.5f));
-    private Entity ape2 = registry.createEntity(new Vector3f(0f, 4f, 0f), new Vector3f(0.5f));
+    private Entity ape = registry.createEntity(new Vector3f(0f, 0f, 0f), new Vector3f(0.5f), new Vector3f());
+    private Entity ape2 = registry.createEntity(new Vector3f(0f, 4f, 0f), new Vector3f(0.5f), new Vector3f());
     private float interpolation;
 
     private PointLight pointLight = new PointLight(new Vector3f(), new Vector3f(5f, 3f, 1f));
@@ -51,8 +51,8 @@ public class EditorTestScene extends Scene3D
     {
         if (Input.isKeyPressed(window, KeyboardKey.KEY_UP))     Renderer3D.addExposure(deltaTime);
         if (Input.isKeyPressed(window, KeyboardKey.KEY_DOWN))   Renderer3D.addExposure(-deltaTime);
-        if (Input.isKeyPressed(window, KeyboardKey.KEY_9))   interpolation += 1f * deltaTime;
-        if (Input.isKeyPressed(window, KeyboardKey.KEY_7))   interpolation -= 1f * deltaTime;
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_9))   interpolation += deltaTime;
+        if (Input.isKeyPressed(window, KeyboardKey.KEY_7))   interpolation -= deltaTime;
         pointLight.setPosition(new Vector3f(Math.sin(interpolation), 0f, Math.cos(interpolation)));
     }
 
@@ -65,6 +65,5 @@ public class EditorTestScene extends Scene3D
     @Override
     protected void onClientDispose()
     {
-
     }
 }

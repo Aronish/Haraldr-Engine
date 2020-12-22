@@ -1,4 +1,4 @@
-package editor;
+package haraldr.dockspace.uicomponents;
 
 import haraldr.dockspace.DockablePanel;
 import haraldr.dockspace.uicomponents.TextLabel;
@@ -6,6 +6,7 @@ import haraldr.dockspace.uicomponents.UnlabeledComponent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
+import haraldr.event.ParentCollapsedEvent;
 import haraldr.graphics.Batch2D;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
@@ -16,7 +17,7 @@ import haraldr.physics.Physics2D;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class UIComponentList
+public class ComponentPropertyList
 {
     private static final float PADDING = 0f, MARGIN = 0f;
     private final float LINE_HEIGHT;
@@ -29,7 +30,7 @@ public class UIComponentList
     private float divider, nextListY;
     private boolean collapsed;
 
-    public UIComponentList(String name, DockablePanel parent)
+    public ComponentPropertyList(String name, DockablePanel parent)
     {
         this.parent = parent;
         position = Vector2f.add(parent.getPosition(), new Vector2f(MARGIN));
@@ -53,6 +54,10 @@ public class UIComponentList
                 for (TextLabel textLabel : components.keySet())
                 {
                     textLabel.setEnabled(!collapsed);
+                }
+                for (UnlabeledComponent unlabeledComponent : components.values())
+                {
+                    unlabeledComponent.onEvent(new ParentCollapsedEvent(!collapsed));
                 }
                 parent.getTextBatch().refreshTextMeshData();
             }
@@ -126,6 +131,11 @@ public class UIComponentList
             components.values().forEach(component -> component.render(batch));
         }
         batch.drawQuad(position, headerSize, new Vector4f(0.15f, 0.15f, 0.15f, 1f));
+    }
+
+    public DockablePanel getParent()
+    {
+        return parent;
     }
 
     public Vector2f getSize()

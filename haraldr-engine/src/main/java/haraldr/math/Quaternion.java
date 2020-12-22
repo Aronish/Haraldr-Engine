@@ -18,14 +18,30 @@ public class Quaternion
         this.z = z;
     }
 
-    @NotNull
     @Contract("_, _ -> new")
-    public static Quaternion fromAxis(@NotNull Vector3f axis, float angle)
+    public static @NotNull Quaternion fromAxis(@NotNull Vector3f axis, float angle)
     {
         axis.normalize();
         float halfAngle = (float) Math.toRadians(angle * 0.5f);
         float sinHalfAngle = (float) Math.sin(halfAngle);
         return new Quaternion((float) Math.cos(halfAngle), axis.getX() * sinHalfAngle, axis.getY() * sinHalfAngle, axis.getZ() * sinHalfAngle);
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull Quaternion fromEulerAngles(@NotNull Vector3f rotation)
+    {
+        double cy = Math.cos(rotation.getZ() * 0.5f);
+        double sy = Math.sin(rotation.getZ() * 0.5f);
+        double cp = Math.cos(rotation.getY() * 0.5f);
+        double sp = Math.sin(rotation.getY() * 0.5f);
+        double cr = Math.cos(rotation.getX() * 0.5f);
+        double sr = Math.sin(rotation.getX() * 0.5f);
+        return new Quaternion(
+                (float) (cr * cp * cy + sr * sp * sy),
+                (float) (sr * cp * cy - cr * sp * sy),
+                (float) (cr * sp * cy + sr * cp * sy),
+                (float) (cr * cp * sy - sr * sp * cy)
+        );
     }
 
     public void normalize()

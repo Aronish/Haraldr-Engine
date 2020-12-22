@@ -15,7 +15,7 @@ public class EntityRegistry
 {
     private static int entityCount;
 
-    private Map<Class<?>, ComponentStorage<?>> registeredComponents = new HashMap<>();
+    private Map<Class<? extends Component>, ComponentStorage<?>> registeredComponents = new HashMap<>();
     private List<Integer> activeEntities = new ArrayList<>();
     private List<Integer> freeIds = new ArrayList<>();
 
@@ -27,7 +27,7 @@ public class EntityRegistry
         registerComponent(BoundingSphereComponent.class);
     }
 
-    public Entity createEntity(Vector3f position, Vector3f scale)
+    public Entity createEntity(Vector3f position, Vector3f scale, Vector3f rotation)
     {
         Entity entity;
         if (freeIds.size() > 0)
@@ -38,7 +38,7 @@ public class EntityRegistry
             entity = new Entity(entityCount++);
         }
         activeEntities.add(entity.id);
-        addComponent(new TransformComponent(position, scale), entity);
+        addComponent(new TransformComponent(position, scale, rotation), entity);
         return entity;
     }
 
@@ -52,7 +52,7 @@ public class EntityRegistry
         freeIds.add(entity.id);
     }
 
-    public <T> void registerComponent(Class<T> componentType)
+    public void registerComponent(Class<? extends Component> componentType)
     {
         registeredComponents.putIfAbsent(componentType, new ComponentStorage<>());
     }
@@ -156,7 +156,7 @@ public class EntityRegistry
         return group;
     }
 
-    public Set<Class<?>> getRegisteredComponentTypes()
+    public Set<Class<? extends Component>> getRegisteredComponentTypes()
     {
         return registeredComponents.keySet();
     }

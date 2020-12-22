@@ -81,7 +81,7 @@ public class TextBatch
 
     public void clear()
     {
-        textMeshData.setData(new float[] {});
+        textMeshData.setSubData(new float[] {}, 0);
         textLabels.clear();
         indexCount = 0;
     }

@@ -43,7 +43,7 @@ public class VertexArray
         glBindVertexArray(0);
     }
 
-    public void setIndexBufferData(@NotNull int[] indices)
+    public void setIndexBufferData(int[] indices)
     {
         indexAmount = indices.length;
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
@@ -91,7 +91,6 @@ public class VertexArray
     public void drawElements(int indexAmount)
     {
         glDrawElements(GL_TRIANGLES, indexAmount, GL_UNSIGNED_INT, 0);
-
     }
 
     public void drawElementsInstanced(int count)

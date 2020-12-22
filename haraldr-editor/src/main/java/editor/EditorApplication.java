@@ -1,15 +1,14 @@
 package editor;
 
+import haraldr.debug.Logger;
 import haraldr.dockspace.DockPosition;
 import haraldr.dockspace.Dockspace;
-import haraldr.dockspace.uicomponents.InputField;
-import haraldr.dockspace.uicomponents.UnlabeledCheckbox;
-import haraldr.dockspace.uicomponents.UnlabeledInputField;
+import haraldr.dockspace.uicomponents.ComponentPropertyList;
 import haraldr.ecs.BoundingSphereComponent;
+import haraldr.ecs.Component;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
 import haraldr.ecs.ModelComponent;
-import haraldr.ecs.SerializeField;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
@@ -28,8 +27,6 @@ import haraldr.physics.Physics3D;
 import haraldr.scene.Camera;
 import haraldr.scene.OrbitalCamera;
 import haraldr.scene.Scene3D;
-
-import java.lang.reflect.Field;
 
 public class EditorApplication extends Application
 {
@@ -79,72 +76,8 @@ public class EditorApplication extends Application
         // Hierarchy Panel
         dockSpace.addPanel(entityHierarchyPanel = new EntityHierarchyPanel(new Vector2f(200f), new Vector2f(200f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Hierarchy"));
         entityHierarchyPanel.refreshEntityList(scene.getRegistry());
-        entityHierarchyPanel.setEntitySelectedAction(selectedEntity ->
-        {
-            if (!selected.equals(Entity.INVALID))
-            {
-                ModelComponent lastModel = scene.getRegistry().getComponent(ModelComponent.class, selected);
-                lastModel.model.setOutlined(false);
-            }
-            selected = selectedEntity;
-            propertiesPanel.clear();
-            if (!selected.equals(Entity.INVALID))
-            {
-                ModelComponent model = scene.getRegistry().getComponent(ModelComponent.class, selected);
-                model.model.setOutlined(true);
-                try
-                {
-                    populatePropertiesPanel();
-                } catch (IllegalAccessException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        });
+        entityHierarchyPanel.setEntitySelectedAction(this::selectEntity);
         dockSpace.dockPanel(entityHierarchyPanel, DockPosition.CENTER);
-    }
-
-    private void populatePropertiesPanel() throws IllegalAccessException
-    {
-        for (Class<?> componentType : scene.getRegistry().getRegisteredComponentTypes())
-        {
-            if (scene.getRegistry().hasComponent(componentType, selected))
-            {
-                UIComponentList uiComponentList = new UIComponentList(componentType.getSimpleName(), propertiesPanel);
-                for (Field field : componentType.getDeclaredFields())
-                {
-                    if (field.isAnnotationPresent(SerializeField.class))
-                    {
-                        field.setAccessible(true);
-                        uiComponentList.addComponent(field.getName(), switch (field.getType().getSimpleName())
-                        {
-                            case "String" -> new UnlabeledInputField(propertiesPanel.getTextBatch(), (String)field.get(scene.getRegistry().getComponent(componentType, selected)), (((addedChar, fullText) ->
-                            {
-                                try
-                                {
-                                    field.set(scene.getRegistry().getComponent(componentType, selected), fullText);
-                                } catch (IllegalAccessException e)
-                                {
-                                    e.printStackTrace();
-                                }
-                            })));
-                            case "float" -> new UnlabeledInputField(propertiesPanel.getTextBatch(), (String)field.get(scene.getRegistry().getComponent(componentType, selected)), InputField.InputType.NUMBERS, (((addedChar, fullText) ->
-                            {
-                                try
-                                {
-                                    field.set(scene.getRegistry().getComponent(componentType, selected), fullText);
-                                } catch (IllegalAccessException e)
-                                {
-                                    e.printStackTrace();
-                                }
-                            })));
-                            default -> new UnlabeledCheckbox();
-                        });
-                    }
-                }
-                propertiesPanel.addComponentList(uiComponentList);
-            }
-        }
     }
 
     @Override
@@ -159,10 +92,11 @@ public class EditorApplication extends Application
             if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
             {
                 var mousePressedEvent = (MousePressedEvent) event;
-                selected = selectEntityWithMouse(
+                Entity selected = selectEntityWithMouse(
                         new Vector2f(mousePressedEvent.xPos - scene3DPanel.getSceneTexture().getPosition().getX(), mousePressedEvent.yPos - scene3DPanel.getSceneTexture().getPosition().getY()),
                         scene3DPanel.getSceneTexture().getSize(),
-                        selected, scene.getRegistry());
+                        this.selected, scene.getRegistry());
+                selectEntity(selected);
             }
         }
 
@@ -171,6 +105,37 @@ public class EditorApplication extends Application
         if (event.eventType == EventType.WINDOW_RESIZED)
         {
             editorCamera.setAspectRatio(scene3DPanel.getSceneTexture().getSize().getX() / scene3DPanel.getSceneTexture().getSize().getY());
+        }
+    }
+
+    private void populatePropertiesPanel()
+    {
+        for (Class<? extends Component> componentType : scene.getRegistry().getRegisteredComponentTypes())
+        {
+            if (scene.getRegistry().hasComponent(componentType, selected))
+            {
+                Component component = scene.getRegistry().getComponent(componentType, selected);
+                ComponentPropertyList componentPropertyList = new ComponentPropertyList(componentType.getSimpleName(), propertiesPanel);
+                component.extractComponentProperties(componentPropertyList);
+                propertiesPanel.addComponentList(componentPropertyList);
+            }
+        }
+    }
+
+    private void selectEntity(Entity entity)
+    {
+        if (!selected.equals(Entity.INVALID))
+        {
+            ModelComponent lastModel = scene.getRegistry().getComponent(ModelComponent.class, selected);
+            lastModel.model.setOutlined(false);
+        }
+        selected = entity;
+        propertiesPanel.clear();
+        if (!selected.equals(Entity.INVALID))
+        {
+            ModelComponent model = scene.getRegistry().getComponent(ModelComponent.class, selected);
+            model.model.setOutlined(true);
+            populatePropertiesPanel();
         }
     }
 

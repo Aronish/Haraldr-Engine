@@ -15,5 +15,6 @@ public class ModelComponent implements Component
     @Override
     public void extractComponentProperties(ComponentPropertyList componentPropertyList)
     {
+
     }
 }

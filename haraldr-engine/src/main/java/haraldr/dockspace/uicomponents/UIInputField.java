@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Contract;
 import java.util.List;
 
 @SuppressWarnings("rawtypes")
-public class UnlabeledInputField<T extends UnlabeledInputField.InputFieldValue> extends UnlabeledComponent
+public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComponent
 {
     private static final Vector4f SELECTED_COLOR = new Vector4f(1f), UNSELECTED_COLOR = new Vector4f(0f, 0f, 0f, 1f);
     private static final float BORDER_WIDTH = 2f;
@@ -31,7 +31,7 @@ public class UnlabeledInputField<T extends UnlabeledInputField.InputFieldValue> 
     private TextBatch parentTextBatch;
     private InputFieldChangeAction<T> inputFieldChangeAction;
 
-    public UnlabeledInputField(TextBatch parentTextBatch, T defaultValue, InputFieldChangeAction<T> inputFieldChangeAction)
+    public UIInputField(TextBatch parentTextBatch, T defaultValue, InputFieldChangeAction<T> inputFieldChangeAction)
     {
         fieldSize = new Vector2f(0f, parentTextBatch.getFont().getSize() - 2f * BORDER_WIDTH);
         borderSize = new Vector2f(0f, parentTextBatch.getFont().getSize());
@@ -123,6 +123,11 @@ public class UnlabeledInputField<T extends UnlabeledInputField.InputFieldValue> 
         batch.drawQuad(fieldPosition, fieldSize, new Vector4f(0.8f, 0.8f, 0.8f, 1f));
     }
 
+    public T getValue()
+    {
+        return value;
+    }
+
     public interface InputFieldChangeAction<UnderlyingType extends InputFieldValue>
     {
         void run(UnderlyingType inputFieldValue);
@@ -135,6 +140,55 @@ public class UnlabeledInputField<T extends UnlabeledInputField.InputFieldValue> 
         void clear();
         String toString();
         UnderlyingType getValue();
+    }
+
+    public static class IntValue implements InputFieldValue<Integer>
+    {
+        private String intValue;
+
+        public IntValue(int intValue)
+        {
+            this.intValue = Integer.toString(intValue);
+        }
+
+        @Override
+        public void onCharacterTyped(char enteredCharacter)
+        {
+            if (enteredCharacter != '\b')
+            {
+                if (List.of('0', '1', '2', '3', '4', '5', '6', '7', '8', '9').contains(enteredCharacter))
+                {
+                    intValue += enteredCharacter;
+                }
+            } else if (intValue.length() > 0)
+            {
+                intValue = intValue.substring(0, intValue.length() - 1);
+            }
+        }
+
+        @Override
+        public void setDefaultValue()
+        {
+            intValue = "0";
+        }
+
+        @Override
+        public void clear()
+        {
+            intValue = "";
+        }
+
+        @Override
+        public Integer getValue()
+        {
+            return intValue.isEmpty() ? 0 : Integer.parseInt(intValue);
+        }
+
+        @Override
+        public String toString()
+        {
+            return intValue;
+        }
     }
 
     public static class FloatValue implements InputFieldValue<Float>

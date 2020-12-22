@@ -1,8 +1,6 @@
 package haraldr.dockspace.uicomponents;
 
 import haraldr.dockspace.DockablePanel;
-import haraldr.dockspace.uicomponents.TextLabel;
-import haraldr.dockspace.uicomponents.UnlabeledComponent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
@@ -26,7 +24,7 @@ public class ComponentPropertyList
     private Vector2f position, size, headerSize;
 
     private TextLabel name;
-    private Map<TextLabel, UnlabeledComponent> components = new LinkedHashMap<>();
+    private Map<TextLabel, UIComponent> components = new LinkedHashMap<>();
     private float divider, nextListY;
     private boolean collapsed;
 
@@ -55,9 +53,9 @@ public class ComponentPropertyList
                 {
                     textLabel.setEnabled(!collapsed);
                 }
-                for (UnlabeledComponent unlabeledComponent : components.values())
+                for (UIComponent component : components.values())
                 {
-                    unlabeledComponent.onEvent(new ParentCollapsedEvent(!collapsed));
+                    component.onEvent(new ParentCollapsedEvent(!collapsed));
                 }
                 parent.getTextBatch().refreshTextMeshData();
             }
@@ -65,15 +63,15 @@ public class ComponentPropertyList
 
         if (!collapsed)
         {
-            for (UnlabeledComponent unlabeledComponent : components.values())
+            for (UIComponent component : components.values())
             {
-                if (unlabeledComponent.onEvent(event)) requireRedraw = true;
+                if (component.onEvent(event)) requireRedraw = true;
             }
         }
         return requireRedraw;
     }
 
-    public void addComponent(String name, UnlabeledComponent component)
+    public void addComponent(String name, UIComponent component)
     {
         TextLabel label = parent.getTextBatch().createTextLabel(name, Vector2f.add(parent.getPosition(), new Vector2f(0f, nextListY)), new Vector4f(1f));
         components.put(label, component);
@@ -91,7 +89,7 @@ public class ComponentPropertyList
         float nextY = headerSize.getY() + PADDING + MARGIN;
 
         name.setPosition(this.position);
-        for (Map.Entry<TextLabel, UnlabeledComponent> entry : components.entrySet())
+        for (Map.Entry<TextLabel, UIComponent> entry : components.entrySet())
         {
             entry.getKey().setPosition(Vector2f.add(position, new Vector2f(2f, nextY)));
             entry.getValue().setPosition(Vector2f.add(position, new Vector2f(divider + PADDING, nextY)));
@@ -104,7 +102,7 @@ public class ComponentPropertyList
     {
         this.position.add(position);
         name.addPosition(position);
-        for (Map.Entry<TextLabel, UnlabeledComponent> entry : components.entrySet())
+        for (Map.Entry<TextLabel, UIComponent> entry : components.entrySet())
         {
             entry.getKey().addPosition(position);
             entry.getValue().addPosition(position);
@@ -116,9 +114,9 @@ public class ComponentPropertyList
     {
         this.size.set(size.getX() - 2f * MARGIN, headerSize.getY() + nextListY + PADDING);
         headerSize.set(this.size.getX(), parent.getHeaderHeight());
-        for (UnlabeledComponent unlabeledComponent : components.values())
+        for (UIComponent component : components.values())
         {
-            unlabeledComponent.setWidth(size.getX() - divider - MARGIN * PADDING);
+            component.setWidth(size.getX() - divider - MARGIN * PADDING);
         }
         parent.getTextBatch().refreshTextMeshData();
     }

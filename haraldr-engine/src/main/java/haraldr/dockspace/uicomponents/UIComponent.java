@@ -4,7 +4,7 @@ import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
 import haraldr.math.Vector2f;
 
-public abstract class UnlabeledComponent
+public abstract class UIComponent
 {
     protected Vector2f position = new Vector2f();
 

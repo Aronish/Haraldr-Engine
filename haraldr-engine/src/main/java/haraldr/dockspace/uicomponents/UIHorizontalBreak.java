@@ -1,28 +1,15 @@
 package haraldr.dockspace.uicomponents;
 
-import haraldr.dockspace.ControlPanel;
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
-import haraldr.math.Vector2f;
 
-public class HorizontalBreak extends LabeledComponent
+public class UIHorizontalBreak extends UIComponent
 {
-    private int height = 20;
+    private int height;
 
-    public HorizontalBreak(String name, ControlPanel parent)
+    public UIHorizontalBreak(int height)
     {
-        super(name, parent);
-    }
-
-    public HorizontalBreak(String name, ControlPanel parent, int height)
-    {
-        this(name, parent);
         this.height = height;
-    }
-
-    @Override
-    protected void setComponentPosition(Vector2f position)
-    {
     }
 
     @Override

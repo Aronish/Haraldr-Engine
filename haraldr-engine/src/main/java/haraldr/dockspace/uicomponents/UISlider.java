@@ -1,42 +1,39 @@
 package haraldr.dockspace.uicomponents;
 
-import haraldr.dockspace.ControlPanel;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Batch2D;
-import haraldr.input.MouseButton;
 import haraldr.input.Input;
+import haraldr.input.MouseButton;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
 
-@SuppressWarnings("unused")
-public class Slider extends LabeledComponent
+public class UISlider extends UIComponent
 {
-    private Vector2f sliderPosition = new Vector2f(), sliderSize;
+    private Vector2f sliderSize;
     private Vector2f handlePosition = new Vector2f(), handleSize;
 
     private float value, min, max;
     private boolean held;
     private SliderChangeAction sliderChangeAction;
 
-    public Slider(String name, ControlPanel parent)
+    public UISlider()
     {
-        this(name, parent, (value) -> {});
+        this(0f, 1f, value -> {});
     }
 
-    public Slider(String name, ControlPanel parent, SliderChangeAction sliderChangeAction)
+    public UISlider(SliderChangeAction sliderChangeAction)
     {
-        this(name, parent, 0f, 1f, sliderChangeAction);
+        this(0f, 1f, sliderChangeAction);
     }
 
-    public Slider(String name, ControlPanel parent, float min, float max, SliderChangeAction sliderChangeAction)
+    public UISlider(float min, float max, SliderChangeAction sliderChangeAction)
     {
-        super(name, parent);
-        sliderSize = new Vector2f(parent.getComponentDivisionSize(), label.getFont().getSize());
-        handleSize = new Vector2f(20f, label.getFont().getSize());
+        sliderSize = new Vector2f(20f);
+        handleSize = new Vector2f(20f);
         this.sliderChangeAction = sliderChangeAction;
         this.min = min;
         this.max = max;
@@ -45,7 +42,7 @@ public class Slider extends LabeledComponent
     public void setValue(float value)
     {
         this.value = value;
-        handlePosition.setX(value * (sliderSize.getX() - handleSize.getX()) + sliderPosition.getX());
+        handlePosition.setX(value * (sliderSize.getX() - handleSize.getX()) + position.getX());
         sliderChangeAction.run(value);
     }
 
@@ -55,18 +52,24 @@ public class Slider extends LabeledComponent
     }
 
     @Override
-    public void setComponentPosition(Vector2f position)
+    public void setPosition(Vector2f position)
     {
-        sliderPosition = position;
-        float normalizedValue = (value - min) / (max - min);
-        float handlePosition = normalizedValue * (sliderSize.getX() - handleSize.getX()) + sliderPosition.getX();
-        this.handlePosition.set(handlePosition, position.getY());
+        this.position.set(position);
+        recalculateHandlePosition();
     }
 
     @Override
     public void setWidth(float width)
     {
         sliderSize.setX(width);
+        recalculateHandlePosition();
+    }
+
+    private void recalculateHandlePosition()
+    {
+        float normalizedValue = (value - min) / (max - min);
+        float handlePosition = normalizedValue * (sliderSize.getX() - handleSize.getX()) + position.getX();
+        this.handlePosition.set(handlePosition, position.getY());
     }
 
     @Override
@@ -91,10 +94,10 @@ public class Slider extends LabeledComponent
             if (held)
             {
                 float position = (float) mouseMovedEvent.xPos - handleSize.getX() / 2f;
-                if (position < sliderPosition.getX()) position = sliderPosition.getX();
-                if (position > sliderPosition.getX() + sliderSize.getX() - handleSize.getX()) position = sliderPosition.getX() + sliderSize.getX() - handleSize.getX();
+                if (position < this.position.getX()) position = this.position.getX();
+                if (position > this.position.getX() + sliderSize.getX() - handleSize.getX()) position = this.position.getX() + sliderSize.getX() - handleSize.getX();
                 handlePosition.setX(position);
-                float normalizedValue = (position - sliderPosition.getX()) / (sliderSize.getX() - handleSize.getX());
+                float normalizedValue = (position - this.position.getX()) / (sliderSize.getX() - handleSize.getX());
                 value = min + (max - min) * normalizedValue;
                 sliderChangeAction.run(value);
                 requireRedraw = true;
@@ -106,7 +109,7 @@ public class Slider extends LabeledComponent
     @Override
     public void render(Batch2D batch)
     {
-        batch.drawQuad(sliderPosition, sliderSize, new Vector4f(0.5f, 0.5f, 0.5f, 1f));
+        batch.drawQuad(position, sliderSize, new Vector4f(0.5f, 0.5f, 0.5f, 1f));
         batch.drawQuad(handlePosition, handleSize, new Vector4f(1f));
     }
 

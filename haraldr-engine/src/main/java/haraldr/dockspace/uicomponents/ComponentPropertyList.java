@@ -14,7 +14,7 @@ import haraldr.physics.Physics2D;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
+//TODO: Make UnlabeledComponentList (in engine) and have some version that is collapsible (in editor).
 public class ComponentPropertyList
 {
     private static final float PADDING = 0f, MARGIN = 0f;

@@ -1,6 +1,5 @@
 package editor;
 
-import haraldr.debug.Logger;
 import haraldr.dockspace.DockablePanel;
 import haraldr.dockspace.uicomponents.ComponentPropertyList;
 import haraldr.event.Event;

@@ -15,6 +15,7 @@ import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
 
+@SuppressWarnings("WeakerAccess")
 public class DockablePanel
 {
     private static final float HEADER_SIZE = 20f;
@@ -136,6 +137,11 @@ public class DockablePanel
     public boolean isPressed()
     {
         return pressed;
+    }
+
+    public boolean isHovered()
+    {
+        return hovered;
     }
 
     public TextBatch getTextBatch()

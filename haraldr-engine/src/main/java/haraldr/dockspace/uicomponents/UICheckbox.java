@@ -21,12 +21,18 @@ public class UICheckbox extends UIComponent
 
     public UICheckbox()
     {
-        this((state) -> {});
+        this(false, (state) -> {});
     }
 
-    public UICheckbox(CheckboxStateChangeAction checkboxStateChangeAction)
+    public UICheckbox(boolean initialState)
+    {
+        this(initialState, (state) -> {});
+    }
+
+    public UICheckbox(boolean initialState, CheckboxStateChangeAction checkboxStateChangeAction)
     {
         size = new Vector2f(20f);
+        state = initialState;
         this.checkboxStateChangeAction = checkboxStateChangeAction;
     }
 
@@ -71,6 +77,11 @@ public class UICheckbox extends UIComponent
     public float getVerticalSize()
     {
         return size.getY();
+    }
+
+    public boolean isChecked()
+    {
+        return state;
     }
 
     @FunctionalInterface

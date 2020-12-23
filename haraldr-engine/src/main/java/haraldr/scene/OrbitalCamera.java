@@ -35,7 +35,7 @@ public class OrbitalCamera extends Camera
     }
 
     @Override
-    public void onEvent(Event event, Window window)
+    public void onEvent(Event event, Window window, boolean movable)
     {
         if (event.eventType == EventType.WINDOW_RESIZED)
         {
@@ -49,7 +49,7 @@ public class OrbitalCamera extends Camera
         if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_2)) moving = false;
         if (Input.wasKeyPressed(event, KeyboardKey.KEY_LEFT_SHIFT)) movingDirectional = true;
         if (Input.wasKeyReleased(event, KeyboardKey.KEY_LEFT_SHIFT)) movingDirectional = false;
-        if (event.eventType == EventType.MOUSE_MOVED)
+        if (movable && event.eventType == EventType.MOUSE_MOVED)
         {
             var mouseMovedEvent = (MouseMovedEvent) event;
             if (rotating)

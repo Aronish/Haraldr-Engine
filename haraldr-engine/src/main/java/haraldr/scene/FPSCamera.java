@@ -79,7 +79,7 @@ public class FPSCamera extends Camera
     }
 
     @Override
-    public void onEvent(Event event, Window window)
+    public void onEvent(Event event, Window window, boolean movable)
     {
         if (event.eventType == EventType.WINDOW_RESIZED)
         {

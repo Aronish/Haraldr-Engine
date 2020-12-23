@@ -15,7 +15,7 @@ public abstract class Camera
 
     public abstract void onUpdate(float deltaTime, Window window);
 
-    public abstract void onEvent(Event event, Window window);
+    public abstract void onEvent(Event event, Window window, boolean movable);
 
     public abstract void calculateViewMatrix();
 

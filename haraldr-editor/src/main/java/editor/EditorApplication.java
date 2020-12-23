@@ -1,6 +1,5 @@
 package editor;
 
-import haraldr.debug.Logger;
 import haraldr.dockspace.DockPosition;
 import haraldr.dockspace.Dockspace;
 import haraldr.dockspace.uicomponents.ComponentPropertyList;
@@ -85,9 +84,9 @@ public class EditorApplication extends Application
     {
         dockSpace.onEvent(event, window);
         scene.onEvent(event, window);
-        if (scene3DPanel.isPressed() && !scene3DPanel.isHeld())
+        editorCamera.onEvent(event, window, scene3DPanel.isHovered());
+        if (scene3DPanel.isHovered() && scene3DPanel.isPressed() && !scene3DPanel.isHeld())
         {
-            editorCamera.onEvent(event, window);
             // Select an entity
             if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
             {
@@ -115,7 +114,7 @@ public class EditorApplication extends Application
             if (scene.getRegistry().hasComponent(componentType, selected))
             {
                 Component component = scene.getRegistry().getComponent(componentType, selected);
-                ComponentPropertyList componentPropertyList = new ComponentPropertyList(componentType.getSimpleName(), propertiesPanel);
+                ComponentPropertyList componentPropertyList = new ComponentPropertyList(componentType.getSimpleName().replace("Component", ""), propertiesPanel);
                 component.extractComponentProperties(componentPropertyList);
                 propertiesPanel.addComponentList(componentPropertyList);
             }
@@ -137,6 +136,7 @@ public class EditorApplication extends Application
             model.model.setOutlined(true);
             populatePropertiesPanel();
         }
+        entityHierarchyPanel.refreshEntityList(scene.getRegistry());
     }
 
     private Entity selectEntityWithMouse(Vector2f mousePoint, Vector2f windowSize, Entity lastSelected, EntityRegistry registry)

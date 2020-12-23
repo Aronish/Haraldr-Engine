@@ -1,19 +1,26 @@
 package haraldr.dockspace.uicomponents;
 
+import haraldr.debug.Logger;
 import haraldr.event.CharTypedEvent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
+import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.event.ParentCollapsedEvent;
 import haraldr.graphics.Batch2D;
 import haraldr.input.Input;
 import haraldr.input.KeyboardKey;
 import haraldr.input.MouseButton;
+import haraldr.math.MathUtils;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
 import org.jetbrains.annotations.Contract;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.List;
 
 @SuppressWarnings("rawtypes")
@@ -24,12 +31,18 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
 
     private Vector2f borderSize;
     private Vector2f fieldPosition = new Vector2f(), fieldSize;
-    private boolean selected;
+    private boolean selected, held;
+    private float lastMouseX;
 
     private T value;
     private TextLabel textLabel;
     private TextBatch parentTextBatch;
     private InputFieldChangeAction<T> inputFieldChangeAction;
+
+    public UIInputField(TextBatch parentTextBatch, T defaultValue)
+    {
+        this(parentTextBatch, defaultValue, value -> {});
+    }
 
     public UIInputField(TextBatch parentTextBatch, T defaultValue, InputFieldChangeAction<T> inputFieldChangeAction)
     {
@@ -72,10 +85,12 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
             {
                 var mousePressedEvent = (MousePressedEvent) event;
                 boolean lastSelectedState = selected;
-                selected = Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), fieldPosition, fieldSize);
+                held = selected = Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), fieldPosition, fieldSize);
+                if (held) lastMouseX = mousePressedEvent.xPos;
 
                 if (value.toString().length() == 0) value.setDefaultValue();
                 updateTextLabel();
+                inputFieldChangeAction.run(value);
 
                 requireRedraw = lastSelectedState != selected;
             }
@@ -83,8 +98,10 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
             {
                 value.clear();
                 updateTextLabel();
+                inputFieldChangeAction.run(value);
             }
         }
+        if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1)) held = false;
         if (selected)
         {
             if (event.eventType == EventType.KEY_PRESSED)
@@ -93,6 +110,7 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
                 {
                     value.onCharacterTyped('\b');
                     updateTextLabel();
+                    inputFieldChangeAction.run(value);
                 }
             }
             if (event.eventType == EventType.CHAR_TYPED)
@@ -100,7 +118,16 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
                 var charTypedEvent = (CharTypedEvent) event;
                 value.onCharacterTyped(charTypedEvent.character);
                 updateTextLabel();
+                inputFieldChangeAction.run(value);
             }
+        }
+        if (held && event.eventType == EventType.MOUSE_MOVED)
+        {
+            var mouseMovedEvent = (MouseMovedEvent) event;
+            value.onMouseDragged((float)mouseMovedEvent.xPos - lastMouseX);
+            lastMouseX = (float)mouseMovedEvent.xPos;
+            updateTextLabel();
+            inputFieldChangeAction.run(value);
         }
         if (event.eventType == EventType.PARENT_COLLAPSED)
         {
@@ -109,11 +136,10 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
         return requireRedraw;
     }
 
-    private void updateTextLabel()
+    public void updateTextLabel()
     {
         textLabel.setText(value.toString());
         parentTextBatch.refreshTextMeshData();
-        inputFieldChangeAction.run(value);
     }
 
     @Override
@@ -135,7 +161,9 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
 
     public interface InputFieldValue<UnderlyingType>
     {
+        default void onMouseDragged(float xOffset) {}
         void onCharacterTyped(char enteredCharacter);
+        void setValue(UnderlyingType value);
         void setDefaultValue();
         void clear();
         String toString();
@@ -152,6 +180,12 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
         }
 
         @Override
+        public void onMouseDragged(float xOffset)
+        {
+            intValue = Integer.toString(Integer.parseInt(intValue) + MathUtils.fastFloor(xOffset));
+        }
+
+        @Override
         public void onCharacterTyped(char enteredCharacter)
         {
             if (enteredCharacter != '\b')
@@ -164,6 +198,12 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
             {
                 intValue = intValue.substring(0, intValue.length() - 1);
             }
+        }
+
+        @Override
+        public void setValue(Integer value)
+        {
+            intValue = Integer.toString(value);
         }
 
         @Override
@@ -194,11 +234,30 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
     public static class FloatValue implements InputFieldValue<Float>
     {
         private String floatValue;
+        private final float DRAG_SENSITIVITY;
 
         @Contract(pure = true)
         public FloatValue(float floatValue)
         {
             this.floatValue = Float.toString(floatValue);
+            DRAG_SENSITIVITY = 0.02f;
+        }
+
+        public FloatValue(float floatValue, float dragSensitivity)
+        {
+            this.floatValue = Float.toString(floatValue);
+            DRAG_SENSITIVITY = dragSensitivity;
+        }
+
+        @Override
+        public void onMouseDragged(float xOffset)
+        {
+            DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
+            decimalFormatSymbols.setDecimalSeparator('.');
+            DecimalFormat decimalFormat = new DecimalFormat("#.#####", decimalFormatSymbols);
+            decimalFormat.setRoundingMode(RoundingMode.CEILING);
+
+            floatValue = decimalFormat.format(Float.parseFloat(floatValue) + xOffset * DRAG_SENSITIVITY);
         }
 
         @Override
@@ -206,17 +265,22 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
         {
             if (enteredCharacter != '\b')
             {
-                if (List.of('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.').contains(enteredCharacter))
+                if (List.of('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '-').contains(enteredCharacter))
                 {
-                    if (enteredCharacter != '.' || !floatValue.contains("."))
-                    {
-                        floatValue += enteredCharacter;
-                    }
+                    if (enteredCharacter != '.' && enteredCharacter != '-') floatValue += enteredCharacter;
+                    else if (enteredCharacter == '.' && !floatValue.contains(".") && !floatValue.equals("-")) floatValue += enteredCharacter;
+                    else if (enteredCharacter == '-' && floatValue.isEmpty()) floatValue += enteredCharacter;
                 }
             } else if (floatValue.length() > 0)
             {
                 floatValue = floatValue.substring(0, floatValue.length() - 1);
             }
+        }
+
+        @Override
+        public void setValue(Float value)
+        {
+            floatValue = Float.toString(value);
         }
 
         @Override
@@ -234,7 +298,8 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
         @Override
         public Float getValue()
         {
-            return floatValue.isEmpty() ? 0f : Float.parseFloat(floatValue);
+            if (floatValue.isEmpty() || floatValue.equals("-")) return 0f;
+            return Float.parseFloat(floatValue);
         }
 
         @Override
@@ -264,6 +329,12 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
             {
                 stringValue = stringValue.substring(0, stringValue.length() - 1);
             }
+        }
+
+        @Override
+        public void setValue(String value)
+        {
+            stringValue = value;
         }
 
         @Override

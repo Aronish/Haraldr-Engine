@@ -46,22 +46,29 @@ public class EntityHierarchyPanel extends DockablePanel
     public void onEvent(Event event, Window window)
     {
         super.onEvent(event, window);
+        EntityListItem pressedListItem = null; // Defer to avoid concurrent modification
         for (EntityListItem entityListItem : entityListItems)
         {
             if (entityListItem.onEvent(event))
             {
                 renderToBatch();
-                if (entityListItem.pressed) entitySelectedAction.run(entityListItem.entity);
+                if (entityListItem.pressed)
+                {
+                    pressedListItem = entityListItem;
+                    break;
+                }
             }
         }
+        if (pressedListItem != null) entitySelectedAction.run(pressedListItem.entity);
     }
 
     public void refreshEntityList(EntityRegistry entityRegistry)
     {
-        entityRegistry.view(TagComponent.class).forEach(((transformComponent, tagComponent) ->
-        {
-            addEntity(tagComponent.tag, entityRegistry.getEntityOf(tagComponent));
-        }));
+        entityListItems.clear();
+        currentListHeight = 0f;
+        textBatch.clear();
+        textBatch.addTextLabel(name);
+        entityRegistry.view(TagComponent.class).forEach(((transformComponent, tagComponent) -> addEntity(tagComponent.tag, entityRegistry.getEntityOf(tagComponent))));
     }
 
     @Override

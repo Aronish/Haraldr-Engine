@@ -25,7 +25,7 @@ public class OrthographicCamera extends Camera
     }
 
     @Override
-    public void onEvent(Event event, Window window)
+    public void onEvent(Event event, Window window, boolean movable)
     {
     }
 

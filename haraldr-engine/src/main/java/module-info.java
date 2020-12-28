@@ -27,8 +27,10 @@ module haraldr
     //TinyEXR
     requires org.lwjgl.tinyexr;
     requires org.lwjgl.tinyexr.natives;
-    //Misc
-    requires java.desktop;
+    //TinyFileDialogs
+    requires org.lwjgl.tinyfd;
+    requires org.lwjgl.tinyfd.natives;
+
     requires JsonParser;
     ///// EXPORTS ////////
     exports haraldr.debug;
@@ -48,4 +50,5 @@ module haraldr
     opens default_shaders;
     opens default_textures;
     opens default_models;
+    opens default_meshes;
 }

@@ -1,6 +1,5 @@
 package haraldr.dockspace.uicomponents;
 
-import haraldr.debug.Logger;
 import haraldr.event.CharTypedEvent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
@@ -20,7 +19,6 @@ import org.jetbrains.annotations.Contract;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.util.List;
 
 @SuppressWarnings("rawtypes")
@@ -252,9 +250,10 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
         @Override
         public void onMouseDragged(float xOffset)
         {
+            // Requires Djava.locale.providers=COMPAT on some systems (cannot parse some numbers correctly with certain locales)
             DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
             decimalFormatSymbols.setDecimalSeparator('.');
-            DecimalFormat decimalFormat = new DecimalFormat("#.#####", decimalFormatSymbols);
+            DecimalFormat decimalFormat = new DecimalFormat("#.###", decimalFormatSymbols);
             decimalFormat.setRoundingMode(RoundingMode.CEILING);
 
             floatValue = decimalFormat.format(Float.parseFloat(floatValue) + xOffset * DRAG_SENSITIVITY);

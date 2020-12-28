@@ -1,6 +1,8 @@
 package haraldr.dockspace.uicomponents;
 
 import haraldr.event.Event;
+import haraldr.event.EventType;
+import haraldr.event.ParentCollapsedEvent;
 import haraldr.graphics.Batch2D;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -11,7 +13,7 @@ public class UIInfoLabel extends UIComponent
     private TextLabel valueLabel;
     private TextBatch parentTextBatch;
 
-    public UIInfoLabel(String value, TextBatch parentTextBatch)
+    public UIInfoLabel(TextBatch parentTextBatch, String value)
     {
         this.value = value;
         this.parentTextBatch = parentTextBatch;
@@ -52,6 +54,11 @@ public class UIInfoLabel extends UIComponent
     @Override
     public boolean onEvent(Event event)
     {
+        if (event.eventType == EventType.PARENT_COLLAPSED)
+        {
+            valueLabel.setEnabled(((ParentCollapsedEvent) event).collapsed);
+            parentTextBatch.refreshTextMeshData();
+        }
         return false;
     }
 

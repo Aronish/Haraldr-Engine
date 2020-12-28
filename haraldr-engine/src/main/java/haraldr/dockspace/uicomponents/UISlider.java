@@ -22,21 +22,32 @@ public class UISlider extends UIComponent
 
     public UISlider()
     {
-        this(0f, 1f, value -> {});
+        this(0f, 1f, 0f, value -> {});
     }
 
     public UISlider(SliderChangeAction sliderChangeAction)
     {
-        this(0f, 1f, sliderChangeAction);
+        this(0f, 1f, 0f, sliderChangeAction);
+    }
+
+    public UISlider(float defaultValue, SliderChangeAction sliderChangeAction)
+    {
+        this(0f, 1f, defaultValue, sliderChangeAction);
     }
 
     public UISlider(float min, float max, SliderChangeAction sliderChangeAction)
+    {
+        this(min, max, 0f, sliderChangeAction);
+    }
+
+    public UISlider(float min, float max, float defaultValue, SliderChangeAction sliderChangeAction)
     {
         sliderSize = new Vector2f(20f);
         handleSize = new Vector2f(20f);
         this.sliderChangeAction = sliderChangeAction;
         this.min = min;
         this.max = max;
+        setValue(defaultValue);
     }
 
     public void setValue(float value)

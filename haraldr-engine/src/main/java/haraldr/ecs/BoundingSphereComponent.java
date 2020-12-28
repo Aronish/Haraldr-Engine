@@ -1,7 +1,5 @@
 package haraldr.ecs;
 
-import haraldr.dockspace.uicomponents.ComponentPropertyList;
-import haraldr.dockspace.uicomponents.UIInputField;
 import org.jetbrains.annotations.Contract;
 
 public class BoundingSphereComponent implements Component
@@ -15,8 +13,8 @@ public class BoundingSphereComponent implements Component
     }
 
     @Override
-    public void extractComponentProperties(ComponentPropertyList componentPropertyList)
+    public void acceptVisitor(ComponentVisitor visitor)
     {
-        componentPropertyList.addComponent("Radius: ", new UIInputField<>(componentPropertyList.getParent().getTextBatch(), new UIInputField.FloatValue(radius), value -> radius = value.getValue()));
+        visitor.visit(this);
     }
 }

@@ -3,6 +3,7 @@ package editor;
 import haraldr.dockspace.DockPosition;
 import haraldr.dockspace.Dockspace;
 import haraldr.dockspace.uicomponents.ComponentPropertyList;
+import haraldr.dockspace.uicomponents.ComponentUIVisitor;
 import haraldr.ecs.BoundingSphereComponent;
 import haraldr.ecs.Component;
 import haraldr.ecs.Entity;
@@ -109,13 +110,15 @@ public class EditorApplication extends Application
 
     private void populatePropertiesPanel()
     {
+        ComponentUIVisitor componentUIVisitor = new ComponentUIVisitor();
         for (Class<? extends Component> componentType : scene.getRegistry().getRegisteredComponentTypes())
         {
             if (scene.getRegistry().hasComponent(componentType, selected))
             {
                 Component component = scene.getRegistry().getComponent(componentType, selected);
                 ComponentPropertyList componentPropertyList = new ComponentPropertyList(componentType.getSimpleName().replace("Component", ""), propertiesPanel);
-                component.extractComponentProperties(componentPropertyList);
+                componentUIVisitor.setComponentPropertyList(componentPropertyList);
+                component.acceptVisitor(componentUIVisitor);
                 propertiesPanel.addComponentList(componentPropertyList);
             }
         }

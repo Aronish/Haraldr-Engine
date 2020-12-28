@@ -28,5 +28,5 @@ out vec4 o_Color;
 
 void main()
 {
-    o_Color = vec4(0.8f, 0.2f, 0.3f, 1.0f);
+    o_Color = vec4(0.78f, 0.07f, 0.0f, 1.0f);
 }

@@ -20,6 +20,7 @@ public class Model
     private static final Shader OUTLINE_SHADER = Shader.create("default_shaders/outline.glsl");
 
     private String path;
+    private JSONObject modelDefinition;
     private VertexArray mesh;
     private Material material;
     private boolean outlined;
@@ -47,7 +48,12 @@ public class Model
 
     public void refresh()
     {
-        JSONObject modelDefinition = new JSONObject(IOUtils.readResource(path, IOUtils::resourceToString));
+        refresh(new JSONObject(IOUtils.readResource(path, IOUtils::resourceToString)));
+    }
+
+    public void refresh(JSONObject modelDefinition)
+    {
+        this.modelDefinition = modelDefinition;
         if (material != null) material.unbind();
         try
         {
@@ -63,7 +69,7 @@ public class Model
 
     public void render(TransformComponent transform)
     {
-        Matrix4f transformationMatrix = Matrix4f.identity().translate(transform.position).rotate(transform.rotation).scale(transform.scale);
+        Matrix4f transformationMatrix = Matrix4f.identity().translate(transform.position).rotate(transform.rotationQuaternion).scale(transform.scale);
         if (outlined) //TODO: Not the best
         {
             glEnable(GL_STENCIL_TEST);
@@ -78,8 +84,8 @@ public class Model
             glStencilMask(0x00);
             OUTLINE_SHADER.bind();
             OUTLINE_SHADER.setMatrix4f("model", transformationMatrix);
-            OUTLINE_SHADER.setFloat("u_Outline_Size", 0.05f);
-            OUTLINE_SHADER.setBoolean("u_Expand_Normals", false);
+            OUTLINE_SHADER.setFloat("u_Outline_Size", 0.02f);
+            OUTLINE_SHADER.setBoolean("u_Expand_Normals", true);
             mesh.drawElements();
             glStencilFunc(GL_ALWAYS, 1, 0xFF);
             glStencilMask(0xFF);
@@ -91,5 +97,10 @@ public class Model
             mesh.bind();
             mesh.drawElements();
         }
+    }
+
+    public JSONObject getModelDefinition()
+    {
+        return modelDefinition;
     }
 }

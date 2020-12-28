@@ -74,7 +74,7 @@ public class OfflineRendererApplication extends Application
                 glViewport(0, 0, window.getWidth(), window.getHeight());
             }
         });
-        environmentMapData = new UIInfoLabel("", mainPanel.getTextBatch());
+        environmentMapData = new UIInfoLabel(mainPanel.getTextBatch(), "");
 
         //IBL maps
         diffuseIrradianceMapSize = new UIInputField<>(mainPanel.getTextBatch(), new UIInputField.IntValue(0), (value) ->
@@ -96,9 +96,9 @@ public class OfflineRendererApplication extends Application
             checkReadiness();
         });
 
-        readyToGenerateIblMaps = new UIInfoLabel("", mainPanel.getTextBatch());
-        diffuseIrradianceMapData = new UIInfoLabel("", mainPanel.getTextBatch());
-        prefilteredEnvironmentMapdata = new UIInfoLabel("", mainPanel.getTextBatch());
+        readyToGenerateIblMaps = new UIInfoLabel(mainPanel.getTextBatch(), "");
+        diffuseIrradianceMapData = new UIInfoLabel(mainPanel.getTextBatch(), "");
+        prefilteredEnvironmentMapdata = new UIInfoLabel(mainPanel.getTextBatch(), "");
 
         generateIblMaps = new UIButton(() ->
         {
@@ -126,7 +126,7 @@ public class OfflineRendererApplication extends Application
             }
             //exportDiffuseIrradianceMap.setEnabled(!diffuseIrradianceMapPath.getValue().isBlank() && diffuseIrradianceMapPath.getValue().endsWith(".exr"));
         });
-        diffuseIrradianceMapPath = new UIInfoLabel("", mainPanel.getTextBatch());
+        diffuseIrradianceMapPath = new UIInfoLabel(mainPanel.getTextBatch(), "");
 
         //Prefiltered Map
         UIButton exportPrefilteredMap = new UIButton(() -> CubeMapGenerator.exportCubeMap(prefilteredEnvironmentMap, prefilteredMapPath.getValue()));
@@ -143,7 +143,7 @@ public class OfflineRendererApplication extends Application
             }
             //exportPrefilteredMap.setEnabled(!prefilteredMapPath.getValue().isBlank() && prefilteredMapPath.getValue().endsWith(".exr"));
         });
-        prefilteredMapPath = new UIInfoLabel("", mainPanel.getTextBatch());
+        prefilteredMapPath = new UIInfoLabel(mainPanel.getTextBatch(), "");
 
         mainPane.addComponent("", new UIHorizontalBreak(20));
         mainPane.addComponent("Load HDR", loadHdr);

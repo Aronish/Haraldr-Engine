@@ -98,7 +98,7 @@ public class CubeMapGenerator
                 IntBuffer width = stack.mallocInt(1);
                 IntBuffer height = stack.mallocInt(1);
                 IntBuffer comps = stack.mallocInt(1);
-                ByteBuffer data = IOUtils.readNativeResource(path, (stream) -> IOUtils.resourceToByteBuffer(stream, 4 * 4096)); //Assuming hdr format as 4 8bit channels
+                ByteBuffer data = IOUtils.readFile(path, (stream) -> IOUtils.resourceToByteBuffer(stream, 4 * 4096)); //Assuming hdr format as 4 8bit channels
                 if (data != null) image = STBImage.stbi_loadf_from_memory(data, width, height, comps, 0);
                 else throw new NullPointerException("Resource at " + path + " not found!");
 

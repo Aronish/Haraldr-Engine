@@ -28,20 +28,47 @@ public class Quaternion
     }
 
     @Contract("_ -> new")
-    public static @NotNull Quaternion fromEulerAngles(@NotNull Vector3f rotation)
+    public static @NotNull Quaternion fromEulerAngles(@NotNull Vector3f eulerDegrees)
     {
-        double cy = Math.cos(rotation.getZ() * 0.5f);
-        double sy = Math.sin(rotation.getZ() * 0.5f);
-        double cp = Math.cos(rotation.getY() * 0.5f);
-        double sp = Math.sin(rotation.getY() * 0.5f);
-        double cr = Math.cos(rotation.getX() * 0.5f);
-        double sr = Math.sin(rotation.getX() * 0.5f);
+        double cy = Math.cos((float)Math.toRadians(eulerDegrees.getZ()) * 0.5f);
+        double sy = Math.sin((float)Math.toRadians(eulerDegrees.getZ()) * 0.5f);
+        double cp = Math.cos((float)Math.toRadians(eulerDegrees.getY()) * 0.5f);
+        double sp = Math.sin((float)Math.toRadians(eulerDegrees.getY()) * 0.5f);
+        double cr = Math.cos((float)Math.toRadians(eulerDegrees.getX()) * 0.5f);
+        double sr = Math.sin((float)Math.toRadians(eulerDegrees.getX()) * 0.5f);
         return new Quaternion(
                 (float) (cr * cp * cy + sr * sp * sy),
                 (float) (sr * cp * cy - cr * sp * sy),
                 (float) (cr * sp * cy + sr * cp * sy),
                 (float) (cr * cp * sy - sr * sp * cy)
         );
+    }
+
+    public static Vector3f toEulerAngles(Quaternion quaternion)
+    {
+        Vector3f angles = new Vector3f();
+
+        // roll (x-axis rotation)
+        double sinr_cosp = 2 * (quaternion.w * quaternion.x + quaternion.y * quaternion.z);
+        double cosr_cosp = 1 - 2 * (quaternion.x * quaternion.x + quaternion.y * quaternion.y);
+        angles.setX((float)Math.atan2(sinr_cosp, cosr_cosp));
+
+        // pitch (y-axis rotation)
+        double sinp = 2 * (quaternion.w * quaternion.y - quaternion.z * quaternion.x);
+        if (Math.abs(sinp) >= 1)
+        {
+            angles.setY((float)Math.copySign(Math.PI / 2f, sinp)); // use 90 degrees if out of range
+        } else
+        {
+            angles.setY((float)Math.asin(sinp));
+        }
+
+        // yaw (z-axis rotation)
+        double siny_cosp = 2 * (quaternion.w * quaternion.z + quaternion.x * quaternion.y);
+        double cosy_cosp = 1 - 2 * (quaternion.y * quaternion.y + quaternion.z * quaternion.z);
+        angles.setZ((float)Math.atan2(siny_cosp, cosy_cosp));
+
+        return new Vector3f((float)Math.toDegrees(angles.getX()), (float)Math.toDegrees(angles.getY()), (float)Math.toDegrees(angles.getZ()));
     }
 
     public void normalize()

@@ -5,11 +5,9 @@ import org.lwjgl.BufferUtils;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.file.Path;
 import java.util.function.Function;
 
 import static org.lwjgl.BufferUtils.createByteBuffer;
@@ -26,7 +24,7 @@ public class IOUtils
                 {
                     if (inputStreamClient == null)
                     {
-                        throw new NullPointerException("Resource at path " + path + " not found!");
+                        return readFile(path, function);
                     } else
                     {
                         return function.apply(inputStreamClient);
@@ -44,7 +42,7 @@ public class IOUtils
         throw new NullPointerException("Couldn't read resource at " + path + "!");
     }
 
-    public static <R> R readNativeResource(String path, Function<InputStream, R> function)
+    public static <R> R readFile(String path, Function<InputStream, R> function)
     {
         try (FileInputStream inputStream = new FileInputStream(path))
         {
@@ -73,19 +71,6 @@ public class IOUtils
             e.printStackTrace();
             return false;
         }
-    }
-
-    //TODO: Remove, doesn't work with .jar's
-    public static String getAbsolutePath(String relativePath)
-    {
-        try
-        {
-            return Path.of(IOUtils.class.getResource(relativePath).toURI()).toAbsolutePath().toString();
-        } catch (URISyntaxException e)
-        {
-            e.printStackTrace();
-        }
-        return "";
     }
 
     public static String resourceToString(InputStream file)

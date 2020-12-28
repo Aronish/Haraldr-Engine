@@ -1,7 +1,5 @@
 package haraldr.ecs;
 
-import haraldr.dockspace.uicomponents.ComponentPropertyList;
-import haraldr.dockspace.uicomponents.UIInputField;
 import org.jetbrains.annotations.Contract;
 
 public class TagComponent implements Component
@@ -15,8 +13,8 @@ public class TagComponent implements Component
     }
 
     @Override
-    public void extractComponentProperties(ComponentPropertyList componentPropertyList)
+    public void acceptVisitor(ComponentVisitor visitor)
     {
-        componentPropertyList.addComponent("Tag: ", new UIInputField<>(componentPropertyList.getParent().getTextBatch(), new UIInputField.StringValue(tag), value -> tag = value.getValue()));
+        visitor.visit(this);
     }
 }

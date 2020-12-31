@@ -18,7 +18,7 @@ public class Spotlight extends DirectionalLight
     @Override
     protected void updateBufferData(@NotNull UniformBuffer lightSetup, int offset)
     {
-        lightSetup.setData(new float[] {
+        lightSetup.setSubData(new float[] {
                 position.getX(), position.getY(), position.getZ(),      0f,
                 direction.getX(), direction.getY(), direction.getZ(),   0f,
                 color.getX(), color.getY(), color.getZ(),               0f,
@@ -30,7 +30,7 @@ public class Spotlight extends DirectionalLight
     @Override
     protected void updateBufferDataUnsafe(@NotNull UniformBuffer lightSetup, int offset)
     {
-        lightSetup.setDataUnsafe(new float[] {
+        lightSetup.setSubDataUnsafe(new float[] {
                 position.getX(), position.getY(), position.getZ(),      0f,
                 direction.getX(), direction.getY(), direction.getZ(),   0f,
                 color.getX(), color.getY(), color.getZ(),               0f,

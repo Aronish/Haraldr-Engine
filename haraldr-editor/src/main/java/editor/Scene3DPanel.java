@@ -6,13 +6,14 @@ import haraldr.graphics.RenderTexture;
 import haraldr.graphics.Renderer2D;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
+import haraldr.main.Layer;
 
 public class Scene3DPanel extends DockablePanel
 {
     private HDRGammaCorrectionPass hdrGammaCorrectionPass;
     private RenderTexture sceneTexture;
 
-    public Scene3DPanel(Vector2f position, Vector2f size, String name)
+    public Scene3DPanel(Vector2f position, Vector2f size, String name, Layer layer)
     {
         super(position, size, new Vector4f(0f), name);
         hdrGammaCorrectionPass = new HDRGammaCorrectionPass(0.5f);

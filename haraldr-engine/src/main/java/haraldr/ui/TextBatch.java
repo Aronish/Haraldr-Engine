@@ -1,7 +1,5 @@
-package haraldr.dockspace.uicomponents;
+package haraldr.ui;
 
-import haraldr.debug.Logger;
-import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.ResourceManager;
 import haraldr.graphics.Shader;
@@ -46,7 +44,12 @@ public class TextBatch
 
     public TextLabel createTextLabel(String text, Vector2f position, Vector4f color)
     {
-        TextLabel label = new TextLabel(text, position, color, font);
+        return createTextLabel(text, position, color, true);
+    }
+
+    public TextLabel createTextLabel(String text, Vector2f position, Vector4f color, boolean enabled)
+    {
+        TextLabel label = new TextLabel(text, position, color, font, enabled);
         textLabels.add(label);
         refreshTextMeshData();
         return label;
@@ -55,6 +58,15 @@ public class TextBatch
     public void addTextLabel(TextLabel label)
     {
         textLabels.add(label);
+        refreshTextMeshData();
+    }
+
+    public void setVisible(boolean visible)
+    {
+        for (TextLabel textLabel : textLabels)
+        {
+            textLabel.setEnabled(visible);
+        }
         refreshTextMeshData();
     }
 

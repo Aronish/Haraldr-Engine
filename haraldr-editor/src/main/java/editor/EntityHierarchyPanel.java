@@ -1,7 +1,7 @@
 package editor;
 
 import haraldr.dockspace.DockablePanel;
-import haraldr.dockspace.uicomponents.TextLabel;
+import haraldr.ui.TextLabel;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
 import haraldr.ecs.TagComponent;
@@ -15,6 +15,7 @@ import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
+import haraldr.main.Layer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class EntityHierarchyPanel extends DockablePanel
 
     private EntitySelectedAction entitySelectedAction = (selectedEntity) -> {};
 
-    public EntityHierarchyPanel(Vector2f position, Vector2f size, Vector4f color, String name)
+    public EntityHierarchyPanel(Vector2f position, Vector2f size, Vector4f color, String name, Layer layer)
     {
         super(position, size, color, name);
     }
@@ -110,6 +111,7 @@ public class EntityHierarchyPanel extends DockablePanel
         void run(Entity selectedEntity);
     }
 
+    //TODO: Use UIVerticalList or some tree-like structure.
     private class EntityListItem
     {
         private TextLabel tag;

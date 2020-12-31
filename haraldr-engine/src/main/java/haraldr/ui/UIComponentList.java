@@ -1,4 +1,4 @@
-package haraldr.dockspace.uicomponents;
+package haraldr.ui;
 
 import haraldr.dockspace.DockablePanel;
 import haraldr.event.Event;
@@ -8,14 +8,16 @@ import haraldr.event.ParentCollapsedEvent;
 import haraldr.graphics.Batch2D;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
+import haraldr.main.Layer;
+import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-//TODO: Make UnlabeledComponentList (in engine) and have some version that is collapsible (in editor).
-public class ComponentPropertyList
+
+public class UIComponentList
 {
     private static final float PADDING = 0f, MARGIN = 0f;
     private final float LINE_HEIGHT;
@@ -28,7 +30,9 @@ public class ComponentPropertyList
     private float divider, nextListY;
     private boolean collapsed;
 
-    public ComponentPropertyList(String name, DockablePanel parent)
+    public Layer contextMenuLayer;
+
+    public UIComponentList(String name, DockablePanel parent, Layer contextMenuLayer)
     {
         this.parent = parent;
         position = Vector2f.add(parent.getPosition(), new Vector2f(MARGIN));
@@ -36,9 +40,11 @@ public class ComponentPropertyList
         headerSize = new Vector2f(size.getX(), parent.getHeaderHeight());
         this.name = parent.getTextBatch().createTextLabel(name, position, new Vector4f(1f));
         LINE_HEIGHT = parent.getTextBatch().getFont().getSize();
+
+        this.contextMenuLayer = contextMenuLayer;
     }
 
-    public boolean onEvent(Event event)
+    public boolean onEvent(Event event, Window window)
     {
         boolean requireRedraw = false;
         if (event.eventType == EventType.MOUSE_PRESSED && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
@@ -55,7 +61,7 @@ public class ComponentPropertyList
                 }
                 for (UIComponent component : components.values())
                 {
-                    component.onEvent(new ParentCollapsedEvent(!collapsed));
+                    component.onEvent(new ParentCollapsedEvent(collapsed), window);
                 }
                 parent.getTextBatch().refreshTextMeshData();
             }
@@ -65,7 +71,7 @@ public class ComponentPropertyList
         {
             for (UIComponent component : components.values())
             {
-                if (component.onEvent(event)) requireRedraw = true;
+                if (component.onEvent(event, window)) requireRedraw = true;
             }
         }
         return requireRedraw;
@@ -121,14 +127,22 @@ public class ComponentPropertyList
         parent.getTextBatch().refreshTextMeshData();
     }
 
-    public void render(Batch2D batch)
+    public void draw(Batch2D batch)
     {
         if (!collapsed)
         {
             batch.drawQuad(position, size, new Vector4f(0.3f, 0.3f, 0.3f, 1f));
-            components.values().forEach(component -> component.render(batch));
+            components.values().forEach(component -> component.draw(batch));
         }
         batch.drawQuad(position, headerSize, new Vector4f(0.15f, 0.15f, 0.15f, 1f));
+    }
+
+    public void onDispose()
+    {
+        for (UIComponent uiComponent : components.values())
+        {
+            uiComponent.onDispose();
+        }
     }
 
     public DockablePanel getParent()

@@ -1,7 +1,8 @@
-package haraldr.dockspace.uicomponents;
+package haraldr.ui;
 
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
+import haraldr.main.Window;
 
 public class UIHorizontalBreak extends UIComponent
 {
@@ -24,13 +25,18 @@ public class UIHorizontalBreak extends UIComponent
     }
 
     @Override
-    public boolean onEvent(Event event)
+    public boolean onEvent(Event event, Window window)
     {
         return false;
     }
 
     @Override
-    public void render(Batch2D batch)
+    public void draw(Batch2D batch)
+    {
+    }
+
+    @Override
+    public void onDispose()
     {
     }
 }

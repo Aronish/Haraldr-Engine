@@ -1,7 +1,7 @@
 package editor;
 
 import haraldr.dockspace.DockablePanel;
-import haraldr.dockspace.uicomponents.ComponentPropertyList;
+import haraldr.ui.UIComponentList;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseScrolledEvent;
@@ -19,7 +19,7 @@ public class PropertiesPanel extends DockablePanel
     private static final float SCROLL_SENSITIVITY = 10f;
 
     private Batch2D listBatch = new Batch2D();
-    private List<ComponentPropertyList> componentPropertyLists = new ArrayList<>();
+    private List<UIComponentList> uiComponentLists = new ArrayList<>();
     private float scrollOffset, listHeight;
 
     public PropertiesPanel(Vector2f position, Vector2f size, Vector4f color, String name)
@@ -27,29 +27,30 @@ public class PropertiesPanel extends DockablePanel
         super(position, size, color, name);
     }
 
-    public void addComponentList(ComponentPropertyList componentPropertyList)
+    public void addComponentList(UIComponentList UIComponentList)
     {
-        componentPropertyLists.add(componentPropertyList);
+        uiComponentLists.add(UIComponentList);
         orderComponentLists(position);
         renderToBatch();
     }
 
     public void clear()
     {
-        componentPropertyLists.clear();
+        uiComponentLists.clear();
         listBatch.clear();
         textBatch.clear();
         textBatch.addTextLabel(name);
+        uiComponentLists.forEach(UIComponentList::onDispose);
     }
 
     private void orderComponentLists(Vector2f position)
     {
         float currentHeight = scrollOffset;
-        for (ComponentPropertyList componentPropertyList : componentPropertyLists)
+        for (UIComponentList UIComponentList : uiComponentLists)
         {
-            componentPropertyList.setPosition(Vector2f.add(position, new Vector2f(0f, currentHeight + headerSize.getY())));
-            componentPropertyList.setSize(size);
-            currentHeight += componentPropertyList.getSize().getY() + 5f;
+            UIComponentList.setPosition(Vector2f.add(position, new Vector2f(0f, currentHeight + headerSize.getY())));
+            UIComponentList.setSize(size);
+            currentHeight += UIComponentList.getSize().getY() + 5f;
         }
         listHeight = currentHeight - scrollOffset;
     }
@@ -59,9 +60,9 @@ public class PropertiesPanel extends DockablePanel
     {
         boolean requireRedraw = false;
         super.onEvent(event, window);
-        for (ComponentPropertyList componentPropertyList : componentPropertyLists)
+        for (UIComponentList UIComponentList : uiComponentLists)
         {
-            if (componentPropertyList.onEvent(event))
+            if (UIComponentList.onEvent(event, window))
             {
                 orderComponentLists(position);
                 requireRedraw = true;
@@ -97,9 +98,9 @@ public class PropertiesPanel extends DockablePanel
     @Override
     public void setSize(Vector2f size)
     {
-        for (ComponentPropertyList componentPropertyList : componentPropertyLists)
+        for (UIComponentList UIComponentList : uiComponentLists)
         {
-            componentPropertyList.setSize(size);
+            UIComponentList.setSize(size);
         }
         super.setSize(size);
         if (listHeight < size.getY()) scrollOffset = 0f;
@@ -108,13 +109,13 @@ public class PropertiesPanel extends DockablePanel
     @Override
     protected void renderToBatch() // TODO: Render only visible
     {
-        if (componentPropertyLists == null) return;
+        if (uiComponentLists == null) return;
         super.renderToBatch();
 
         listBatch.begin();
-        for (ComponentPropertyList componentPropertyList : componentPropertyLists)
+        for (UIComponentList uiComponentList : uiComponentLists)
         {
-            componentPropertyList.render(listBatch);
+            uiComponentList.draw(listBatch);
         }
         listBatch.end();
     }
@@ -137,10 +138,5 @@ public class PropertiesPanel extends DockablePanel
         Renderer.stencilMask(0xFF);
         Renderer.stencilFunc(Renderer.StencilFunc.ALWAYS, 1, 0xFF);
         Renderer.disableStencilTest();
-    }
-
-    @Override
-    public void renderText()
-    {
     }
 }

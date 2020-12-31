@@ -1,4 +1,4 @@
-package haraldr.dockspace.uicomponents;
+package haraldr.ui;
 
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -13,15 +13,21 @@ public class TextLabel
     private Font font;
     private String text;
     private Vector4f color;
+    private boolean enabled;
     private Vector2f position;
-    private boolean enabled = true;
     private List<Float> textMeshData = new ArrayList<>();
 
-    public TextLabel(@NotNull String text, Vector2f position, Vector4f color, Font font)
+    public TextLabel(String text, Vector2f position, Vector4f color, Font font)
+    {
+        this(text, position, color, font, true);
+    }
+
+    public TextLabel(String text, Vector2f position, Vector4f color, Font font, boolean enabled)
     {
         this.text = text;
-        this.color = color;
         this.font = font;
+        this.color = color;
+        this.enabled = enabled;
         this.position = Vector2f.add(position, new Vector2f(0f, font.getSize() - font.getBaseline()));
         setText(text);
     }
@@ -60,6 +66,11 @@ public class TextLabel
     public Font getFont()
     {
         return font;
+    }
+
+    public String getText()
+    {
+        return text;
     }
 
     public int getPixelWidth()

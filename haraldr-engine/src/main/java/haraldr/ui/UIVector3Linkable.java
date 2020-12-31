@@ -1,7 +1,8 @@
-package haraldr.dockspace.uicomponents;
+package haraldr.ui;
 
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
+import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector3f;
 
@@ -140,15 +141,15 @@ public class UIVector3Linkable extends UIVector3
     }
 
     @Override
-    public boolean onEvent(Event event)
+    public boolean onEvent(Event event, Window window)
     {
-        return super.onEvent(event) | linked.onEvent(event);
+        return super.onEvent(event, window) | linked.onEvent(event, window);
     }
 
     @Override
-    public void render(Batch2D batch)
+    public void draw(Batch2D batch)
     {
-        super.render(batch);
-        linked.render(batch);
+        super.draw(batch);
+        linked.draw(batch);
     }
 }

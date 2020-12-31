@@ -35,7 +35,7 @@ module haraldr
     ///// EXPORTS ////////
     exports haraldr.debug;
     exports haraldr.dockspace;
-    exports haraldr.dockspace.uicomponents;
+    exports haraldr.ui;
     exports haraldr.ecs;
     exports haraldr.event;
     exports haraldr.graphics;

@@ -5,12 +5,8 @@ import haraldr.main.Window;
 import haraldr.scene.Scene3D;
 import org.jetbrains.annotations.NotNull;
 
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL45.glBindTextureUnit;
-
 @SuppressWarnings("unused")
-public abstract class Renderer3D
+public abstract class Renderer3D //TODO: Clean up this mess
 {
     public static final VertexArray SCREEN_QUAD = new VertexArray();
 
@@ -68,9 +64,9 @@ public abstract class Renderer3D
     public static void begin(@NotNull Window window, Camera camera, Framebuffer framebuffer) //TODO: Unnecessary in current form?
     {
         matrixBuffer.bind(0);
-        matrixBuffer.setDataUnsafe(camera.getViewMatrix().matrix, 0);
-        matrixBuffer.setDataUnsafe(camera.getProjectionMatrix().matrix, 64);
-        matrixBuffer.setDataUnsafe(camera.getRawPosition(), 128);
+        matrixBuffer.setSubDataUnsafe(camera.getViewMatrix().matrix, 0);
+        matrixBuffer.setSubDataUnsafe(camera.getProjectionMatrix().matrix, 64);
+        matrixBuffer.setSubDataUnsafe(camera.getRawPosition(), 128);
         framebuffer.bind();
         Renderer.enableDepthTest();
         Renderer.clear(Renderer.ClearMask.COLOR_DEPTH_STENCIL);

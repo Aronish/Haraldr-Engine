@@ -1,7 +1,6 @@
 package haraldr.graphics.lighting;
 
 import haraldr.graphics.DefaultModels;
-import haraldr.graphics.Shader;
 import haraldr.graphics.Texture;
 import haraldr.graphics.UniformBuffer;
 import haraldr.math.Matrix4f;
@@ -37,7 +36,7 @@ public class DirectionalLight extends Light
     @Override
     protected void updateBufferData(@NotNull UniformBuffer lightSetup, int offset)
     {
-        lightSetup.setData(new float[] {
+        lightSetup.setSubData(new float[] {
                 direction.getX(), direction.getY(), direction.getZ(),   0f,
                 color.getX(), color.getY(), color.getZ(),               0f,
         }, offset);
@@ -46,7 +45,7 @@ public class DirectionalLight extends Light
     @Override
     protected void updateBufferDataUnsafe(@NotNull UniformBuffer lightSetup, int offset)
     {
-        lightSetup.setDataUnsafe(new float[] {
+        lightSetup.setSubDataUnsafe(new float[] {
                 direction.getX(), direction.getY(), direction.getZ(),   0f,
                 color.getX(), color.getY(), color.getZ(),               0f,
         }, offset);

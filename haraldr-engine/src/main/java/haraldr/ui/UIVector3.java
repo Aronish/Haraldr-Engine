@@ -1,7 +1,8 @@
-package haraldr.dockspace.uicomponents;
+package haraldr.ui;
 
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
+import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector3f;
 
@@ -97,19 +98,25 @@ public class UIVector3 extends UIComponent
     }
 
     @Override
-    public boolean onEvent(Event event)
+    public boolean onEvent(Event event, Window window)
     {
-        return x.onEvent(event) | y.onEvent(event) | z.onEvent(event);
+        return x.onEvent(event, window) | y.onEvent(event, window) | z.onEvent(event, window);
     }
 
     @Override
-    public void render(Batch2D batch)
+    public void draw(Batch2D batch)
     {
-        x.render(batch);
-        y.render(batch);
-        z.render(batch);
+        x.draw(batch);
+        y.draw(batch);
+        z.draw(batch);
     }
 
+    @Override
+    public void onDispose()
+    {
+    }
+
+    @FunctionalInterface
     public interface Vector3ChangeAction
     {
         void run(float x, float y, float z);

@@ -1,5 +1,6 @@
 package haraldr.input;
 
+import org.jetbrains.annotations.Contract;
 import org.lwjgl.glfw.GLFW;
 
 @SuppressWarnings("unused")
@@ -131,6 +132,7 @@ public enum KeyboardKey
 
     public final int keyCode;
 
+    @Contract(pure = true)
     KeyboardKey(int keyCode)
     {
         this.keyCode = keyCode;

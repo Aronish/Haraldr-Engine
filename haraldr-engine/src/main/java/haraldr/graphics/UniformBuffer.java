@@ -21,14 +21,14 @@ public class UniformBuffer
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 
-    public void setData(float[] data, int offset)
+    public void setSubData(float[] data, int offset)
     {
         glBindBuffer(GL_UNIFORM_BUFFER, uniformBufferId);
         glBufferSubData(GL_UNIFORM_BUFFER, offset, data);
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 
-    public void setDataUnsafe(float[] data, int offset)
+    public void setSubDataUnsafe(float[] data, int offset)
     {
         glBufferSubData(GL_UNIFORM_BUFFER, offset, data);
     }

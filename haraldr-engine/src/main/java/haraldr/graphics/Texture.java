@@ -1,7 +1,7 @@
 package haraldr.graphics;
 
 import haraldr.debug.Logger;
-import haraldr.dockspace.uicomponents.Font;
+import haraldr.ui.Font;
 import haraldr.main.EntryPoint;
 import haraldr.main.IOUtils;
 import org.jetbrains.annotations.Contract;

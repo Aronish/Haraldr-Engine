@@ -1,4 +1,4 @@
-package haraldr.dockspace.uicomponents;
+package haraldr.ui;
 
 import haraldr.event.CharTypedEvent;
 import haraldr.event.Event;
@@ -10,6 +10,7 @@ import haraldr.graphics.Batch2D;
 import haraldr.input.Input;
 import haraldr.input.KeyboardKey;
 import haraldr.input.MouseButton;
+import haraldr.main.Window;
 import haraldr.math.MathUtils;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -74,7 +75,7 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
     }
 
     @Override
-    public boolean onEvent(Event event)
+    public boolean onEvent(Event event, Window window)
     {
         boolean requireRedraw = false;
         if (event.eventType == EventType.MOUSE_PRESSED)
@@ -84,7 +85,11 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
                 var mousePressedEvent = (MousePressedEvent) event;
                 boolean lastSelectedState = selected;
                 held = selected = Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), fieldPosition, fieldSize);
-                if (held) lastMouseX = mousePressedEvent.xPos;
+                if (held)
+                {
+                    lastMouseX = mousePressedEvent.xPos;
+                    window.setCursorVisibility(false);
+                }
 
                 if (value.toString().length() == 0) value.setDefaultValue();
                 updateTextLabel();
@@ -99,7 +104,11 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
                 inputFieldChangeAction.run(value);
             }
         }
-        if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1)) held = false;
+        if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
+        {
+            held = false;
+            window.setCursorVisibility(true);
+        }
         if (selected)
         {
             if (event.eventType == EventType.KEY_PRESSED)
@@ -124,12 +133,13 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
             var mouseMovedEvent = (MouseMovedEvent) event;
             value.onMouseDragged((float)mouseMovedEvent.xPos - lastMouseX);
             lastMouseX = (float)mouseMovedEvent.xPos;
+            window.setCursorPosition(lastMouseX, 0f);
             updateTextLabel();
             inputFieldChangeAction.run(value);
         }
         if (event.eventType == EventType.PARENT_COLLAPSED)
         {
-            textLabel.setEnabled(((ParentCollapsedEvent) event).collapsed);
+            textLabel.setEnabled(!((ParentCollapsedEvent) event).collapsed);
         }
         return requireRedraw;
     }
@@ -141,10 +151,15 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
     }
 
     @Override
-    public void render(Batch2D batch)
+    public void draw(Batch2D batch)
     {
         batch.drawQuad(position, borderSize, selected ? SELECTED_COLOR : UNSELECTED_COLOR);
         batch.drawQuad(fieldPosition, fieldSize, new Vector4f(0.8f, 0.8f, 0.8f, 1f));
+    }
+
+    @Override
+    public void onDispose()
+    {
     }
 
     public T getValue()
@@ -152,6 +167,7 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
         return value;
     }
 
+    @FunctionalInterface
     public interface InputFieldChangeAction<UnderlyingType extends InputFieldValue>
     {
         void run(UnderlyingType inputFieldValue);

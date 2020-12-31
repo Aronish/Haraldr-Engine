@@ -3,11 +3,6 @@ package offlinerenderer;
 import haraldr.dockspace.DockPosition;
 import haraldr.dockspace.DockablePanel;
 import haraldr.dockspace.Dockspace;
-import haraldr.dockspace.uicomponents.ComponentPropertyList;
-import haraldr.dockspace.uicomponents.UIButton;
-import haraldr.dockspace.uicomponents.UIHorizontalBreak;
-import haraldr.dockspace.uicomponents.UIInfoLabel;
-import haraldr.dockspace.uicomponents.UIInputField;
 import haraldr.event.Event;
 import haraldr.graphics.Renderer;
 import haraldr.main.Application;
@@ -15,6 +10,13 @@ import haraldr.main.IOUtils;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
+import haraldr.ui.UIComponentList;
+import haraldr.ui.UIButton;
+import haraldr.ui.UIHorizontalBreak;
+import haraldr.ui.UIInfoLabel;
+import haraldr.ui.UIInputField;
+import haraldr.main.Layer;
+import haraldr.main.LayerManager;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
@@ -23,6 +25,9 @@ import static org.lwjgl.opengl.GL11.glViewport;
 //TODO: Fix panel
 public class OfflineRendererApplication extends Application
 {
+    private LayerManager layerManager;
+    private Layer mainLayer;
+
     private Dockspace dockspace;
     private DockablePanel mainPanel;
     private UIInputField<UIInputField.IntValue> diffuseIrradianceMapSize;
@@ -53,7 +58,7 @@ public class OfflineRendererApplication extends Application
         dockspace.addPanel(mainPanel);
         dockspace.dockPanel(mainPanel, DockPosition.CENTER);
 
-        ComponentPropertyList mainPane = new ComponentPropertyList("Haraldr Offline Renderer", mainPanel);
+        UIComponentList mainPane = new UIComponentList("Haraldr Offline Renderer", mainPanel, mainLayer);
 
         //Original environment map
         UIButton loadHdr = new UIButton(() ->
@@ -199,7 +204,7 @@ public class OfflineRendererApplication extends Application
     protected void clientRender(Window window)
     {
         dockspace.render();
-        mainPanel.renderText();
+        layerManager.render();
     }
 
     @Override

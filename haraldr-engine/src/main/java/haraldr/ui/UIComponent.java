@@ -1,7 +1,8 @@
-package haraldr.dockspace.uicomponents;
+package haraldr.ui;
 
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
+import haraldr.main.Window;
 import haraldr.math.Vector2f;
 
 public abstract class UIComponent
@@ -25,7 +26,9 @@ public abstract class UIComponent
     /**
      * @return true if an event requires a redraw.
      */
-    public abstract boolean onEvent(Event event);
+    public abstract boolean onEvent(Event event, Window window);
 
-    public abstract void render(Batch2D batch);
+    public abstract void draw(Batch2D batch);
+
+    public abstract void onDispose();
 }

@@ -1,5 +1,6 @@
 package haraldr.input;
 
+import org.jetbrains.annotations.Contract;
 import org.lwjgl.glfw.GLFW;
 
 @SuppressWarnings("unused")
@@ -20,6 +21,7 @@ public enum MouseButton
 
     public final int buttonCode;
 
+    @Contract(pure = true)
     MouseButton(int buttonCode)
     {
         this.buttonCode = buttonCode;

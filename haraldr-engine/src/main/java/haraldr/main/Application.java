@@ -5,7 +5,6 @@ import haraldr.event.Event;
 import haraldr.event.EventDispatcher;
 import haraldr.event.EventType;
 import haraldr.event.WindowResizedEvent;
-import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Renderer3D;
 import haraldr.graphics.ResourceManager;

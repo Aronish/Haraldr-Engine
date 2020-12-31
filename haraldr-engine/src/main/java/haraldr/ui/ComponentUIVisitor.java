@@ -1,5 +1,6 @@
-package haraldr.dockspace.uicomponents;
+package haraldr.ui;
 
+import haraldr.debug.Logger;
 import haraldr.ecs.BoundingSphereComponent;
 import haraldr.ecs.ComponentVisitor;
 import haraldr.ecs.ModelComponent;
@@ -8,29 +9,28 @@ import haraldr.ecs.TransformComponent;
 import haraldr.main.IOUtils;
 import haraldr.math.Quaternion;
 import haraldr.math.Vector3f;
+import jsonparser.JSONArray;
 import jsonparser.JSONObject;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
-import java.util.List;
-
 public class ComponentUIVisitor implements ComponentVisitor
 {
-    private ComponentPropertyList componentPropertyList;
+    private UIComponentList uiComponentList;
 
-    public void setComponentPropertyList(ComponentPropertyList componentPropertyList)
+    public void setComponentPropertyList(UIComponentList UIComponentList)
     {
-        this.componentPropertyList = componentPropertyList;
+        this.uiComponentList = UIComponentList;
     }
 
     @Override
     public void visit(BoundingSphereComponent boundingSphereComponent)
     {
-        componentPropertyList.addComponent(
+        uiComponentList.addComponent(
                 "Radius: ",
                 new UIInputField<>(
-                        componentPropertyList.getParent().getTextBatch(),
+                        uiComponentList.getParent().getTextBatch(),
                         new UIInputField.FloatValue(boundingSphereComponent.radius),
                         value -> boundingSphereComponent.radius = value.getValue()
                 )
@@ -44,9 +44,9 @@ public class ComponentUIVisitor implements ComponentVisitor
         JSONObject updatedModelDefinition = modelComponent.model.getModelDefinition();
         JSONObject materialProperties = updatedModelDefinition.getJSONObject("material").getJSONObject("properties");
 
-        UIInfoLabel meshPathLabel = new UIInfoLabel(componentPropertyList.getParent().getTextBatch(), updatedModelDefinition.getString("mesh"));
-        componentPropertyList.addComponent("Mesh: ", meshPathLabel);
-        componentPropertyList.addComponent(
+        UIInfoLabel meshPathLabel = new UIInfoLabel(uiComponentList.getParent().getTextBatch(), updatedModelDefinition.getString("mesh"));
+        uiComponentList.addComponent("Mesh: ", meshPathLabel);
+        uiComponentList.addComponent(
                 "Load Mesh: ",
                 new UIButton(() ->
                 {
@@ -68,45 +68,56 @@ public class ComponentUIVisitor implements ComponentVisitor
                 })
         );
 
-        componentPropertyList.addComponent(
-                "Color: ",
-                new UIVector3(
-                        componentPropertyList.getParent().getTextBatch(),
-                        new Vector3f(0f), new Vector3f(1f), new Vector3f(materialProperties.getJSONArray("color")), 0.01f,
-                        (r, g, b) ->
-                        {
-                            materialProperties.put("color", List.of(r, g, b));
-                            modelComponent.model.refresh(updatedModelDefinition);
-                        }
-                )
-        );
+        // Material types
+        UIDropDownMenu uiDropDownMenu = new UIDropDownMenu(uiComponentList.contextMenuLayer);
+        JSONArray materialTypes = new JSONObject(IOUtils.readResource("default_models/material_specification.json", IOUtils::resourceToString)).names();
+        for (Object materialType : materialTypes.toList())
+        {
+            uiDropDownMenu.addMenuItem(((String)materialType).charAt(0) + ((String)materialType).substring(1).toLowerCase(), Logger::info);
+            // TODO: Lambda for selecting and changing type here
+        }
+        uiComponentList.addComponent("Material Type: ", uiDropDownMenu);
+        // TODO: Rework once serialization exists
 
-        componentPropertyList.addComponent(
-                "Metalness: ",
-                new UISlider(materialProperties.getFloat("metalness"), (value ->
-                {
-                    materialProperties.put("metalness", value);
-                    modelComponent.model.refresh(updatedModelDefinition);
-                }))
-        );
+        //uiComponentList.addComponent(
+        //        "Color: ",
+        //        new UIVector3(
+        //                uiComponentList.getParent().getTextBatch(),
+        //                new Vector3f(0f), new Vector3f(1f), new Vector3f(materialProperties.getJSONArray("color")), 0.01f,
+        //                (r, g, b) ->
+        //                {
+        //                    materialProperties.put("color", List.of(r, g, b));
+        //                    modelComponent.model.refresh(updatedModelDefinition);
+        //                }
+        //        )
+        //);
 
-        componentPropertyList.addComponent(
-                "Roughness: ",
-                new UISlider(materialProperties.getFloat("roughness"), (value ->
-                {
-                    materialProperties.put("roughness", value);
-                    modelComponent.model.refresh(updatedModelDefinition);
-                }))
-        );
+        //uiComponentList.addComponent(
+        //        "Metalness: ",
+        //        new UISlider(materialProperties.getFloat("metalness"), (value ->
+        //        {
+        //            materialProperties.put("metalness", value);
+        //            modelComponent.model.refresh(updatedModelDefinition);
+        //        }))
+        //);
+
+        //uiComponentList.addComponent(
+        //        "Roughness: ",
+        //        new UISlider(materialProperties.getFloat("roughness"), (value ->
+        //        {
+        //            materialProperties.put("roughness", value);
+        //            modelComponent.model.refresh(updatedModelDefinition);
+        //        }))
+        //);
     }
 
     @Override
     public void visit(TagComponent tagComponent)
     {
-        componentPropertyList.addComponent(
+        uiComponentList.addComponent(
                 "Tag: ",
                 new UIInputField<>(
-                        componentPropertyList.getParent().getTextBatch(),
+                        uiComponentList.getParent().getTextBatch(),
                         new UIInputField.StringValue(tagComponent.tag),
                         value -> tagComponent.tag = value.getValue()
                 )
@@ -116,10 +127,10 @@ public class ComponentUIVisitor implements ComponentVisitor
     @Override
     public void visit(TransformComponent transformComponent)
     {
-        componentPropertyList.addComponent(
+        uiComponentList.addComponent(
                 "Position: ",
                 new UIVector3(
-                        componentPropertyList.getParent().getTextBatch(),
+                        uiComponentList.getParent().getTextBatch(),
                         transformComponent.position,
                         (x, y, z) ->
                         {
@@ -129,11 +140,12 @@ public class ComponentUIVisitor implements ComponentVisitor
                         }
                 )
         );
-        componentPropertyList.addComponent(
+        boolean linkedScale = transformComponent.scale.getX() == transformComponent.scale.getY() && transformComponent.scale.getX() == transformComponent.scale.getZ();
+        uiComponentList.addComponent(
                 "Scale: ",
                 new UIVector3Linkable(
-                        componentPropertyList.getParent().getTextBatch(),
-                        new Vector3f(0f), new Vector3f(Float.MAX_VALUE), transformComponent.scale, true,
+                        uiComponentList.getParent().getTextBatch(),
+                        new Vector3f(0f), new Vector3f(Float.MAX_VALUE), transformComponent.scale, linkedScale,
                         (x, y, z) ->
                         {
                             transformComponent.scale.setX(x);
@@ -142,12 +154,11 @@ public class ComponentUIVisitor implements ComponentVisitor
                         }
                 )
         );
-        componentPropertyList.addComponent(
-                //TODO: Gimbal lock still exists
+        uiComponentList.addComponent(
                 "Rotation: ",
                 new UIVector3(
-                        componentPropertyList.getParent().getTextBatch(),
-                        Quaternion.toEulerAngles(transformComponent.rotationQuaternion), 0.3f,
+                        uiComponentList.getParent().getTextBatch(),
+                        transformComponent.rotation, 0.3f,
                         (x, y, z) ->
                         {
                             transformComponent.rotation.setX(x);

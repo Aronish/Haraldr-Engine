@@ -30,7 +30,7 @@ public class PointLight extends Light
     @Override
     protected void updateBufferData(@NotNull UniformBuffer lightSetup, int offset)
     {
-        lightSetup.setData(new float[] {
+        lightSetup.setSubData(new float[] {
                 position.getX(), position.getY(), position.getZ(),  0f,
                 color.getX(), color.getY(), color.getZ(),           0f,
                 constant, linear, quadratic
@@ -40,7 +40,7 @@ public class PointLight extends Light
     @Override
     protected void updateBufferDataUnsafe(@NotNull UniformBuffer lightSetup, int offset)
     {
-        lightSetup.setDataUnsafe(new float[] {
+        lightSetup.setSubDataUnsafe(new float[] {
                 position.getX(), position.getY(), position.getZ(),  0f,
                 color.getX(), color.getY(), color.getZ(),           0f,
                 constant, linear, quadratic

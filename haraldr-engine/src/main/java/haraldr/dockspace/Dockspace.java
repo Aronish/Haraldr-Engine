@@ -4,7 +4,6 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
-import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Batch2D;
 import haraldr.input.Input;
 import haraldr.input.KeyboardKey;
@@ -29,16 +28,12 @@ public class Dockspace
     private DockablePanel selectedPanel;
     private DockingArea rootArea;
 
-    private WindowHeader windowHeader;
-
     private Batch2D renderBatch = new Batch2D();
 
     public Dockspace(Vector2f position, Vector2f size)
     {
-        windowHeader = new WindowHeader(position, size.getX(), new Vector4f(0.4f, 0.4f, 0.4f, 1f));
-        this.position = Vector2f.add(position, new Vector2f(0f, windowHeader.getSize().getY()));
-        this.size = Vector2f.add(size, new Vector2f(0f, -windowHeader.getSize().getY()));
-
+        this.position = position;
+        this.size = size;
         rootArea = new DockingArea(this.position, this.size);
         renderToBatch();
     }
@@ -64,14 +59,6 @@ public class Dockspace
 
     public void onEvent(Event event, Window window)
     {
-        windowHeader.onEvent(event);
-
-        if (event.eventType == EventType.WINDOW_RESIZED)
-        {
-            var windowResizedEvent = (WindowResizedEvent) event;
-            setSize(new Vector2f(windowResizedEvent.width, windowResizedEvent.height));
-        }
-
         if (Input.wasKeyPressed(event, KeyboardKey.KEY_TAB))
         {
             panels.addFirst(panels.removeLast());
@@ -84,13 +71,14 @@ public class Dockspace
             DockingArea dockedArea = rootArea.getDockedArea(panel);
             if (dockedArea == null || dockedArea.parent == null || !dockedArea.parent.resizing) panel.onEvent(event, window);
 
-            if (panel.isHeld())
+            if (panel.isHeaderPressed())
             {
                 selectedPanel = panel;
                 panels.remove(selectedPanel);
-                panels.addLast(selectedPanel);
+                panels.addFirst(selectedPanel);
                 break;
             }
+            if (event.isHandled()) break;
         }
 
         if (selectedPanel != null && Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
@@ -119,14 +107,13 @@ public class Dockspace
         }
     }
 
-    private void setSize(Vector2f size)
+    public void resize(float width, float height)
     {
-        this.size.set(Vector2f.add(size, new Vector2f(0f, -windowHeader.getSize().getY())));
+        this.size.set(width, height - position.getY());
         Vector2f scaleFactors = Vector2f.divide(size, rootArea.size);
-        rootArea.scalePosition(scaleFactors, new Vector2f(0f, -(windowHeader.getSize().getY() * scaleFactors.getY() - windowHeader.getSize().getY())));
+        rootArea.scalePosition(scaleFactors, new Vector2f(0f, -(position.getY() * scaleFactors.getY() - position.getY())));
         rootArea.scaleSize(scaleFactors);
         rootArea.recalculateSplitArea();
-        windowHeader.setWidth(rootArea.size.getX());
         renderToBatch();
     }
 
@@ -140,10 +127,10 @@ public class Dockspace
 
     public void render()
     {
-        windowHeader.render();
         renderBatch.render();
-        for (DockablePanel dockablePanel : panels)
+        for (Iterator<DockablePanel> it = panels.descendingIterator(); it.hasNext();)
         {
+            DockablePanel dockablePanel = it.next();
             dockablePanel.render();
             dockablePanel.renderText();
         }
@@ -526,26 +513,45 @@ public class Dockspace
         /**
          * Undocks this panel and shifts panels with children on opposite side one layer upwards in the tree.
          * Resizes areas with panels and resizing areas according to reclaimed area.
-         * Don't ask me how this works, it is a bunch of small resizing fixes clumped together in a mess.
+         * Don't ask me how this works, it is a bunch of small fixes that account for all cases clumped together in a mess.
          */
         private void undock()
         {
             if (dockPosition != DockPosition.CENTER)
             {
-                Map<DockPosition, DockingArea> adjacentChildren = parent.children.get(dockPosition.getOpposite()).children;
                 DockingArea opposite = parent.children.get(dockPosition.getOpposite());
+                Map<DockPosition, DockingArea> adjacentChildren = opposite.children;
                 if (adjacentChildren.size() == 0) // Only one adjacent area
                 {
                     if (opposite.dockedPanel != null)
                     {
+                        // If there's a panel directly adjacent in the same parent, resize that to fit entire parent.
                         parent.dockedPanel = opposite.dockedPanel;
                         parent.dockedPanel.setPosition(parent.position);
                         parent.dockedPanel.setSize(parent.size);
                         parent.dockPosition = DockPosition.CENTER;
+                        parent.dockable = false;
                         parent.children.clear();
+                    } else
+                    {
+                        // If this is the only one, remove parent and resize its adjacent area to fit its parent.
+                        if (parent.parent != null)
+                        {
+                            DockingArea parentOpposite = parent.parent.children.get(parent.dockPosition.getOpposite());
+                            parent.parent.dockedPanel = parentOpposite.dockedPanel;
+                            parent.parent.dockedPanel.setPosition(parent.parent.position);
+                            parent.parent.dockedPanel.setSize(parent.parent.size);
+                            parent.parent.dockPosition = DockPosition.CENTER;
+                            parent.parent.dockable = true;
+                            parent.parent.children.clear();
+                        } else // Parent is rootArea
+                        {
+                            parent.dockable = true;
+                            parent.dockPosition = DockPosition.NONE;
+                            parent.dockedPanel = null;
+                            parent.children.clear();
+                        }
                     }
-                    parent.dockable = true;
-                    parent.children.clear();
                 } else // Two adjacent areas
                 {
                     parent.children.clear();
@@ -553,7 +559,7 @@ public class Dockspace
                     parent.splitAreaPosition = opposite.splitAreaPosition;
                     parent.splitAreaSize = opposite.splitAreaSize;
                     parent.dockable = opposite.dockable;
-                    // Expand areas with recovered space. A bit ugly, but difficult to compact.
+                    // Expand areas with recovered space. Different positions and sizes depending on docking configuration. A bit ugly, but difficult to compact.
                     switch (dockPosition)
                     {
                         case LEFT -> {
@@ -600,11 +606,32 @@ public class Dockspace
                     parent.vertical = opposite.vertical;
                     parent.recalculateSplitArea();
                 }
-            } else
+            } else // Area was in center of one of parent's child areas.
             {
-                dockable = true;
-                dockedPanel = null;
-                dockPosition = DockPosition.NONE;
+                if (parent != null)
+                {
+                    DockingArea opposite = null;
+                    for (DockingArea dockingArea : parent.children.values())
+                    {
+                        if (!dockingArea.equals(this))
+                        {
+                            opposite = dockingArea;
+                        }
+                    }
+                    assert opposite != null;
+
+                    parent.dockedPanel = opposite.dockedPanel;
+                    parent.dockedPanel.setPosition(parent.position);
+                    parent.dockedPanel.setSize(parent.size);
+                    parent.dockPosition = DockPosition.CENTER;
+                    parent.dockable = false;
+                    parent.children.clear();
+                } else // Area is rootArea
+                {
+                    dockable = true;
+                    dockedPanel = null;
+                    dockPosition = DockPosition.NONE;
+                }
             }
         }
 

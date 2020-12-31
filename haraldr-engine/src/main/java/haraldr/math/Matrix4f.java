@@ -76,7 +76,8 @@ public class Matrix4f
         return new Vector3f(result[0], result[1], result[2]);
     }
 
-    public static Vector4f multiply(Matrix4f matrix, Vector4f vector)
+    @Contract("_, _ -> new")
+    public static @NotNull Vector4f multiply(Matrix4f matrix, @NotNull Vector4f vector)
     {
         float[] start = { vector.getX(), vector.getY(), vector.getZ(), vector.getW() };
         float[] result = new float[4];
@@ -290,12 +291,17 @@ public class Matrix4f
 
     public Matrix4f translate(Vector2f vector)
     {
-        return multiply(createTranslate(vector));
+        matrix[12] += vector.getX();
+        matrix[13] += vector.getY();
+        return this;
     }
 
     public Matrix4f translate(Vector3f vector)
     {
-        return multiply(createTranslate(vector));
+        matrix[12] += vector.getX();
+        matrix[13] += vector.getY();
+        matrix[14] += vector.getZ();
+        return this;
     }
 
     private static @NotNull Matrix4f createRotate(@NotNull Vector3f rotation)

@@ -1,4 +1,4 @@
-package haraldr.dockspace.uicomponents;
+package haraldr.ui;
 
 import haraldr.event.Event;
 import haraldr.event.EventType;
@@ -7,6 +7,7 @@ import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Batch2D;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
+import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
@@ -84,7 +85,7 @@ public class UISlider extends UIComponent
     }
 
     @Override
-    public boolean onEvent(Event event)
+    public boolean onEvent(Event event, Window window)
     {
         boolean requireRedraw = false;
         if (event.eventType == EventType.MOUSE_PRESSED)
@@ -118,10 +119,15 @@ public class UISlider extends UIComponent
     }
 
     @Override
-    public void render(Batch2D batch)
+    public void draw(Batch2D batch)
     {
         batch.drawQuad(position, sliderSize, new Vector4f(0.5f, 0.5f, 0.5f, 1f));
         batch.drawQuad(handlePosition, handleSize, new Vector4f(1f));
+    }
+
+    @Override
+    public void onDispose()
+    {
     }
 
     @Override

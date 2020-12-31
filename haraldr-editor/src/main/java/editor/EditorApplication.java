@@ -1,9 +1,8 @@
 package editor;
 
+import haraldr.debug.Logger;
 import haraldr.dockspace.DockPosition;
 import haraldr.dockspace.Dockspace;
-import haraldr.dockspace.uicomponents.ComponentPropertyList;
-import haraldr.dockspace.uicomponents.ComponentUIVisitor;
 import haraldr.ecs.BoundingSphereComponent;
 import haraldr.ecs.Component;
 import haraldr.ecs.Entity;
@@ -12,6 +11,7 @@ import haraldr.ecs.ModelComponent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
+import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer3D;
 import haraldr.input.Input;
@@ -27,18 +27,27 @@ import haraldr.physics.Physics3D;
 import haraldr.scene.Camera;
 import haraldr.scene.OrbitalCamera;
 import haraldr.scene.Scene3D;
+import haraldr.ui.ComponentUIVisitor;
+import haraldr.ui.UIComponentList;
+import haraldr.main.Layer;
+import haraldr.main.LayerManager;
+import haraldr.ui.WindowHeader;
 
 public class EditorApplication extends Application
 {
+    private LayerManager layerManager = new LayerManager();
+    private Layer mainLayer, contextMenuLayer;
+
+    private WindowHeader windowHeader;
+    private Dockspace dockSpace;
+    // Editor panels
+    private EntityHierarchyPanel entityHierarchyPanel;
+    private Scene3DPanel scene3DPanel;
+    private PropertiesPanel propertiesPanel;
+    // Scene
     private Camera editorCamera;
     private Scene3D scene;
     private Entity selected = Entity.INVALID;
-
-    private Dockspace dockSpace;
-    private EntityHierarchyPanel entityHierarchyPanel;
-    private Scene3DPanel scene3DPanel;
-
-    private PropertiesPanel propertiesPanel;
 
     public EditorApplication()
     {
@@ -52,13 +61,31 @@ public class EditorApplication extends Application
     @Override
     protected void clientInit(Window window)
     {
+        // Application layers
+        mainLayer = new MainLayer();
+        contextMenuLayer = new ContextMenuLayer();
+        layerManager.addLayer(mainLayer);
+        layerManager.addLayer(contextMenuLayer);
+
+        windowHeader = new WindowHeader(new Vector2f(), window.getWidth(), new Vector4f(0.4f, 0.4f, 0.4f, 1f), mainLayer, contextMenuLayer);
+        windowHeader.addMenuButton(
+                "File",
+                new WindowHeader.ListData("Open", Logger::info),
+                new WindowHeader.ListData("Save", Logger::info),
+                new WindowHeader.ListData("Exit", Logger::info)
+        );
+
+        dockSpace = new Dockspace(
+                new Vector2f(0f, windowHeader.getSize().getY()),
+                new Vector2f(window.getWidth(), window.getHeight() - windowHeader.getSize().getY())
+        );
+
+        // Scene
         scene = new EditorTestScene();
         scene.onActivate();
 
-        dockSpace = new Dockspace(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()));
-
         // Scene Panel
-        dockSpace.addPanel(scene3DPanel = new Scene3DPanel(new Vector2f(700f, 30f), new Vector2f(200f, 200f), "Scene"));
+        dockSpace.addPanel(scene3DPanel = new Scene3DPanel(new Vector2f(700f, 30f), new Vector2f(200f, 200f), "Scene", mainLayer));
         editorCamera = new OrbitalCamera(scene3DPanel.getSize().getX(), scene3DPanel.getSize().getY());
         scene3DPanel.setPanelResizeAction((position, size) ->
         {
@@ -74,7 +101,7 @@ public class EditorApplication extends Application
         dockSpace.dockPanel(propertiesPanel, DockPosition.BOTTOM);
 
         // Hierarchy Panel
-        dockSpace.addPanel(entityHierarchyPanel = new EntityHierarchyPanel(new Vector2f(200f), new Vector2f(200f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Hierarchy"));
+        dockSpace.addPanel(entityHierarchyPanel = new EntityHierarchyPanel(new Vector2f(200f), new Vector2f(200f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Hierarchy", mainLayer));
         entityHierarchyPanel.refreshEntityList(scene.getRegistry());
         entityHierarchyPanel.setEntitySelectedAction(this::selectEntity);
         dockSpace.dockPanel(entityHierarchyPanel, DockPosition.CENTER);
@@ -83,10 +110,13 @@ public class EditorApplication extends Application
     @Override
     protected void clientEvent(Event event, Window window)
     {
+        windowHeader.onEvent(event, window);
         dockSpace.onEvent(event, window);
         scene.onEvent(event, window);
         editorCamera.onEvent(event, window, scene3DPanel.isHovered());
-        if (scene3DPanel.isHovered() && scene3DPanel.isPressed() && !scene3DPanel.isHeld())
+
+
+        if (scene3DPanel.isHovered() && scene3DPanel.isContentPressed() && !scene3DPanel.isHeaderPressed())
         {
             // Select an entity
             if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
@@ -104,7 +134,9 @@ public class EditorApplication extends Application
 
         if (event.eventType == EventType.WINDOW_RESIZED)
         {
+            var windowResizedEvent = (WindowResizedEvent) event;
             editorCamera.setAspectRatio(scene3DPanel.getSceneTexture().getSize().getX() / scene3DPanel.getSceneTexture().getSize().getY());
+            dockSpace.resize(windowResizedEvent.width, windowResizedEvent.height);
         }
     }
 
@@ -116,10 +148,10 @@ public class EditorApplication extends Application
             if (scene.getRegistry().hasComponent(componentType, selected))
             {
                 Component component = scene.getRegistry().getComponent(componentType, selected);
-                ComponentPropertyList componentPropertyList = new ComponentPropertyList(componentType.getSimpleName().replace("Component", ""), propertiesPanel);
-                componentUIVisitor.setComponentPropertyList(componentPropertyList);
+                UIComponentList UIComponentList = new UIComponentList(componentType.getSimpleName().replace("Component", ""), propertiesPanel, contextMenuLayer);
+                componentUIVisitor.setComponentPropertyList(UIComponentList);
                 component.acceptVisitor(componentUIVisitor);
-                propertiesPanel.addComponentList(componentPropertyList);
+                propertiesPanel.addComponentList(UIComponentList);
             }
         }
     }
@@ -179,6 +211,8 @@ public class EditorApplication extends Application
 
         Renderer.disableDepthTest();
         dockSpace.render();
+        layerManager.render();
+        //windowHeader.render();
     }
 
     @Override

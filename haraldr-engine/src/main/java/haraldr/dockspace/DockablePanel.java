@@ -1,8 +1,8 @@
 package haraldr.dockspace;
 
-import haraldr.dockspace.uicomponents.Font;
-import haraldr.dockspace.uicomponents.TextBatch;
-import haraldr.dockspace.uicomponents.TextLabel;
+import haraldr.ui.Font;
+import haraldr.ui.TextBatch;
+import haraldr.ui.TextLabel;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
@@ -23,7 +23,7 @@ public class DockablePanel
 
     protected Vector2f position, size, headerSize;
     protected Vector4f color;
-    protected boolean held, pressed, hovered; // held = moving, held by header ; pressed = content area pressed
+    protected boolean headerPressed, contentPressed, hovered; // held = moving, held by header ; pressed = content area pressed
 
     protected TextBatch textBatch = new TextBatch(Font.DEFAULT_FONT);
     protected TextLabel name;
@@ -48,20 +48,21 @@ public class DockablePanel
         {
             var mousePressedEvent = (MousePressedEvent) event;
             Vector2f mousePoint = new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos);
-            held = Physics2D.pointInsideAABB(mousePoint, position, headerSize);
-            pressed = Physics2D.pointInsideAABB(mousePoint, Vector2f.add(position, new Vector2f(0f, HEADER_SIZE)), Vector2f.add(size, new Vector2f(0f, -HEADER_SIZE)));
+            headerPressed = Physics2D.pointInsideAABB(mousePoint, position, headerSize);
+            contentPressed = Physics2D.pointInsideAABB(mousePoint, Vector2f.add(position, new Vector2f(0f, HEADER_SIZE)), Vector2f.add(size, new Vector2f(0f, -HEADER_SIZE)));
         }
-        if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1)) held = false;
+        if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1)) headerPressed = false;
         if (event.eventType == EventType.MOUSE_MOVED)
         {
             var mouseMovedEvent = (MouseMovedEvent) event;
             Vector2f mousePoint = new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos);
             hovered = Physics2D.pointInsideAABB(mousePoint, position, size);
-            if (held)
+            if (headerPressed)
             {
                 setPosition(mousePoint);
             }
         }
+        event.setHandled(headerPressed || contentPressed || hovered);
     }
 
     protected void renderToBatch()
@@ -129,14 +130,14 @@ public class DockablePanel
         return headerSize.getY();
     }
 
-    public boolean isHeld()
+    public boolean isHeaderPressed()
     {
-        return held;
+        return headerPressed;
     }
 
-    public boolean isPressed()
+    public boolean isContentPressed()
     {
-        return pressed;
+        return contentPressed;
     }
 
     public boolean isHovered()

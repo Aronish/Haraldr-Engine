@@ -1,4 +1,4 @@
-package haraldr.dockspace.uicomponents;
+package haraldr.ui;
 
 import haraldr.event.Event;
 import haraldr.event.EventType;
@@ -6,6 +6,7 @@ import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Batch2D;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
+import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
@@ -48,7 +49,7 @@ public class UICheckbox extends UIComponent
     }
 
     @Override
-    public boolean onEvent(Event event)
+    public boolean onEvent(Event event, Window window)
     {
         boolean requireRedraw = false;
         if (event.eventType == EventType.MOUSE_PRESSED)
@@ -68,9 +69,14 @@ public class UICheckbox extends UIComponent
     }
 
     @Override
-    public void render(Batch2D batch)
+    public void draw(Batch2D batch)
     {
         batch.drawQuad(position, size, state ? ON_COLOR : OFF_COLOR);
+    }
+
+    @Override
+    public void onDispose()
+    {
     }
 
     @Override

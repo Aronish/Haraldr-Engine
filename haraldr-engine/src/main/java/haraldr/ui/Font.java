@@ -1,4 +1,4 @@
-package haraldr.dockspace.uicomponents;
+package haraldr.ui;
 
 import haraldr.graphics.Texture;
 import haraldr.main.IOUtils;

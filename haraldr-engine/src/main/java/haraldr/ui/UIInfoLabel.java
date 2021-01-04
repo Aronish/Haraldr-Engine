@@ -4,6 +4,7 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.ParentCollapsedEvent;
 import haraldr.graphics.Batch2D;
+import haraldr.graphics.TextBatchContainer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -12,25 +13,24 @@ public class UIInfoLabel extends UIComponent
 {
     private String value;
     private TextLabel valueLabel;
-    private TextBatch parentTextBatch;
 
-    public UIInfoLabel(TextBatch parentTextBatch, String value)
+    public UIInfoLabel(String value)
     {
+        this(null, value);
+    }
+
+    public UIInfoLabel(TextBatchContainer parent, String value)
+    {
+        super(parent);
         this.value = value;
-        this.parentTextBatch = parentTextBatch;
-        valueLabel = parentTextBatch.createTextLabel(value, position, new Vector4f(1f));
+        valueLabel = textBatch.createTextLabel(value, position, new Vector4f(1f));
     }
 
     public void setValue(String value)
     {
         this.value = value;
         valueLabel.setText(value);
-        parentTextBatch.refreshTextMeshData();
-    }
-
-    public String getValue()
-    {
-        return value;
+        textBatch.refreshTextMeshData();
     }
 
     @Override
@@ -38,7 +38,7 @@ public class UIInfoLabel extends UIComponent
     {
         super.setPosition(position);
         valueLabel.setPosition(position);
-        parentTextBatch.refreshTextMeshData();
+        textBatch.refreshTextMeshData();
     }
 
     @Override
@@ -47,18 +47,12 @@ public class UIInfoLabel extends UIComponent
     }
 
     @Override
-    public float getVerticalSize()
-    {
-        return valueLabel.getFont().getSize();
-    }
-
-    @Override
     public boolean onEvent(Event event, Window window)
     {
         if (event.eventType == EventType.PARENT_COLLAPSED)
         {
-            valueLabel.setEnabled(((ParentCollapsedEvent) event).collapsed);
-            parentTextBatch.refreshTextMeshData();
+            valueLabel.setEnabled(!((ParentCollapsedEvent) event).collapsed);
+            textBatch.refreshTextMeshData();
         }
         return false;
     }
@@ -71,5 +65,16 @@ public class UIInfoLabel extends UIComponent
     @Override
     public void onDispose()
     {
+    }
+
+    @Override
+    public float getVerticalSize()
+    {
+        return valueLabel.getFont().getSize();
+    }
+
+    public String getValue()
+    {
+        return value;
     }
 }

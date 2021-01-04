@@ -79,6 +79,10 @@ public class Batch2D
 
     public void end()
     {
+        if (vertexData == null)
+        {
+            Logger.info("HELLISH");
+        }
         vertexBuffer.setSubData(vertexData, 0);
         vertexData = null;
     }

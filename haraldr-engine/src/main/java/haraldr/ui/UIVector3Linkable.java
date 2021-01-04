@@ -2,6 +2,7 @@ package haraldr.ui;
 
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
+import haraldr.graphics.TextBatchContainer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector3f;
@@ -10,16 +11,17 @@ public class UIVector3Linkable extends UIVector3
 {
     private UICheckbox linked;
 
-    public UIVector3Linkable(TextBatch parentTextBatch, Vector3f defaultValues, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3Linkable(TextBatchContainer parent, Vector3f defaultValues, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
     {
-        this(parentTextBatch, defaultValues, 0.02f, initiallyLinked, vector3ChangeAction);
+        this(parent, defaultValues, 0.02f, initiallyLinked, vector3ChangeAction);
     }
 
-    public UIVector3Linkable(TextBatch parentTextBatch, Vector3f defaultValues, float dragSensitivity, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3Linkable(TextBatchContainer parent, Vector3f defaultValues, float dragSensitivity, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
     {
-        linked = new UICheckbox(initiallyLinked);
+        super(parent);
+        linked = new UICheckbox(parent, initiallyLinked);
         linked.setWidth(20f);
-        x = new UIInputField<>(parentTextBatch, new UIInputField.FloatValue(defaultValues.getX(), dragSensitivity), inputFieldValue ->
+        x = new UIInputField<>(parent, new UIInputField.FloatValue(defaultValues.getX(), dragSensitivity), inputFieldValue ->
         {
             float value = inputFieldValue.getValue();
             if (linked.isChecked())
@@ -34,7 +36,7 @@ public class UIVector3Linkable extends UIVector3
                 vector3ChangeAction.run(value, y.getValue().getValue(), z.getValue().getValue());
             }
         });
-        y = new UIInputField<>(parentTextBatch, new UIInputField.FloatValue(defaultValues.getY(), dragSensitivity), inputFieldValue ->
+        y = new UIInputField<>(parent, new UIInputField.FloatValue(defaultValues.getY(), dragSensitivity), inputFieldValue ->
         {
             float value = inputFieldValue.getValue();
             if (linked.isChecked())
@@ -49,7 +51,7 @@ public class UIVector3Linkable extends UIVector3
                 vector3ChangeAction.run(x.getValue().getValue(), value, z.getValue().getValue());
             }
         });
-        z = new UIInputField<>(parentTextBatch, new UIInputField.FloatValue(defaultValues.getZ(), dragSensitivity), inputFieldValue ->
+        z = new UIInputField<>(parent, new UIInputField.FloatValue(defaultValues.getZ(), dragSensitivity), inputFieldValue ->
         {
             float value = inputFieldValue.getValue();
             if (linked.isChecked())
@@ -68,16 +70,17 @@ public class UIVector3Linkable extends UIVector3
 
     // Max and min
 
-    public UIVector3Linkable(TextBatch parentTextBatch, Vector3f min, Vector3f max, Vector3f defaultValues, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3Linkable(TextBatchContainer parent, Vector3f min, Vector3f max, Vector3f defaultValues, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
     {
-        this(parentTextBatch, min, max, defaultValues, 0.02f, initiallyLinked, vector3ChangeAction);
+        this(parent, min, max, defaultValues, 0.02f, initiallyLinked, vector3ChangeAction);
     }
 
-    public UIVector3Linkable(TextBatch parentTextBatch, Vector3f min, Vector3f max, Vector3f defaultValues, float dragSensitivity, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3Linkable(TextBatchContainer parent, Vector3f min, Vector3f max, Vector3f defaultValues, float dragSensitivity, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
     {
-        linked = new UICheckbox(initiallyLinked);
+        super(parent);
+        linked = new UICheckbox(parent, initiallyLinked);
         linked.setWidth(20f);
-        x = new UIInputField<>(parentTextBatch, new UIInputField.FloatValue(defaultValues.getX(), dragSensitivity), inputFieldValue ->
+        x = new UIInputField<>(parent, new UIInputField.FloatValue(defaultValues.getX(), dragSensitivity), inputFieldValue ->
         {
             float value = inputFieldValue.getValue();
             if (value < min.getX()) value = min.getX();
@@ -95,7 +98,7 @@ public class UIVector3Linkable extends UIVector3
                 vector3ChangeAction.run(value, y.getValue().getValue(), z.getValue().getValue());
             }
         });
-        y = new UIInputField<>(parentTextBatch, new UIInputField.FloatValue(defaultValues.getY(), dragSensitivity), inputFieldValue ->
+        y = new UIInputField<>(parent, new UIInputField.FloatValue(defaultValues.getY(), dragSensitivity), inputFieldValue ->
         {
             float value = inputFieldValue.getValue();
             if (value < min.getY()) value = min.getY();
@@ -113,7 +116,7 @@ public class UIVector3Linkable extends UIVector3
                 vector3ChangeAction.run(x.getValue().getValue(), value, z.getValue().getValue());
             }
         });
-        z = new UIInputField<>(parentTextBatch, new UIInputField.FloatValue(defaultValues.getZ(), dragSensitivity), inputFieldValue ->
+        z = new UIInputField<>(parent, new UIInputField.FloatValue(defaultValues.getZ(), dragSensitivity), inputFieldValue ->
         {
             float value = inputFieldValue.getValue();
             if (value < min.getZ()) value = min.getZ();
@@ -151,5 +154,12 @@ public class UIVector3Linkable extends UIVector3
     {
         super.draw(batch);
         linked.draw(batch);
+    }
+
+    @Override
+    public void onDispose()
+    {
+        super.onDispose();
+        linked.onDispose();
     }
 }

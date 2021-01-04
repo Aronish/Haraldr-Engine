@@ -27,13 +27,13 @@ public class ListItem
 
     public boolean onEvent(Event event)
     {
-        boolean requireRedraw = false;
+        boolean requiresRedraw = false;
         if (event.eventType == EventType.MOUSE_MOVED)
         {
             var mouseMovedEvent = (MouseMovedEvent) event;
             boolean previousHoveredState = hovered;
             hovered = Physics2D.pointInsideAABB(new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos), position, size);
-            requireRedraw = previousHoveredState != hovered;
+            requiresRedraw = previousHoveredState != hovered;
         }
         if (event.eventType == EventType.MOUSE_PRESSED && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
         {
@@ -41,14 +41,14 @@ public class ListItem
             boolean lastPressed = pressed;
             pressed = Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), position, size);
             if (pressed) listItemPressAction.run(tag.getText());
-            requireRedraw = lastPressed != pressed;
+            requiresRedraw = lastPressed != pressed;
         }
         if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
         {
-            requireRedraw = pressed;
+            requiresRedraw = pressed;
             pressed = false;
         }
-        return requireRedraw;
+        return requiresRedraw;
     }
 
     public void setPosition(Vector2f position)

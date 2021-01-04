@@ -98,6 +98,12 @@ public class ResourceManager
         TEXT_BATCHES.add(textBatch);
     }
 
+    public static void destroyTextBatch(TextBatch textBatch)
+    {
+        TEXT_BATCHES.remove(textBatch);
+        textBatch.dispose();
+    }
+
     public static void addBatch2D(Batch2D batch)
     {
         BATCH_2_D_LIST.add(batch);

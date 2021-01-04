@@ -4,6 +4,7 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Batch2D;
+import haraldr.graphics.TextBatchContainer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -20,11 +21,12 @@ public class UIButton extends UIComponent
 
     public UIButton()
     {
-        this(() -> {});
+        this(null, () -> {});
     }
 
-    public UIButton(ButtonPressAction buttonPressAction)
+    public UIButton(TextBatchContainer parent, ButtonPressAction buttonPressAction)
     {
+        super(parent);
         buttonSize = new Vector2f(20f);
         this.buttonPressAction = buttonPressAction;
     }
@@ -43,7 +45,7 @@ public class UIButton extends UIComponent
     @Override
     public boolean onEvent(Event event, Window window)
     {
-        boolean requireRedraw = false;
+        boolean requiresRedraw = false;
         if (event.eventType == EventType.MOUSE_PRESSED)
         {
             var mousePressedEvent = (MousePressedEvent) event;
@@ -51,15 +53,15 @@ public class UIButton extends UIComponent
             {
                 currentColor = ON_COLOR;
                 buttonPressAction.run();
-                requireRedraw = true;
+                requiresRedraw = true;
             }
         }
         if (event.eventType == EventType.MOUSE_RELEASED)
         {
-            requireRedraw = currentColor != OFF_COLOR;
+            requiresRedraw = currentColor != OFF_COLOR;
             currentColor = OFF_COLOR;
         }
-        return requireRedraw;
+        return requiresRedraw;
     }
 
     @Override

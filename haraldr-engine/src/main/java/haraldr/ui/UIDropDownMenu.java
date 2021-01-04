@@ -5,9 +5,9 @@ import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
 import haraldr.event.ParentCollapsedEvent;
 import haraldr.graphics.Batch2D;
+import haraldr.graphics.TextBatchContainer;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
-import haraldr.main.Layer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.physics.Physics2D;
@@ -18,10 +18,11 @@ public class UIDropDownMenu extends UIComponent
     private boolean menuOpened;
     private UIVerticalList verticalList;
 
-    public UIDropDownMenu(Layer contextMenuLayer)
+    public UIDropDownMenu(TextBatchContainer parent)
     {
+        super(parent);
         size = new Vector2f(20f);
-        verticalList = new UIVerticalList(contextMenuLayer);
+        verticalList = new UIVerticalList(this);
     }
 
     public void addMenuItem(String name, ListItem.ListItemPressAction listItemPressAction)
@@ -57,10 +58,10 @@ public class UIDropDownMenu extends UIComponent
     @Override
     public boolean onEvent(Event event, Window window)
     {
-        boolean requireRedraw = false;
+        boolean requiresRedraw = false;
         if (menuOpened)
         {
-            requireRedraw = verticalList.onEvent(event, window);
+            verticalList.onEvent(event, window);
         }
         if (event.eventType == EventType.MOUSE_PRESSED && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
         {
@@ -71,25 +72,25 @@ public class UIDropDownMenu extends UIComponent
             else menuOpened = false;
 
             verticalList.setVisible(menuOpened);
-            requireRedraw = true;
+            requiresRedraw = true;
         }
         if (event.eventType == EventType.PARENT_COLLAPSED)
         {
             var parentCollapsedEvent = (ParentCollapsedEvent) event;
             verticalList.setVisible(!parentCollapsedEvent.collapsed);
         }
-        return requireRedraw;
+        return requiresRedraw;
     }
 
     @Override
     public void draw(Batch2D batch)
     {
-        verticalList.draw(batch);
     }
 
     @Override
     public void onDispose()
     {
+        verticalList.onDispose();
     }
 
     public boolean isMenuOpened()

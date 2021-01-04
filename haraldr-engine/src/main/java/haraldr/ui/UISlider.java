@@ -1,10 +1,12 @@
 package haraldr.ui;
 
+import haraldr.dockspace.DockablePanel;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Batch2D;
+import haraldr.graphics.TextBatchContainer;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
 import haraldr.main.Window;
@@ -23,26 +25,32 @@ public class UISlider extends UIComponent
 
     public UISlider()
     {
-        this(0f, 1f, 0f, value -> {});
+        this(null, 0f, 1f, 0f, value -> {});
     }
 
-    public UISlider(SliderChangeAction sliderChangeAction)
+    public UISlider(TextBatchContainer parent)
     {
-        this(0f, 1f, 0f, sliderChangeAction);
+        this(parent, 0f, 1f, 0f, value -> {});
     }
 
-    public UISlider(float defaultValue, SliderChangeAction sliderChangeAction)
+    public UISlider(TextBatchContainer parent, SliderChangeAction sliderChangeAction)
     {
-        this(0f, 1f, defaultValue, sliderChangeAction);
+        this(parent, 0f, 1f, 0f, sliderChangeAction);
     }
 
-    public UISlider(float min, float max, SliderChangeAction sliderChangeAction)
+    public UISlider(TextBatchContainer parent, float defaultValue, SliderChangeAction sliderChangeAction)
     {
-        this(min, max, 0f, sliderChangeAction);
+        this(parent, 0f, 1f, defaultValue, sliderChangeAction);
     }
 
-    public UISlider(float min, float max, float defaultValue, SliderChangeAction sliderChangeAction)
+    public UISlider(TextBatchContainer parent, float min, float max, SliderChangeAction sliderChangeAction)
     {
+        this(parent, min, max, 0f, sliderChangeAction);
+    }
+
+    public UISlider(TextBatchContainer parent, float min, float max, float defaultValue, SliderChangeAction sliderChangeAction)
+    {
+        super(parent);
         sliderSize = new Vector2f(20f);
         handleSize = new Vector2f(20f);
         this.sliderChangeAction = sliderChangeAction;
@@ -63,6 +71,13 @@ public class UISlider extends UIComponent
         this.sliderChangeAction = sliderChangeAction;
     }
 
+    private void recalculateHandlePosition()
+    {
+        float normalizedValue = (value - min) / (max - min);
+        float handlePosition = normalizedValue * (sliderSize.getX() - handleSize.getX()) + position.getX();
+        this.handlePosition.set(handlePosition, position.getY());
+    }
+
     @Override
     public void setPosition(Vector2f position)
     {
@@ -77,17 +92,10 @@ public class UISlider extends UIComponent
         recalculateHandlePosition();
     }
 
-    private void recalculateHandlePosition()
-    {
-        float normalizedValue = (value - min) / (max - min);
-        float handlePosition = normalizedValue * (sliderSize.getX() - handleSize.getX()) + position.getX();
-        this.handlePosition.set(handlePosition, position.getY());
-    }
-
     @Override
     public boolean onEvent(Event event, Window window)
     {
-        boolean requireRedraw = false;
+        boolean requiresRedraw = false;
         if (event.eventType == EventType.MOUSE_PRESSED)
         {
             if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
@@ -112,10 +120,10 @@ public class UISlider extends UIComponent
                 float normalizedValue = (position - this.position.getX()) / (sliderSize.getX() - handleSize.getX());
                 value = min + (max - min) * normalizedValue;
                 sliderChangeAction.run(value);
-                requireRedraw = true;
+                requiresRedraw = true;
             }
         }
-        return requireRedraw;
+        return requiresRedraw;
     }
 
     @Override

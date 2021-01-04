@@ -2,7 +2,7 @@ package haraldr.ui;
 
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
-import haraldr.main.Layer;
+import haraldr.graphics.TextBatchContainer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -13,16 +13,13 @@ import java.util.List;
 public class UIVerticalList extends UIComponent
 {
     private List<ListItem> listItems = new ArrayList<>();
-    private Batch2D renderBatch;
-    private TextBatch textBatch;
+    private Batch2D renderBatch = new Batch2D();
     private float listHeight;
     private boolean visible;
 
-    public UIVerticalList(Layer listLayer)
+    public UIVerticalList(TextBatchContainer parent)
     {
-        //TODO: Have UIComponent exist on a layer, DockablePanel needs own UILayerManager
-        renderBatch = listLayer.createBatch2D();
-        textBatch = listLayer.createTextBatch();
+        super(parent);
     }
 
     public void addItem(String name, ListItem.ListItemPressAction listItemPressAction)
@@ -35,7 +32,7 @@ public class UIVerticalList extends UIComponent
     public void setVisible(boolean visible)
     {
         this.visible = visible;
-        textBatch.setVisible(visible);
+        //textBatch.setVisible(visible); // TODO: Need a way to create more text batches in children
     }
 
     @Override
@@ -58,19 +55,13 @@ public class UIVerticalList extends UIComponent
     }
 
     @Override
-    public float getVerticalSize()
-    {
-        return listHeight;
-    }
-
-    @Override
     public boolean onEvent(Event event, Window window)
     {
         if (visible)
         {
             for (ListItem listItem : listItems)
             {
-                if (listItem.onEvent(event)) return true;
+                if (listItem.onEvent(event)) draw(renderBatch);
             }
         }
         return false;
@@ -81,19 +72,22 @@ public class UIVerticalList extends UIComponent
     {
         if (visible)
         {
-            renderBatch.begin();
             for (ListItem listItem : listItems)
             {
-                renderBatch.drawQuad(listItem.getPosition(), listItem.getSize(), listItem.isHovered() ? new Vector4f(0.6f, 0.6f, 0.6f, 1f) : new Vector4f(0.4f, 0.4f, 0.4f, 1f));
+                batch.drawQuad(listItem.getPosition(), listItem.getSize(), listItem.isHovered() ? new Vector4f(0.6f, 0.6f, 0.6f, 1f) : new Vector4f(0.4f, 0.4f, 0.4f, 1f));
             }
-            renderBatch.end();
-        } else renderBatch.clear();
+        }
     }
 
     @Override
     public void onDispose()
     {
-        textBatch.clear();
+    }
+
+    @Override
+    public float getVerticalSize()
+    {
+        return listHeight;
     }
 
     public boolean isVisible()

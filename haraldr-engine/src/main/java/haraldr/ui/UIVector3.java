@@ -2,6 +2,7 @@ package haraldr.ui;
 
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
+import haraldr.graphics.TextBatchContainer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector3f;
@@ -11,37 +12,40 @@ public class UIVector3 extends UIComponent
     protected UIInputField<UIInputField.FloatValue> x, y, z;
     protected float elementWidth;
 
-    protected UIVector3()
+    protected UIVector3(TextBatchContainer parent)
     {
+        this(parent, new Vector3f(), 0.02f, (x, y, z) -> {});
     }
 
-    public UIVector3(TextBatch parentTextBatch, Vector3f defaultValues, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3(TextBatchContainer parent, Vector3f defaultValues, Vector3ChangeAction vector3ChangeAction)
     {
-        this(parentTextBatch, defaultValues, 0.02f, vector3ChangeAction);
+        this(parent, defaultValues, 0.02f, vector3ChangeAction);
     }
 
-    public UIVector3(TextBatch parentTextBatch, Vector3f defaultValues, float dragSensitivity, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3(TextBatchContainer parent, Vector3f defaultValues, float dragSensitivity, Vector3ChangeAction vector3ChangeAction)
     {
-        x = new UIInputField<>(parentTextBatch, new UIInputField.FloatValue(defaultValues.getX(), dragSensitivity), inputFieldValue ->
+        super(parent);
+        x = new UIInputField<>(parent, new UIInputField.FloatValue(defaultValues.getX(), dragSensitivity), inputFieldValue ->
                 vector3ChangeAction.run(inputFieldValue.getValue(), y.getValue().getValue(), z.getValue().getValue()));
 
-        y = new UIInputField<>(parentTextBatch, new UIInputField.FloatValue(defaultValues.getY(), dragSensitivity), inputFieldValue ->
+        y = new UIInputField<>(parent, new UIInputField.FloatValue(defaultValues.getY(), dragSensitivity), inputFieldValue ->
                 vector3ChangeAction.run(x.getValue().getValue(), inputFieldValue.getValue(), z.getValue().getValue()));
 
-        z = new UIInputField<>(parentTextBatch, new UIInputField.FloatValue(defaultValues.getZ(), dragSensitivity), inputFieldValue ->
+        z = new UIInputField<>(parent, new UIInputField.FloatValue(defaultValues.getZ(), dragSensitivity), inputFieldValue ->
                 vector3ChangeAction.run(x.getValue().getValue(), y.getValue().getValue(), inputFieldValue.getValue()));
     }
 
     // Max and min
 
-    public UIVector3(TextBatch parentTextBatch, Vector3f min, Vector3f max, Vector3f defaultValues, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3(TextBatchContainer parent, Vector3f min, Vector3f max, Vector3f defaultValues, Vector3ChangeAction vector3ChangeAction)
     {
-        this(parentTextBatch, min, max, defaultValues, 0.02f, vector3ChangeAction);
+        this(parent, min, max, defaultValues, 0.02f, vector3ChangeAction);
     }
 
-    public UIVector3(TextBatch parentTextBatch, Vector3f min, Vector3f max, Vector3f defaultValues, float dragSensitivity, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3(TextBatchContainer parent, Vector3f min, Vector3f max, Vector3f defaultValues, float dragSensitivity, Vector3ChangeAction vector3ChangeAction)
     {
-        x = new UIInputField<>(parentTextBatch, new UIInputField.FloatValue(defaultValues.getX(), dragSensitivity), inputFieldValue ->
+        super(parent);
+        x = new UIInputField<>(parent, new UIInputField.FloatValue(defaultValues.getX(), dragSensitivity), inputFieldValue ->
         {
             float value = inputFieldValue.getValue();
             if (value < min.getX()) value = min.getX();
@@ -49,7 +53,7 @@ public class UIVector3 extends UIComponent
             inputFieldValue.setValue(value);
             vector3ChangeAction.run(value, y.getValue().getValue(), z.getValue().getValue());
         });
-        y = new UIInputField<>(parentTextBatch, new UIInputField.FloatValue(defaultValues.getY(), dragSensitivity), inputFieldValue ->
+        y = new UIInputField<>(parent, new UIInputField.FloatValue(defaultValues.getY(), dragSensitivity), inputFieldValue ->
         {
             float value = inputFieldValue.getValue();
             if (value < min.getY()) value = min.getY();
@@ -57,7 +61,7 @@ public class UIVector3 extends UIComponent
             inputFieldValue.setValue(value);
             vector3ChangeAction.run(x.getValue().getValue(), value, z.getValue().getValue());
         });
-        z = new UIInputField<>(parentTextBatch, new UIInputField.FloatValue(defaultValues.getZ(), dragSensitivity), inputFieldValue ->
+        z = new UIInputField<>(parent, new UIInputField.FloatValue(defaultValues.getZ(), dragSensitivity), inputFieldValue ->
         {
             float value = inputFieldValue.getValue();
             if (value < min.getZ()) value = min.getZ();
@@ -65,13 +69,6 @@ public class UIVector3 extends UIComponent
             inputFieldValue.setValue(value);
             vector3ChangeAction.run(x.getValue().getValue(), y.getValue().getValue(), value);
         });
-    }
-
-    @Override
-    public void setPosition(Vector2f position)
-    {
-        super.setPosition(position);
-        updatePosition(position);
     }
 
     protected void updatePosition(Vector2f position)
@@ -82,6 +79,13 @@ public class UIVector3 extends UIComponent
     }
 
     @Override
+    public void setPosition(Vector2f position)
+    {
+        super.setPosition(position);
+        updatePosition(position);
+    }
+
+    @Override
     public void setWidth(float width)
     {
         elementWidth = width / 3f - 20f / 3f;
@@ -89,12 +93,6 @@ public class UIVector3 extends UIComponent
         y.setWidth(elementWidth);
         z.setWidth(elementWidth);
         updatePosition(position);
-    }
-
-    @Override
-    public float getVerticalSize()
-    {
-        return x.getVerticalSize();
     }
 
     @Override
@@ -114,6 +112,15 @@ public class UIVector3 extends UIComponent
     @Override
     public void onDispose()
     {
+        x.onDispose();
+        y.onDispose();
+        z.onDispose();
+    }
+
+    @Override
+    public float getVerticalSize()
+    {
+        return x.getVerticalSize();
     }
 
     @FunctionalInterface

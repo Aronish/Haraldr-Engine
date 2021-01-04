@@ -4,6 +4,7 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Batch2D;
+import haraldr.graphics.TextBatchContainer;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
 import haraldr.main.Window;
@@ -20,18 +21,19 @@ public class UICheckbox extends UIComponent
 
     private CheckboxStateChangeAction checkboxStateChangeAction;
 
-    public UICheckbox()
+    public UICheckbox(TextBatchContainer parent)
     {
-        this(false, (state) -> {});
+        this(parent, false, state -> {});
     }
 
-    public UICheckbox(boolean initialState)
+    public UICheckbox(TextBatchContainer parent, boolean initialState)
     {
-        this(initialState, (state) -> {});
+        this(parent, initialState, state -> {});
     }
 
-    public UICheckbox(boolean initialState, CheckboxStateChangeAction checkboxStateChangeAction)
+    public UICheckbox(TextBatchContainer parent, boolean initialState, CheckboxStateChangeAction checkboxStateChangeAction)
     {
+        super(parent);
         size = new Vector2f(20f);
         state = initialState;
         this.checkboxStateChangeAction = checkboxStateChangeAction;
@@ -51,7 +53,7 @@ public class UICheckbox extends UIComponent
     @Override
     public boolean onEvent(Event event, Window window)
     {
-        boolean requireRedraw = false;
+        boolean requiresRedraw = false;
         if (event.eventType == EventType.MOUSE_PRESSED)
         {
             if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
@@ -61,11 +63,11 @@ public class UICheckbox extends UIComponent
                 {
                     state = !state;
                     checkboxStateChangeAction.run(state);
-                    requireRedraw = true;
+                    requiresRedraw = true;
                 }
             }
         }
-        return requireRedraw;
+        return requiresRedraw;
     }
 
     @Override

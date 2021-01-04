@@ -1,5 +1,6 @@
 package haraldr.ui;
 
+import haraldr.dockspace.DockablePanel;
 import haraldr.event.CharTypedEvent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
@@ -7,6 +8,7 @@ import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.event.ParentCollapsedEvent;
 import haraldr.graphics.Batch2D;
+import haraldr.graphics.TextBatchContainer;
 import haraldr.input.Input;
 import haraldr.input.KeyboardKey;
 import haraldr.input.MouseButton;
@@ -35,21 +37,20 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
 
     private T value;
     private TextLabel textLabel;
-    private TextBatch parentTextBatch;
     private InputFieldChangeAction<T> inputFieldChangeAction;
 
-    public UIInputField(TextBatch parentTextBatch, T defaultValue)
+    public UIInputField(TextBatchContainer parent, T defaultValue)
     {
-        this(parentTextBatch, defaultValue, value -> {});
+        this(parent, defaultValue, value -> {});
     }
 
-    public UIInputField(TextBatch parentTextBatch, T defaultValue, InputFieldChangeAction<T> inputFieldChangeAction)
+    public UIInputField(TextBatchContainer parent, T defaultValue, InputFieldChangeAction<T> inputFieldChangeAction)
     {
-        fieldSize = new Vector2f(0f, parentTextBatch.getFont().getSize() - 2f * BORDER_WIDTH);
-        borderSize = new Vector2f(0f, parentTextBatch.getFont().getSize());
+        super(parent);
+        fieldSize = new Vector2f(0f, textBatch.getFont().getSize() - 2f * BORDER_WIDTH);
+        borderSize = new Vector2f(0f, textBatch.getFont().getSize());
         value = defaultValue;
-        textLabel = parentTextBatch.createTextLabel(value.toString(), fieldPosition, new Vector4f(0f, 0f, 0f, 1f));
-        this.parentTextBatch = parentTextBatch;
+        textLabel = textBatch.createTextLabel(value.toString(), fieldPosition, new Vector4f(0f, 0f, 0f, 1f));
         this.inputFieldChangeAction = inputFieldChangeAction;
     }
 
@@ -69,15 +70,9 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
     }
 
     @Override
-    public float getVerticalSize()
-    {
-        return borderSize.getY();
-    }
-
-    @Override
     public boolean onEvent(Event event, Window window)
     {
-        boolean requireRedraw = false;
+        boolean requiresRedraw = false;
         if (event.eventType == EventType.MOUSE_PRESSED)
         {
             if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
@@ -95,7 +90,7 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
                 updateTextLabel();
                 inputFieldChangeAction.run(value);
 
-                requireRedraw = lastSelectedState != selected;
+                requiresRedraw = lastSelectedState != selected;
             }
             if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_2) && selected)
             {
@@ -141,13 +136,13 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
         {
             textLabel.setEnabled(!((ParentCollapsedEvent) event).collapsed);
         }
-        return requireRedraw;
+        return requiresRedraw;
     }
 
     public void updateTextLabel()
     {
         textLabel.setText(value.toString());
-        parentTextBatch.refreshTextMeshData();
+        textBatch.refreshTextMeshData();
     }
 
     @Override
@@ -160,6 +155,12 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
     @Override
     public void onDispose()
     {
+    }
+
+    @Override
+    public float getVerticalSize()
+    {
+        return borderSize.getY();
     }
 
     public T getValue()
@@ -196,7 +197,7 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
         @Override
         public void onMouseDragged(float xOffset)
         {
-            intValue = Integer.toString(Integer.parseInt(intValue) + MathUtils.fastFloor(xOffset));
+            intValue = Integer.toString((intValue.isEmpty() ? 0 : Integer.parseInt(intValue)) + MathUtils.fastFloor(xOffset));
         }
 
         @Override
@@ -272,7 +273,7 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
             DecimalFormat decimalFormat = new DecimalFormat("#.###", decimalFormatSymbols);
             decimalFormat.setRoundingMode(RoundingMode.CEILING);
 
-            floatValue = decimalFormat.format(Float.parseFloat(floatValue) + xOffset * DRAG_SENSITIVITY);
+            floatValue = decimalFormat.format((floatValue.isEmpty() ? 0f : Float.parseFloat(floatValue)) + xOffset * DRAG_SENSITIVITY);
         }
 
         @Override

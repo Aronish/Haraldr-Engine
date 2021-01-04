@@ -15,7 +15,7 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
-public class ComponentUIVisitor implements ComponentVisitor
+public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONParser and TinyFileDialogs and move to editor.
 {
     private UIComponentList uiComponentList;
 
@@ -30,7 +30,7 @@ public class ComponentUIVisitor implements ComponentVisitor
         uiComponentList.addComponent(
                 "Radius: ",
                 new UIInputField<>(
-                        uiComponentList.getParent().getTextBatch(),
+                        uiComponentList,
                         new UIInputField.FloatValue(boundingSphereComponent.radius),
                         value -> boundingSphereComponent.radius = value.getValue()
                 )
@@ -44,11 +44,11 @@ public class ComponentUIVisitor implements ComponentVisitor
         JSONObject updatedModelDefinition = modelComponent.model.getModelDefinition();
         JSONObject materialProperties = updatedModelDefinition.getJSONObject("material").getJSONObject("properties");
 
-        UIInfoLabel meshPathLabel = new UIInfoLabel(uiComponentList.getParent().getTextBatch(), updatedModelDefinition.getString("mesh"));
+        UIInfoLabel meshPathLabel = new UIInfoLabel(uiComponentList, updatedModelDefinition.getString("mesh"));
         uiComponentList.addComponent("Mesh: ", meshPathLabel);
         uiComponentList.addComponent(
                 "Load Mesh: ",
-                new UIButton(() ->
+                new UIButton(uiComponentList, () ->
                 {
                     String meshPath;
                     try (MemoryStack stack = MemoryStack.stackPush())
@@ -69,7 +69,7 @@ public class ComponentUIVisitor implements ComponentVisitor
         );
 
         // Material types
-        UIDropDownMenu uiDropDownMenu = new UIDropDownMenu(uiComponentList.contextMenuLayer);
+        UIDropDownMenu uiDropDownMenu = new UIDropDownMenu(uiComponentList);
         JSONArray materialTypes = new JSONObject(IOUtils.readResource("default_models/material_specification.json", IOUtils::resourceToString)).names();
         for (Object materialType : materialTypes.toList())
         {
@@ -117,7 +117,7 @@ public class ComponentUIVisitor implements ComponentVisitor
         uiComponentList.addComponent(
                 "Tag: ",
                 new UIInputField<>(
-                        uiComponentList.getParent().getTextBatch(),
+                        uiComponentList,
                         new UIInputField.StringValue(tagComponent.tag),
                         value -> tagComponent.tag = value.getValue()
                 )
@@ -130,7 +130,7 @@ public class ComponentUIVisitor implements ComponentVisitor
         uiComponentList.addComponent(
                 "Position: ",
                 new UIVector3(
-                        uiComponentList.getParent().getTextBatch(),
+                        uiComponentList,
                         transformComponent.position,
                         (x, y, z) ->
                         {
@@ -144,7 +144,7 @@ public class ComponentUIVisitor implements ComponentVisitor
         uiComponentList.addComponent(
                 "Scale: ",
                 new UIVector3Linkable(
-                        uiComponentList.getParent().getTextBatch(),
+                        uiComponentList,
                         new Vector3f(0f), new Vector3f(Float.MAX_VALUE), transformComponent.scale, linkedScale,
                         (x, y, z) ->
                         {
@@ -157,7 +157,7 @@ public class ComponentUIVisitor implements ComponentVisitor
         uiComponentList.addComponent(
                 "Rotation: ",
                 new UIVector3(
-                        uiComponentList.getParent().getTextBatch(),
+                        uiComponentList,
                         transformComponent.rotation, 0.3f,
                         (x, y, z) ->
                         {

@@ -98,13 +98,18 @@ public class TextBatch
         indexCount = 0;
     }
 
+    public void dispose()
+    {
+        texts.delete();
+    }
+
     public Font getFont()
     {
         return font;
     }
 
-    public void dispose()
+    public List<TextLabel> getTextLabels()
     {
-        texts.delete();
+        return textLabels;
     }
 }

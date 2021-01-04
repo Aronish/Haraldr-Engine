@@ -2,26 +2,27 @@ package haraldr.ui;
 
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
+import haraldr.graphics.TextBatchContainer;
 import haraldr.main.Window;
 
-public class UIHorizontalBreak extends UIComponent
+public class UIHorizontalBreak extends UIComponent // Quite useless as a whole class
 {
     private int height;
 
     public UIHorizontalBreak(int height)
     {
+        this(null, height);
+    }
+
+    public UIHorizontalBreak(TextBatchContainer parent, int height)
+    {
+        super(parent);
         this.height = height;
     }
 
     @Override
     public void setWidth(float width)
     {
-    }
-
-    @Override
-    public float getVerticalSize()
-    {
-        return height;
     }
 
     @Override
@@ -38,5 +39,11 @@ public class UIHorizontalBreak extends UIComponent
     @Override
     public void onDispose()
     {
+    }
+
+    @Override
+    public float getVerticalSize()
+    {
+        return height;
     }
 }

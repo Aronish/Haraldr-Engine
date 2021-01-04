@@ -6,9 +6,9 @@ import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Batch2D;
+import haraldr.graphics.TextBatchContainer;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
-import haraldr.main.Layer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Contract;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WindowHeader
+public class WindowHeader implements TextBatchContainer
 {
     private static final float MENU_BUTTON_PADDING = 10f;
 
@@ -27,25 +27,21 @@ public class WindowHeader
 
     private float currentButtonPosition;
     private List<MenuButton> menuButtons = new ArrayList<>();
-    private Layer contextMenuLayer;
 
-    private Batch2D headerBatch;
-    private TextBatch headerTextBatch;
+    private Batch2D headerBatch = new Batch2D();
+    private TextBatch headerTextBatch = new TextBatch(Font.DEFAULT_FONT);
 
-    public WindowHeader(Vector2f position, float size, Vector4f color, Layer layer, Layer contextMenuLayer)
+    public WindowHeader(Vector2f position, float size, Vector4f color)
     {
         this.position = position;
         this.size = new Vector2f(size, 20f);
         this.color = color;
-        this.contextMenuLayer = contextMenuLayer;
         currentButtonPosition = position.getX();
-        headerBatch = contextMenuLayer.createBatch2D();
-        headerTextBatch = contextMenuLayer.createTextBatch();
     }
 
     public void addMenuButton(String name, ListData... listDataEntries)
     {
-        MenuButton menuButton = new MenuButton(name, Vector2f.add(position, new Vector2f(currentButtonPosition, 0f)), contextMenuLayer, listDataEntries);
+        MenuButton menuButton = new MenuButton(name, Vector2f.add(position, new Vector2f(currentButtonPosition, 0f)), listDataEntries);
         menuButtons.add(menuButton);
         currentButtonPosition += menuButton.name.getPixelWidth() + MENU_BUTTON_PADDING;
         draw();
@@ -92,6 +88,12 @@ public class WindowHeader
         return size;
     }
 
+    @Override
+    public TextBatch getTextBatch()
+    {
+        return headerTextBatch;
+    }
+
     private class MenuButton
     {
         private TextLabel name;
@@ -99,13 +101,13 @@ public class WindowHeader
         private boolean hovered;
         private UIVerticalList actions;
 
-        private MenuButton(String name, Vector2f position, Layer contextMenuLayer, ListData... listDataEntries)
+        private MenuButton(String name, Vector2f position, ListData... listDataEntries)
         {
             this.name = WindowHeader.this.headerTextBatch.createTextLabel(name, Vector2f.add(position, new Vector2f(MENU_BUTTON_PADDING / 2f, 0f)), new Vector4f(1f));
             this.position = new Vector2f(position);
             size = new Vector2f(this.name.getPixelWidth() + MENU_BUTTON_PADDING, WindowHeader.this.size.getY());
 
-            actions = new UIVerticalList(contextMenuLayer);
+            actions = new UIVerticalList(WindowHeader.this);
             float widestEntry = 0f;
             for (ListData listDataEntry : listDataEntries)
             {
@@ -120,7 +122,7 @@ public class WindowHeader
 
         private boolean onEvent(Event event, Window window)
         {
-            boolean requireRedraw = false;
+            boolean requiresRedraw = false;
             if (event.eventType == EventType.MOUSE_PRESSED && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
             {
                 var mousePressedEvent = (MousePressedEvent) event;
@@ -128,7 +130,7 @@ public class WindowHeader
                 if (pressed)
                 {
                     actions.setVisible(!actions.isVisible());
-                    requireRedraw = true;
+                    requiresRedraw = true;
                 }
             }
             if (event.eventType == EventType.MOUSE_MOVED)
@@ -136,10 +138,10 @@ public class WindowHeader
                 var mouseMovedEvent = (MouseMovedEvent) event;
                 boolean previousHoveredState = hovered;
                 hovered = Physics2D.pointInsideAABB(new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos), position, size);
-                requireRedraw = previousHoveredState != hovered;
+                requiresRedraw = previousHoveredState != hovered;
             }
-            requireRedraw |= actions.onEvent(event, window);
-            return requireRedraw;
+            //actions.onEvent(event, window);
+            return requiresRedraw;
         }
     }
 

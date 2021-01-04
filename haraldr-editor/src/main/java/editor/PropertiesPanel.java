@@ -27,30 +27,30 @@ public class PropertiesPanel extends DockablePanel
         super(position, size, color, name);
     }
 
-    public void addComponentList(UIComponentList UIComponentList)
+    public void addComponentList(UIComponentList uiComponentList)
     {
-        uiComponentLists.add(UIComponentList);
+        uiComponentLists.add(uiComponentList);
         orderComponentLists(position);
         renderToBatch();
     }
 
     public void clear()
     {
+        uiComponentLists.forEach(UIComponentList::onDispose);
         uiComponentLists.clear();
         listBatch.clear();
         textBatch.clear();
         textBatch.addTextLabel(name);
-        uiComponentLists.forEach(UIComponentList::onDispose);
     }
 
     private void orderComponentLists(Vector2f position)
     {
         float currentHeight = scrollOffset;
-        for (UIComponentList UIComponentList : uiComponentLists)
+        for (UIComponentList uiComponentList : uiComponentLists)
         {
-            UIComponentList.setPosition(Vector2f.add(position, new Vector2f(0f, currentHeight + headerSize.getY())));
-            UIComponentList.setSize(size);
-            currentHeight += UIComponentList.getSize().getY() + 5f;
+            uiComponentList.setPosition(Vector2f.add(position, new Vector2f(0f, currentHeight + headerSize.getY())));
+            uiComponentList.setWidth(size.getX());
+            currentHeight += uiComponentList.getVerticalSize() + 5f;
         }
         listHeight = currentHeight - scrollOffset;
     }
@@ -58,14 +58,14 @@ public class PropertiesPanel extends DockablePanel
     @Override
     public void onEvent(Event event, Window window)
     {
-        boolean requireRedraw = false;
+        boolean requiresRedraw = false;
         super.onEvent(event, window);
-        for (UIComponentList UIComponentList : uiComponentLists)
+        for (UIComponentList uiComponentList : uiComponentLists)
         {
-            if (UIComponentList.onEvent(event, window))
+            if (uiComponentList.onEvent(event, window))
             {
-                orderComponentLists(position);
-                requireRedraw = true;
+                requiresRedraw = true;
+                orderComponentLists(position); //TODO: Does not need to happen every event, only if the collapsed state of a list has changed
             }
         }
 
@@ -82,10 +82,10 @@ public class PropertiesPanel extends DockablePanel
                 if (scrollOffset > 0f) scrollOffset = 0f;
 
                 orderComponentLists(position);
-                requireRedraw = true;
+                requiresRedraw = true;
             }
         }
-        if (requireRedraw) renderToBatch();
+        if (requiresRedraw) renderToBatch();
     }
 
     @Override
@@ -98,9 +98,9 @@ public class PropertiesPanel extends DockablePanel
     @Override
     public void setSize(Vector2f size)
     {
-        for (UIComponentList UIComponentList : uiComponentLists)
+        for (UIComponentList uiComponentList : uiComponentLists)
         {
-            UIComponentList.setSize(size);
+            uiComponentList.setWidth(size.getX());
         }
         super.setSize(size);
         if (listHeight < size.getY()) scrollOffset = 0f;
@@ -118,6 +118,11 @@ public class PropertiesPanel extends DockablePanel
             uiComponentList.draw(listBatch);
         }
         listBatch.end();
+    }
+
+    @Override
+    public void renderText()
+    {
     }
 
     @Override

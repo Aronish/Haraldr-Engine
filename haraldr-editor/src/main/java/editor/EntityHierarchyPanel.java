@@ -1,7 +1,6 @@
 package editor;
 
 import haraldr.dockspace.DockablePanel;
-import haraldr.ui.TextLabel;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
 import haraldr.ecs.TagComponent;
@@ -15,7 +14,7 @@ import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
-import haraldr.main.Layer;
+import haraldr.ui.TextLabel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ public class EntityHierarchyPanel extends DockablePanel
 
     private EntitySelectedAction entitySelectedAction = (selectedEntity) -> {};
 
-    public EntityHierarchyPanel(Vector2f position, Vector2f size, Vector4f color, String name, Layer layer)
+    public EntityHierarchyPanel(Vector2f position, Vector2f size, Vector4f color, String name)
     {
         super(position, size, color, name);
     }
@@ -129,27 +128,27 @@ public class EntityHierarchyPanel extends DockablePanel
 
         private boolean onEvent(Event event)
         {
-            boolean requireRedraw = false;
+            boolean requiresRedraw = false;
             if (event.eventType == EventType.MOUSE_MOVED)
             {
                 var mouseMovedEvent = (MouseMovedEvent) event;
                 boolean previousHoveredState = hovered;
                 hovered = Physics2D.pointInsideAABB(new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos), position, size);
-                requireRedraw = previousHoveredState != hovered;
+                requiresRedraw = previousHoveredState != hovered;
             }
             if (event.eventType == EventType.MOUSE_PRESSED && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
             {
                 var mousePressedEvent = (MousePressedEvent) event;
                 boolean lastPressed = pressed;
                 pressed = Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), position, size);
-                requireRedraw = lastPressed != pressed;
+                requiresRedraw = lastPressed != pressed;
             }
             if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
             {
-                requireRedraw = pressed;
+                requiresRedraw = pressed;
                 pressed = false;
             }
-            return requireRedraw;
+            return requiresRedraw;
         }
 
         private void setPosition(Vector2f position)

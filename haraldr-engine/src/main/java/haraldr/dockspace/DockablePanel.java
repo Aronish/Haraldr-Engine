@@ -1,22 +1,23 @@
 package haraldr.dockspace;
 
-import haraldr.ui.Font;
-import haraldr.ui.TextBatch;
-import haraldr.ui.TextLabel;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Batch2D;
+import haraldr.graphics.TextBatchContainer;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
+import haraldr.ui.Font;
+import haraldr.ui.TextBatch;
+import haraldr.ui.TextLabel;
 
 @SuppressWarnings("WeakerAccess")
-public class DockablePanel
+public class DockablePanel implements TextBatchContainer
 {
     private static final float HEADER_SIZE = 20f;
     protected static final Vector4f HEADER_COLOR = new Vector4f(0.15f, 0.15f, 0.15f, 1f);

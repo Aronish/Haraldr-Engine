@@ -1,7 +1,6 @@
 package haraldr.main;
 
 import haraldr.debug.Logger;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -46,6 +45,8 @@ public abstract class EntryPoint
                 argumentValidator.validateArguments(Arrays.asList(args));
             }
         }
+
+        System.setProperty("java.locale.providers", "COMPAT"); // Needed to prevent exceptions when parsing negative floats in certain locales.
 
         if (application == null) throw new IllegalStateException("Client codebase must supply an Application!\n(Through static initializer in EntryPoint subclass.)");
         application.start();

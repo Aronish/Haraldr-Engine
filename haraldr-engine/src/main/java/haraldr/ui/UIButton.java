@@ -4,7 +4,6 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Batch2D;
-import haraldr.graphics.TextBatchContainer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -24,7 +23,7 @@ public class UIButton extends UIComponent
         this(null, () -> {});
     }
 
-    public UIButton(TextBatchContainer parent, ButtonPressAction buttonPressAction)
+    public UIButton(UIContainer parent, ButtonPressAction buttonPressAction)
     {
         super(parent);
         buttonSize = new Vector2f(20f);

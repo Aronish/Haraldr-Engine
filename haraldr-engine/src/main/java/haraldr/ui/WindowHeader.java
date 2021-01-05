@@ -6,7 +6,6 @@ import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Batch2D;
-import haraldr.graphics.TextBatchContainer;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
 import haraldr.main.Window;
@@ -18,7 +17,7 @@ import org.jetbrains.annotations.Contract;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WindowHeader implements TextBatchContainer
+public class WindowHeader implements UIContainer
 {
     private static final float MENU_BUTTON_PADDING = 10f;
 
@@ -28,8 +27,8 @@ public class WindowHeader implements TextBatchContainer
     private float currentButtonPosition;
     private List<MenuButton> menuButtons = new ArrayList<>();
 
-    private Batch2D headerBatch = new Batch2D();
-    private TextBatch headerTextBatch = new TextBatch(Font.DEFAULT_FONT);
+    private Batch2D mainBatch = new Batch2D();
+    private TextBatch textBatch = new TextBatch(Font.DEFAULT_FONT);
 
     public WindowHeader(Vector2f position, float size, Vector4f color)
     {
@@ -67,20 +66,20 @@ public class WindowHeader implements TextBatchContainer
 
     private void draw()
     {
-        headerBatch.begin();
-        headerBatch.drawQuad(position, size, color);
+        mainBatch.begin();
+        mainBatch.drawQuad(position, size, color);
         for (MenuButton menuButton : menuButtons)
         {
-            headerBatch.drawQuad(menuButton.position, menuButton.size, menuButton.hovered ? new Vector4f(0.6f, 0.6f, 0.6f, 1f) : new Vector4f(0.4f, 0.4f, 0.4f, 1f));
-            menuButton.actions.draw(headerBatch);
+            mainBatch.drawQuad(menuButton.position, menuButton.size, menuButton.hovered ? new Vector4f(0.6f, 0.6f, 0.6f, 1f) : new Vector4f(0.4f, 0.4f, 0.4f, 1f));
+            menuButton.actions.draw();
         }
-        headerBatch.end();
+        mainBatch.end();
     }
 
     public void render()
     {
-        headerBatch.render();
-        headerTextBatch.render();
+        mainBatch.render();
+        textBatch.render();
     }
 
     public Vector2f getSize()
@@ -89,9 +88,15 @@ public class WindowHeader implements TextBatchContainer
     }
 
     @Override
+    public Batch2D getMainBatch()
+    {
+        return mainBatch;
+    }
+
+    @Override
     public TextBatch getTextBatch()
     {
-        return headerTextBatch;
+        return textBatch;
     }
 
     private class MenuButton
@@ -103,7 +108,7 @@ public class WindowHeader implements TextBatchContainer
 
         private MenuButton(String name, Vector2f position, ListData... listDataEntries)
         {
-            this.name = WindowHeader.this.headerTextBatch.createTextLabel(name, Vector2f.add(position, new Vector2f(MENU_BUTTON_PADDING / 2f, 0f)), new Vector4f(1f));
+            this.name = WindowHeader.this.textBatch.createTextLabel(name, Vector2f.add(position, new Vector2f(MENU_BUTTON_PADDING / 2f, 0f)), new Vector4f(1f));
             this.position = new Vector2f(position);
             size = new Vector2f(this.name.getPixelWidth() + MENU_BUTTON_PADDING, WindowHeader.this.size.getY());
 
@@ -112,7 +117,7 @@ public class WindowHeader implements TextBatchContainer
             for (ListData listDataEntry : listDataEntries)
             {
                 actions.addItem(listDataEntry.name, listDataEntry.listItemPressAction);
-                float labelWidth = WindowHeader.this.headerTextBatch.getFont().getPixelWidth(listDataEntry.name);
+                float labelWidth = WindowHeader.this.textBatch.getFont().getPixelWidth(listDataEntry.name);
                 if (labelWidth > widestEntry) widestEntry = labelWidth;
             }
             actions.setPosition(Vector2f.add(position, new Vector2f(0f, size.getY())));

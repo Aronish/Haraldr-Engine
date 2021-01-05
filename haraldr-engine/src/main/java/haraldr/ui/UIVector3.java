@@ -2,7 +2,6 @@ package haraldr.ui;
 
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
-import haraldr.graphics.TextBatchContainer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector3f;
@@ -12,17 +11,17 @@ public class UIVector3 extends UIComponent
     protected UIInputField<UIInputField.FloatValue> x, y, z;
     protected float elementWidth;
 
-    protected UIVector3(TextBatchContainer parent)
+    protected UIVector3(UIContainer parent)
     {
         this(parent, new Vector3f(), 0.02f, (x, y, z) -> {});
     }
 
-    public UIVector3(TextBatchContainer parent, Vector3f defaultValues, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3(UIContainer parent, Vector3f defaultValues, Vector3ChangeAction vector3ChangeAction)
     {
         this(parent, defaultValues, 0.02f, vector3ChangeAction);
     }
 
-    public UIVector3(TextBatchContainer parent, Vector3f defaultValues, float dragSensitivity, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3(UIContainer parent, Vector3f defaultValues, float dragSensitivity, Vector3ChangeAction vector3ChangeAction)
     {
         super(parent);
         x = new UIInputField<>(parent, new UIInputField.FloatValue(defaultValues.getX(), dragSensitivity), inputFieldValue ->
@@ -37,12 +36,12 @@ public class UIVector3 extends UIComponent
 
     // Max and min
 
-    public UIVector3(TextBatchContainer parent, Vector3f min, Vector3f max, Vector3f defaultValues, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3(UIContainer parent, Vector3f min, Vector3f max, Vector3f defaultValues, Vector3ChangeAction vector3ChangeAction)
     {
         this(parent, min, max, defaultValues, 0.02f, vector3ChangeAction);
     }
 
-    public UIVector3(TextBatchContainer parent, Vector3f min, Vector3f max, Vector3f defaultValues, float dragSensitivity, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3(UIContainer parent, Vector3f min, Vector3f max, Vector3f defaultValues, float dragSensitivity, Vector3ChangeAction vector3ChangeAction)
     {
         super(parent);
         x = new UIInputField<>(parent, new UIInputField.FloatValue(defaultValues.getX(), dragSensitivity), inputFieldValue ->
@@ -104,9 +103,9 @@ public class UIVector3 extends UIComponent
     @Override
     public void draw(Batch2D batch)
     {
-        x.draw(batch);
-        y.draw(batch);
-        z.draw(batch);
+        x.draw();
+        y.draw();
+        z.draw();
     }
 
     @Override

@@ -4,7 +4,6 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.ParentCollapsedEvent;
 import haraldr.graphics.Batch2D;
-import haraldr.graphics.TextBatchContainer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -19,7 +18,7 @@ public class UIInfoLabel extends UIComponent
         this(null, value);
     }
 
-    public UIInfoLabel(TextBatchContainer parent, String value)
+    public UIInfoLabel(UIContainer parent, String value)
     {
         super(parent);
         this.value = value;

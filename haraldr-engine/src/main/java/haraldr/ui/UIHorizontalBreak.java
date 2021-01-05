@@ -2,7 +2,6 @@ package haraldr.ui;
 
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
-import haraldr.graphics.TextBatchContainer;
 import haraldr.main.Window;
 
 public class UIHorizontalBreak extends UIComponent // Quite useless as a whole class
@@ -14,7 +13,7 @@ public class UIHorizontalBreak extends UIComponent // Quite useless as a whole c
         this(null, height);
     }
 
-    public UIHorizontalBreak(TextBatchContainer parent, int height)
+    public UIHorizontalBreak(UIContainer parent, int height)
     {
         super(parent);
         this.height = height;

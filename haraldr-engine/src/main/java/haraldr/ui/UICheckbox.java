@@ -4,7 +4,6 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Batch2D;
-import haraldr.graphics.TextBatchContainer;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
 import haraldr.main.Window;
@@ -21,17 +20,17 @@ public class UICheckbox extends UIComponent
 
     private CheckboxStateChangeAction checkboxStateChangeAction;
 
-    public UICheckbox(TextBatchContainer parent)
+    public UICheckbox(UIContainer parent)
     {
         this(parent, false, state -> {});
     }
 
-    public UICheckbox(TextBatchContainer parent, boolean initialState)
+    public UICheckbox(UIContainer parent, boolean initialState)
     {
         this(parent, initialState, state -> {});
     }
 
-    public UICheckbox(TextBatchContainer parent, boolean initialState, CheckboxStateChangeAction checkboxStateChangeAction)
+    public UICheckbox(UIContainer parent, boolean initialState, CheckboxStateChangeAction checkboxStateChangeAction)
     {
         super(parent);
         size = new Vector2f(20f);

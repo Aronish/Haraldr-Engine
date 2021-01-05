@@ -5,7 +5,6 @@ import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
 import haraldr.event.ParentCollapsedEvent;
 import haraldr.graphics.Batch2D;
-import haraldr.graphics.TextBatchContainer;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
 import haraldr.main.Window;
@@ -18,7 +17,7 @@ public class UIDropDownMenu extends UIComponent
     private boolean menuOpened;
     private UIVerticalList verticalList;
 
-    public UIDropDownMenu(TextBatchContainer parent)
+    public UIDropDownMenu(UIContainer parent)
     {
         super(parent);
         size = new Vector2f(20f);

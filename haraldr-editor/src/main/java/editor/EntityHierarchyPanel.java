@@ -75,14 +75,14 @@ public class EntityHierarchyPanel extends DockablePanel
     protected void renderToBatch()
     {
         if (entityListItems == null) return;
-        renderBatch.begin();
-        renderBatch.drawQuad(position, size, color);
-        renderBatch.drawQuad(position, headerSize, HEADER_COLOR);
+        mainBatch.begin();
+        mainBatch.drawQuad(position, size, color);
+        mainBatch.drawQuad(position, headerSize, HEADER_COLOR);
         for (EntityListItem entityListItem : entityListItems)
         {
-            renderBatch.drawQuad(entityListItem.position, entityListItem.size, entityListItem.hovered ? new Vector4f(0.3f, 0.3f, 0.3f, 1f) : new Vector4f(0f));
+            mainBatch.drawQuad(entityListItem.position, entityListItem.size, entityListItem.hovered ? new Vector4f(0.3f, 0.3f, 0.3f, 1f) : new Vector4f(0f));
         }
-        renderBatch.end();
+        mainBatch.end();
     }
 
     @Override

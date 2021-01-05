@@ -121,11 +121,6 @@ public class PropertiesPanel extends DockablePanel
     }
 
     @Override
-    public void renderText()
-    {
-    }
-
-    @Override
     public void render()
     {
         Renderer.enableStencilTest();
@@ -143,5 +138,11 @@ public class PropertiesPanel extends DockablePanel
         Renderer.stencilMask(0xFF);
         Renderer.stencilFunc(Renderer.StencilFunc.ALWAYS, 1, 0xFF);
         Renderer.disableStencilTest();
+    }
+
+    @Override
+    public Batch2D getMainBatch()
+    {
+        return listBatch;
     }
 }

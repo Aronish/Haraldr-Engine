@@ -5,7 +5,7 @@ import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Batch2D;
-import haraldr.graphics.TextBatchContainer;
+import haraldr.ui.UIContainer;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
 import haraldr.main.Window;
@@ -17,7 +17,7 @@ import haraldr.ui.TextBatch;
 import haraldr.ui.TextLabel;
 
 @SuppressWarnings("WeakerAccess")
-public class DockablePanel implements TextBatchContainer
+public class DockablePanel implements UIContainer
 {
     private static final float HEADER_SIZE = 20f;
     protected static final Vector4f HEADER_COLOR = new Vector4f(0.15f, 0.15f, 0.15f, 1f);
@@ -29,7 +29,7 @@ public class DockablePanel implements TextBatchContainer
     protected TextBatch textBatch = new TextBatch(Font.DEFAULT_FONT);
     protected TextLabel name;
 
-    protected Batch2D renderBatch = new Batch2D();
+    protected Batch2D mainBatch = new Batch2D();
 
     private PanelDimensionChangeAction panelDimensionChangeAction = (position, size) -> {};
 
@@ -68,15 +68,15 @@ public class DockablePanel implements TextBatchContainer
 
     protected void renderToBatch()
     {
-        renderBatch.begin();
-        renderBatch.drawQuad(position, size, color);
-        renderBatch.drawQuad(position, headerSize, HEADER_COLOR);
-        renderBatch.end();
+        mainBatch.begin();
+        mainBatch.drawQuad(position, size, color);
+        mainBatch.drawQuad(position, headerSize, HEADER_COLOR);
+        mainBatch.end();
     }
 
     public void render()
     {
-        renderBatch.render();
+        mainBatch.render();
     }
 
     public void renderText()
@@ -146,6 +146,13 @@ public class DockablePanel implements TextBatchContainer
         return hovered;
     }
 
+    @Override
+    public Batch2D getMainBatch()
+    {
+        return mainBatch;
+    }
+
+    @Override
     public TextBatch getTextBatch()
     {
         return textBatch;

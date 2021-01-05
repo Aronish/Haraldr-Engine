@@ -1,6 +1,5 @@
 package haraldr.ui;
 
-import haraldr.dockspace.DockablePanel;
 import haraldr.event.CharTypedEvent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
@@ -8,7 +7,6 @@ import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.event.ParentCollapsedEvent;
 import haraldr.graphics.Batch2D;
-import haraldr.graphics.TextBatchContainer;
 import haraldr.input.Input;
 import haraldr.input.KeyboardKey;
 import haraldr.input.MouseButton;
@@ -39,12 +37,12 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
     private TextLabel textLabel;
     private InputFieldChangeAction<T> inputFieldChangeAction;
 
-    public UIInputField(TextBatchContainer parent, T defaultValue)
+    public UIInputField(UIContainer parent, T defaultValue)
     {
         this(parent, defaultValue, value -> {});
     }
 
-    public UIInputField(TextBatchContainer parent, T defaultValue, InputFieldChangeAction<T> inputFieldChangeAction)
+    public UIInputField(UIContainer parent, T defaultValue, InputFieldChangeAction<T> inputFieldChangeAction)
     {
         super(parent);
         fieldSize = new Vector2f(0f, textBatch.getFont().getSize() - 2f * BORDER_WIDTH);

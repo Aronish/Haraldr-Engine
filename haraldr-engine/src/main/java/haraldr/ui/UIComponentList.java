@@ -5,7 +5,6 @@ import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
 import haraldr.event.ParentCollapsedEvent;
 import haraldr.graphics.Batch2D;
-import haraldr.graphics.TextBatchContainer;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
 import haraldr.main.Window;
@@ -28,7 +27,7 @@ public class UIComponentList extends UIComponent
     private float divider, nextListY;
     private boolean collapsed;
 
-    public UIComponentList(TextBatchContainer parent, String name, Vector2f position, Vector2f size)
+    public UIComponentList(UIContainer parent, String name, Vector2f position, Vector2f size)
     {
         super(parent);
         this.position = Vector2f.add(position, new Vector2f(MARGIN));
@@ -79,19 +78,6 @@ public class UIComponentList extends UIComponent
     }
 
     @Override
-    public void addPosition(Vector2f position)
-    {
-        this.position.add(position);
-        name.addPosition(position);
-        for (Map.Entry<TextLabel, UIComponent> entry : components.entrySet())
-        {
-            entry.getKey().addPosition(position);
-            entry.getValue().addPosition(position);
-        }
-        textBatch.refreshTextMeshData();
-    }
-
-    @Override
     public boolean onEvent(Event event, Window window)
     {
         boolean requiresRedraw = false;
@@ -131,7 +117,7 @@ public class UIComponentList extends UIComponent
         if (!collapsed)
         {
             batch.drawQuad(position, size, new Vector4f(0.3f, 0.3f, 0.3f, 1f));
-            components.values().forEach(component -> component.draw(batch));
+            components.values().forEach(UIComponent::draw);
         }
         batch.drawQuad(position, headerSize, new Vector4f(0.15f, 0.15f, 0.15f, 1f));
     }

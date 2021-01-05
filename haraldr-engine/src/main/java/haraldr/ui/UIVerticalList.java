@@ -2,7 +2,6 @@ package haraldr.ui;
 
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
-import haraldr.graphics.TextBatchContainer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -13,11 +12,10 @@ import java.util.List;
 public class UIVerticalList extends UIComponent
 {
     private List<ListItem> listItems = new ArrayList<>();
-    private Batch2D renderBatch = new Batch2D();
     private float listHeight;
     private boolean visible;
 
-    public UIVerticalList(TextBatchContainer parent)
+    public UIVerticalList(UIContainer parent)
     {
         super(parent);
     }
@@ -61,7 +59,7 @@ public class UIVerticalList extends UIComponent
         {
             for (ListItem listItem : listItems)
             {
-                if (listItem.onEvent(event)) draw(renderBatch);
+                if (listItem.onEvent(event)) draw();
             }
         }
         return false;

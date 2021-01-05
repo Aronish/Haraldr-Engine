@@ -2,7 +2,6 @@ package haraldr.ui;
 
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
-import haraldr.graphics.TextBatchContainer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector3f;
@@ -11,12 +10,12 @@ public class UIVector3Linkable extends UIVector3
 {
     private UICheckbox linked;
 
-    public UIVector3Linkable(TextBatchContainer parent, Vector3f defaultValues, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3Linkable(UIContainer parent, Vector3f defaultValues, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
     {
         this(parent, defaultValues, 0.02f, initiallyLinked, vector3ChangeAction);
     }
 
-    public UIVector3Linkable(TextBatchContainer parent, Vector3f defaultValues, float dragSensitivity, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3Linkable(UIContainer parent, Vector3f defaultValues, float dragSensitivity, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
     {
         super(parent);
         linked = new UICheckbox(parent, initiallyLinked);
@@ -70,12 +69,12 @@ public class UIVector3Linkable extends UIVector3
 
     // Max and min
 
-    public UIVector3Linkable(TextBatchContainer parent, Vector3f min, Vector3f max, Vector3f defaultValues, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3Linkable(UIContainer parent, Vector3f min, Vector3f max, Vector3f defaultValues, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
     {
         this(parent, min, max, defaultValues, 0.02f, initiallyLinked, vector3ChangeAction);
     }
 
-    public UIVector3Linkable(TextBatchContainer parent, Vector3f min, Vector3f max, Vector3f defaultValues, float dragSensitivity, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3Linkable(UIContainer parent, Vector3f min, Vector3f max, Vector3f defaultValues, float dragSensitivity, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
     {
         super(parent);
         linked = new UICheckbox(parent, initiallyLinked);
@@ -153,7 +152,7 @@ public class UIVector3Linkable extends UIVector3
     public void draw(Batch2D batch)
     {
         super.draw(batch);
-        linked.draw(batch);
+        linked.draw();
     }
 
     @Override

@@ -1,12 +1,10 @@
 package haraldr.ui;
 
-import haraldr.dockspace.DockablePanel;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Batch2D;
-import haraldr.graphics.TextBatchContainer;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
 import haraldr.main.Window;
@@ -28,27 +26,27 @@ public class UISlider extends UIComponent
         this(null, 0f, 1f, 0f, value -> {});
     }
 
-    public UISlider(TextBatchContainer parent)
+    public UISlider(UIContainer parent)
     {
         this(parent, 0f, 1f, 0f, value -> {});
     }
 
-    public UISlider(TextBatchContainer parent, SliderChangeAction sliderChangeAction)
+    public UISlider(UIContainer parent, SliderChangeAction sliderChangeAction)
     {
         this(parent, 0f, 1f, 0f, sliderChangeAction);
     }
 
-    public UISlider(TextBatchContainer parent, float defaultValue, SliderChangeAction sliderChangeAction)
+    public UISlider(UIContainer parent, float defaultValue, SliderChangeAction sliderChangeAction)
     {
         this(parent, 0f, 1f, defaultValue, sliderChangeAction);
     }
 
-    public UISlider(TextBatchContainer parent, float min, float max, SliderChangeAction sliderChangeAction)
+    public UISlider(UIContainer parent, float min, float max, SliderChangeAction sliderChangeAction)
     {
         this(parent, min, max, 0f, sliderChangeAction);
     }
 
-    public UISlider(TextBatchContainer parent, float min, float max, float defaultValue, SliderChangeAction sliderChangeAction)
+    public UISlider(UIContainer parent, float min, float max, float defaultValue, SliderChangeAction sliderChangeAction)
     {
         super(parent);
         sliderSize = new Vector2f(20f);

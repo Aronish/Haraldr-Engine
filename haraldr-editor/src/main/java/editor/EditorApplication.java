@@ -162,8 +162,11 @@ public class EditorApplication extends Application
         windowHeader.onEvent(event, window);
         dockSpace.onEvent(event, window);
 
-        scene.onEvent(event, window);
-        editorCamera.onEvent(event, window, scene3DPanel.isHovered());
+        if (!event.isHandled())
+        {
+            scene.onEvent(event, window);
+            editorCamera.onEvent(event, window, scene3DPanel.isHovered());
+        }
 
         if (scene3DPanel.isHovered() && scene3DPanel.isContentPressed() && !scene3DPanel.isHeaderPressed())
         {

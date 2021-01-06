@@ -43,7 +43,10 @@ public class DockablePanel implements UIContainer
         renderToBatch(); //TODO: Could be structured to avoid null checks in subclasses
     }
 
-    public void onEvent(Event event, Window window)
+    /**
+     * @return whether this panel should consume the event. If the panel is docked it won't be consumed.
+     */
+    public boolean onEvent(Event event, Window window)
     {
         if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
         {
@@ -52,7 +55,10 @@ public class DockablePanel implements UIContainer
             headerPressed = Physics2D.pointInsideAABB(mousePoint, position, headerSize);
             contentPressed = Physics2D.pointInsideAABB(mousePoint, Vector2f.add(position, new Vector2f(0f, HEADER_SIZE)), Vector2f.add(size, new Vector2f(0f, -HEADER_SIZE)));
         }
-        if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1)) headerPressed = false;
+        if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
+        {
+            contentPressed = headerPressed = false;
+        }
         if (event.eventType == EventType.MOUSE_MOVED)
         {
             var mouseMovedEvent = (MouseMovedEvent) event;
@@ -63,7 +69,7 @@ public class DockablePanel implements UIContainer
                 setPosition(mousePoint);
             }
         }
-        event.setHandled(headerPressed || contentPressed || hovered);
+        return headerPressed || contentPressed;
     }
 
     protected void renderToBatch()

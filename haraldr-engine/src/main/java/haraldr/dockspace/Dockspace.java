@@ -59,26 +59,26 @@ public class Dockspace
 
     public void onEvent(Event event, Window window)
     {
-        if (Input.wasKeyPressed(event, KeyboardKey.KEY_TAB))
-        {
-            panels.addFirst(panels.removeLast());
-        }
-
         rootArea.onEvent(event, window);
 
         for (DockablePanel panel : panels)
         {
             DockingArea dockedArea = rootArea.getDockedArea(panel);
-            if (dockedArea == null || dockedArea.parent == null || !dockedArea.parent.resizing) panel.onEvent(event, window);
+            boolean consumeEvent = false;
+            if (dockedArea == null || dockedArea.parent == null || !dockedArea.parent.resizing) consumeEvent = panel.onEvent(event, window);
 
-            if (panel.isHeaderPressed())
+            if (panel.isHeaderPressed()) selectedPanel = panel;
+            if (consumeEvent) // TODO: Fix event fallthrough for scene
             {
-                selectedPanel = panel;
-                panels.remove(selectedPanel);
-                panels.addFirst(selectedPanel);
-                break;
+                panels.remove(panel);
+                panels.addFirst(panel);
             }
-            if (event.isHandled()) break;
+            if (consumeEvent || panel.isHovered()) break;
+        }
+
+        if (Input.wasKeyPressed(event, KeyboardKey.KEY_TAB))
+        {
+            panels.addFirst(panels.removeLast());
         }
 
         if (selectedPanel != null && Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))

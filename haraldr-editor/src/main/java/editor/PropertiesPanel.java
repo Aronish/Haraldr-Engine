@@ -56,10 +56,9 @@ public class PropertiesPanel extends DockablePanel
     }
 
     @Override
-    public void onEvent(Event event, Window window)
+    public boolean onEvent(Event event, Window window)
     {
-        boolean requiresRedraw = false;
-        super.onEvent(event, window);
+        boolean requiresRedraw = false, consumeEvent = super.onEvent(event, window);
         for (UIComponentList uiComponentList : uiComponentLists)
         {
             if (uiComponentList.onEvent(event, window))
@@ -86,6 +85,7 @@ public class PropertiesPanel extends DockablePanel
             }
         }
         if (requiresRedraw) renderToBatch();
+        return consumeEvent;
     }
 
     @Override

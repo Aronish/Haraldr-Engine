@@ -59,7 +59,7 @@ public class UIVerticalList extends UIComponent
         {
             for (ListItem listItem : listItems)
             {
-                if (listItem.onEvent(event)) draw();
+                //if (listItem.onEvent(event)) draw();
             }
         }
         return false;

@@ -43,9 +43,9 @@ public class EntityHierarchyPanel extends DockablePanel
         entityListItems.add(entityListItem);
     }
 
-    public void onEvent(Event event, Window window)
+    public boolean onEvent(Event event, Window window)
     {
-        super.onEvent(event, window);
+        boolean consumeEvent = super.onEvent(event, window);
         EntityListItem pressedListItem = null; // Defer to avoid concurrent modification
         for (EntityListItem entityListItem : entityListItems)
         {
@@ -60,6 +60,7 @@ public class EntityHierarchyPanel extends DockablePanel
             }
         }
         if (pressedListItem != null) entitySelectedAction.run(pressedListItem.entity);
+        return consumeEvent;
     }
 
     public void refreshEntityList(EntityRegistry entityRegistry)

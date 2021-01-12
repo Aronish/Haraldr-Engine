@@ -6,7 +6,6 @@ import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Batch2D;
 import haraldr.input.Input;
-import haraldr.input.KeyboardKey;
 import haraldr.input.MouseButton;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
@@ -24,7 +23,7 @@ public class Dockspace
 {
     private Vector2f position, size;
 
-    private LinkedList<DockablePanel> panels = new LinkedList<>();
+    private LinkedList<DockablePanel> dockedPanels = new LinkedList<>(), undockedPanels = new LinkedList<>();
     private DockablePanel selectedPanel;
     private DockingArea rootArea;
 
@@ -40,12 +39,16 @@ public class Dockspace
 
     public void addPanel(DockablePanel panel)
     {
-        panels.add(panel);
+        undockedPanels.add(panel);
     }
 
     public void dockPanel(DockablePanel panel, DockPosition dockPosition)
     {
-        rootArea.dockPanel(panel, dockPosition);
+        if (undockedPanels.contains(panel) && rootArea.dockPanel(panel, dockPosition))
+        {
+            undockedPanels.remove(panel);
+            dockedPanels.add(panel);
+        }
     }
 
     public void resizePanel(DockablePanel panel, float size)
@@ -61,29 +64,33 @@ public class Dockspace
     {
         rootArea.onEvent(event, window);
 
-        for (DockablePanel panel : panels)
+        boolean undockedPanelsConsumed = false;
+        for (DockablePanel undockedPanel : undockedPanels)
         {
-            DockingArea dockedArea = rootArea.getDockedArea(panel);
-            boolean consumeEvent = false;
-            if (dockedArea == null || dockedArea.parent == null || !dockedArea.parent.resizing) consumeEvent = panel.onEvent(event, window);
-
-            if (panel.isHeaderPressed()) selectedPanel = panel;
-            if (consumeEvent) // TODO: Fix event fallthrough for scene
+            if (undockedPanel.onEvent(event, window))
             {
-                panels.remove(panel);
-                panels.addFirst(panel);
+                if (undockedPanel.isHeaderPressed()) selectedPanel = undockedPanel;
+                undockedPanelsConsumed = true;
+                undockedPanels.remove(undockedPanel);
+                undockedPanels.addFirst(undockedPanel);
+                break;
             }
-            if (consumeEvent || panel.isHovered()) break;
+        }
+        if (!undockedPanelsConsumed)
+        {
+            for (DockablePanel dockedPanel : dockedPanels)
+            {
+                if (dockedPanel.onEvent(event, window) && dockedPanel.isHeaderPressed()) selectedPanel = dockedPanel;
+            }
         }
 
-        if (Input.wasKeyPressed(event, KeyboardKey.KEY_TAB))
+        if (selectedPanel != null && undockedPanels.contains(selectedPanel) && Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
         {
-            panels.addFirst(panels.removeLast());
-        }
-
-        if (selectedPanel != null && Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
-        {
-            rootArea.attemptDockPanel(selectedPanel);
+            if (rootArea.attemptDockPanel(selectedPanel))
+            {
+                undockedPanels.remove(selectedPanel);
+                dockedPanels.addFirst(selectedPanel);
+            }
             selectedPanel = null;
             renderToBatch();
         }
@@ -97,6 +104,8 @@ public class Dockspace
                 if (dockedArea.parent == null || !dockedArea.parent.resizing)
                 {
                     dockedArea.undock();
+                    dockedPanels.remove(selectedPanel);
+                    undockedPanels.addFirst(selectedPanel);
                     selectedPanel.setSize(new Vector2f(300f));
                     selectedPanel = null;
                     return;
@@ -128,7 +137,13 @@ public class Dockspace
     public void render()
     {
         renderBatch.render();
-        for (Iterator<DockablePanel> it = panels.descendingIterator(); it.hasNext();)
+        for (Iterator<DockablePanel> it = dockedPanels.descendingIterator(); it.hasNext();)
+        {
+            DockablePanel dockablePanel = it.next();
+            dockablePanel.render();
+            dockablePanel.renderText();
+        }
+        for (Iterator<DockablePanel> it = undockedPanels.descendingIterator(); it.hasNext();)
         {
             DockablePanel dockablePanel = it.next();
             dockablePanel.render();
@@ -138,7 +153,8 @@ public class Dockspace
 
     public void dispose()
     {
-        panels.forEach(DockablePanel::dispose);
+        dockedPanels.forEach(DockablePanel::dispose);
+        undockedPanels.forEach(DockablePanel::dispose);
     }
 
     public Vector2f getSize()
@@ -372,6 +388,7 @@ public class Dockspace
          */
         private boolean attemptDockPanel(DockablePanel panel)
         {
+            boolean docked = false;
             if (hovered && dockable)
             {
                 return dockPanelToPosition(panel, dockGizmo.getDockPosition(panel.getPosition()));
@@ -379,10 +396,10 @@ public class Dockspace
             {
                 for (DockingArea dockingArea : children.values())
                 {
-                    if (dockingArea.attemptDockPanel(panel)) break;
+                    if (docked = dockingArea.attemptDockPanel(panel)) break;
                 }
             }
-            return false;
+            return docked;
         }
 
         /**
@@ -392,6 +409,7 @@ public class Dockspace
          */
         private boolean dockPanel(DockablePanel panel, DockPosition dockPosition)
         {
+            boolean docked = false;
             if (dockable)
             {
                 return dockPanelToPosition(panel, dockPosition);
@@ -399,10 +417,10 @@ public class Dockspace
             {
                 for (DockingArea dockingArea : children.values())
                 {
-                    if (dockingArea.dockPanel(panel, dockPosition)) break;
+                    if (docked = dockingArea.dockPanel(panel, dockPosition)) break;
                 }
             }
-            return false;
+            return docked;
         }
 
         private boolean dockPanelToPosition(DockablePanel panel, DockPosition dockPosition)

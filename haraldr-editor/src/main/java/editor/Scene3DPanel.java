@@ -1,9 +1,11 @@
 package editor;
 
 import haraldr.dockspace.DockablePanel;
+import haraldr.event.Event;
 import haraldr.graphics.HDRGammaCorrectionPass;
 import haraldr.graphics.RenderTexture;
 import haraldr.graphics.Renderer2D;
+import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 
@@ -20,6 +22,14 @@ public class Scene3DPanel extends DockablePanel
                 Vector2f.add(position, new Vector2f(0f, headerSize.getY())),
                 Vector2f.add(position, new Vector2f(0f, -headerSize.getY()))
         );
+    }
+
+    @Override
+    public boolean onEvent(Event event, Window window)
+    {
+        boolean panelConsumed = super.onEvent(event, window);
+        event.setHandled(headerPressed);
+        return panelConsumed;
     }
 
     @Override

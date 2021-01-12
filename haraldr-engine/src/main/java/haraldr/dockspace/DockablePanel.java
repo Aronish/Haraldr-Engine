@@ -69,6 +69,7 @@ public class DockablePanel implements UIContainer
                 setPosition(mousePoint);
             }
         }
+        event.setHandled(headerPressed || contentPressed);
         return headerPressed || contentPressed;
     }
 

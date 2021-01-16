@@ -61,6 +61,12 @@ public class TextBatch
         refreshTextMeshData();
     }
 
+    public void removeTextLabel(TextLabel label)
+    {
+        textLabels.remove(label);
+        refreshTextMeshData();
+    }
+
     public void setVisible(boolean visible)
     {
         for (TextLabel textLabel : textLabels)

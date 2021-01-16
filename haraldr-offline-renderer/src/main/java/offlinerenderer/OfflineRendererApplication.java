@@ -4,14 +4,15 @@ import haraldr.dockspace.DockPosition;
 import haraldr.dockspace.DockablePanel;
 import haraldr.dockspace.Dockspace;
 import haraldr.event.Event;
+import haraldr.event.EventType;
 import haraldr.graphics.Renderer;
 import haraldr.main.Application;
 import haraldr.main.IOUtils;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
-import haraldr.ui.UIComponentList;
 import haraldr.ui.UIButton;
+import haraldr.ui.UIComponentList;
 import haraldr.ui.UIHorizontalBreak;
 import haraldr.ui.UIInfoLabel;
 import haraldr.ui.UIInputField;
@@ -19,12 +20,15 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
+import java.lang.module.ResolutionException;
+
 import static org.lwjgl.opengl.GL11.glViewport;
 //TODO: Fix everything
 public class OfflineRendererApplication extends Application
 {
     private Dockspace dockspace;
-    private DockablePanel mainPanel;
+    private MainPanel mainPanel;
+
     private UIInputField<UIInputField.IntValue> diffuseIrradianceMapSize;
     private UIInputField<UIInputField.IntValue> prefilteredEnvironmentMapSize;
     private UIInfoLabel environmentMapData;
@@ -49,9 +53,7 @@ public class OfflineRendererApplication extends Application
     protected void clientInit(Window window)
     {
         dockspace = new Dockspace(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()));
-        mainPanel = new DockablePanel(new Vector2f(), new Vector2f(), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Haraldr Offline Renderer");
-        dockspace.addPanel(mainPanel);
-        dockspace.dockPanel(mainPanel, DockPosition.CENTER);
+        mainPanel = new MainPanel(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Haraldr Offline Renderer");
 
         UIComponentList uiComponentList = new UIComponentList(mainPanel, "Haraldr Offline Renderer", new Vector2f(), new Vector2f());
 
@@ -74,10 +76,10 @@ public class OfflineRendererApplication extends Application
                 glViewport(0, 0, window.getWidth(), window.getHeight());
             }
         });
-        environmentMapData = new UIInfoLabel("");
+        environmentMapData = new UIInfoLabel(mainPanel, "");
 
         //IBL maps
-        diffuseIrradianceMapSize = new UIInputField<>(mainPanel, new UIInputField.IntValue(0), (value) ->
+        diffuseIrradianceMapSize = new UIInputField<>(mainPanel, new UIInputField.IntValue(16, 2, 8192), (value) ->
         {
             if (value.toString().length() > 0 && value.toString().length() <= 4)
             {
@@ -86,7 +88,7 @@ public class OfflineRendererApplication extends Application
             } else diffIrrSizeValid = false;
             checkReadiness();
         });
-        prefilteredEnvironmentMapSize = new UIInputField<>(mainPanel, new UIInputField.IntValue(0), (value) ->
+        prefilteredEnvironmentMapSize = new UIInputField<>(mainPanel, new UIInputField.IntValue(128, 2, 8192), (value) ->
         {
             if (value.toString().length() > 0 && value.toString().length() <= 4)
             {
@@ -96,9 +98,9 @@ public class OfflineRendererApplication extends Application
             checkReadiness();
         });
 
-        readyToGenerateIblMaps = new UIInfoLabel("");
-        diffuseIrradianceMapData = new UIInfoLabel("");
-        prefilteredEnvironmentMapdata = new UIInfoLabel("");
+        readyToGenerateIblMaps = new UIInfoLabel(mainPanel, "");
+        diffuseIrradianceMapData = new UIInfoLabel(mainPanel, "");
+        prefilteredEnvironmentMapdata = new UIInfoLabel(mainPanel, "");
 
         generateIblMaps = new UIButton(mainPanel, () ->
         {
@@ -108,12 +110,12 @@ public class OfflineRendererApplication extends Application
             prefilteredEnvironmentMapdata.setValue("Loaded: " + prefilteredEnvironmentMap.getName() + " | Size: " + prefilteredEnvironmentMap.getSize());
             glViewport(0, 0, window.getWidth(), window.getHeight());
         });
-        //generateIblMaps.setEnabled(false);
+        generateIblMaps.setEnabled(false);
 
         //Export options
         //Diffuse Irradiance Map
         UIButton exportDiffuseIrradianceMap = new UIButton(mainPanel, () -> CubeMapGenerator.exportCubeMap(diffuseIrradianceMap, diffuseIrradianceMapPath.getValue()));
-        //exportDiffuseIrradianceMap.setEnabled(false);
+        exportDiffuseIrradianceMap.setEnabled(false);
 
         UIButton saveDiffuseIrradianceMapAs = new UIButton(mainPanel, () ->
         {
@@ -124,13 +126,13 @@ public class OfflineRendererApplication extends Application
                 String path = TinyFileDialogs.tinyfd_saveFileDialog("Save diffuse irradiance map", "", filterPatterns, "");
                 diffuseIrradianceMapPath.setValue(path == null ? "" : path);
             }
-            //exportDiffuseIrradianceMap.setEnabled(!diffuseIrradianceMapPath.getValue().isBlank() && diffuseIrradianceMapPath.getValue().endsWith(".exr"));
+            exportDiffuseIrradianceMap.setEnabled(!diffuseIrradianceMapPath.getValue().isBlank() && diffuseIrradianceMapPath.getValue().endsWith(".exr"));
         });
-        diffuseIrradianceMapPath = new UIInfoLabel("");
+        diffuseIrradianceMapPath = new UIInfoLabel(mainPanel, "");
 
         //Prefiltered Map
         UIButton exportPrefilteredMap = new UIButton(mainPanel, () -> CubeMapGenerator.exportCubeMap(prefilteredEnvironmentMap, prefilteredMapPath.getValue()));
-        //exportPrefilteredMap.setEnabled(false);
+        exportPrefilteredMap.setEnabled(false);
 
         UIButton savePrefilteredMap = new UIButton(mainPanel, () ->
         {
@@ -141,15 +143,15 @@ public class OfflineRendererApplication extends Application
                 String path = TinyFileDialogs.tinyfd_saveFileDialog("Save prefiltered environment map", "", filterPatterns, "");
                 prefilteredMapPath.setValue(path == null ? "" : path);
             }
-            //exportPrefilteredMap.setEnabled(!prefilteredMapPath.getValue().isBlank() && prefilteredMapPath.getValue().endsWith(".exr"));
+            exportPrefilteredMap.setEnabled(!prefilteredMapPath.getValue().isBlank() && prefilteredMapPath.getValue().endsWith(".exr"));
         });
-        prefilteredMapPath = new UIInfoLabel("");
+        prefilteredMapPath = new UIInfoLabel(mainPanel, "");
 
-        uiComponentList.addComponent("", new UIHorizontalBreak(20));
+        uiComponentList.addComponent("", new UIHorizontalBreak(mainPanel, 20));
         uiComponentList.addComponent("Load HDR", loadHdr);
         uiComponentList.addComponent("", environmentMapData);
 
-        uiComponentList.addComponent("PRECOMPUTE CUBEMAPS", new UIHorizontalBreak(20));
+        uiComponentList.addComponent("PRECOMPUTE CUBEMAPS", new UIHorizontalBreak(mainPanel, 20));
         uiComponentList.addComponent("Diffuse Irradiance Map Size", diffuseIrradianceMapSize);
         uiComponentList.addComponent("Prefiltered Map Size", prefilteredEnvironmentMapSize);
         uiComponentList.addComponent("Ready to generate?", readyToGenerateIblMaps);
@@ -157,15 +159,19 @@ public class OfflineRendererApplication extends Application
         uiComponentList.addComponent("", diffuseIrradianceMapData);
         uiComponentList.addComponent("", prefilteredEnvironmentMapdata);
 
-        uiComponentList.addComponent("DIFFUSE IRRADIANCE MAP", new UIHorizontalBreak(20));
+        uiComponentList.addComponent("DIFFUSE IRRADIANCE MAP", new UIHorizontalBreak(mainPanel, 20));
         uiComponentList.addComponent("Save", saveDiffuseIrradianceMapAs);
         uiComponentList.addComponent("Save Path", diffuseIrradianceMapPath);
         uiComponentList.addComponent("Export", exportDiffuseIrradianceMap);
 
-        uiComponentList.addComponent("PREFILTERED MAP", new UIHorizontalBreak(20));
+        uiComponentList.addComponent("PREFILTERED MAP", new UIHorizontalBreak(mainPanel, 20));
         uiComponentList.addComponent("Save", savePrefilteredMap);
         uiComponentList.addComponent("Save Path", prefilteredMapPath);
         uiComponentList.addComponent("Export", exportPrefilteredMap);
+        mainPanel.addUIComponent(uiComponentList);
+        dockspace.addPanel(mainPanel);
+        dockspace.dockPanel(mainPanel, DockPosition.CENTER);
+
         checkReadiness();
 
         Renderer.disableDepthTest();
@@ -176,11 +182,11 @@ public class OfflineRendererApplication extends Application
         if (diffIrrSizeValid && prefSizeValid && environmentMap != null)
         {
             readyToGenerateIblMaps.setValue("Ready!");
-            //generateIblMaps.setEnabled(true);
+            generateIblMaps.setEnabled(true);
         } else
         {
             readyToGenerateIblMaps.setValue("Sizes must be powers of two (2 - 8192) and HDR has to be loaded!");
-            //generateIblMaps.setEnabled(false);
+            generateIblMaps.setEnabled(false);
         }
     }
 

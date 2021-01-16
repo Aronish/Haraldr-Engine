@@ -186,16 +186,33 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
     public static class IntValue implements InputFieldValue<Integer>
     {
         private String intValue;
+        private int min, max, stepSize;
 
         public IntValue(int intValue)
         {
+            this(intValue, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
+        }
+
+        public IntValue(int intValue, int min, int max)
+        {
+            this(intValue, min, max, 1);
+        }
+
+        public IntValue(int intValue, int min, int max, int stepSize)
+        {
             this.intValue = Integer.toString(intValue);
+            this.min = min;
+            this.max = max;
+            this.stepSize = stepSize;
         }
 
         @Override
         public void onMouseDragged(float xOffset)
         {
-            intValue = Integer.toString((intValue.isEmpty() ? 0 : Integer.parseInt(intValue)) + MathUtils.fastFloor(xOffset));
+            int value = (intValue.isEmpty() ? 0 : Integer.parseInt(intValue)) + MathUtils.fastFloor(xOffset) * stepSize;
+            if (value < min) value = min;
+            if (value > max) value = max;
+            intValue = Integer.toString(value);
         }
 
         @Override

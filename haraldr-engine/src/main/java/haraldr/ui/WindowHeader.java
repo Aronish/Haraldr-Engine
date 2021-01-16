@@ -71,7 +71,7 @@ public class WindowHeader implements UIContainer
         for (MenuButton menuButton : menuButtons)
         {
             mainBatch.drawQuad(menuButton.position, menuButton.size, menuButton.hovered ? new Vector4f(0.6f, 0.6f, 0.6f, 1f) : new Vector4f(0.4f, 0.4f, 0.4f, 1f));
-            menuButton.actions.draw();
+            menuButton.actions.draw(mainBatch);
         }
         mainBatch.end();
     }
@@ -145,7 +145,7 @@ public class WindowHeader implements UIContainer
                 hovered = Physics2D.pointInsideAABB(new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos), position, size);
                 requiresRedraw = previousHoveredState != hovered;
             }
-            //actions.onEvent(event, window);
+            if (actions.onEvent(event, window)) requiresRedraw = true;
             return requiresRedraw;
         }
     }

@@ -23,14 +23,18 @@ public class UIVerticalList extends UIComponent
     public void addItem(String name, ListItem.ListItemPressAction listItemPressAction)
     {
         ListItem listItem;
-        listItems.add(listItem = new ListItem(name, Vector2f.add(position, new Vector2f(0f, listHeight)), textBatch, listItemPressAction));
+        listItems.add(listItem = new ListItem(name, Vector2f.add(position, new Vector2f(0f, listHeight)), textBatch, visible, listItemPressAction));
         listHeight += listItem.getSize().getY();
     }
 
     public void setVisible(boolean visible)
     {
         this.visible = visible;
-        //textBatch.setVisible(visible); // TODO: Need a way to create more text batches in children
+        for (ListItem listItem : listItems)
+        {
+            listItem.getTag().setEnabled(visible);
+        }
+        textBatch.refreshTextMeshData();
     }
 
     @Override
@@ -55,14 +59,15 @@ public class UIVerticalList extends UIComponent
     @Override
     public boolean onEvent(Event event, Window window)
     {
+        boolean requiresRedraw = false;
         if (visible)
         {
             for (ListItem listItem : listItems)
             {
-                //if (listItem.onEvent(event)) draw();
+                if (listItem.onEvent(event)) requiresRedraw = true;
             }
         }
-        return false;
+        return requiresRedraw;
     }
 
     @Override

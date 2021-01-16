@@ -17,10 +17,10 @@ public class ListItem
     private boolean hovered, pressed;
     private ListItemPressAction listItemPressAction;
 
-    public ListItem(String name, Vector2f position, TextBatch textBatch, ListItemPressAction listItemPressAction)
+    public ListItem(String name, Vector2f position, TextBatch textBatch, boolean enabled, ListItemPressAction listItemPressAction)
     {
         this.position = new Vector2f(position);
-        this.tag = textBatch.createTextLabel(name, this.position, new Vector4f(1f), false);
+        this.tag = textBatch.createTextLabel(name, this.position, new Vector4f(1f), enabled);
         size = new Vector2f(0f, textBatch.getFont().getSize());
         this.listItemPressAction = listItemPressAction;
     }
@@ -33,6 +33,7 @@ public class ListItem
             var mouseMovedEvent = (MouseMovedEvent) event;
             boolean previousHoveredState = hovered;
             hovered = Physics2D.pointInsideAABB(new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos), position, size);
+            if (hovered) event.setHandled(true);
             requiresRedraw = previousHoveredState != hovered;
         }
         if (event.eventType == EventType.MOUSE_PRESSED && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
@@ -40,7 +41,11 @@ public class ListItem
             var mousePressedEvent = (MousePressedEvent) event;
             boolean lastPressed = pressed;
             pressed = Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), position, size);
-            if (pressed) listItemPressAction.run(tag.getText());
+            if (pressed)
+            {
+                listItemPressAction.run(tag.getText());
+                event.setHandled(true);
+            }
             requiresRedraw = lastPressed != pressed;
         }
         if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
@@ -62,6 +67,11 @@ public class ListItem
         this.size.setX(width);
     }
 
+    public TextLabel getTag()
+    {
+        return tag;
+    }
+
     public Vector2f getPosition()
     {
         return position;
@@ -80,6 +90,6 @@ public class ListItem
     @FunctionalInterface
     public interface ListItemPressAction
     {
-        void run(String name);
+        void run(String name); //TODO: Not name
     }
 }

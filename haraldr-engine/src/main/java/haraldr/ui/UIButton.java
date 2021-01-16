@@ -13,6 +13,7 @@ public class UIButton extends UIComponent
 {
     private static final Vector4f ON_COLOR = new Vector4f(0.2f, 0.8f, 0.3f, 1f);
     private static final Vector4f OFF_COLOR = new Vector4f(0.8f, 0.2f, 0.3f, 1f);
+    private static final Vector4f DISABLED_COLOR = new Vector4f(0.4f, 0.4f, 0.4f, 1f);
 
     private Vector2f buttonSize;
     private Vector4f currentColor = OFF_COLOR;
@@ -36,6 +37,13 @@ public class UIButton extends UIComponent
     }
 
     @Override
+    public void setEnabled(boolean enabled)
+    {
+        super.setEnabled(enabled);
+        currentColor = enabled ? OFF_COLOR : DISABLED_COLOR;
+    }
+
+    @Override
     public void setWidth(float width)
     {
         buttonSize.setX(width);
@@ -45,20 +53,23 @@ public class UIButton extends UIComponent
     public boolean onEvent(Event event, Window window)
     {
         boolean requiresRedraw = false;
-        if (event.eventType == EventType.MOUSE_PRESSED)
+        if (enabled)
         {
-            var mousePressedEvent = (MousePressedEvent) event;
-            if (Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), position, buttonSize))
+            if (event.eventType == EventType.MOUSE_PRESSED)
             {
-                currentColor = ON_COLOR;
-                buttonPressAction.run();
-                requiresRedraw = true;
+                var mousePressedEvent = (MousePressedEvent) event;
+                if (Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), position, buttonSize))
+                {
+                    currentColor = ON_COLOR;
+                    buttonPressAction.run();
+                    requiresRedraw = true;
+                }
             }
-        }
-        if (event.eventType == EventType.MOUSE_RELEASED)
-        {
-            requiresRedraw = currentColor != OFF_COLOR;
-            currentColor = OFF_COLOR;
+            if (event.eventType == EventType.MOUSE_RELEASED)
+            {
+                requiresRedraw = currentColor != OFF_COLOR;
+                currentColor = OFF_COLOR;
+            }
         }
         return requiresRedraw;
     }

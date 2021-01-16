@@ -10,6 +10,7 @@ public abstract class UIComponent implements UIContainer
     protected Vector2f position = new Vector2f();
     private Batch2D mainBatch;
     protected TextBatch textBatch;
+    protected boolean enabled = true;
 
     protected UIComponent(UIContainer parent)
     {
@@ -20,6 +21,11 @@ public abstract class UIComponent implements UIContainer
     public void setPosition(Vector2f position)
     {
         this.position.set(position);
+    }
+
+    public void setEnabled(boolean enabled)
+    {
+        this.enabled = enabled;
     }
 
     public abstract void onDispose();

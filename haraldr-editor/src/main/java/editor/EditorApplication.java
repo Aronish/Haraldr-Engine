@@ -120,7 +120,7 @@ public class EditorApplication extends Application
                 "File",
                 new WindowHeader.ListData("Open", Logger::info),
                 new WindowHeader.ListData("Save", Logger::info),
-                new WindowHeader.ListData("Exit", Logger::info)
+                new WindowHeader.ListData("Exit", name -> stop())
         );
 
         // Dockspace
@@ -159,9 +159,9 @@ public class EditorApplication extends Application
     @Override
     protected void clientEvent(Event event, Window window)
     {
+        //TODO: Container to loop over UIContainers.
         windowHeader.onEvent(event, window);
-        dockSpace.onEvent(event, window);
-
+        if (!event.isHandled()) dockSpace.onEvent(event, window);
         if (!event.isHandled())
         {
             scene.onEvent(event, window);
@@ -186,9 +186,7 @@ public class EditorApplication extends Application
 
         if (event.eventType == EventType.WINDOW_RESIZED)
         {
-            var windowResizedEvent = (WindowResizedEvent) event;
             editorCamera.setAspectRatio(scene3DPanel.getSceneTexture().getSize().getX() / scene3DPanel.getSceneTexture().getSize().getY());
-            dockSpace.resize(windowResizedEvent.width, windowResizedEvent.height);
         }
     }
 

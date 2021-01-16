@@ -4,6 +4,7 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
+import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Batch2D;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
@@ -62,17 +63,28 @@ public class Dockspace
 
     public void onEvent(Event event, Window window)
     {
+        if (event.eventType == EventType.WINDOW_RESIZED)
+        {
+            var windowResizedEvent = (WindowResizedEvent) event;
+            resize(windowResizedEvent.width, windowResizedEvent.height);
+        }
+
         rootArea.onEvent(event, window);
 
         boolean undockedPanelsConsumed = false;
         for (DockablePanel undockedPanel : undockedPanels)
         {
-            if (undockedPanel.onEvent(event, window))
+            boolean panelConsumedPress = undockedPanel.onEvent(event, window);
+            if (panelConsumedPress) // The panel consumed the event
             {
                 if (undockedPanel.isHeaderPressed()) selectedPanel = undockedPanel;
-                undockedPanelsConsumed = true;
+                // Only set panel on top if pressed somewhere
                 undockedPanels.remove(undockedPanel);
                 undockedPanels.addFirst(undockedPanel);
+            }
+            if (panelConsumedPress || undockedPanel.isHovered())
+            {
+                undockedPanelsConsumed = true;
                 break;
             }
         }

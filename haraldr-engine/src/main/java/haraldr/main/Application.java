@@ -5,6 +5,7 @@ import haraldr.event.Event;
 import haraldr.event.EventDispatcher;
 import haraldr.event.EventType;
 import haraldr.event.WindowResizedEvent;
+import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
 import haraldr.graphics.Renderer3D;
 import haraldr.graphics.ResourceManager;
@@ -51,13 +52,13 @@ public abstract class Application
         this.initialWindowProperties = initialWindowProperties;
     }
 
-    public void start()
+    public final void start()
     {
         init();
         loop();
     }
 
-    private void stop()
+    protected final void stop()
     {
         glfwSetWindowShouldClose(window.getWindowHandle(), true);
     }
@@ -116,6 +117,7 @@ public abstract class Application
             if (event.eventType == EventType.WINDOW_RESIZED)
             {
                 var windowResizedEvent = (WindowResizedEvent) event;
+                Renderer.setViewPort(0, 0, windowResizedEvent.width, windowResizedEvent.height);
                 Renderer2D.onWindowResized(windowResizedEvent.width, windowResizedEvent.height);
             }
         }
@@ -179,7 +181,7 @@ public abstract class Application
 
     public abstract void clientDispose();
 
-    public void dispose()
+    public final void dispose()
     {
         clientDispose();
         window.delete();

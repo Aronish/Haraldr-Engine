@@ -22,6 +22,7 @@ public class UIDropDownMenu extends UIComponent
         super(parent);
         size = new Vector2f(20f);
         verticalList = new UIVerticalList(this);
+        verticalList.setVisible(menuOpened);
     }
 
     public void addMenuItem(String name, ListItem.ListItemPressAction listItemPressAction)
@@ -84,6 +85,7 @@ public class UIDropDownMenu extends UIComponent
     @Override
     public void draw(Batch2D batch)
     {
+        verticalList.draw(batch);
     }
 
     @Override

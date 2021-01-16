@@ -24,7 +24,7 @@ public class DockablePanel implements UIContainer
 
     protected Vector2f position, size, headerSize;
     protected Vector4f color;
-    protected boolean headerPressed, contentPressed, hovered; // held = moving, held by header ; pressed = content area pressed
+    protected boolean headerPressed, contentPressed, hovered;
 
     protected TextBatch textBatch = new TextBatch(Font.DEFAULT_FONT);
     protected TextLabel name;

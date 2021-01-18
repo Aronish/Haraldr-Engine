@@ -123,6 +123,18 @@ public class UIComponentList extends UIComponent
     }
 
     @Override
+    public void drawOverlay(Batch2D overlayBatch)
+    {
+        if (!collapsed)
+        {
+            for (UIComponent uiComponent : components.values())
+            {
+                uiComponent.drawOverlay(overlayBatch);
+            }
+        }
+    }
+
+    @Override
     public void onDispose()
     {
         for (UIComponent uiComponent : components.values())

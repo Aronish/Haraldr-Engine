@@ -76,11 +76,6 @@ public class UICheckbox extends UIComponent
     }
 
     @Override
-    public void onDispose()
-    {
-    }
-
-    @Override
     public float getVerticalSize()
     {
         return size.getY();

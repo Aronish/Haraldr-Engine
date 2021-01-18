@@ -5,11 +5,14 @@ import haraldr.graphics.Batch2D;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
-public class UIVerticalList extends UIComponent
+public class UIVerticalList extends UIComponent implements Iterable<ListItem>
 {
     private List<ListItem> listItems = new ArrayList<>();
     private float listHeight;
@@ -20,11 +23,21 @@ public class UIVerticalList extends UIComponent
         super(parent);
     }
 
-    public void addItem(String name, ListItem.ListItemPressAction listItemPressAction)
+    public void addItem(String name, Consumer<String> listItemPressAction)
     {
-        ListItem listItem;
-        listItems.add(listItem = new ListItem(name, Vector2f.add(position, new Vector2f(0f, listHeight)), textBatch, visible, listItemPressAction));
+        addItem(new ListItem(name, Vector2f.add(position, new Vector2f(0f, listHeight)), textBatch, visible, listItemPressAction));
+    }
+
+    public void addItem(ListItem listItem) //TODO: "Merge" with EntityHierarchyPanel
+    {
+        listItems.add(listItem);
         listHeight += listItem.getSize().getY();
+    }
+
+    public void clear()
+    {
+        listItems.clear();
+        listHeight = 0f;
     }
 
     public void setVisible(boolean visible)
@@ -83,14 +96,21 @@ public class UIVerticalList extends UIComponent
     }
 
     @Override
-    public void onDispose()
-    {
-    }
-
-    @Override
     public float getVerticalSize()
     {
         return listHeight;
+    }
+
+    public List<ListItem> getListItems()
+    {
+        return listItems;
+    }
+
+    @NotNull
+    @Override
+    public Iterator<ListItem> iterator()
+    {
+        return listItems.iterator();
     }
 
     public boolean isVisible()

@@ -81,11 +81,6 @@ public class UIButton extends UIComponent
     }
 
     @Override
-    public void onDispose()
-    {
-    }
-
-    @Override
     public float getVerticalSize()
     {
         return buttonSize.getY();

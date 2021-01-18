@@ -132,11 +132,6 @@ public class UISlider extends UIComponent
     }
 
     @Override
-    public void onDispose()
-    {
-    }
-
-    @Override
     public float getVerticalSize()
     {
         return sliderSize.getY();

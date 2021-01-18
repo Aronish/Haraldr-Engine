@@ -1,7 +1,6 @@
 package editor;
 
 import haraldr.dockspace.DockablePanel;
-import haraldr.ui.UIComponentList;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseScrolledEvent;
@@ -10,6 +9,7 @@ import haraldr.graphics.Renderer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
+import haraldr.ui.UIComponentList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class PropertiesPanel extends DockablePanel
 {
     private static final float SCROLL_SENSITIVITY = 10f;
 
-    private Batch2D listBatch = new Batch2D();
+    private Batch2D listBatch = new Batch2D(), overlayBatch = new Batch2D();
     private List<UIComponentList> uiComponentLists = new ArrayList<>();
     private float scrollOffset, listHeight;
 
@@ -64,7 +64,7 @@ public class PropertiesPanel extends DockablePanel
             if (uiComponentList.onEvent(event, window))
             {
                 requiresRedraw = true;
-                orderComponentLists(position); //TODO: Does not need to happen every event, only if the collapsed state of a list has changed
+                orderComponentLists(position); //Minor TODO: Does not need to happen every event, only if the collapsed state of a list has changed
             }
         }
 
@@ -113,10 +113,13 @@ public class PropertiesPanel extends DockablePanel
         super.renderToBatch();
 
         listBatch.begin();
+        overlayBatch.begin();
         for (UIComponentList uiComponentList : uiComponentLists)
         {
             uiComponentList.draw(listBatch);
+            uiComponentList.drawOverlay(overlayBatch);
         }
+        overlayBatch.end();
         listBatch.end();
     }
 
@@ -135,6 +138,7 @@ public class PropertiesPanel extends DockablePanel
         Renderer.stencilFunc(Renderer.StencilFunc.EQUAL, 1, 0xFF);
         listBatch.render();
         textBatch.render();
+        overlayBatch.render();
         Renderer.stencilMask(0xFF);
         Renderer.stencilFunc(Renderer.StencilFunc.ALWAYS, 1, 0xFF);
         Renderer.disableStencilTest();
@@ -144,5 +148,11 @@ public class PropertiesPanel extends DockablePanel
     public Batch2D getMainBatch()
     {
         return listBatch;
+    }
+
+    @Override
+    public Batch2D getOverlayBatch()
+    {
+        return overlayBatch;
     }
 }

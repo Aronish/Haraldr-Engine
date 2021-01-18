@@ -41,11 +41,6 @@ public class UIInfoLabel extends UIComponent
     }
 
     @Override
-    public void setWidth(float width)
-    {
-    }
-
-    @Override
     public boolean onEvent(Event event, Window window)
     {
         if (event.eventType == EventType.PARENT_COLLAPSED)
@@ -54,16 +49,6 @@ public class UIInfoLabel extends UIComponent
             textBatch.refreshTextMeshData();
         }
         return false;
-    }
-
-    @Override
-    public void draw(Batch2D batch)
-    {
-    }
-
-    @Override
-    public void onDispose()
-    {
     }
 
     @Override

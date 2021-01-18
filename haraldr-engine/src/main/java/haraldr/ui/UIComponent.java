@@ -1,14 +1,13 @@
 package haraldr.ui;
 
-import haraldr.event.Event;
+import haraldr.debug.Logger;
 import haraldr.graphics.Batch2D;
-import haraldr.main.Window;
 import haraldr.math.Vector2f;
 
-public abstract class UIComponent implements UIContainer
+public abstract class UIComponent implements UIComponentBehavior, UIContainer
 {
     protected Vector2f position = new Vector2f();
-    private Batch2D mainBatch;
+    private Batch2D mainBatch, overlayBatch; // List of batches if needed with getter with index.
     protected TextBatch textBatch;
     protected boolean enabled = true;
 
@@ -16,6 +15,7 @@ public abstract class UIComponent implements UIContainer
     {
         mainBatch = parent.getMainBatch();
         textBatch = parent.getTextBatch();
+        overlayBatch = parent.getOverlayBatch();
     }
 
     public void setPosition(Vector2f position)
@@ -28,25 +28,21 @@ public abstract class UIComponent implements UIContainer
         this.enabled = enabled;
     }
 
-    public abstract void onDispose();
-
-    public abstract void setWidth(float width);
-
-    public abstract boolean onEvent(Event event, Window window);
-
     public void draw()
     {
         draw(mainBatch);
     }
 
-    public abstract void draw(Batch2D batch);
-
-    public abstract float getVerticalSize();
-
     @Override
     public Batch2D getMainBatch()
     {
         return mainBatch;
+    }
+
+    @Override
+    public Batch2D getOverlayBatch()
+    {
+        return overlayBatch;
     }
 
     @Override

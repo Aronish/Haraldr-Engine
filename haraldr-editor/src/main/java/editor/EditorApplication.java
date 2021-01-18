@@ -11,7 +11,6 @@ import haraldr.ecs.ModelComponent;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
-import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer3D;
 import haraldr.input.Input;
@@ -150,9 +149,8 @@ public class EditorApplication extends Application
         dockSpace.dockPanel(propertiesPanel, DockPosition.BOTTOM);
 
         // Hierarchy Panel
-        dockSpace.addPanel(entityHierarchyPanel = new EntityHierarchyPanel(new Vector2f(200f), new Vector2f(200f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Hierarchy"));
+        dockSpace.addPanel(entityHierarchyPanel = new EntityHierarchyPanel(new Vector2f(200f), new Vector2f(200f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Hierarchy", this::selectEntity));
         entityHierarchyPanel.refreshEntityList(scene.getRegistry());
-        entityHierarchyPanel.setEntitySelectedAction(this::selectEntity);
         dockSpace.dockPanel(entityHierarchyPanel, DockPosition.CENTER);
     }
 

@@ -151,11 +151,6 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
     }
 
     @Override
-    public void onDispose()
-    {
-    }
-
-    @Override
     public float getVerticalSize()
     {
         return borderSize.getY();

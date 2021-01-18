@@ -11,10 +11,12 @@ import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.physics.Physics2D;
 
+//TODO: Open menu upwards if no space
 public class UIDropDownMenu extends UIComponent
 {
     private Vector2f size;
     private boolean menuOpened;
+    private UIInfoLabel selected;
     private UIVerticalList verticalList;
 
     public UIDropDownMenu(UIContainer parent)
@@ -23,23 +25,24 @@ public class UIDropDownMenu extends UIComponent
         size = new Vector2f(20f);
         verticalList = new UIVerticalList(this);
         verticalList.setVisible(menuOpened);
+        selected = new UIInfoLabel(this, "");
     }
 
     public void addMenuItem(String name, ListItem.ListItemPressAction listItemPressAction)
     {
-        verticalList.addItem(name, listItemPressAction);
-    }
-
-    public void setMenuOpened(boolean menuOpened)
-    {
-        this.menuOpened = menuOpened;
+        verticalList.addItem(name, arg ->
+        {
+            listItemPressAction.run(arg);
+            selected.setValue(arg);
+        });
     }
 
     @Override
     public void setPosition(Vector2f position)
     {
         super.setPosition(position);
-        verticalList.setPosition(position);
+        verticalList.setPosition(Vector2f.add(position, new Vector2f(0f, size.getY())));
+        selected.setPosition(position);
     }
 
     @Override
@@ -52,7 +55,7 @@ public class UIDropDownMenu extends UIComponent
     @Override
     public float getVerticalSize()
     {
-        return size.getY() + verticalList.getVerticalSize();
+        return menuOpened ? size.getY() + verticalList.getVerticalSize() : size.getY();
     }
 
     @Override
@@ -61,7 +64,7 @@ public class UIDropDownMenu extends UIComponent
         boolean requiresRedraw = false;
         if (menuOpened)
         {
-            verticalList.onEvent(event, window);
+            if (verticalList.onEvent(event, window)) requiresRedraw = true;
         }
         if (event.eventType == EventType.MOUSE_PRESSED && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
         {
@@ -83,9 +86,9 @@ public class UIDropDownMenu extends UIComponent
     }
 
     @Override
-    public void draw(Batch2D batch)
+    public void drawOverlay(Batch2D overlayBatch)
     {
-        verticalList.draw(batch);
+        verticalList.draw(overlayBatch);
     }
 
     @Override

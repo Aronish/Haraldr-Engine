@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class WindowHeader implements UIContainer
 {
@@ -153,10 +154,10 @@ public class WindowHeader implements UIContainer
     public static class ListData // Records plz
     {
         private final String name;
-        private final ListItem.ListItemPressAction listItemPressAction;
+        private final Consumer<String> listItemPressAction;
 
         @Contract(pure = true)
-        public ListData(String name, ListItem.ListItemPressAction listItemPressAction)
+        public ListData(String name, Consumer<String> listItemPressAction)
         {
             this.name = name;
             this.listItemPressAction = listItemPressAction;

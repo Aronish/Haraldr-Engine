@@ -9,6 +9,7 @@ import haraldr.input.Input;
 import haraldr.input.MouseButton;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
+import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
 
 //TODO: Open menu upwards if no space
@@ -23,18 +24,14 @@ public class UIDropDownMenu extends UIComponent
     {
         super(parent);
         size = new Vector2f(20f);
-        verticalList = new UIVerticalList(this);
+        verticalList = new UIVerticalList(this, new Vector4f(0.4f, 0.4f, 0.4f, 1f));
         verticalList.setVisible(menuOpened);
         selected = new UIInfoLabel(this, "");
     }
 
-    public void addMenuItem(String name, ListItem.ListItemPressAction listItemPressAction)
+    public void addMenuItem(String name, ListItem.ListItemCallback listItemCallback)
     {
-        verticalList.addItem(name, arg ->
-        {
-            listItemPressAction.run(arg);
-            selected.setValue(arg);
-        });
+        verticalList.addItem(name, listItemCallback);
     }
 
     @Override
@@ -59,12 +56,14 @@ public class UIDropDownMenu extends UIComponent
     }
 
     @Override
-    public boolean onEvent(Event event, Window window)
+    public UIEventResult onEvent(Event event, Window window)
     {
-        boolean requiresRedraw = false;
+        boolean requiresRedraw = false, consumed = false;
         if (menuOpened)
         {
-            if (verticalList.onEvent(event, window)) requiresRedraw = true;
+            UIEventResult eventResult = verticalList.onEvent(event, window);
+            requiresRedraw = eventResult.requiresRedraw();
+            consumed = eventResult.consumed();
         }
         if (event.eventType == EventType.MOUSE_PRESSED && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
         {
@@ -82,7 +81,7 @@ public class UIDropDownMenu extends UIComponent
             var parentCollapsedEvent = (ParentCollapsedEvent) event;
             verticalList.setVisible(!parentCollapsedEvent.collapsed);
         }
-        return requiresRedraw;
+        return new UIEventResult(requiresRedraw, consumed);
     }
 
     @Override

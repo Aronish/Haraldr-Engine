@@ -68,7 +68,7 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
     }
 
     @Override
-    public boolean onEvent(Event event, Window window)
+    public UIEventResult onEvent(Event event, Window window)
     {
         boolean requiresRedraw = false;
         if (event.eventType == EventType.MOUSE_PRESSED)
@@ -134,7 +134,7 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
         {
             textLabel.setEnabled(!((ParentCollapsedEvent) event).collapsed);
         }
-        return requiresRedraw;
+        return new UIEventResult(requiresRedraw, false);
     }
 
     public void updateTextLabel()

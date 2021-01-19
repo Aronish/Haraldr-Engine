@@ -91,7 +91,7 @@ public class UISlider extends UIComponent
     }
 
     @Override
-    public boolean onEvent(Event event, Window window)
+    public UIEventResult onEvent(Event event, Window window)
     {
         boolean requiresRedraw = false;
         if (event.eventType == EventType.MOUSE_PRESSED)
@@ -121,7 +121,7 @@ public class UISlider extends UIComponent
                 requiresRedraw = true;
             }
         }
-        return requiresRedraw;
+        return new UIEventResult(requiresRedraw, false);
     }
 
     @Override

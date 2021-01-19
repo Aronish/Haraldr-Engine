@@ -119,7 +119,7 @@ public class EditorApplication extends Application
                 "File",
                 new WindowHeader.ListData("Open", Logger::info),
                 new WindowHeader.ListData("Save", Logger::info),
-                new WindowHeader.ListData("Exit", name -> stop())
+                new WindowHeader.ListData("Exit", this::stop)
         );
 
         // Dockspace
@@ -133,7 +133,7 @@ public class EditorApplication extends Application
         scene.onActivate();
 
         // Scene Panel
-        dockSpace.addPanel(scene3DPanel = new Scene3DPanel(new Vector2f(700f, 30f), new Vector2f(200f, 200f), "Scene"));
+        dockSpace.addPanel(scene3DPanel = new Scene3DPanel(new Vector2f(100f, 100f), new Vector2f(200f), "Scene"));
         editorCamera = new OrbitalCamera(scene3DPanel.getSize().getX(), scene3DPanel.getSize().getY());
         scene3DPanel.setPanelResizeAction((position, size) ->
         {
@@ -145,11 +145,11 @@ public class EditorApplication extends Application
         dockSpace.resizePanel(scene3DPanel, 300f);
 
         // Properties Panel
-        dockSpace.addPanel(propertiesPanel = new PropertiesPanel(new Vector2f(), new Vector2f(), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Properties"));
+        dockSpace.addPanel(propertiesPanel = new PropertiesPanel(new Vector2f(300f), new Vector2f(200f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Properties"));
         dockSpace.dockPanel(propertiesPanel, DockPosition.BOTTOM);
 
         // Hierarchy Panel
-        dockSpace.addPanel(entityHierarchyPanel = new EntityHierarchyPanel(new Vector2f(200f), new Vector2f(200f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Hierarchy", this::selectEntity));
+        dockSpace.addPanel(entityHierarchyPanel = new EntityHierarchyPanel(new Vector2f(500f), new Vector2f(200f), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Hierarchy", this::selectEntity));
         entityHierarchyPanel.refreshEntityList(scene.getRegistry());
         dockSpace.dockPanel(entityHierarchyPanel, DockPosition.CENTER);
     }

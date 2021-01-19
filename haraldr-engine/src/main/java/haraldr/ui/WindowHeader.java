@@ -12,11 +12,9 @@ import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
-import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class WindowHeader implements UIContainer
 {
@@ -113,12 +111,12 @@ public class WindowHeader implements UIContainer
             this.position = new Vector2f(position);
             size = new Vector2f(this.name.getPixelWidth() + MENU_BUTTON_PADDING, WindowHeader.this.size.getY());
 
-            actions = new UIVerticalList(WindowHeader.this);
+            actions = new UIVerticalList(WindowHeader.this, new Vector4f(0.4f, 0.4f, 0.4f, 1f));
             float widestEntry = 0f;
             for (ListData listDataEntry : listDataEntries)
             {
-                actions.addItem(listDataEntry.name, listDataEntry.listItemPressAction);
-                float labelWidth = WindowHeader.this.textBatch.getFont().getPixelWidth(listDataEntry.name);
+                actions.addItem(listDataEntry.name, listDataEntry.listItemCallback);
+                float labelWidth = this.name.getFont().getPixelWidth(listDataEntry.name);
                 if (labelWidth > widestEntry) widestEntry = labelWidth;
             }
             actions.setPosition(Vector2f.add(position, new Vector2f(0f, size.getY())));
@@ -146,21 +144,10 @@ public class WindowHeader implements UIContainer
                 hovered = Physics2D.pointInsideAABB(new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos), position, size);
                 requiresRedraw = previousHoveredState != hovered;
             }
-            if (actions.onEvent(event, window)) requiresRedraw = true;
+            requiresRedraw |= actions.onEvent(event, window).requiresRedraw();
             return requiresRedraw;
         }
     }
 
-    public static class ListData // Records plz
-    {
-        private final String name;
-        private final Consumer<String> listItemPressAction;
-
-        @Contract(pure = true)
-        public ListData(String name, Consumer<String> listItemPressAction)
-        {
-            this.name = name;
-            this.listItemPressAction = listItemPressAction;
-        }
-    }
+    public static record ListData(String name, ListItem.ListItemCallback listItemCallback) {}
 }

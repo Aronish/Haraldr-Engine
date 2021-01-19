@@ -1,6 +1,5 @@
 package haraldr.ui;
 
-import haraldr.debug.Logger;
 import haraldr.graphics.Batch2D;
 import haraldr.math.Vector2f;
 

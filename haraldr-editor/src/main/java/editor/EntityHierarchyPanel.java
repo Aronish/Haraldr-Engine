@@ -1,6 +1,5 @@
 package editor;
 
-import haraldr.debug.Logger;
 import haraldr.dockspace.DockablePanel;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
@@ -10,45 +9,39 @@ import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.ui.ListItem;
-import haraldr.ui.TextBatch;
 import haraldr.ui.UIVerticalList;
+import org.jetbrains.annotations.Contract;
 
 public class EntityHierarchyPanel extends DockablePanel
 {
-    private UIVerticalList entityList;
-    private float currentListHeight;
+    private UIVerticalList entityList = new UIVerticalList(this);
     private EntitySelectedAction entitySelectedAction;
 
     public EntityHierarchyPanel(Vector2f position, Vector2f size, Vector4f color, String name, EntitySelectedAction entitySelectedAction)
     {
         super(position, size, color, name);
-        entityList = new UIVerticalList(this);
         this.entitySelectedAction = entitySelectedAction;
+        setPosition(position);
+        setSize(size);
+        renderToBatch();
     }
 
     private void addEntity(String name, Entity entity)
     {
-        EntityListItem entityListItem = new EntityListItem(name, Vector2f.add(position, new Vector2f(0f, currentListHeight + headerSize.getY())), textBatch, entity);
-        currentListHeight += entityListItem.getTag().getFont().getSize();
-        entityList.addItem(entityListItem);
+        entityList.addItem(name, size.getX(), new EntityListItem(entity));
+        renderToBatch();
     }
 
     public boolean onEvent(Event event, Window window)
     {
         boolean consumeEvent = super.onEvent(event, window);
-        if (entityList.onEvent(event, window)) renderToBatch();
+        if (entityList.onEvent(event, window).requiresRedraw()) renderToBatch();
         return consumeEvent;
-    }
-
-    private void onEntitySelected(Entity entity)
-    {
-        entitySelectedAction.run(entity);
     }
 
     public void refreshEntityList(EntityRegistry entityRegistry)
     {
         entityList.clear();
-        currentListHeight = 0f;
         textBatch.clear();
         textBatch.addTextLabel(name);
         entityRegistry.view(TagComponent.class).forEach(((transformComponent, tagComponent) -> addEntity(tagComponent.tag, entityRegistry.getEntityOf(tagComponent))));
@@ -84,20 +77,20 @@ public class EntityHierarchyPanel extends DockablePanel
         void run(Entity selectedEntity);
     }
 
-    private class EntityListItem extends ListItem
+    private class EntityListItem implements ListItem.ListItemCallback
     {
         private Entity entity;
 
-        private EntityListItem(String name, Vector2f position, TextBatch textBatch, Entity entity)
+        @Contract(pure = true)
+        private EntityListItem(Entity entity)
         {
-            super(name, position, textBatch, true, Logger::info);
             this.entity = entity;
         }
 
         @Override
-        public void onItemPressed()
+        public void onPress()
         {
-            EntityHierarchyPanel.this.onEntitySelected(entity);
+            EntityHierarchyPanel.this.entitySelectedAction.run(entity);
         }
     }
 }

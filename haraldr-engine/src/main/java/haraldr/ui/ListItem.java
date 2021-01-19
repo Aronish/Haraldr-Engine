@@ -10,24 +10,24 @@ import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
 
-import java.util.function.Consumer;
-
 public class ListItem
 {
     private TextLabel tag;
     private Vector2f position, size;
     private boolean hovered, pressed;
-    private Consumer<String> listItemPressAction;
+    private ListItemCallback listItemCallback;
 
-    public ListItem(String name, Vector2f position, TextBatch textBatch, boolean enabled, Consumer<String> listItemPressAction)
+    public ListItem(String name, Vector2f position, TextBatch textBatch, boolean enabled, ListItemCallback listItemCallback)
     {
         this.position = new Vector2f(position);
         this.tag = textBatch.createTextLabel(name, this.position, new Vector4f(1f), enabled);
         size = new Vector2f(0f, textBatch.getFont().getSize());
-        this.listItemPressAction = listItemPressAction;
+        this.listItemCallback = listItemCallback;
     }
 
-    public boolean onEvent(Event event)
+    record ListItemEventResult(boolean requiresRedraw, ListItem pressedItem) {}
+
+    public ListItemEventResult onEvent(Event event)
     {
         boolean requiresRedraw = false;
         if (event.eventType == EventType.MOUSE_MOVED)
@@ -43,12 +43,7 @@ public class ListItem
             var mousePressedEvent = (MousePressedEvent) event;
             boolean lastPressed = pressed;
             pressed = Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), position, size);
-            if (pressed)
-            {
-                onItemPressed();
-                listItemPressAction.accept(tag.getText());
-                event.setHandled(true);
-            }
+            if (pressed) event.setHandled(true);
             if (lastPressed != pressed) requiresRedraw = true;
         }
         if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
@@ -56,11 +51,7 @@ public class ListItem
             if (pressed) requiresRedraw = true;
             pressed = false;
         }
-        return requiresRedraw;
-    }
-
-    public void onItemPressed()
-    {
+        return new ListItemEventResult(requiresRedraw, pressed ? this : null);
     }
 
     public void setPosition(Vector2f position)
@@ -99,9 +90,13 @@ public class ListItem
         return pressed;
     }
 
-    @FunctionalInterface
-    public interface ListItemPressAction<T>
+    public ListItemCallback getListItemCallback()
     {
-        void run(T argument);
+        return listItemCallback;
+    }
+
+    public interface ListItemCallback
+    {
+        void onPress();
     }
 }

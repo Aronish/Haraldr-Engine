@@ -9,6 +9,7 @@ import haraldr.graphics.Renderer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
+import haraldr.ui.UIComponentBehavior;
 import haraldr.ui.UIComponentList;
 
 import java.util.ArrayList;
@@ -25,6 +26,9 @@ public class PropertiesPanel extends DockablePanel
     public PropertiesPanel(Vector2f position, Vector2f size, Vector4f color, String name)
     {
         super(position, size, color, name);
+        setPosition(position);
+        setSize(size);
+        renderToBatch();
     }
 
     public void addComponentList(UIComponentList uiComponentList)
@@ -61,11 +65,13 @@ public class PropertiesPanel extends DockablePanel
         boolean requiresRedraw = false, consumeEvent = super.onEvent(event, window);
         for (UIComponentList uiComponentList : uiComponentLists)
         {
-            if (uiComponentList.onEvent(event, window))
+            UIComponentBehavior.UIEventResult eventResult = uiComponentList.onEvent(event, window);
+            if (eventResult.requiresRedraw())
             {
                 requiresRedraw = true;
                 orderComponentLists(position); //Minor TODO: Does not need to happen every event, only if the collapsed state of a list has changed
             }
+            if (eventResult.consumed()) break;
         }
 
         if (hovered && event.eventType == EventType.MOUSE_SCROLLED)

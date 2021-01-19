@@ -40,7 +40,7 @@ public class DockablePanel implements UIContainer
         this.size = size;
         this.color = color;
         this.name = textBatch.createTextLabel(name, position, new Vector4f(1f));
-        renderToBatch(); //TODO: Could be structured to avoid null checks in subclasses
+        renderToBatch();
     }
 
     /**

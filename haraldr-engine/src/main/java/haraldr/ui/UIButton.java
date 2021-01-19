@@ -50,7 +50,7 @@ public class UIButton extends UIComponent
     }
 
     @Override
-    public boolean onEvent(Event event, Window window)
+    public UIEventResult onEvent(Event event, Window window)
     {
         boolean requiresRedraw = false;
         if (enabled)
@@ -71,7 +71,7 @@ public class UIButton extends UIComponent
                 currentColor = OFF_COLOR;
             }
         }
-        return requiresRedraw;
+        return new UIEventResult(requiresRedraw, false);
     }
 
     @Override

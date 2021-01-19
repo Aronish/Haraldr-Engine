@@ -7,9 +7,9 @@ import haraldr.main.Window;
 public interface UIComponentBehavior
 {
     default void setWidth(float width) {}
-    default boolean onEvent(Event event, Window window)
+    default UIEventResult onEvent(Event event, Window window)
     {
-        return false;
+        return new UIEventResult(false, false);
     }
     default void draw(Batch2D batch) {}
     default void drawOverlay(Batch2D overlayBatch) {}
@@ -18,4 +18,6 @@ public interface UIComponentBehavior
     {
         return 0f;
     }
+
+    record UIEventResult(boolean requiresRedraw, boolean consumed) {}
 }

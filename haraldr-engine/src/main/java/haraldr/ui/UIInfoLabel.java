@@ -41,14 +41,14 @@ public class UIInfoLabel extends UIComponent
     }
 
     @Override
-    public boolean onEvent(Event event, Window window)
+    public UIEventResult onEvent(Event event, Window window)
     {
         if (event.eventType == EventType.PARENT_COLLAPSED)
         {
             valueLabel.setEnabled(!((ParentCollapsedEvent) event).collapsed);
             textBatch.refreshTextMeshData();
         }
-        return false;
+        return new UIEventResult(false, false);
     }
 
     @Override

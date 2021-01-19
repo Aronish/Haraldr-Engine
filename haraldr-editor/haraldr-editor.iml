@@ -9,5 +9,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="module" module-name="haraldr-engine" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="annotations-19.0.0" level="application" />
   </component>
 </module>

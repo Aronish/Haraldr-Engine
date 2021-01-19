@@ -92,7 +92,9 @@ public class Dockspace
         {
             for (DockablePanel dockedPanel : dockedPanels)
             {
-                if (dockedPanel.onEvent(event, window) && dockedPanel.isHeaderPressed()) selectedPanel = dockedPanel;
+                boolean consumedEvent;
+                if (consumedEvent = dockedPanel.onEvent(event, window) && dockedPanel.isHeaderPressed()) selectedPanel = dockedPanel;
+                if (consumedEvent) break;
             }
         }
 

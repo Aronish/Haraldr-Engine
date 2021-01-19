@@ -143,9 +143,11 @@ public class UIVector3Linkable extends UIVector3
     }
 
     @Override
-    public boolean onEvent(Event event, Window window)
+    public UIEventResult onEvent(Event event, Window window)
     {
-        return super.onEvent(event, window) | linked.onEvent(event, window);
+        UIEventResult linkedEventResult = linked.onEvent(event, window);
+        UIEventResult superEventResult = super.onEvent(event, window);
+        return new UIEventResult(linkedEventResult.requiresRedraw() || superEventResult.consumed(), linkedEventResult.consumed() || superEventResult.consumed());
     }
 
     @Override

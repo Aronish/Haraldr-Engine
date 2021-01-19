@@ -78,7 +78,7 @@ public class UIComponentList extends UIComponent
     }
 
     @Override
-    public boolean onEvent(Event event, Window window)
+    public UIEventResult onEvent(Event event, Window window)
     {
         boolean requiresRedraw = false;
         if (event.eventType == EventType.MOUSE_PRESSED && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
@@ -105,10 +105,10 @@ public class UIComponentList extends UIComponent
         {
             for (UIComponent component : components.values())
             {
-                if (component.onEvent(event, window)) requiresRedraw = true;
+                requiresRedraw |= component.onEvent(event, window).requiresRedraw();
             }
         }
-        return requiresRedraw;
+        return new UIEventResult(requiresRedraw, false);
     }
 
     @Override

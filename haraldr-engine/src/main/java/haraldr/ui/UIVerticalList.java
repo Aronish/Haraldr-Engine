@@ -1,6 +1,7 @@
 package haraldr.ui;
 
 import haraldr.event.Event;
+import haraldr.event.EventCategory;
 import haraldr.graphics.Batch2D;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
@@ -10,28 +11,36 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class UIVerticalList extends UIComponent implements Iterable<ListItem>
 {
     private List<ListItem> listItems = new ArrayList<>();
     private float listHeight;
-    private boolean visible;
+    private boolean visible = true;
+    private Vector4f backgroundColor;
 
     public UIVerticalList(UIContainer parent)
     {
+        this(parent, new Vector4f());
+    }
+
+    public UIVerticalList(UIContainer parent, Vector4f backgroundColor)
+    {
         super(parent);
+        this.backgroundColor = backgroundColor;
     }
 
-    public void addItem(String name, Consumer<String> listItemPressAction)
+    public void addItem(String name, ListItem.ListItemCallback listItemCallback)
     {
-        addItem(new ListItem(name, Vector2f.add(position, new Vector2f(0f, listHeight)), textBatch, visible, listItemPressAction));
+        addItem(name, 0f, listItemCallback);
     }
 
-    public void addItem(ListItem listItem) //TODO: "Merge" with EntityHierarchyPanel
+    public void addItem(String name, float width, ListItem.ListItemCallback listItemCallback)
     {
-        listItems.add(listItem);
+        ListItem listItem = new ListItem(name, Vector2f.add(position, new Vector2f(0f, listHeight)), textBatch, visible, listItemCallback);
+        listItem.setWidth(width);
         listHeight += listItem.getSize().getY();
+        listItems.add(listItem);
     }
 
     public void clear()
@@ -70,17 +79,26 @@ public class UIVerticalList extends UIComponent implements Iterable<ListItem>
     }
 
     @Override
-    public boolean onEvent(Event event, Window window)
+    public UIEventResult onEvent(Event event, Window window)
     {
-        boolean requiresRedraw = false;
+        if (!event.isInCategory(EventCategory.CATEGORY_MOUSE)) return new UIEventResult(false, false);
+        boolean requiresRedraw = false, consumed = false;
         if (visible)
         {
+            ListItem pressedItem = null;
             for (ListItem listItem : listItems)
             {
-                if (listItem.onEvent(event)) requiresRedraw = true;
+                ListItem.ListItemEventResult eventResult = listItem.onEvent(event);
+                if (eventResult.requiresRedraw()) requiresRedraw = true;
+                if (eventResult.pressedItem() != null)
+                {
+                    pressedItem = listItem;
+                    consumed = true;
+                }
             }
+            if (pressedItem != null) pressedItem.getListItemCallback().onPress();
         }
-        return requiresRedraw;
+        return new UIEventResult(requiresRedraw, consumed);
     }
 
     @Override
@@ -90,7 +108,7 @@ public class UIVerticalList extends UIComponent implements Iterable<ListItem>
         {
             for (ListItem listItem : listItems)
             {
-                batch.drawQuad(listItem.getPosition(), listItem.getSize(), listItem.isHovered() ? new Vector4f(0.6f, 0.6f, 0.6f, 1f) : new Vector4f(0.4f, 0.4f, 0.4f, 1f));
+                batch.drawQuad(listItem.getPosition(), listItem.getSize(), listItem.isHovered() ? new Vector4f(0.6f, 0.6f, 0.6f, 1f) : backgroundColor);
             }
         }
     }
@@ -99,11 +117,6 @@ public class UIVerticalList extends UIComponent implements Iterable<ListItem>
     public float getVerticalSize()
     {
         return listHeight;
-    }
-
-    public List<ListItem> getListItems()
-    {
-        return listItems;
     }
 
     @NotNull

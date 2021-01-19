@@ -95,9 +95,15 @@ public class UIVector3 extends UIComponent
     }
 
     @Override
-    public boolean onEvent(Event event, Window window)
+    public UIEventResult onEvent(Event event, Window window)
     {
-        return x.onEvent(event, window) | y.onEvent(event, window) | z.onEvent(event, window);
+        UIEventResult xEventResult = x.onEvent(event, window);
+        UIEventResult yEventResult = y.onEvent(event, window);
+        UIEventResult zEventResult = z.onEvent(event, window);
+        return new UIEventResult(
+                xEventResult.requiresRedraw() || yEventResult.requiresRedraw() || zEventResult.requiresRedraw(),
+                xEventResult.consumed() || yEventResult.consumed() || zEventResult.consumed()
+            );
     }
 
     @Override

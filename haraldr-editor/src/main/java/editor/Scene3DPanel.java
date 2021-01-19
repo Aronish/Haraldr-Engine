@@ -17,11 +17,14 @@ public class Scene3DPanel extends DockablePanel
     public Scene3DPanel(Vector2f position, Vector2f size, String name)
     {
         super(position, size, new Vector4f(0f), name);
+        setPosition(position);
+        setSize(size);
         hdrGammaCorrectionPass = new HDRGammaCorrectionPass(0.5f);
         sceneTexture = new RenderTexture(
                 Vector2f.add(position, new Vector2f(0f, headerSize.getY())),
-                Vector2f.add(position, new Vector2f(0f, -headerSize.getY()))
+                Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
         );
+        renderToBatch();
     }
 
     @Override

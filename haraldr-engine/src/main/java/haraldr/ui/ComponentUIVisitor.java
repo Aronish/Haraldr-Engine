@@ -31,7 +31,7 @@ public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONPa
                 "Radius: ",
                 new UIInputField<>(
                         uiComponentList,
-                        new UIInputField.FloatValue(boundingSphereComponent.radius),
+                        0, new UIInputField.FloatValue(boundingSphereComponent.radius),
                         value -> boundingSphereComponent.radius = value.getValue()
                 )
         );
@@ -44,11 +44,11 @@ public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONPa
         JSONObject updatedModelDefinition = modelComponent.model.getModelDefinition();
         JSONObject materialProperties = updatedModelDefinition.getJSONObject("material").getJSONObject("properties");
 
-        UIInfoLabel meshPathLabel = new UIInfoLabel(uiComponentList, updatedModelDefinition.getString("mesh"));
+        UIInfoLabel meshPathLabel = new UIInfoLabel(uiComponentList, 0, updatedModelDefinition.getString("mesh"));
         uiComponentList.addComponent("Mesh: ", meshPathLabel);
         uiComponentList.addComponent(
                 "Load Mesh: ",
-                new UIButton(uiComponentList, () ->
+                new UIButton(uiComponentList, 0, () ->
                 {
                     String meshPath;
                     try (MemoryStack stack = MemoryStack.stackPush())
@@ -69,7 +69,7 @@ public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONPa
         );
 
         // Material types
-        UIDropDownMenu uiDropDownMenu = new UIDropDownMenu(uiComponentList);
+        UIDropDownMenu uiDropDownMenu = new UIDropDownMenu(uiComponentList, 0);
         JSONArray materialTypes = new JSONObject(IOUtils.readResource("default_models/material_specification.json", IOUtils::resourceToString)).names();
         for (Object materialType : materialTypes.toList())
         {
@@ -118,7 +118,7 @@ public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONPa
                 "Tag: ",
                 new UIInputField<>(
                         uiComponentList,
-                        new UIInputField.StringValue(tagComponent.tag),
+                        0, new UIInputField.StringValue(tagComponent.tag),
                         value -> tagComponent.tag = value.getValue()
                 )
         );
@@ -131,7 +131,7 @@ public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONPa
                 "Position: ",
                 new UIVector3(
                         uiComponentList,
-                        transformComponent.position,
+                        0, transformComponent.position,
                         (x, y, z) ->
                         {
                             transformComponent.position.setX(x);
@@ -145,7 +145,7 @@ public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONPa
                 "Scale: ",
                 new UIVector3Linkable(
                         uiComponentList,
-                        new Vector3f(0f), new Vector3f(Float.MAX_VALUE), transformComponent.scale, linkedScale,
+                        0, new Vector3f(0f), new Vector3f(Float.MAX_VALUE), transformComponent.scale, linkedScale,
                         (x, y, z) ->
                         {
                             transformComponent.scale.setX(x);
@@ -158,7 +158,7 @@ public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONPa
                 "Rotation: ",
                 new UIVector3(
                         uiComponentList,
-                        transformComponent.rotation, 0.3f,
+                        0, transformComponent.rotation, 0.3f,
                         (x, y, z) ->
                         {
                             transformComponent.rotation.setX(x);

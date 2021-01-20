@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Contract;
 
 public class EntityHierarchyPanel extends DockablePanel
 {
-    private UIVerticalList entityList = new UIVerticalList(this);
+    private UIVerticalList entityList = new UIVerticalList(this, 0);
     private EntitySelectedAction entitySelectedAction;
 
     public EntityHierarchyPanel(Vector2f position, Vector2f size, Vector4f color, String name, EntitySelectedAction entitySelectedAction)
@@ -24,35 +24,35 @@ public class EntityHierarchyPanel extends DockablePanel
         this.entitySelectedAction = entitySelectedAction;
         setPosition(position);
         setSize(size);
-        renderToBatch();
+        draw();
     }
 
     private void addEntity(String name, Entity entity)
     {
         entityList.addItem(name, size.getX(), new EntityListItem(entity));
-        renderToBatch();
+        draw();
     }
 
     public boolean onEvent(Event event, Window window)
     {
         boolean consumeEvent = super.onEvent(event, window);
-        if (entityList.onEvent(event, window).requiresRedraw()) renderToBatch();
+        if (entityList.onEvent(event, window).requiresRedraw()) draw();
         return consumeEvent;
     }
 
     public void refreshEntityList(EntityRegistry entityRegistry)
     {
         entityList.clear();
-        //textBatch.clear();
-        //textBatch.addTextLabel(name);
+        uiLayers.get(0).getTextBatch().clear();
+        uiLayers.get(0).getTextBatch().addTextLabel(name);
         entityRegistry.view(TagComponent.class).forEach(((transformComponent, tagComponent) -> addEntity(tagComponent.tag, entityRegistry.getEntityOf(tagComponent))));
     }
 
     @Override
-    protected void renderToBatch()
+    protected void draw()
     {
         if (entityList == null) return;
-        Batch2D mainBatch = batches.get(0);
+        Batch2D mainBatch = uiLayers.get(0).getBatch();
         mainBatch.begin();
         mainBatch.drawQuad(position, size, color);
         mainBatch.drawQuad(position, headerSize, HEADER_COLOR);

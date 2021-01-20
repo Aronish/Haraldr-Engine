@@ -1,9 +1,9 @@
 package haraldr.ui;
 
-import haraldr.graphics.Batch2D;
+import java.util.List;
 
 public interface UIContainer
 {
-    Batch2D getBatch();
-    TextBatch getTextBatch();
+    List<UILayer> getLayers();
+    UILayer getLayer(int index);
 }

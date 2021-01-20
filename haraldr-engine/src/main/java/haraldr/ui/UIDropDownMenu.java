@@ -4,7 +4,6 @@ import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
 import haraldr.event.ParentCollapsedEvent;
-import haraldr.graphics.Batch2D;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
 import haraldr.main.Window;
@@ -20,13 +19,13 @@ public class UIDropDownMenu extends UIComponent
     private UIInfoLabel selected;
     private UIVerticalList verticalList;
 
-    public UIDropDownMenu(UIContainer parent)
+    public UIDropDownMenu(UIContainer parent, int layerIndex)
     {
-        super(parent);
+        super(parent, layerIndex);
         size = new Vector2f(20f);
-        verticalList = new UIVerticalList(this, new Vector4f(0.4f, 0.4f, 0.4f, 1f));
+        verticalList = new UIVerticalList(this, layerIndex + 1, new Vector4f(0.4f, 0.4f, 0.4f, 1f));
         verticalList.setVisible(menuOpened);
-        selected = new UIInfoLabel(this, "");
+        selected = new UIInfoLabel(this, layerIndex, "");
     }
 
     public void addMenuItem(String name, ListItem.ListItemCallback listItemCallback)
@@ -86,12 +85,6 @@ public class UIDropDownMenu extends UIComponent
             verticalList.setVisible(!parentCollapsedEvent.collapsed);
         }
         return new UIEventResult(requiresRedraw, consumed);
-    }
-
-    @Override
-    public void drawOverlay(Batch2D overlayBatch)
-    {
-        verticalList.draw(overlayBatch);
     }
 
     @Override

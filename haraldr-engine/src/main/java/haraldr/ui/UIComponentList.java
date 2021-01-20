@@ -27,9 +27,9 @@ public class UIComponentList extends UIComponent
     private float divider, nextListY;
     private boolean collapsed;
 
-    public UIComponentList(UIContainer parent, String name, Vector2f position, Vector2f size)
+    public UIComponentList(UIContainer parent, int layerIndex, String name, Vector2f position, Vector2f size)
     {
-        super(parent);
+        super(parent, layerIndex);
         this.position = Vector2f.add(position, new Vector2f(MARGIN));
         this.size = Vector2f.add(size, new Vector2f(-2f * MARGIN, 0f));
         LINE_HEIGHT = textBatch.getFont().getSize();
@@ -117,21 +117,9 @@ public class UIComponentList extends UIComponent
         if (!collapsed)
         {
             batch.drawQuad(position, size, new Vector4f(0.3f, 0.3f, 0.3f, 1f));
-            components.values().forEach(UIComponent::draw);
+            components.values().forEach(component -> component.draw(batch));
         }
         batch.drawQuad(position, headerSize, new Vector4f(0.15f, 0.15f, 0.15f, 1f));
-    }
-
-    @Override
-    public void drawOverlay(Batch2D overlayBatch)
-    {
-        if (!collapsed)
-        {
-            for (UIComponent uiComponent : components.values())
-            {
-                uiComponent.drawOverlay(overlayBatch);
-            }
-        }
     }
 
     @Override

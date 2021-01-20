@@ -141,7 +141,7 @@ public class EditorApplication extends Application
     @Override
     protected void clientEvent(Event event, Window window)
     {
-        //TODO: Container to loop over UIContainers.
+        //TODO: Fix handled check
         windowHeader.onEvent(event, window);
         if (!event.isHandled()) dockSpace.onEvent(event, window);
         if (!event.isHandled())

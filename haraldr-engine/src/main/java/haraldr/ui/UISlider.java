@@ -21,34 +21,34 @@ public class UISlider extends UIComponent
     private boolean held;
     private SliderChangeAction sliderChangeAction;
 
-    public UISlider()
+    public UISlider(int layerIndex)
     {
-        this(null, 0f, 1f, 0f, value -> {});
+        this(null, layerIndex, 0f, 1f, 0f, value -> {});
     }
 
-    public UISlider(UIContainer parent)
+    public UISlider(UIContainer parent, int layerIndex)
     {
-        this(parent, 0f, 1f, 0f, value -> {});
+        this(parent, layerIndex, 0f, 1f, 0f, value -> {});
     }
 
-    public UISlider(UIContainer parent, SliderChangeAction sliderChangeAction)
+    public UISlider(UIContainer parent, int layerIndex, SliderChangeAction sliderChangeAction)
     {
-        this(parent, 0f, 1f, 0f, sliderChangeAction);
+        this(parent, layerIndex, 0f, 1f, 0f, sliderChangeAction);
     }
 
-    public UISlider(UIContainer parent, float defaultValue, SliderChangeAction sliderChangeAction)
+    public UISlider(UIContainer parent, int layerIndex, float defaultValue, SliderChangeAction sliderChangeAction)
     {
-        this(parent, 0f, 1f, defaultValue, sliderChangeAction);
+        this(parent, layerIndex, 0f, 1f, defaultValue, sliderChangeAction);
     }
 
-    public UISlider(UIContainer parent, float min, float max, SliderChangeAction sliderChangeAction)
+    public UISlider(UIContainer parent, int layerIndex, float min, float max, SliderChangeAction sliderChangeAction)
     {
-        this(parent, min, max, 0f, sliderChangeAction);
+        this(parent, layerIndex, min, max, 0f, sliderChangeAction);
     }
 
-    public UISlider(UIContainer parent, float min, float max, float defaultValue, SliderChangeAction sliderChangeAction)
+    public UISlider(UIContainer parent, int layerIndex, float min, float max, float defaultValue, SliderChangeAction sliderChangeAction)
     {
-        super(parent);
+        super(parent, layerIndex);
         sliderSize = new Vector2f(20f);
         handleSize = new Vector2f(20f);
         this.sliderChangeAction = sliderChangeAction;

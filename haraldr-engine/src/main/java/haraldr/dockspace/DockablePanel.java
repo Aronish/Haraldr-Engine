@@ -1,5 +1,6 @@
 package haraldr.dockspace;
 
+import haraldr.debug.Logger;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
@@ -12,13 +13,14 @@ import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
 import haraldr.ui.TextLabel;
+import haraldr.ui.UIContainer;
 import haraldr.ui.UILayer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("WeakerAccess")
-public class DockablePanel
+public class DockablePanel implements UIContainer
 {
     private static final float HEADER_SIZE = 20f;
     protected static final Vector4f HEADER_COLOR = new Vector4f(0.15f, 0.15f, 0.15f, 1f);
@@ -29,19 +31,20 @@ public class DockablePanel
     protected TextLabel name;
 
     protected List<UILayer> uiLayers = new ArrayList<>();
+    protected UILayer mainLayer = new UILayer();
 
     private PanelDimensionChangeAction panelDimensionChangeAction = (position, size) -> {};
 
     public DockablePanel(Vector2f position, Vector2f size, Vector4f color, String name)
     {
-        uiLayers.add(new UILayer());
+        uiLayers.add(mainLayer);
 
         this.position = new Vector2f(position);
         headerSize = new Vector2f(size.getX(), HEADER_SIZE);
         this.size = size;
         this.color = color;
-        this.name = uiLayers.get(0).getTextBatch().createTextLabel(name, position, new Vector4f(1f));
-        renderToBatch();
+        this.name = mainLayer.getTextBatch().createTextLabel(name, position, new Vector4f(1f));
+        draw();
     }
 
     /**
@@ -74,9 +77,9 @@ public class DockablePanel
         return headerPressed || contentPressed;
     }
 
-    protected void renderToBatch()
+    protected void draw()
     {
-        Batch2D mainBatch = uiLayers.get(0).getBatch();
+        Batch2D mainBatch = mainLayer.getBatch();
         mainBatch.begin();
         mainBatch.drawQuad(position, size, color);
         mainBatch.drawQuad(position, headerSize, HEADER_COLOR);
@@ -97,12 +100,15 @@ public class DockablePanel
     {
         this.position.set(position);
         name.setPosition(position);
-        //textBatches.forEach(TextBatch::refreshTextMeshData);
+        for (UILayer uiLayer : uiLayers)
+        {
+            uiLayer.getTextBatch().refreshTextMeshData();
+        }
         panelDimensionChangeAction.run(
                 Vector2f.add(this.position, new Vector2f(0f, headerSize.getY())),
                 Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
         );
-        renderToBatch();
+        draw();
     }
 
     public void setSize(Vector2f size)
@@ -113,11 +119,30 @@ public class DockablePanel
                 Vector2f.add(position, new Vector2f(0f, headerSize.getY())),
                 Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
         );
-        renderToBatch();
+        draw();
     }
 
     public void dispose()
     {
+    }
+
+    @Override
+    public UILayer getLayer(int index)
+    {
+        if (index >= uiLayers.size())
+        {
+            UILayer layer = new UILayer();
+            uiLayers.add(0, layer);
+            return layer;
+        }
+        Logger.info(uiLayers.size());
+        return uiLayers.get(index);
+    }
+
+    @Override
+    public List<UILayer> getLayers()
+    {
+        return uiLayers;
     }
 
     public Vector2f getPosition()

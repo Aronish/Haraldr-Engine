@@ -3,7 +3,6 @@ package haraldr.ui;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.ParentCollapsedEvent;
-import haraldr.graphics.Batch2D;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -13,14 +12,14 @@ public class UIInfoLabel extends UIComponent
     private String value;
     private TextLabel valueLabel;
 
-    public UIInfoLabel(String value)
+    public UIInfoLabel(String value, int layerIndex)
     {
-        this(null, value);
+        this(null, layerIndex, value);
     }
 
-    public UIInfoLabel(UIContainer parent, String value)
+    public UIInfoLabel(UIContainer parent, int layerIndex, String value)
     {
-        super(parent);
+        super(parent, layerIndex);
         this.value = value;
         valueLabel = textBatch.createTextLabel(value, position, new Vector4f(1f));
     }

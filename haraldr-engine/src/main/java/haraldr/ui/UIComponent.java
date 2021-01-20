@@ -3,17 +3,23 @@ package haraldr.ui;
 import haraldr.graphics.Batch2D;
 import haraldr.math.Vector2f;
 
+import java.util.List;
+
 public abstract class UIComponent implements UIComponentBehavior, UIContainer
 {
     protected Vector2f position = new Vector2f();
+    protected boolean enabled = true;
+    protected UIContainer parent;
     protected Batch2D batch;
     protected TextBatch textBatch;
-    protected boolean enabled = true;
 
-    protected UIComponent(UIContainer parent) //NEED ACCESS TO OTHER LAYERS
+    protected UIComponent(UIContainer parent, int layerIndex)
     {
-        batch = parent.getBatch();
-        textBatch = parent.getTextBatch();
+        this.parent = parent;
+        UILayer layer = parent.getLayer(layerIndex);
+        layer.addComponent(this);
+        batch = layer.getBatch();
+        textBatch = layer.getTextBatch();
     }
 
     public void setPosition(Vector2f position)
@@ -26,8 +32,15 @@ public abstract class UIComponent implements UIComponentBehavior, UIContainer
         this.enabled = enabled;
     }
 
-    public void draw()
+    @Override
+    public UILayer getLayer(int index)
     {
-        draw(batch);
+        return parent.getLayer(index);
+    }
+
+    @Override
+    public List<UILayer> getLayers()
+    {
+        return parent.getLayers();
     }
 }

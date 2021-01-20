@@ -155,13 +155,11 @@ public class Dockspace
         {
             DockablePanel dockablePanel = it.next();
             dockablePanel.render();
-            dockablePanel.renderText();
         }
         for (Iterator<DockablePanel> it = undockedPanels.descendingIterator(); it.hasNext();)
         {
             DockablePanel dockablePanel = it.next();
             dockablePanel.render();
-            dockablePanel.renderText();
         }
     }
 

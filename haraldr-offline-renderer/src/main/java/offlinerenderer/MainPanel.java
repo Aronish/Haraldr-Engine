@@ -52,12 +52,12 @@ public class MainPanel extends DockablePanel
         {
             if (uiComponent.onEvent(event, window)) requireRedraw = true;
         }
-        if (requireRedraw) renderToBatch();
+        if (requireRedraw) draw();
         return consumePress;
     }
 
     @Override
-    protected void renderToBatch()
+    protected void draw()
     {
         if (uiComponents == null) return;
         mainBatch.begin();

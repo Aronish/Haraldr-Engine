@@ -26,11 +26,12 @@ public class WindowHeader implements UIContainer
     private float currentButtonPosition;
     private List<MenuButton> menuButtons = new ArrayList<>();
 
-    private Batch2D batch = new Batch2D();
-    private TextBatch textBatch = new TextBatch(Font.DEFAULT_FONT);
+    private List<UILayer> uiLayers = new ArrayList<>();
 
     public WindowHeader(Vector2f position, float size, Vector4f color)
     {
+        uiLayers.add(new UILayer());
+
         this.position = position;
         this.size = new Vector2f(size, 20f);
         this.color = color;
@@ -65,6 +66,7 @@ public class WindowHeader implements UIContainer
 
     private void draw()
     {
+        Batch2D batch = uiLayers.get(0).getBatch();
         batch.begin();
         batch.drawQuad(position, size, color);
         for (MenuButton menuButton : menuButtons)
@@ -77,8 +79,7 @@ public class WindowHeader implements UIContainer
 
     public void render()
     {
-        batch.render();
-        textBatch.render();
+        uiLayers.forEach(UILayer::render);
     }
 
     public Vector2f getSize()
@@ -87,18 +88,24 @@ public class WindowHeader implements UIContainer
     }
 
     @Override
-    public Batch2D getBatch()
+    public UILayer getLayer(int index)
     {
-        return batch;
+        if (index >= uiLayers.size())
+        {
+            UILayer layer = new UILayer();
+            uiLayers.add(layer);
+            return layer;
+        }
+        return uiLayers.get(index);
     }
 
     @Override
-    public TextBatch getTextBatch()
+    public List<UILayer> getLayers()
     {
-        return textBatch;
+        return uiLayers;
     }
 
-    private class MenuButton
+    private class MenuButton //TODO: Clean up
     {
         private TextLabel name;
         private Vector2f position, size;
@@ -107,11 +114,11 @@ public class WindowHeader implements UIContainer
 
         private MenuButton(String name, Vector2f position, ListData... listDataEntries)
         {
-            this.name = WindowHeader.this.textBatch.createTextLabel(name, Vector2f.add(position, new Vector2f(MENU_BUTTON_PADDING / 2f, 0f)), new Vector4f(1f));
+            this.name = WindowHeader.this.getLayers().get(0).getTextBatch().createTextLabel(name, Vector2f.add(position, new Vector2f(MENU_BUTTON_PADDING / 2f, 0f)), new Vector4f(1f));
             this.position = new Vector2f(position);
             size = new Vector2f(this.name.getPixelWidth() + MENU_BUTTON_PADDING, WindowHeader.this.size.getY());
 
-            actions = new UIVerticalList(WindowHeader.this, new Vector4f(0.4f, 0.4f, 0.4f, 1f));
+            actions = new UIVerticalList(WindowHeader.this, 0, new Vector4f(0.4f, 0.4f, 0.4f, 1f));
             float widestEntry = 0f;
             for (ListData listDataEntry : listDataEntries)
             {

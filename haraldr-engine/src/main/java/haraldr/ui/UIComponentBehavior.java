@@ -12,7 +12,6 @@ public interface UIComponentBehavior
         return new UIEventResult(false, false);
     }
     default void draw(Batch2D batch) {}
-    default void drawOverlay(Batch2D overlayBatch) {}
     default void onDispose() {}
     default float getVerticalSize()
     {

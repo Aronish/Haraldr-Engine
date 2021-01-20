@@ -7,7 +7,7 @@ import haraldr.main.Window;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UILayer implements UIContainer
+public class UILayer
 {
     private List<UIComponent> components = new ArrayList<>();
     private Batch2D batch = new Batch2D();
@@ -18,15 +18,43 @@ public class UILayer implements UIContainer
         components.add(component);
     }
 
-    public boolean onEvent(Event event, Window window)
+    public UIComponentBehavior.UIEventResult onEvent(Event event, Window window)
     {
-        UIComponentBehavior.UIEventResult eventResult;
+        UIComponentBehavior.UIEventResult componentResult;
+        boolean requiresRedraw = false, consumed = false;
         for (UIComponent component : components)
         {
-            eventResult = component.onEvent(event, window);
-            if (eventResult.consumed()) return true;
+            componentResult = component.onEvent(event, window);
+            if (componentResult.requiresRedraw())
+            {
+                requiresRedraw = true;
+                break;
+            }
+            if (componentResult.consumed())
+            {
+                consumed = true;
+                break;
+            }
         }
-        return false;
+        return new UIComponentBehavior.UIEventResult(requiresRedraw, consumed);
+    }
+
+    public void clear()
+    {
+        components.clear();
+        batch.clear();
+        textBatch.clear();
+        textBatch.refreshTextMeshData();
+    }
+
+    public void draw()
+    {
+        batch.begin();
+        for (UIComponent component : components)
+        {
+            component.draw(batch);
+        }
+        batch.end();
     }
 
     public void render()
@@ -35,13 +63,11 @@ public class UILayer implements UIContainer
         textBatch.render();
     }
 
-    @Override
     public Batch2D getBatch()
     {
         return batch;
     }
 
-    @Override
     public TextBatch getTextBatch()
     {
         return textBatch;

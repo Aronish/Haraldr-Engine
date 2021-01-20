@@ -19,14 +19,14 @@ public class UIButton extends UIComponent
     private Vector4f currentColor = OFF_COLOR;
     private ButtonPressAction buttonPressAction;
 
-    public UIButton()
+    public UIButton(int layerIndex)
     {
-        this(null, () -> {});
+        this(null, layerIndex, () -> {});
     }
 
-    public UIButton(UIContainer parent, ButtonPressAction buttonPressAction)
+    public UIButton(UIContainer parent, int layerIndex, ButtonPressAction buttonPressAction)
     {
-        super(parent);
+        super(parent, layerIndex);
         buttonSize = new Vector2f(20f);
         this.buttonPressAction = buttonPressAction;
     }

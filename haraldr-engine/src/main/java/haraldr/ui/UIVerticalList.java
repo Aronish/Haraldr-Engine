@@ -19,14 +19,14 @@ public class UIVerticalList extends UIComponent implements Iterable<ListItem>
     private boolean visible = true;
     private Vector4f backgroundColor;
 
-    public UIVerticalList(UIContainer parent)
+    public UIVerticalList(UIContainer parent, int layerIndex)
     {
-        this(parent, new Vector4f());
+        this(parent, layerIndex, new Vector4f());
     }
 
-    public UIVerticalList(UIContainer parent, Vector4f backgroundColor)
+    public UIVerticalList(UIContainer parent, int layerIndex, Vector4f backgroundColor)
     {
-        super(parent);
+        super(parent, layerIndex);
         this.backgroundColor = backgroundColor;
     }
 

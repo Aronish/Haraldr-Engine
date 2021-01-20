@@ -1,6 +1,9 @@
 package editor;
 
 import haraldr.dockspace.DockablePanel;
+import haraldr.ecs.Component;
+import haraldr.ecs.Entity;
+import haraldr.ecs.EntityRegistry;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseScrolledEvent;
@@ -9,6 +12,7 @@ import haraldr.graphics.Renderer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
+import haraldr.ui.ComponentUIVisitor;
 import haraldr.ui.UIComponentBehavior;
 import haraldr.ui.UIComponentList;
 
@@ -38,13 +42,29 @@ public class PropertiesPanel extends DockablePanel
         renderToBatch();
     }
 
+    public void populateWithEntity(Entity selected, EntityRegistry registry)
+    {
+        ComponentUIVisitor componentUIVisitor = new ComponentUIVisitor();
+        for (Class<? extends Component> componentType : registry.getRegisteredComponentTypes())
+        {
+            if (registry.hasComponent(componentType, selected))
+            {
+                Component component = registry.getComponent(componentType, selected);
+                UIComponentList uiComponentList = new UIComponentList(uiLayers.get(0), componentType.getSimpleName().replace("Component", ""), position, size);
+                componentUIVisitor.setComponentPropertyList(uiComponentList);
+                component.acceptVisitor(componentUIVisitor);
+                addComponentList(uiComponentList);
+            }
+        }
+    }
+
     public void clear()
     {
         uiComponentLists.forEach(UIComponentList::onDispose);
         uiComponentLists.clear();
         listBatch.clear();
-        textBatch.clear();
-        textBatch.addTextLabel(name);
+        //textBatch.clear();
+        //textBatch.addTextLabel(name);
     }
 
     private void orderComponentLists(Vector2f position)
@@ -142,23 +162,10 @@ public class PropertiesPanel extends DockablePanel
 
         // Render UIComponentLists where stencil buffer is 0xFF.
         Renderer.stencilFunc(Renderer.StencilFunc.EQUAL, 1, 0xFF);
-        listBatch.render();
-        textBatch.render();
-        overlayBatch.render();
+        //listBatch.render();
+        //overlayBatch.render();
         Renderer.stencilMask(0xFF);
         Renderer.stencilFunc(Renderer.StencilFunc.ALWAYS, 1, 0xFF);
         Renderer.disableStencilTest();
-    }
-
-    @Override
-    public Batch2D getMainBatch()
-    {
-        return listBatch;
-    }
-
-    @Override
-    public Batch2D getOverlayBatch()
-    {
-        return overlayBatch;
     }
 }

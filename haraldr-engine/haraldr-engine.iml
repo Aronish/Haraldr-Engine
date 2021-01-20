@@ -19,6 +19,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="JsonParser" level="project" />
-    <orderEntry type="library" name="annotations-19.0.0" level="application" />
+    <orderEntry type="library" name="annotations-19.0.0" level="project" />
   </component>
 </module>

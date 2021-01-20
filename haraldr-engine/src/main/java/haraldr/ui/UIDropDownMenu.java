@@ -31,7 +31,11 @@ public class UIDropDownMenu extends UIComponent
 
     public void addMenuItem(String name, ListItem.ListItemCallback listItemCallback)
     {
-        verticalList.addItem(name, listItemCallback);
+        verticalList.addItem(name, () ->
+        {
+            selected.setValue(name);
+            listItemCallback.onPress();
+        });
     }
 
     @Override

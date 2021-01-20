@@ -5,6 +5,7 @@ import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
 import haraldr.ecs.TagComponent;
 import haraldr.event.Event;
+import haraldr.graphics.Batch2D;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -42,8 +43,8 @@ public class EntityHierarchyPanel extends DockablePanel
     public void refreshEntityList(EntityRegistry entityRegistry)
     {
         entityList.clear();
-        textBatch.clear();
-        textBatch.addTextLabel(name);
+        //textBatch.clear();
+        //textBatch.addTextLabel(name);
         entityRegistry.view(TagComponent.class).forEach(((transformComponent, tagComponent) -> addEntity(tagComponent.tag, entityRegistry.getEntityOf(tagComponent))));
     }
 
@@ -51,6 +52,7 @@ public class EntityHierarchyPanel extends DockablePanel
     protected void renderToBatch()
     {
         if (entityList == null) return;
+        Batch2D mainBatch = batches.get(0);
         mainBatch.begin();
         mainBatch.drawQuad(position, size, color);
         mainBatch.drawQuad(position, headerSize, HEADER_COLOR);

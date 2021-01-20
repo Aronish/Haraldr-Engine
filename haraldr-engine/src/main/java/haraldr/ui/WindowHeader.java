@@ -26,7 +26,7 @@ public class WindowHeader implements UIContainer
     private float currentButtonPosition;
     private List<MenuButton> menuButtons = new ArrayList<>();
 
-    private Batch2D mainBatch = new Batch2D();
+    private Batch2D batch = new Batch2D();
     private TextBatch textBatch = new TextBatch(Font.DEFAULT_FONT);
 
     public WindowHeader(Vector2f position, float size, Vector4f color)
@@ -65,19 +65,19 @@ public class WindowHeader implements UIContainer
 
     private void draw()
     {
-        mainBatch.begin();
-        mainBatch.drawQuad(position, size, color);
+        batch.begin();
+        batch.drawQuad(position, size, color);
         for (MenuButton menuButton : menuButtons)
         {
-            mainBatch.drawQuad(menuButton.position, menuButton.size, menuButton.hovered ? new Vector4f(0.6f, 0.6f, 0.6f, 1f) : new Vector4f(0.4f, 0.4f, 0.4f, 1f));
-            menuButton.actions.draw(mainBatch);
+            batch.drawQuad(menuButton.position, menuButton.size, menuButton.hovered ? new Vector4f(0.6f, 0.6f, 0.6f, 1f) : new Vector4f(0.4f, 0.4f, 0.4f, 1f));
+            menuButton.actions.draw(batch);
         }
-        mainBatch.end();
+        batch.end();
     }
 
     public void render()
     {
-        mainBatch.render();
+        batch.render();
         textBatch.render();
     }
 
@@ -87,9 +87,9 @@ public class WindowHeader implements UIContainer
     }
 
     @Override
-    public Batch2D getMainBatch()
+    public Batch2D getBatch()
     {
-        return mainBatch;
+        return batch;
     }
 
     @Override

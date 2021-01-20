@@ -5,19 +5,20 @@ import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Batch2D;
-import haraldr.ui.UIContainer;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
-import haraldr.ui.Font;
-import haraldr.ui.TextBatch;
 import haraldr.ui.TextLabel;
+import haraldr.ui.UILayer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("WeakerAccess")
-public class DockablePanel implements UIContainer
+public class DockablePanel
 {
     private static final float HEADER_SIZE = 20f;
     protected static final Vector4f HEADER_COLOR = new Vector4f(0.15f, 0.15f, 0.15f, 1f);
@@ -25,21 +26,21 @@ public class DockablePanel implements UIContainer
     protected Vector2f position, size, headerSize;
     protected Vector4f color;
     protected boolean headerPressed, contentPressed, hovered;
-
-    protected TextBatch textBatch = new TextBatch(Font.DEFAULT_FONT);
     protected TextLabel name;
 
-    protected Batch2D mainBatch = new Batch2D();
+    protected List<UILayer> uiLayers = new ArrayList<>();
 
     private PanelDimensionChangeAction panelDimensionChangeAction = (position, size) -> {};
 
     public DockablePanel(Vector2f position, Vector2f size, Vector4f color, String name)
     {
+        uiLayers.add(new UILayer());
+
         this.position = new Vector2f(position);
         headerSize = new Vector2f(size.getX(), HEADER_SIZE);
         this.size = size;
         this.color = color;
-        this.name = textBatch.createTextLabel(name, position, new Vector4f(1f));
+        this.name = uiLayers.get(0).getTextBatch().createTextLabel(name, position, new Vector4f(1f));
         renderToBatch();
     }
 
@@ -75,6 +76,7 @@ public class DockablePanel implements UIContainer
 
     protected void renderToBatch()
     {
+        Batch2D mainBatch = uiLayers.get(0).getBatch();
         mainBatch.begin();
         mainBatch.drawQuad(position, size, color);
         mainBatch.drawQuad(position, headerSize, HEADER_COLOR);
@@ -83,12 +85,7 @@ public class DockablePanel implements UIContainer
 
     public void render()
     {
-        mainBatch.render();
-    }
-
-    public void renderText()
-    {
-        textBatch.render();
+        uiLayers.forEach(UILayer::render);
     }
 
     public void setPanelResizeAction(PanelDimensionChangeAction panelDimensionChangeAction)
@@ -100,7 +97,7 @@ public class DockablePanel implements UIContainer
     {
         this.position.set(position);
         name.setPosition(position);
-        textBatch.refreshTextMeshData();
+        //textBatches.forEach(TextBatch::refreshTextMeshData);
         panelDimensionChangeAction.run(
                 Vector2f.add(this.position, new Vector2f(0f, headerSize.getY())),
                 Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
@@ -151,18 +148,6 @@ public class DockablePanel implements UIContainer
     public boolean isHovered()
     {
         return hovered;
-    }
-
-    @Override
-    public Batch2D getMainBatch()
-    {
-        return mainBatch;
-    }
-
-    @Override
-    public TextBatch getTextBatch()
-    {
-        return textBatch;
     }
 
     public interface PanelDimensionChangeAction

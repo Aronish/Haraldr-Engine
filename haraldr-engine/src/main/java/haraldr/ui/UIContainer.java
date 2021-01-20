@@ -4,15 +4,6 @@ import haraldr.graphics.Batch2D;
 
 public interface UIContainer
 {
-    Batch2D getMainBatch();
-    default Batch2D getOverlayBatch()
-    {
-        return getMainBatch();
-    }
-    
+    Batch2D getBatch();
     TextBatch getTextBatch();
-    default TextBatch getOverlayTextBatch()
-    {
-        return getTextBatch();
-    }
 }

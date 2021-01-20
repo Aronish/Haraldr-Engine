@@ -54,22 +54,6 @@ public class EditorApplication extends Application
         );
     }
 
-    private void populatePropertiesPanel()
-    {
-        ComponentUIVisitor componentUIVisitor = new ComponentUIVisitor();
-        for (Class<? extends Component> componentType : scene.getRegistry().getRegisteredComponentTypes())
-        {
-            if (scene.getRegistry().hasComponent(componentType, selected))
-            {
-                Component component = scene.getRegistry().getComponent(componentType, selected);
-                UIComponentList uiComponentList = new UIComponentList(propertiesPanel, componentType.getSimpleName().replace("Component", ""), propertiesPanel.getPosition(), propertiesPanel.getSize());
-                componentUIVisitor.setComponentPropertyList(uiComponentList);
-                component.acceptVisitor(componentUIVisitor);
-                propertiesPanel.addComponentList(uiComponentList);
-            }
-        }
-    }
-
     private void selectEntity(Entity entity)
     {
         if (!selected.equals(Entity.INVALID))
@@ -83,7 +67,7 @@ public class EditorApplication extends Application
         {
             ModelComponent model = scene.getRegistry().getComponent(ModelComponent.class, selected);
             model.model.setOutlined(true);
-            populatePropertiesPanel();
+            propertiesPanel.populateWithEntity(selected, scene.getRegistry());
         }
         entityHierarchyPanel.refreshEntityList(scene.getRegistry());
     }

@@ -1,8 +1,6 @@
 package haraldr.ui;
 
-import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
-import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector3f;
 
@@ -143,11 +141,10 @@ public class UIVector3Linkable extends UIVector3
     }
 
     @Override
-    public UIEventResult onEvent(Event event, Window window)
+    public void setEnabled(boolean enabled)
     {
-        UIEventResult linkedEventResult = linked.onEvent(event, window);
-        UIEventResult superEventResult = super.onEvent(event, window);
-        return new UIEventResult(linkedEventResult.requiresRedraw() || superEventResult.consumed(), linkedEventResult.consumed() || superEventResult.consumed());
+        super.setEnabled(enabled);
+        linked.setEnabled(enabled);
     }
 
     @Override

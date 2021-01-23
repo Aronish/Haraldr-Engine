@@ -3,11 +3,12 @@ package haraldr.ui;
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
 import haraldr.main.Window;
+import haraldr.math.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UILayer
+public class UIEventLayer
 {
     private List<UIComponent> components = new ArrayList<>();
     private Batch2D batch = new Batch2D();
@@ -24,11 +25,11 @@ public class UILayer
         boolean requiresRedraw = false, consumed = false;
         for (UIComponent component : components)
         {
+            if (!component.enabled) continue;
             componentResult = component.onEvent(event, window);
             if (componentResult.requiresRedraw())
             {
                 requiresRedraw = true;
-                break;
             }
             if (componentResult.consumed())
             {
@@ -37,6 +38,14 @@ public class UILayer
             }
         }
         return new UIComponentBehavior.UIEventResult(requiresRedraw, consumed);
+    }
+
+    public void addPosition(Vector2f difference)
+    {
+        for (UIComponent component : components)
+        {
+            component.addPosition(difference);
+        }
     }
 
     public void clear()
@@ -52,7 +61,7 @@ public class UILayer
         batch.begin();
         for (UIComponent component : components)
         {
-            component.draw(batch);
+            if (component.enabled) component.draw(batch);
         }
         batch.end();
     }

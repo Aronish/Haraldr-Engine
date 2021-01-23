@@ -16,10 +16,15 @@ public abstract class UIComponent implements UIComponentBehavior, UIContainer
     protected UIComponent(UIContainer parent, int layerIndex)
     {
         this.parent = parent;
-        UILayer layer = parent.getLayer(layerIndex);
+        UIEventLayer layer = parent.getLayer(layerIndex);
         layer.addComponent(this);
         batch = layer.getBatch();
         textBatch = layer.getTextBatch();
+    }
+
+    public void addPosition(Vector2f difference)
+    {
+        position.add(difference);
     }
 
     public void setPosition(Vector2f position)
@@ -33,13 +38,13 @@ public abstract class UIComponent implements UIComponentBehavior, UIContainer
     }
 
     @Override
-    public UILayer getLayer(int index)
+    public UIEventLayer getLayer(int index)
     {
         return parent.getLayer(index);
     }
 
     @Override
-    public List<UILayer> getLayers()
+    public List<UIEventLayer> getLayers()
     {
         return parent.getLayers();
     }

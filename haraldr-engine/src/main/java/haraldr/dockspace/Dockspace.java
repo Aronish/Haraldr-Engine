@@ -69,8 +69,9 @@ public class Dockspace
             resize(windowResizedEvent.width, windowResizedEvent.height);
         }
 
-        rootArea.onEvent(event, window);
+        rootArea.onEvent(event, window); //Docking area resizing
 
+        // Undocked panels are always on top
         boolean undockedPanelsConsumed = false;
         for (DockablePanel undockedPanel : undockedPanels)
         {
@@ -88,6 +89,7 @@ public class Dockspace
                 break;
             }
         }
+        // Then send events to docked panels
         if (!undockedPanelsConsumed)
         {
             for (DockablePanel dockedPanel : dockedPanels)
@@ -98,6 +100,7 @@ public class Dockspace
             }
         }
 
+        // Try docking the selected panel
         if (selectedPanel != null && undockedPanels.contains(selectedPanel) && Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
         {
             if (rootArea.attemptDockPanel(selectedPanel))

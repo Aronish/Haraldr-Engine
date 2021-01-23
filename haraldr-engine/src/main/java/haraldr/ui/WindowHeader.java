@@ -26,11 +26,11 @@ public class WindowHeader implements UIContainer
     private float currentButtonPosition;
     private List<MenuButton> menuButtons = new ArrayList<>();
 
-    private List<UILayer> uiLayers = new ArrayList<>();
+    private List<UIEventLayer> uiEventLayers = new ArrayList<>();
 
     public WindowHeader(Vector2f position, float size, Vector4f color)
     {
-        uiLayers.add(new UILayer());
+        uiEventLayers.add(new UIEventLayer());
 
         this.position = position;
         this.size = new Vector2f(size, 20f);
@@ -66,7 +66,7 @@ public class WindowHeader implements UIContainer
 
     private void draw()
     {
-        Batch2D batch = uiLayers.get(0).getBatch();
+        Batch2D batch = uiEventLayers.get(0).getBatch();
         batch.begin();
         batch.drawQuad(position, size, color);
         for (MenuButton menuButton : menuButtons)
@@ -79,7 +79,7 @@ public class WindowHeader implements UIContainer
 
     public void render()
     {
-        uiLayers.forEach(UILayer::render);
+        uiEventLayers.forEach(UIEventLayer::render);
     }
 
     public Vector2f getSize()
@@ -88,21 +88,21 @@ public class WindowHeader implements UIContainer
     }
 
     @Override
-    public UILayer getLayer(int index)
+    public UIEventLayer getLayer(int index)
     {
-        if (index >= uiLayers.size())
+        if (index >= uiEventLayers.size())
         {
-            UILayer layer = new UILayer();
-            uiLayers.add(layer);
+            UIEventLayer layer = new UIEventLayer();
+            uiEventLayers.add(layer);
             return layer;
         }
-        return uiLayers.get(index);
+        return uiEventLayers.get(index);
     }
 
     @Override
-    public List<UILayer> getLayers()
+    public List<UIEventLayer> getLayers()
     {
-        return uiLayers;
+        return uiEventLayers;
     }
 
     private class MenuButton //TODO: Clean up

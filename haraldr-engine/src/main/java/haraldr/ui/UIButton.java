@@ -1,6 +1,7 @@
 package haraldr.ui;
 
 import haraldr.event.Event;
+import haraldr.event.EventCategory;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Batch2D;
@@ -15,6 +16,7 @@ public class UIButton extends UIComponent
     private static final Vector4f OFF_COLOR = new Vector4f(0.8f, 0.2f, 0.3f, 1f);
     private static final Vector4f DISABLED_COLOR = new Vector4f(0.4f, 0.4f, 0.4f, 1f);
 
+    private boolean clickable = true;
     private Vector2f buttonSize;
     private Vector4f currentColor = OFF_COLOR;
     private ButtonPressAction buttonPressAction;
@@ -36,10 +38,9 @@ public class UIButton extends UIComponent
         this.buttonPressAction = action;
     }
 
-    @Override
-    public void setEnabled(boolean enabled)
+    public void setClickable(boolean clickable)
     {
-        super.setEnabled(enabled);
+        this.clickable = clickable;
         currentColor = enabled ? OFF_COLOR : DISABLED_COLOR;
     }
 
@@ -53,7 +54,7 @@ public class UIButton extends UIComponent
     public UIEventResult onEvent(Event event, Window window)
     {
         boolean requiresRedraw = false;
-        if (enabled)
+        if (clickable)
         {
             if (event.eventType == EventType.MOUSE_PRESSED)
             {

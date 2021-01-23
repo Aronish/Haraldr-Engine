@@ -30,9 +30,8 @@ public class Scene3DPanel extends DockablePanel
     @Override
     public boolean onEvent(Event event, Window window)
     {
-        boolean panelConsumed = super.onEvent(event, window);
-        event.setHandled(headerPressed);
-        return panelConsumed;
+        super.onEvent(event, window);
+        return headerPressed;
     }
 
     @Override

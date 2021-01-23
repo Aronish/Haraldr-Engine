@@ -1,5 +1,6 @@
 package haraldr.ui;
 
+import haraldr.debug.Logger;
 import haraldr.event.Event;
 import haraldr.event.EventCategory;
 import haraldr.graphics.Batch2D;
@@ -79,9 +80,18 @@ public class UIVerticalList extends UIComponent implements Iterable<ListItem>
     }
 
     @Override
+    public void setEnabled(boolean enabled)
+    {
+        super.setEnabled(enabled);
+        for (ListItem listItem : listItems)
+        {
+            listItem.getTag().setEnabled(enabled);
+        }
+    }
+
+    @Override
     public UIEventResult onEvent(Event event, Window window)
     {
-        if (!event.isInCategory(EventCategory.CATEGORY_MOUSE)) return new UIEventResult(false, false);
         boolean requiresRedraw = false, consumed = false;
         if (visible)
         {

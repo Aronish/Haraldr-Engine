@@ -22,7 +22,7 @@ public abstract class Event
 
     public void setHandled(boolean handled)
     {
-        isHandled = handled;
+        isHandled |= handled;
     }
 
     public boolean isHandled()

@@ -1,8 +1,6 @@
 package haraldr.ui;
 
-import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
-import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector3f;
 
@@ -95,15 +93,12 @@ public class UIVector3 extends UIComponent
     }
 
     @Override
-    public UIEventResult onEvent(Event event, Window window)
+    public void setEnabled(boolean enabled)
     {
-        UIEventResult xEventResult = x.onEvent(event, window);
-        UIEventResult yEventResult = y.onEvent(event, window);
-        UIEventResult zEventResult = z.onEvent(event, window);
-        return new UIEventResult(
-                xEventResult.requiresRedraw() || yEventResult.requiresRedraw() || zEventResult.requiresRedraw(),
-                xEventResult.consumed() || yEventResult.consumed() || zEventResult.consumed()
-            );
+        super.setEnabled(enabled);
+        x.setEnabled(enabled);
+        y.setEnabled(enabled);
+        z.setEnabled(enabled);
     }
 
     @Override

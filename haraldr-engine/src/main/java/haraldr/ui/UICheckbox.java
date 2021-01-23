@@ -1,6 +1,8 @@
 package haraldr.ui;
 
+import haraldr.debug.Logger;
 import haraldr.event.Event;
+import haraldr.event.EventCategory;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
 import haraldr.graphics.Batch2D;

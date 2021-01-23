@@ -13,14 +13,11 @@ import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
 import haraldr.ui.TextLabel;
-import haraldr.ui.UIContainer;
-import haraldr.ui.UILayer;
-
-import java.util.ArrayList;
-import java.util.List;
+import haraldr.ui.UIEventLayer;
+import haraldr.ui.UILayerStack;
 
 @SuppressWarnings("WeakerAccess")
-public class DockablePanel implements UIContainer
+public class DockablePanel
 {
     private static final float HEADER_SIZE = 20f;
     protected static final Vector4f HEADER_COLOR = new Vector4f(0.15f, 0.15f, 0.15f, 1f);
@@ -30,14 +27,14 @@ public class DockablePanel implements UIContainer
     protected boolean headerPressed, contentPressed, hovered;
     protected TextLabel name;
 
-    protected List<UILayer> uiLayers = new ArrayList<>();
-    protected UILayer mainLayer = new UILayer();
+    protected UILayerStack uiLayers = new UILayerStack();
+    protected UIEventLayer mainLayer = new UIEventLayer();
 
     private PanelDimensionChangeAction panelDimensionChangeAction = (position, size) -> {};
 
     public DockablePanel(Vector2f position, Vector2f size, Vector4f color, String name)
     {
-        uiLayers.add(mainLayer);
+        uiLayers.addLayer(mainLayer);
 
         this.position = new Vector2f(position);
         headerSize = new Vector2f(size.getX(), HEADER_SIZE);
@@ -47,9 +44,8 @@ public class DockablePanel implements UIContainer
         draw();
     }
 
-    /**
-     * @return whether this panel should consume the event. If the panel is docked it won't be consumed.
-     */
+    private Vector2f lastHeaderPressedPos = new Vector2f();
+
     public boolean onEvent(Event event, Window window)
     {
         if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
@@ -57,6 +53,7 @@ public class DockablePanel implements UIContainer
             var mousePressedEvent = (MousePressedEvent) event;
             Vector2f mousePoint = new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos);
             headerPressed = Physics2D.pointInsideAABB(mousePoint, position, headerSize);
+            if (headerPressed) lastHeaderPressedPos = position;
             contentPressed = Physics2D.pointInsideAABB(mousePoint, Vector2f.add(position, new Vector2f(0f, HEADER_SIZE)), Vector2f.add(size, new Vector2f(0f, -HEADER_SIZE)));
         }
         if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
@@ -68,12 +65,21 @@ public class DockablePanel implements UIContainer
             var mouseMovedEvent = (MouseMovedEvent) event;
             Vector2f mousePoint = new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos);
             hovered = Physics2D.pointInsideAABB(mousePoint, position, size);
+            //if (headerPressed)
+            //{
+            //    long start = System.nanoTime();
+            //    setPosition(mousePoint);
+            //    Logger.info(System.nanoTime() - start);
+            //}
             if (headerPressed)
             {
-                setPosition(mousePoint);
+                Vector2f difference = Vector2f.subtract(mousePoint, lastHeaderPressedPos);
+                lastHeaderPressedPos = mousePoint;
+                long start = System.nanoTime();
+                addPosition(difference);
+                Logger.info(System.nanoTime() - start);
             }
         }
-        event.setHandled(headerPressed || contentPressed);
         return headerPressed || contentPressed;
     }
 
@@ -88,7 +94,7 @@ public class DockablePanel implements UIContainer
 
     public void render()
     {
-        uiLayers.forEach(UILayer::render);
+        uiLayers.render();
     }
 
     public void setPanelResizeAction(PanelDimensionChangeAction panelDimensionChangeAction)
@@ -96,14 +102,23 @@ public class DockablePanel implements UIContainer
         this.panelDimensionChangeAction = panelDimensionChangeAction;
     }
 
+    public void addPosition(Vector2f difference)
+    {
+        this.position.add(difference);
+        name.addPosition(difference);
+        uiLayers.refresh();
+        panelDimensionChangeAction.run(
+                Vector2f.add(this.position, new Vector2f(0f, headerSize.getY())),
+                Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
+        );
+        draw();
+    }
+
     public void setPosition(Vector2f position)
     {
         this.position.set(position);
         name.setPosition(position);
-        for (UILayer uiLayer : uiLayers)
-        {
-            uiLayer.getTextBatch().refreshTextMeshData();
-        }
+        uiLayers.refresh();
         panelDimensionChangeAction.run(
                 Vector2f.add(this.position, new Vector2f(0f, headerSize.getY())),
                 Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
@@ -122,25 +137,9 @@ public class DockablePanel implements UIContainer
         draw();
     }
 
-    public void dispose()
-    {
-    }
+    public void dispose() {}
 
-    @Override
-    public UILayer getLayer(int index)
-    {
-        if (index >= uiLayers.size())
-        {
-            UILayer layer = new UILayer();
-            uiLayers.add(0, layer);
-            return layer;
-        }
-        Logger.info(uiLayers.size());
-        return uiLayers.get(index);
-    }
-
-    @Override
-    public List<UILayer> getLayers()
+    public UILayerStack getLayers()
     {
         return uiLayers;
     }

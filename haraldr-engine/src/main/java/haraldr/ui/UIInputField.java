@@ -31,7 +31,7 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
     private Vector2f borderSize;
     private Vector2f fieldPosition = new Vector2f(), fieldSize;
     private boolean selected, held;
-    private float lastMouseX;
+    private float lastMouseX, lastMouseY;
 
     private T value;
     private TextLabel textLabel;
@@ -68,6 +68,13 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
     }
 
     @Override
+    public void setEnabled(boolean enabled)
+    {
+        super.setEnabled(enabled);
+        textLabel.setEnabled(enabled);
+    }
+
+    @Override
     public UIEventResult onEvent(Event event, Window window)
     {
         boolean requiresRedraw = false;
@@ -81,6 +88,7 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
                 if (held)
                 {
                     lastMouseX = mousePressedEvent.xPos;
+                    lastMouseY = mousePressedEvent.yPos;
                     window.setCursorVisibility(false);
                 }
 
@@ -126,9 +134,10 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
             var mouseMovedEvent = (MouseMovedEvent) event;
             value.onMouseDragged((float)mouseMovedEvent.xPos - lastMouseX);
             lastMouseX = (float)mouseMovedEvent.xPos;
-            window.setCursorPosition(lastMouseX, 0f);
+            window.setCursorPosition(lastMouseX, lastMouseY);
             updateTextLabel();
             inputFieldChangeAction.run(value);
+            event.setHandled(true);
         }
         if (event.eventType == EventType.PARENT_COLLAPSED)
         {

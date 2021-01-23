@@ -95,17 +95,9 @@ public class UIComponentList extends UIComponent
                 }
                 for (UIComponent component : components.values())
                 {
-                    component.onEvent(new ParentCollapsedEvent(collapsed), window);
+                    component.setEnabled(!collapsed);
                 }
                 textBatch.refreshTextMeshData();
-            }
-        }
-
-        if (!collapsed)
-        {
-            for (UIComponent component : components.values())
-            {
-                requiresRedraw |= component.onEvent(event, window).requiresRedraw();
             }
         }
         return new UIEventResult(requiresRedraw, false);

@@ -18,5 +18,8 @@ public interface UIComponentBehavior
         return 0f;
     }
 
-    record UIEventResult(boolean requiresRedraw, boolean consumed) {}
+    record UIEventResult(boolean requiresRedraw, boolean consumed)
+    {
+        public static final UIEventResult NONE = new UIEventResult(false, false);
+    }
 }

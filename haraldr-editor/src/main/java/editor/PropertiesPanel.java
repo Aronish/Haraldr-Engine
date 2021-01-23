@@ -1,5 +1,6 @@
 package editor;
 
+import haraldr.debug.Logger;
 import haraldr.dockspace.DockablePanel;
 import haraldr.ecs.Component;
 import haraldr.ecs.Entity;
@@ -15,7 +16,7 @@ import haraldr.math.Vector4f;
 import haraldr.ui.ComponentUIVisitor;
 import haraldr.ui.UIComponentBehavior;
 import haraldr.ui.UIComponentList;
-import haraldr.ui.UILayer;
+import haraldr.ui.UIEventLayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class PropertiesPanel extends DockablePanel
 {
     private static final float SCROLL_SENSITIVITY = 10f;
 
-    private UILayer stencilLayer = new UILayer();
+    private UIEventLayer stencilLayer = new UIEventLayer();
     private List<UIComponentList> uiComponentLists = new ArrayList<>();
     private float scrollOffset, listHeight;
 
@@ -39,7 +40,6 @@ public class PropertiesPanel extends DockablePanel
     public void addComponentList(UIComponentList uiComponentList)
     {
         uiComponentLists.add(uiComponentList);
-        mainLayer.addComponent(uiComponentList);
         orderComponentLists(position);
         draw();
     }
@@ -52,7 +52,7 @@ public class PropertiesPanel extends DockablePanel
             if (registry.hasComponent(componentType, selected))
             {
                 Component component = registry.getComponent(componentType, selected);
-                UIComponentList uiComponentList = new UIComponentList(this, 0, componentType.getSimpleName().replace("Component", ""), position, size);
+                UIComponentList uiComponentList = new UIComponentList(uiLayers, 0, componentType.getSimpleName().replace("Component", ""), position, size);
                 componentUIVisitor.setComponentPropertyList(uiComponentList);
                 component.acceptVisitor(componentUIVisitor);
                 addComponentList(uiComponentList);
@@ -65,7 +65,7 @@ public class PropertiesPanel extends DockablePanel
     {
         uiComponentLists.forEach(UIComponentList::onDispose);
         uiComponentLists.clear();
-        uiLayers.forEach(UILayer::clear);
+        uiLayers.clear();
         mainLayer.getTextBatch().addTextLabel(name);
     }
 
@@ -85,31 +85,11 @@ public class PropertiesPanel extends DockablePanel
     public boolean onEvent(Event event, Window window)
     {
         boolean requiresRedraw = false, consumeEvent = super.onEvent(event, window);
-        //for (UIComponentList uiComponentList : uiComponentLists)
-        //{
-        //    UIComponentBehavior.UIEventResult eventResult = uiComponentList.onEvent(event, window);
-        //    if (eventResult.requiresRedraw())
-        //    {
-        //        requiresRedraw = true;
-        //        orderComponentLists(position); //Minor TODO: Does not need to happen every event, only if the collapsed state of a list has changed
-        //    }
-        //    if (eventResult.consumed()) break;
-        //}
-        for (UILayer uiLayer : uiLayers)
-        {
-            UIComponentBehavior.UIEventResult eventResult = uiLayer.onEvent(event, window);
-            if (eventResult.requiresRedraw())
-            {
-                requiresRedraw = true;
-                orderComponentLists(position);
-            }
-            if (eventResult.consumed())
-            {
-                consumeEvent = true;
-                break;
-            }
-        }
+        // UILayer events
+        UIComponentBehavior.UIEventResult uiEventResult = uiLayers.onEvent(event, window);
+        //if (requiresRedraw = uiEventResult.requiresRedraw()) orderComponentLists(position);
 
+        //Scroll panel
         if (hovered && event.eventType == EventType.MOUSE_SCROLLED)
         {
             var mouseScrolledEvent = (MouseScrolledEvent) event;
@@ -138,6 +118,13 @@ public class PropertiesPanel extends DockablePanel
     }
 
     @Override
+    public void addPosition(Vector2f difference)
+    {
+        uiLayers.addPosition(difference);
+        super.addPosition(difference);
+    }
+
+    @Override
     public void setSize(Vector2f size)
     {
         for (UIComponentList uiComponentList : uiComponentLists)
@@ -151,7 +138,7 @@ public class PropertiesPanel extends DockablePanel
     @Override
     protected void draw() // TODO: Render only visible
     {
-        if (uiComponentLists == null) return;
+        if (stencilLayer == null) return;
         //Stencil
         Batch2D stencilBatch = stencilLayer.getBatch();
         stencilBatch.begin();
@@ -159,7 +146,7 @@ public class PropertiesPanel extends DockablePanel
         stencilBatch.drawQuad(position, headerSize, HEADER_COLOR);
         stencilBatch.end();
         //UI
-        uiLayers.forEach(UILayer::draw);
+        uiLayers.draw();
     }
 
     @Override
@@ -175,7 +162,7 @@ public class PropertiesPanel extends DockablePanel
 
         // Render UIComponentLists where stencil buffer is 0xFF.
         Renderer.stencilFunc(Renderer.StencilFunc.EQUAL, 1, 0xFF);
-        uiLayers.forEach(UILayer::render);
+        uiLayers.render();
         Renderer.stencilMask(0xFF);
         Renderer.stencilFunc(Renderer.StencilFunc.ALWAYS, 1, 0xFF);
         Renderer.disableStencilTest();

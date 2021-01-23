@@ -1,9 +1,5 @@
 package haraldr.ui;
 
-import haraldr.event.Event;
-import haraldr.event.EventType;
-import haraldr.event.ParentCollapsedEvent;
-import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 
@@ -40,14 +36,10 @@ public class UIInfoLabel extends UIComponent
     }
 
     @Override
-    public UIEventResult onEvent(Event event, Window window)
+    public void setEnabled(boolean enabled)
     {
-        if (event.eventType == EventType.PARENT_COLLAPSED)
-        {
-            valueLabel.setEnabled(!((ParentCollapsedEvent) event).collapsed);
-            textBatch.refreshTextMeshData();
-        }
-        return new UIEventResult(false, false);
+        super.setEnabled(enabled);
+        valueLabel.setEnabled(enabled);
     }
 
     @Override

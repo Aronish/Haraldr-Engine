@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface UIContainer
 {
-    List<UILayer> getLayers();
-    UILayer getLayer(int index);
+    List<UIEventLayer> getLayers();
+    UIEventLayer getLayer(int index);
 }

@@ -2,6 +2,7 @@ package offlinerenderer;
 
 import haraldr.dockspace.DockablePanel;
 import haraldr.event.Event;
+import haraldr.graphics.Batch2D;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
@@ -50,7 +51,7 @@ public class MainPanel extends DockablePanel
         boolean consumePress = super.onEvent(event, window), requireRedraw = false;
         for (UIComponent uiComponent : uiComponents)
         {
-            if (uiComponent.onEvent(event, window)) requireRedraw = true;
+            if (uiComponent.onEvent(event, window).requiresRedraw()) requireRedraw = true;
         }
         if (requireRedraw) draw();
         return consumePress;
@@ -60,6 +61,7 @@ public class MainPanel extends DockablePanel
     protected void draw()
     {
         if (uiComponents == null) return;
+        Batch2D mainBatch = mainLayer.getBatch();
         mainBatch.begin();
         mainBatch.drawQuad(position, size, color);
         mainBatch.drawQuad(position, headerSize, HEADER_COLOR);

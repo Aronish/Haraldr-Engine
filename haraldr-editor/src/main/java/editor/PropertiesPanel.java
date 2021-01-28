@@ -1,6 +1,5 @@
 package editor;
 
-import haraldr.debug.Logger;
 import haraldr.dockspace.DockablePanel;
 import haraldr.ecs.Component;
 import haraldr.ecs.Entity;
@@ -87,7 +86,7 @@ public class PropertiesPanel extends DockablePanel
         boolean requiresRedraw = false, consumeEvent = super.onEvent(event, window);
         // UILayer events
         UIComponentBehavior.UIEventResult uiEventResult = uiLayers.onEvent(event, window);
-        //if (requiresRedraw = uiEventResult.requiresRedraw()) orderComponentLists(position);
+        if (requiresRedraw = uiEventResult.requiresRedraw()) orderComponentLists(position);
 
         //Scroll panel
         if (hovered && event.eventType == EventType.MOUSE_SCROLLED)

@@ -65,20 +65,18 @@ public class DockablePanel
             var mouseMovedEvent = (MouseMovedEvent) event;
             Vector2f mousePoint = new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos);
             hovered = Physics2D.pointInsideAABB(mousePoint, position, size);
-            //if (headerPressed)
-            //{
-            //    long start = System.nanoTime();
-            //    setPosition(mousePoint);
-            //    Logger.info(System.nanoTime() - start);
-            //}
             if (headerPressed)
             {
-                Vector2f difference = Vector2f.subtract(mousePoint, lastHeaderPressedPos);
-                lastHeaderPressedPos = mousePoint;
-                long start = System.nanoTime();
-                addPosition(difference);
-                Logger.info(System.nanoTime() - start);
+                setPosition(mousePoint);
             }
+            //if (headerPressed)
+            //{
+            //    Vector2f difference = Vector2f.subtract(mousePoint, lastHeaderPressedPos);
+            //    lastHeaderPressedPos = mousePoint;
+            //    long start = System.nanoTime();
+            //    addPosition(difference);
+            //    Logger.info(System.nanoTime() - start);
+            //}
         }
         return headerPressed || contentPressed;
     }

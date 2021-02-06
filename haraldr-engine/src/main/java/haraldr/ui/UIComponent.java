@@ -5,7 +5,7 @@ import haraldr.math.Vector2f;
 
 import java.util.List;
 
-public abstract class UIComponent implements UIComponentBehavior, UIContainer
+public abstract class UIComponent implements UIComponentBehavior, UIEventObserver, UIContainer
 {
     protected Vector2f position = new Vector2f();
     protected boolean enabled = true;
@@ -35,6 +35,12 @@ public abstract class UIComponent implements UIComponentBehavior, UIContainer
     public void setEnabled(boolean enabled)
     {
         this.enabled = enabled;
+    }
+
+    @Override
+    public boolean isEnabled()
+    {
+        return enabled;
     }
 
     @Override

@@ -9,11 +9,10 @@ import haraldr.main.IOUtils;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
-import haraldr.ui.UIButton;
-import haraldr.ui.UIComponentList;
-import haraldr.ui.UIHorizontalBreak;
-import haraldr.ui.UIInfoLabel;
-import haraldr.ui.UIInputField;
+import haraldr.ui.components.UIButton;
+import haraldr.ui.components.UIHorizontalBreak;
+import haraldr.ui.components.UIInfoLabel;
+import haraldr.ui.components.UIInputField;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
@@ -50,8 +49,6 @@ public class OfflineRendererApplication extends Application
     {
         dockspace = new Dockspace(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()));
         mainPanel = new MainPanel(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Haraldr Offline Renderer");
-
-        UIComponentList uiComponentList = new UIComponentList(mainPanel.getLayers(), 0, "Haraldr Offline Renderer", new Vector2f(), new Vector2f());
 
         //Original environment map
         UIButton loadHdr = new UIButton(mainPanel.getLayers(), 0, () ->
@@ -106,12 +103,12 @@ public class OfflineRendererApplication extends Application
             prefilteredEnvironmentMapdata.setValue("Loaded: " + prefilteredEnvironmentMap.getName() + " | Size: " + prefilteredEnvironmentMap.getSize());
             glViewport(0, 0, window.getWidth(), window.getHeight());
         });
-        generateIblMaps.setClickable(false);
+        generateIblMaps.setEnabled(false);
 
         //Export options
         //Diffuse Irradiance Map
         UIButton exportDiffuseIrradianceMap = new UIButton(mainPanel.getLayers(), 0, () -> CubeMapGenerator.exportCubeMap(diffuseIrradianceMap, diffuseIrradianceMapPath.getValue()));
-        exportDiffuseIrradianceMap.setClickable(false);
+        exportDiffuseIrradianceMap.setEnabled(false);
 
         UIButton saveDiffuseIrradianceMapAs = new UIButton(mainPanel.getLayers(), 0, () ->
         {
@@ -122,13 +119,13 @@ public class OfflineRendererApplication extends Application
                 String path = TinyFileDialogs.tinyfd_saveFileDialog("Save diffuse irradiance map", "", filterPatterns, "");
                 diffuseIrradianceMapPath.setValue(path == null ? "" : path);
             }
-            exportDiffuseIrradianceMap.setClickable(!diffuseIrradianceMapPath.getValue().isBlank() && diffuseIrradianceMapPath.getValue().endsWith(".exr"));
+            exportDiffuseIrradianceMap.setEnabled(!diffuseIrradianceMapPath.getValue().isBlank() && diffuseIrradianceMapPath.getValue().endsWith(".exr"));
         });
         diffuseIrradianceMapPath = new UIInfoLabel(mainPanel.getLayers(), 0, "");
 
         //Prefiltered Map
         UIButton exportPrefilteredMap = new UIButton(mainPanel.getLayers(), 0, () -> CubeMapGenerator.exportCubeMap(prefilteredEnvironmentMap, prefilteredMapPath.getValue()));
-        exportPrefilteredMap.setClickable(false);
+        exportPrefilteredMap.setEnabled(false);
 
         UIButton savePrefilteredMap = new UIButton(mainPanel.getLayers(), 0, () ->
         {
@@ -139,32 +136,31 @@ public class OfflineRendererApplication extends Application
                 String path = TinyFileDialogs.tinyfd_saveFileDialog("Save prefiltered environment map", "", filterPatterns, "");
                 prefilteredMapPath.setValue(path == null ? "" : path);
             }
-            exportPrefilteredMap.setClickable(!prefilteredMapPath.getValue().isBlank() && prefilteredMapPath.getValue().endsWith(".exr"));
+            exportPrefilteredMap.setEnabled(!prefilteredMapPath.getValue().isBlank() && prefilteredMapPath.getValue().endsWith(".exr"));
         });
         prefilteredMapPath = new UIInfoLabel(mainPanel.getLayers(), 0, "");
 
-        uiComponentList.addComponent("", new UIHorizontalBreak(mainPanel.getLayers(), 0, 20));
-        uiComponentList.addComponent("Load HDR", loadHdr);
-        uiComponentList.addComponent("", environmentMapData);
+        mainPanel.addComponent("", new UIHorizontalBreak(mainPanel.getLayers(), 0, 20));
+        mainPanel.addComponent("Load HDR", loadHdr);
+        mainPanel.addComponent("", environmentMapData);
 
-        uiComponentList.addComponent("PRECOMPUTE CUBEMAPS", new UIHorizontalBreak(mainPanel.getLayers(), 0, 20));
-        uiComponentList.addComponent("Diffuse Irradiance Map Size", diffuseIrradianceMapSize);
-        uiComponentList.addComponent("Prefiltered Map Size", prefilteredEnvironmentMapSize);
-        uiComponentList.addComponent("Ready to generate?", readyToGenerateIblMaps);
-        uiComponentList.addComponent("Generate IBL maps", generateIblMaps);
-        uiComponentList.addComponent("", diffuseIrradianceMapData);
-        uiComponentList.addComponent("", prefilteredEnvironmentMapdata);
+        mainPanel.addComponent("PRECOMPUTE CUBEMAPS", new UIHorizontalBreak(mainPanel.getLayers(), 0, 20));
+        mainPanel.addComponent("Diffuse Irradiance Map Size", diffuseIrradianceMapSize);
+        mainPanel.addComponent("Prefiltered Map Size", prefilteredEnvironmentMapSize);
+        mainPanel.addComponent("Ready to generate?", readyToGenerateIblMaps);
+        mainPanel.addComponent("Generate IBL maps", generateIblMaps);
+        mainPanel.addComponent("", diffuseIrradianceMapData);
+        mainPanel.addComponent("", prefilteredEnvironmentMapdata);
 
-        uiComponentList.addComponent("DIFFUSE IRRADIANCE MAP", new UIHorizontalBreak(mainPanel.getLayers(), 0, 20));
-        uiComponentList.addComponent("Save", saveDiffuseIrradianceMapAs);
-        uiComponentList.addComponent("Save Path", diffuseIrradianceMapPath);
-        uiComponentList.addComponent("Export", exportDiffuseIrradianceMap);
+        mainPanel.addComponent("DIFFUSE IRRADIANCE MAP", new UIHorizontalBreak(mainPanel.getLayers(), 0, 20));
+        mainPanel.addComponent("Save", saveDiffuseIrradianceMapAs);
+        mainPanel.addComponent("Save Path", diffuseIrradianceMapPath);
+        mainPanel.addComponent("Export", exportDiffuseIrradianceMap);
 
-        uiComponentList.addComponent("PREFILTERED MAP", new UIHorizontalBreak(mainPanel.getLayers(), 0, 20));
-        uiComponentList.addComponent("Save", savePrefilteredMap);
-        uiComponentList.addComponent("Save Path", prefilteredMapPath);
-        uiComponentList.addComponent("Export", exportPrefilteredMap);
-        mainPanel.addUIComponent(uiComponentList);
+        mainPanel.addComponent("PREFILTERED MAP", new UIHorizontalBreak(mainPanel.getLayers(), 0, 20));
+        mainPanel.addComponent("Save", savePrefilteredMap);
+        mainPanel.addComponent("Save Path", prefilteredMapPath);
+        mainPanel.addComponent("Export", exportPrefilteredMap);
         dockspace.addPanel(mainPanel);
         dockspace.dockPanel(mainPanel, DockPosition.CENTER);
 
@@ -178,11 +174,11 @@ public class OfflineRendererApplication extends Application
         if (diffIrrSizeValid && prefSizeValid && environmentMap != null)
         {
             readyToGenerateIblMaps.setValue("Ready!");
-            generateIblMaps.setClickable(true);
+            generateIblMaps.setEnabled(true);
         } else
         {
             readyToGenerateIblMaps.setValue("Sizes must be powers of two (2 - 8192) and HDR has to be loaded!");
-            generateIblMaps.setClickable(false);
+            generateIblMaps.setEnabled(false);
         }
     }
 

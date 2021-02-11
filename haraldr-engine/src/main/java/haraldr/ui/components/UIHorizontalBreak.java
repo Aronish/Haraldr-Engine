@@ -1,4 +1,4 @@
-package haraldr.ui;
+package haraldr.ui.components;
 
 public class UIHorizontalBreak extends UIComponent // Quite useless as a whole class
 {

@@ -35,7 +35,6 @@ module haraldr
     ///// EXPORTS ////////
     exports haraldr.debug;
     exports haraldr.dockspace;
-    exports haraldr.ui;
     exports haraldr.ecs;
     exports haraldr.event;
     exports haraldr.graphics;
@@ -45,6 +44,8 @@ module haraldr
     exports haraldr.math;
     exports haraldr.physics;
     exports haraldr.scene;
+    exports haraldr.ui;
+    exports haraldr.ui.components;
 
     ///// RESOURCES //////
     opens default_shaders;

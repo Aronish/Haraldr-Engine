@@ -1,4 +1,4 @@
-package haraldr.ui;
+package haraldr.ui.components;
 
 import haraldr.graphics.Batch2D;
 import haraldr.math.Vector2f;
@@ -71,8 +71,8 @@ public class UIVector3 extends UIComponent
     protected void updatePosition(Vector2f position)
     {
         x.setPosition(position);
-        y.setPosition(Vector2f.add(position, new Vector2f(elementWidth, 0f)));
-        z.setPosition(Vector2f.add(position, new Vector2f(2f * elementWidth, 0f)));
+        y.setPosition(Vector2f.addX(position, elementWidth));
+        z.setPosition(Vector2f.addX(position, 2f * elementWidth));
     }
 
     @Override
@@ -85,7 +85,7 @@ public class UIVector3 extends UIComponent
     @Override
     public void setSize(Vector2f size)
     {
-        elementWidth = size.getX() / 3f - 20f / 3f;
+        elementWidth = size.getX() / 3f - 18f / 3f;
         x.setSize(new Vector2f(elementWidth, size.getY()));
         y.setSize(new Vector2f(elementWidth, size.getY()));
         z.setSize(new Vector2f(elementWidth, size.getY()));

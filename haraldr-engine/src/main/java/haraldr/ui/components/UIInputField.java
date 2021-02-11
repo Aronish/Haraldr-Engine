@@ -1,4 +1,4 @@
-package haraldr.ui;
+package haraldr.ui.components;
 
 import haraldr.event.CharTypedEvent;
 import haraldr.event.Event;
@@ -15,6 +15,7 @@ import haraldr.math.MathUtils;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
+import haraldr.ui.TextLabel;
 import org.jetbrains.annotations.Contract;
 
 import java.math.RoundingMode;

@@ -1,4 +1,4 @@
-package haraldr.ui;
+package haraldr.ui.components;
 
 import haraldr.event.Event;
 import haraldr.event.EventType;

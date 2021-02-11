@@ -1,4 +1,4 @@
-package haraldr.ui;
+package haraldr.ui.components;
 
 import haraldr.graphics.Batch2D;
 import haraldr.math.Vector2f;
@@ -137,7 +137,14 @@ public class UIVector3Linkable extends UIVector3
     public void updatePosition(Vector2f position)
     {
         super.updatePosition(position);
-        linked.setPosition(Vector2f.add(position, new Vector2f(3f * elementWidth, 0f)));
+        linked.setPosition(Vector2f.addX(position, 3f * elementWidth));
+    }
+
+    @Override
+    public void setSize(Vector2f size)
+    {
+        super.setSize(size);
+        linked.setSize(size);
     }
 
     @Override

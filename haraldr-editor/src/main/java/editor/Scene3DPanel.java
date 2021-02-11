@@ -21,8 +21,8 @@ public class Scene3DPanel extends DockablePanel
         setSize(size);
         hdrGammaCorrectionPass = new HDRGammaCorrectionPass(0.5f);
         sceneTexture = new RenderTexture(
-                Vector2f.add(position, new Vector2f(0f, headerSize.getY())),
-                Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
+                Vector2f.addY(position, headerSize.getY()),
+                Vector2f.addY(size, -headerSize.getY())
         );
         draw();
     }

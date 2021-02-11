@@ -1,7 +1,8 @@
-package haraldr.ui;
+package haraldr.ui.components;
 
-import haraldr.graphics.Batch2D;
 import haraldr.math.Vector2f;
+import haraldr.ui.TextBatch;
+import haraldr.ui.UIEventLayer;
 
 import java.util.List;
 
@@ -10,7 +11,6 @@ public abstract class UIComponent implements UIContainer, UIPositionable, UILaye
     protected Vector2f position = new Vector2f(), size = new Vector2f();
     protected boolean enabled = true;
     protected UIContainer parent;
-    protected Batch2D batch;
     protected TextBatch textBatch;
 
     protected UIComponent(UIContainer parent, int layerIndex)
@@ -18,7 +18,6 @@ public abstract class UIComponent implements UIContainer, UIPositionable, UILaye
         this.parent = parent;
         UIEventLayer layer = parent.getLayer(layerIndex);
         layer.addComponent(this);
-        batch = layer.getBatch();
         textBatch = layer.getTextBatch();
     }
 

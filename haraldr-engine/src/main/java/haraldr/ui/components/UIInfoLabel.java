@@ -1,7 +1,8 @@
-package haraldr.ui;
+package haraldr.ui.components;
 
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
+import haraldr.ui.TextLabel;
 
 public class UIInfoLabel extends UIComponent
 {

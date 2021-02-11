@@ -10,11 +10,9 @@ import haraldr.graphics.Renderer;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
-import haraldr.ui.ComponentUIVisitor;
-import haraldr.ui.UIComponentList;
 import haraldr.ui.UIEventLayer;
-import haraldr.ui.UILayerable;
-import haraldr.ui.UIVerticalListGroup;
+import haraldr.ui.components.UILayerable;
+import haraldr.ui.components.UIVerticalListGroup;
 
 public class PropertiesPanel extends DockablePanel
 {
@@ -24,8 +22,8 @@ public class PropertiesPanel extends DockablePanel
     public PropertiesPanel(Vector2f position, Vector2f size, Vector4f color, String name)
     {
         super(position, size, color, name);
-        mainContentGroup.setPosition(Vector2f.add(position, new Vector2f(0f, headerSize.getY())));
-        mainContentGroup.setSize(Vector2f.add(size, new Vector2f(0f, headerSize.getY())));
+        mainContentGroup.setPosition(Vector2f.addY(position, headerSize.getY()));
+        mainContentGroup.setSize(Vector2f.addY(size, headerSize.getY()));
         draw();
     }
 
@@ -37,11 +35,11 @@ public class PropertiesPanel extends DockablePanel
             if (registry.hasComponent(componentType, selected))
             {
                 Component component = registry.getComponent(componentType, selected);
-                UIComponentList uiComponentList = new UIComponentList(uiLayerStack, 0, componentType.getSimpleName().replace("Component", ""), position, size);
-                componentUIVisitor.setComponentPropertyList(uiComponentList);
+                ECSComponentGroup ecsComponentGroup = new ECSComponentGroup(uiLayerStack, 0, componentType.getSimpleName().replace("Component", ""), position, size);
+                componentUIVisitor.setComponentPropertyList(ecsComponentGroup);
                 component.acceptVisitor(componentUIVisitor);
 
-                mainContentGroup.addComponent(uiComponentList);
+                mainContentGroup.addComponent(ecsComponentGroup);
             }
         }
         mainLayer.getTextBatch().refreshTextMeshData();
@@ -58,14 +56,14 @@ public class PropertiesPanel extends DockablePanel
     @Override
     public void setPosition(Vector2f position)
     {
-        mainContentGroup.setPosition(Vector2f.add(position, new Vector2f(0f, headerSize.getY())));
+        mainContentGroup.setPosition(Vector2f.addY(position, headerSize.getY()));
         super.setPosition(position);
     }
 
     @Override
     public void setSize(Vector2f size)
     {
-        mainContentGroup.setSize(Vector2f.add(size, new Vector2f(0f, headerSize.getY())));
+        mainContentGroup.setSize(Vector2f.addY(size, headerSize.getY()));
         super.setSize(size);
     }
 

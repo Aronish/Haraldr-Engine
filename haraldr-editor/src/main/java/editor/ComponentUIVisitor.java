@@ -1,4 +1,4 @@
-package haraldr.ui;
+package editor;
 
 import haraldr.debug.Logger;
 import haraldr.ecs.BoundingSphereComponent;
@@ -9,28 +9,32 @@ import haraldr.ecs.TransformComponent;
 import haraldr.main.IOUtils;
 import haraldr.math.Quaternion;
 import haraldr.math.Vector3f;
+import haraldr.ui.FileDialogs;
+import haraldr.ui.components.UIButton;
+import haraldr.ui.components.UIDropDownMenu;
+import haraldr.ui.components.UIInfoLabel;
+import haraldr.ui.components.UIInputField;
+import haraldr.ui.components.UIVector3;
+import haraldr.ui.components.UIVector3Linkable;
 import jsonparser.JSONArray;
 import jsonparser.JSONObject;
-import org.lwjgl.PointerBuffer;
-import org.lwjgl.system.MemoryStack;
-import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
-public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONParser and TinyFileDialogs and move to editor.
+public class ComponentUIVisitor implements ComponentVisitor
 {
-    private UIComponentList uiComponentList;
+    private ECSComponentGroup ecsComponentGroup;
 
-    public void setComponentPropertyList(UIComponentList UIComponentList)
+    public void setComponentPropertyList(ECSComponentGroup ECSComponentGroup)
     {
-        this.uiComponentList = UIComponentList;
+        this.ecsComponentGroup = ECSComponentGroup;
     }
 
     @Override
     public void visit(BoundingSphereComponent boundingSphereComponent)
     {
-        uiComponentList.addComponent(
+        ecsComponentGroup.getComponentList().addComponent(
                 "Radius: ",
                 new UIInputField<>(
-                        uiComponentList,
+                        ecsComponentGroup,
                         0, new UIInputField.FloatValue(boundingSphereComponent.radius),
                         value -> boundingSphereComponent.radius = value.getValue()
                 )
@@ -44,20 +48,13 @@ public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONPa
         JSONObject updatedModelDefinition = modelComponent.model.getModelDefinition();
         JSONObject materialProperties = updatedModelDefinition.getJSONObject("material").getJSONObject("properties");
 
-        UIInfoLabel meshPathLabel = new UIInfoLabel(uiComponentList, 0, updatedModelDefinition.getString("mesh"));
-        uiComponentList.addComponent("Mesh: ", meshPathLabel);
-        uiComponentList.addComponent(
+        UIInfoLabel meshPathLabel = new UIInfoLabel(ecsComponentGroup, 0, updatedModelDefinition.getString("mesh"));
+        ecsComponentGroup.getComponentList().addComponent("Mesh: ", meshPathLabel);
+        ecsComponentGroup.getComponentList().addComponent(
                 "Load Mesh: ",
-                new UIButton(uiComponentList, 0, () ->
+                new UIButton(ecsComponentGroup, 0, () ->
                 {
-                    String meshPath;
-                    try (MemoryStack stack = MemoryStack.stackPush())
-                    {
-                        PointerBuffer filterPatterns = stack.mallocPointer(1);
-                        filterPatterns.put(IOUtils.stringToByteBuffer("*.obj"));
-                        meshPath = TinyFileDialogs.tinyfd_openFileDialog("Select mesh", "", filterPatterns, "", false);
-                        if (meshPath == null) meshPath = "";
-                    }
+                    String meshPath = FileDialogs.openFile("Select mesh", "obj");
 
                     if (!meshPath.isBlank() && meshPath.endsWith(".obj"))
                     {
@@ -69,17 +66,17 @@ public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONPa
         );
 
         // Material types
-        UIDropDownMenu uiDropDownMenu = new UIDropDownMenu(uiComponentList, 0);
+        UIDropDownMenu uiDropDownMenu = new UIDropDownMenu(ecsComponentGroup, 0);
         JSONArray materialTypes = new JSONObject(IOUtils.readResource("default_models/material_specification.json", IOUtils::resourceToString)).names();
         for (Object materialType : materialTypes.toList())
         {
             uiDropDownMenu.addMenuItem(((String)materialType).charAt(0) + ((String)materialType).substring(1).toLowerCase(), Logger::info);
             // TODO: Lambda for selecting and changing type here
         }
-        uiComponentList.addComponent("Material Type: ", uiDropDownMenu);
+        ecsComponentGroup.getComponentList().addComponent("Material Type: ", uiDropDownMenu);
         // TODO: Rework once serialization exists
 
-        //uiComponentList.addComponent(
+        //uiComponentList.getComponentList().addComponent(
         //        "Color: ",
         //        new UIVector3(
         //                uiComponentList.getParent().getTextBatch(),
@@ -92,7 +89,7 @@ public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONPa
         //        )
         //);
 
-        //uiComponentList.addComponent(
+        //uiComponentList.getComponentList().addComponent(
         //        "Metalness: ",
         //        new UISlider(materialProperties.getFloat("metalness"), (value ->
         //        {
@@ -101,7 +98,7 @@ public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONPa
         //        }))
         //);
 
-        //uiComponentList.addComponent(
+        //uiComponentList.getComponentList().addComponent(
         //        "Roughness: ",
         //        new UISlider(materialProperties.getFloat("roughness"), (value ->
         //        {
@@ -114,10 +111,10 @@ public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONPa
     @Override
     public void visit(TagComponent tagComponent)
     {
-        uiComponentList.addComponent(
+        ecsComponentGroup.getComponentList().addComponent(
                 "Tag: ",
                 new UIInputField<>(
-                        uiComponentList,
+                        ecsComponentGroup,
                         0, new UIInputField.StringValue(tagComponent.tag),
                         value -> tagComponent.tag = value.getValue()
                 )
@@ -127,10 +124,10 @@ public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONPa
     @Override
     public void visit(TransformComponent transformComponent)
     {
-        uiComponentList.addComponent(
+        ecsComponentGroup.getComponentList().addComponent(
                 "Position: ",
                 new UIVector3(
-                        uiComponentList,
+                        ecsComponentGroup,
                         0, transformComponent.position,
                         (x, y, z) ->
                         {
@@ -141,10 +138,10 @@ public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONPa
                 )
         );
         boolean linkedScale = transformComponent.scale.getX() == transformComponent.scale.getY() && transformComponent.scale.getX() == transformComponent.scale.getZ();
-        uiComponentList.addComponent(
+        ecsComponentGroup.getComponentList().addComponent(
                 "Scale: ",
                 new UIVector3Linkable(
-                        uiComponentList,
+                        ecsComponentGroup,
                         0, new Vector3f(0f), new Vector3f(Float.MAX_VALUE), transformComponent.scale, linkedScale,
                         (x, y, z) ->
                         {
@@ -154,10 +151,10 @@ public class ComponentUIVisitor implements ComponentVisitor // TODO: Wrap JSONPa
                         }
                 )
         );
-        uiComponentList.addComponent(
+        ecsComponentGroup.getComponentList().addComponent(
                 "Rotation: ",
                 new UIVector3(
-                        uiComponentList,
+                        ecsComponentGroup,
                         0, transformComponent.rotation, 0.3f,
                         (x, y, z) ->
                         {

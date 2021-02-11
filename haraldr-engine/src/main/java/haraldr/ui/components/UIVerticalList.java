@@ -1,4 +1,4 @@
-package haraldr.ui;
+package haraldr.ui.components;
 
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
@@ -15,7 +15,6 @@ public class UIVerticalList extends UIComponent implements Iterable<ListItem>
 {
     private List<ListItem> listItems = new ArrayList<>();
     private float listHeight;
-    private boolean visible = true;
     private Vector4f backgroundColor;
 
     public UIVerticalList(UIContainer parent, int layerIndex)
@@ -36,7 +35,7 @@ public class UIVerticalList extends UIComponent implements Iterable<ListItem>
 
     public void addItem(String name, float width, ListItem.ListItemCallback listItemCallback)
     {
-        ListItem listItem = new ListItem(name, Vector2f.add(position, new Vector2f(0f, listHeight)), textBatch, visible, listItemCallback);
+        ListItem listItem = new ListItem(name, Vector2f.addY(position, listHeight), textBatch, enabled, listItemCallback);
         listItem.setWidth(width);
         listHeight += listItem.getSize().getY();
         listItems.add(listItem);
@@ -48,23 +47,13 @@ public class UIVerticalList extends UIComponent implements Iterable<ListItem>
         listHeight = 0f;
     }
 
-    public void setVisible(boolean visible)
-    {
-        this.visible = visible;
-        for (ListItem listItem : listItems)
-        {
-            listItem.getTag().setEnabled(visible);
-        }
-        textBatch.refreshTextMeshData();
-    }
-
     @Override
     public void setPosition(Vector2f position)
     {
         super.setPosition(position);
         for (int i = 0; i < listItems.size(); ++i)
         {
-            listItems.get(i).setPosition(Vector2f.add(position, new Vector2f(0f, i * listItems.get(i).getSize().getY())));
+            listItems.get(i).setPosition(Vector2f.addY(position, i * listItems.get(i).getSize().getY()));
         }
     }
 
@@ -85,13 +74,14 @@ public class UIVerticalList extends UIComponent implements Iterable<ListItem>
         {
             listItem.getTag().setEnabled(enabled);
         }
+        textBatch.refreshTextMeshData();
     }
 
     @Override
     public UIEventResult onEvent(Event event, Window window)
     {
         boolean requiresRedraw = false, consumed = false;
-        if (visible)
+        if (enabled)
         {
             ListItem pressedItem = null;
             for (ListItem listItem : listItems)
@@ -112,7 +102,7 @@ public class UIVerticalList extends UIComponent implements Iterable<ListItem>
     @Override
     public void draw(Batch2D batch)
     {
-        if (visible)
+        if (enabled)
         {
             for (ListItem listItem : listItems)
             {
@@ -132,10 +122,5 @@ public class UIVerticalList extends UIComponent implements Iterable<ListItem>
     public Iterator<ListItem> iterator()
     {
         return listItems.iterator();
-    }
-
-    public boolean isVisible()
-    {
-        return visible;
     }
 }

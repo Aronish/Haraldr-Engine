@@ -28,13 +28,13 @@ public class DockGizmo
     private void refreshDockDimensions()
     {
         float halfGizmoSize = GIZMO_SIZE / 2f;
-        topPosition = Vector2f.add(parentPosition, new Vector2f(parentSize.getX() / 2f - halfGizmoSize, 0f));
+        topPosition = Vector2f.addX(parentPosition, parentSize.getX() / 2f - halfGizmoSize);
         topSize = new Vector2f(GIZMO_SIZE, halfGizmoSize);
 
         bottomPosition = Vector2f.add(parentPosition, new Vector2f(parentSize.getX() / 2f - halfGizmoSize, parentSize.getY() - halfGizmoSize));
         bottomSize = new Vector2f(GIZMO_SIZE, halfGizmoSize);
 
-        leftPosition = Vector2f.add(parentPosition, new Vector2f(0f, parentSize.getY() / 2f - halfGizmoSize));
+        leftPosition = Vector2f.addY(parentPosition, parentSize.getY() / 2f - halfGizmoSize);
         leftSize = new Vector2f(halfGizmoSize, GIZMO_SIZE);
 
         rightPosition = Vector2f.add(parentPosition, new Vector2f(parentSize.getX() - halfGizmoSize, parentSize.getY() / 2f - halfGizmoSize));

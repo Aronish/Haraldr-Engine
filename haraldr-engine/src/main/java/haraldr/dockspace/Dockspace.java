@@ -239,7 +239,7 @@ public class Dockspace
                 var mouseMovedEvent = (MouseMovedEvent) event;
                 Vector2f mousePoint = new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos);
 
-                if (Physics2D.pointInsideAABB(mousePoint, splitAreaPosition, splitAreaSize))
+                if (!children.isEmpty() && Physics2D.pointInsideAABB(mousePoint, splitAreaPosition, splitAreaSize))
                 {
                     window.setCursorType(vertical ? Window.CursorType.RESIZE_VERTICAL : Window.CursorType.RESIZE_HORIZONTAL);
                 }
@@ -379,11 +379,11 @@ public class Dockspace
             if (children.size() == 0) return;
             if (vertical)
             {
-                splitAreaPosition.set(Vector2f.add(children.get(DockPosition.BOTTOM).position, new Vector2f(0f, -SPLIT_AREA_SIZE / 2f)));
+                splitAreaPosition.set(Vector2f.addY(children.get(DockPosition.BOTTOM).position, -SPLIT_AREA_SIZE / 2f));
                 splitAreaSize.setX(size.getX());
             } else
             {
-                splitAreaPosition.set(Vector2f.add(children.get(DockPosition.RIGHT).position, new Vector2f(-SPLIT_AREA_SIZE / 2f, 0f)));
+                splitAreaPosition.set(Vector2f.addX(children.get(DockPosition.RIGHT).position, -SPLIT_AREA_SIZE / 2f));
                 splitAreaSize.setY(size.getY());
             }
 
@@ -468,8 +468,8 @@ public class Dockspace
                     DockingArea leftDockingArea = new DockingArea(position, leftSize, false, panel, DockPosition.LEFT, this);
                     children.putIfAbsent(DockPosition.LEFT, leftDockingArea);
                     children.putIfAbsent(DockPosition.RIGHT, new DockingArea(
-                            Vector2f.add(position, new Vector2f(leftSize.getX(), 0f)),
-                            Vector2f.add(size, new Vector2f(-leftSize.getX(), 0f)),
+                            Vector2f.addX(position, leftSize.getX()),
+                            Vector2f.addX(size, -leftSize.getX()),
                             DockPosition.RIGHT, this
                     ));
                     panel.setPosition(leftDockingArea.position);
@@ -485,8 +485,8 @@ public class Dockspace
                 case RIGHT -> {
                     Vector2f leftSize = Vector2f.divide(size, new Vector2f(2f, 1f));
                     DockingArea rightDockingArea = new DockingArea(
-                            Vector2f.add(position, new Vector2f(leftSize.getX(), 0f)),
-                            Vector2f.add(size, new Vector2f(-leftSize.getX(), 0f)),
+                            Vector2f.addX(position, leftSize.getX()),
+                            Vector2f.addX(size, -leftSize.getX()),
                             false, panel, DockPosition.RIGHT, this
                     );
                     children.putIfAbsent(DockPosition.LEFT, new DockingArea(position, leftSize, DockPosition.LEFT, this));
@@ -506,8 +506,8 @@ public class Dockspace
                     DockingArea topDockingArea = new DockingArea(position, topSize, false, panel, DockPosition.TOP, this);
                     children.putIfAbsent(DockPosition.TOP, topDockingArea);
                     children.putIfAbsent(DockPosition.BOTTOM, new DockingArea(
-                            Vector2f.add(position, new Vector2f(0f, topSize.getY())),
-                            Vector2f.add(size, new Vector2f(0f, -topSize.getY())),
+                            Vector2f.addY(position, topSize.getY()),
+                            Vector2f.addY(size, -topSize.getY()),
                             DockPosition.BOTTOM, this
                     ));
                     panel.setPosition(topDockingArea.position);
@@ -523,8 +523,8 @@ public class Dockspace
                 case BOTTOM -> {
                     Vector2f topSize = Vector2f.divide(size, new Vector2f(1f, 2f));
                     DockingArea bottomDockingArea = new DockingArea(
-                            Vector2f.add(position, new Vector2f(0f, topSize.getY())),
-                            Vector2f.add(size, new Vector2f(0f, -topSize.getY())),
+                            Vector2f.addY(position, topSize.getY()),
+                            Vector2f.addY(size, -topSize.getY()),
                             false, panel, DockPosition.BOTTOM, this
                     );
                     children.putIfAbsent(DockPosition.TOP, new DockingArea(position, topSize, DockPosition.TOP, this));

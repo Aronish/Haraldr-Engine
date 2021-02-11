@@ -9,8 +9,8 @@ import haraldr.graphics.Batch2D;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
-import haraldr.ui.ListItem;
-import haraldr.ui.UIVerticalList;
+import haraldr.ui.components.ListItem;
+import haraldr.ui.components.UIVerticalList;
 import org.jetbrains.annotations.Contract;
 
 public class EntityHierarchyPanel extends DockablePanel
@@ -63,7 +63,7 @@ public class EntityHierarchyPanel extends DockablePanel
     @Override
     public void setPosition(Vector2f position)
     {
-        entityList.setPosition(Vector2f.add(position, new Vector2f(0f, headerSize.getY())));
+        entityList.setPosition(Vector2f.addY(position, headerSize.getY()));
         super.setPosition(position);
     }
 

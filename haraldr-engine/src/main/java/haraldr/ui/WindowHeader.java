@@ -12,6 +12,9 @@ import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
+import haraldr.ui.components.ListItem;
+import haraldr.ui.components.UIContainer;
+import haraldr.ui.components.UIVerticalList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,17 +33,18 @@ public class WindowHeader implements UIContainer
 
     public WindowHeader(Vector2f position, float size, Vector4f color)
     {
-        uiEventLayers.add(new UIEventLayer());
+        UIEventLayer mainLayer = new UIEventLayer();
+        uiEventLayers.add(mainLayer);
 
         this.position = position;
-        this.size = new Vector2f(size, 20f);
+        this.size = new Vector2f(size, mainLayer.getTextBatch().getFont().getSize());
         this.color = color;
         currentButtonPosition = position.getX();
     }
 
     public void addMenuButton(String name, ListData... listDataEntries)
     {
-        MenuButton menuButton = new MenuButton(name, Vector2f.add(position, new Vector2f(currentButtonPosition, 0f)), listDataEntries);
+        MenuButton menuButton = new MenuButton(name, Vector2f.addX(position, currentButtonPosition), listDataEntries);
         menuButtons.add(menuButton);
         currentButtonPosition += menuButton.name.getPixelWidth() + MENU_BUTTON_PADDING;
         draw();
@@ -114,7 +118,7 @@ public class WindowHeader implements UIContainer
 
         private MenuButton(String name, Vector2f position, ListData... listDataEntries)
         {
-            this.name = WindowHeader.this.getLayers().get(0).getTextBatch().createTextLabel(name, Vector2f.add(position, new Vector2f(MENU_BUTTON_PADDING / 2f, 0f)), new Vector4f(1f));
+            this.name = WindowHeader.this.getLayers().get(0).getTextBatch().createTextLabel(name, Vector2f.addX(position, MENU_BUTTON_PADDING / 2f), new Vector4f(1f));
             this.position = new Vector2f(position);
             size = new Vector2f(this.name.getPixelWidth() + MENU_BUTTON_PADDING, WindowHeader.this.size.getY());
 
@@ -126,9 +130,9 @@ public class WindowHeader implements UIContainer
                 float labelWidth = this.name.getFont().getPixelWidth(listDataEntry.name);
                 if (labelWidth > widestEntry) widestEntry = labelWidth;
             }
-            actions.setPosition(Vector2f.add(position, new Vector2f(0f, size.getY())));
+            actions.setPosition(Vector2f.addX(position, size.getY()));
             actions.setSize(new Vector2f(widestEntry, 0f));
-            actions.setVisible(false);
+            actions.setEnabled(false);
         }
 
         private boolean onEvent(Event event, Window window)
@@ -140,7 +144,7 @@ public class WindowHeader implements UIContainer
                 boolean pressed = Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), position, size);
                 if (pressed)
                 {
-                    actions.setVisible(!actions.isVisible());
+                    actions.setEnabled(!actions.isEnabled());
                     requiresRedraw = true;
                 }
             }

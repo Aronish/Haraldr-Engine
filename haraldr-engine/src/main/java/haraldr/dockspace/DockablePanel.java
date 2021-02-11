@@ -12,7 +12,6 @@ import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
 import haraldr.ui.TextLabel;
-import haraldr.ui.UIComponentGroup;
 import haraldr.ui.UIEventLayer;
 import haraldr.ui.UILayerStack;
 
@@ -54,7 +53,7 @@ public abstract class DockablePanel
             Vector2f mousePoint = new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos);
             headerPressed = Physics2D.pointInsideAABB(mousePoint, position, headerSize);
             if (headerPressed) lastHeaderPressedPos = position;
-            contentPressed = Physics2D.pointInsideAABB(mousePoint, Vector2f.add(position, new Vector2f(0f, HEADER_SIZE)), Vector2f.add(size, new Vector2f(0f, -HEADER_SIZE)));
+            contentPressed = Physics2D.pointInsideAABB(mousePoint, Vector2f.addY(position, HEADER_SIZE), Vector2f.addY(size, -HEADER_SIZE));
         }
         if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
         {
@@ -106,8 +105,8 @@ public abstract class DockablePanel
         name.addPosition(difference);
         uiLayerStack.refresh();
         panelDimensionChangeAction.run(
-                Vector2f.add(this.position, new Vector2f(0f, headerSize.getY())),
-                Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
+                Vector2f.addY(this.position, headerSize.getY()),
+                Vector2f.addY(size, -headerSize.getY())
         );
         draw();
     }
@@ -118,8 +117,8 @@ public abstract class DockablePanel
         name.setPosition(position);
         uiLayerStack.refresh();
         panelDimensionChangeAction.run(
-                Vector2f.add(this.position, new Vector2f(0f, headerSize.getY())),
-                Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
+                Vector2f.addY(this.position, headerSize.getY()),
+                Vector2f.addY(size, -headerSize.getY())
         );
         draw();
     }
@@ -129,8 +128,8 @@ public abstract class DockablePanel
         this.size.set(size);
         headerSize.setX(size.getX());
         panelDimensionChangeAction.run(
-                Vector2f.add(position, new Vector2f(0f, headerSize.getY())),
-                Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
+                Vector2f.addY(position, headerSize.getY()),
+                Vector2f.addY(size, -headerSize.getY())
         );
         draw();
     }

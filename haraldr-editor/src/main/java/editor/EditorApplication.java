@@ -4,7 +4,6 @@ import haraldr.debug.Logger;
 import haraldr.dockspace.DockPosition;
 import haraldr.dockspace.Dockspace;
 import haraldr.ecs.BoundingSphereComponent;
-import haraldr.ecs.Component;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
 import haraldr.ecs.ModelComponent;
@@ -26,8 +25,6 @@ import haraldr.physics.Physics3D;
 import haraldr.scene.Camera;
 import haraldr.scene.OrbitalCamera;
 import haraldr.scene.Scene3D;
-import haraldr.ui.ComponentUIVisitor;
-import haraldr.ui.UIComponentList;
 import haraldr.ui.WindowHeader;
 
 public class EditorApplication extends Application

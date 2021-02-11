@@ -2,6 +2,8 @@ package haraldr.ui;
 
 import haraldr.event.Event;
 import haraldr.main.Window;
+import haraldr.ui.components.UIContainer;
+import haraldr.ui.components.UILayerable;
 
 import java.util.Iterator;
 import java.util.LinkedList;

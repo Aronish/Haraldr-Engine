@@ -44,9 +44,10 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Font
 {
-    public static final Font DEFAULT_FONT = new Font("default_fonts/Roboto-Regular.ttf", 20, 4);
+    public static final Font DEFAULT_FONT = new Font("default_fonts/Roboto-Regular.ttf", 18, 1);
 
     public static final int WIDTH = 512, HEIGHT = 512;
+    private static final float SIZE_COMPENSATION = 2f;
 
     private float scaleFactor;
     private int size, ascent, descent, lineGap, baseline;
@@ -94,7 +95,7 @@ public class Font
         STBTTPackContext packContext = STBTTPackContext.create();
         stbtt_PackBegin(packContext, atlasData, WIDTH, HEIGHT, 0, 1);
         stbtt_PackSetOversampling(packContext, oversampling, oversampling);
-        stbtt_PackFontRange(packContext, fontData, 0, (float) size, 32, packedchars);
+        stbtt_PackFontRange(packContext, fontData, 0, size * SIZE_COMPENSATION, 32, packedchars);
         stbtt_PackEnd(packContext);
 
         int fontAtlas = glCreateTextures(GL_TEXTURE_2D);
@@ -118,8 +119,8 @@ public class Font
             FloatBuffer y = stack.floats(0f);
             STBTTAlignedQuad quad = STBTTAlignedQuad.mallocStack(stack);
 
-            float factorX = 1f;
-            float factorY = 1f;
+            float factorX = 1f / SIZE_COMPENSATION;
+            float factorY = 1f / SIZE_COMPENSATION;
             float lineY = 0f;
 
             for (int i = 0, to = text.length(); i < to; )
@@ -146,9 +147,9 @@ public class Font
                 }
 
                 float x0 = scale(codePointX, quad.x0(), factorX),
-                        x1 = scale(codePointX, quad.x1(), factorX),
-                        y0 = scale(lineY, quad.y0(), factorY),
-                        y1 = scale(lineY, quad.y1(), factorY);
+                      x1 = scale(codePointX, quad.x1(), factorX),
+                      y0 = scale(lineY, quad.y0(), factorY),
+                      y1 = scale(lineY, quad.y1(), factorY);
 
                 vertices.add(x0 + position.getX());
                 vertices.add(y0 + position.getY());

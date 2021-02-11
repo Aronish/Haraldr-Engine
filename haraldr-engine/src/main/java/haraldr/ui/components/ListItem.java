@@ -1,4 +1,4 @@
-package haraldr.ui;
+package haraldr.ui.components;
 
 import haraldr.event.Event;
 import haraldr.event.EventType;
@@ -9,6 +9,8 @@ import haraldr.input.MouseButton;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
+import haraldr.ui.TextBatch;
+import haraldr.ui.TextLabel;
 
 public class ListItem
 {

@@ -3,12 +3,14 @@ package haraldr.ui;
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
 import haraldr.main.Window;
+import haraldr.ui.components.UIComponent;
+import haraldr.ui.components.UILayerable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Should handle event passthrough and handling and ui drawing/rendering. Better to do this here as it contains the UI with a flat list.
+ * Should handle event passthrough and handling and ui drawing/rendering. Better to do this here as it contains the UI as a flat list.
  * UIComponentGroup hierarchy will take care of positioning.
  */
 public class UIEventLayer

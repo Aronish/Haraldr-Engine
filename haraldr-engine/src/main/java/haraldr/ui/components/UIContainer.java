@@ -1,4 +1,6 @@
-package haraldr.ui;
+package haraldr.ui.components;
+
+import haraldr.ui.UIEventLayer;
 
 import java.util.List;
 

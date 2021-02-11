@@ -1,4 +1,4 @@
-package haraldr.ui;
+package haraldr.ui.components;
 
 import haraldr.event.Event;
 import haraldr.event.EventType;
@@ -22,7 +22,7 @@ public class UIDropDownMenu extends UIComponent
         super(parent, layerIndex);
         size = new Vector2f(20f);
         verticalList = new UIVerticalList(this, layerIndex + 1, new Vector4f(0.4f, 0.4f, 0.4f, 1f));
-        verticalList.setVisible(false);
+        verticalList.setEnabled(false);
         selected = new UIInfoLabel(this, layerIndex, "");
     }
 
@@ -40,7 +40,7 @@ public class UIDropDownMenu extends UIComponent
     public void setPosition(Vector2f position)
     {
         super.setPosition(position);
-        verticalList.setPosition(Vector2f.add(position, new Vector2f(0f, size.getY())));
+        verticalList.setPosition(Vector2f.addY(position, size.getY()));
         selected.setPosition(position);
     }
 
@@ -63,7 +63,7 @@ public class UIDropDownMenu extends UIComponent
         boolean requiresRedraw = menuCloseRequested;
         if (menuCloseRequested)
         {
-            verticalList.setVisible(false);
+            verticalList.setEnabled(false);
             menuCloseRequested = false;
         } else if (event.eventType == EventType.MOUSE_PRESSED && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
         {
@@ -72,7 +72,7 @@ public class UIDropDownMenu extends UIComponent
 
             if (Physics2D.pointInsideAABB(mousePoint, position, size))
             {
-                verticalList.setVisible(!verticalList.isVisible());
+                verticalList.setEnabled(!verticalList.isEnabled());
             }
             requiresRedraw = true;
         }
@@ -84,7 +84,6 @@ public class UIDropDownMenu extends UIComponent
     {
         super.setEnabled(enabled);
         selected.setEnabled(enabled);
-        verticalList.setEnabled(enabled);
+        if (!enabled) verticalList.setEnabled(false);
     }
-
 }

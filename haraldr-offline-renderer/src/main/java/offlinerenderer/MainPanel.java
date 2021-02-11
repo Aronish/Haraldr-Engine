@@ -6,53 +6,45 @@ import haraldr.graphics.Batch2D;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
-import haraldr.ui.UIComponent;
+import haraldr.ui.UILayerStack;
+import haraldr.ui.components.UIComponent;
+import haraldr.ui.components.UILabeledList;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainPanel extends DockablePanel
 {
-    private List<UIComponent> uiComponents = new ArrayList<>();
+    private UILabeledList uiComponentList = new UILabeledList(uiLayerStack, 0, Vector2f.addY(position, headerSize.getY()), new Vector2f());
 
     public MainPanel(Vector2f position, Vector2f size, Vector4f color, String name)
     {
         super(position, size, color, name);
     }
 
-    public void addUIComponent(UIComponent uiComponent)
+    public void addComponent(String label, UIComponent uiComponent)
     {
-        uiComponents.add(uiComponent);
+        uiComponentList.addComponent(label, uiComponent);
     }
 
     @Override
     public void setPosition(Vector2f position)
     {
-        for (UIComponent uiComponent : uiComponents)
-        {
-            uiComponent.setPosition(Vector2f.add(position, new Vector2f(0f, headerSize.getY())));
-        }
+        uiComponentList.setPosition(Vector2f.addY(position, headerSize.getY()));
         super.setPosition(position);
     }
 
     @Override
     public void setSize(Vector2f size)
     {
-        for (UIComponent uiComponent : uiComponents)
-        {
-            uiComponent.setWidth(size.getX());
-        }
+        uiComponentList.setSize(size);
         super.setSize(size);
     }
 
     @Override
     public boolean onEvent(Event event, Window window)
     {
-        boolean consumePress = super.onEvent(event, window), requireRedraw = false;
-        for (UIComponent uiComponent : uiComponents)
-        {
-            if (uiComponent.onEvent(event, window).requiresRedraw()) requireRedraw = true;
-        }
+        boolean consumePress = super.onEvent(event, window), requireRedraw = uiComponentList.onEvent(event, window).requiresRedraw();
         if (requireRedraw) draw();
         return consumePress;
     }
@@ -60,16 +52,13 @@ public class MainPanel extends DockablePanel
     @Override
     protected void draw()
     {
-        if (uiComponents == null) return;
+        if (uiComponentList == null) return;
         Batch2D mainBatch = mainLayer.getBatch();
         mainBatch.begin();
         mainBatch.drawQuad(position, size, color);
         mainBatch.drawQuad(position, headerSize, HEADER_COLOR);
 
-        for (UIComponent uiComponent : uiComponents)
-        {
-            uiComponent.draw(mainBatch);
-        }
+        uiComponentList.draw(mainBatch);
         mainBatch.end();
     }
 }

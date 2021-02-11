@@ -29,5 +29,5 @@ out vec4 o_Color;
 
 void main()
 {
-    o_Color = v_Color * vec4(texture(fontAtlas, v_TextureCoordinate).r);
+    o_Color = v_Color * vec4(texture(fontAtlas, v_TextureCoordinate)).r;
 }

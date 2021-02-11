@@ -1,4 +1,4 @@
-package haraldr.ui;
+package haraldr.ui.components;
 
 import haraldr.math.Vector2f;
 
@@ -9,5 +9,5 @@ public interface UIPositionable
     default float getVerticalSize()
     {
         return 0f;
-    } // TODO: Maybe useless with size
+    }
 }

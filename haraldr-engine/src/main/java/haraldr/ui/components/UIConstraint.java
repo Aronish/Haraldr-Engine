@@ -1,4 +1,4 @@
-package haraldr.ui;
+package haraldr.ui.components;
 
 public abstract class UIConstraint
 {

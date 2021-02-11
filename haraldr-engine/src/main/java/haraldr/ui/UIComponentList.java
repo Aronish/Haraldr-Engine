@@ -3,7 +3,6 @@ package haraldr.ui;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MousePressedEvent;
-import haraldr.event.ParentCollapsedEvent;
 import haraldr.graphics.Batch2D;
 import haraldr.input.Input;
 import haraldr.input.MouseButton;
@@ -112,15 +111,6 @@ public class UIComponentList extends UIComponent
             components.values().forEach(component -> component.draw(batch));
         }
         batch.drawQuad(position, headerSize, new Vector4f(0.15f, 0.15f, 0.15f, 1f));
-    }
-
-    @Override
-    public void onDispose()
-    {
-        for (UIComponent uiComponent : components.values())
-        {
-            uiComponent.onDispose();
-        }
     }
 
     @Override

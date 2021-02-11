@@ -1,6 +1,5 @@
 package haraldr.ui;
 
-import haraldr.graphics.Batch2D;
 import haraldr.math.Vector2f;
 
 import java.util.ArrayList;
@@ -8,15 +7,15 @@ import java.util.List;
 
 public class UIVerticalListGroup extends UIComponentGroup
 {
-    private List<UIComponent> uiComponentList = new ArrayList<>();
+    private List<UIPositionable> uiComponentList = new ArrayList<>();
     private float currentListHeight;
 
-    protected UIVerticalListGroup(UIContainer parent, int layerIndex)
+    public UIVerticalListGroup(UIContainer parent, int layerIndex)
     {
         super(parent, layerIndex);
     }
 
-    public void addComponent(UIComponent uiComponent)
+    public void addComponent(UIPositionable uiComponent)
     {
         uiComponentList.add(uiComponent);
         orderList();
@@ -25,11 +24,16 @@ public class UIVerticalListGroup extends UIComponentGroup
     private void orderList()
     {
         float currentListHeight = 0f;
-        for (UIComponent uiComponent : uiComponentList)
+        for (UIPositionable uiComponent : uiComponentList)
         {
             currentListHeight += uiComponent.getVerticalSize();
             uiComponent.setPosition(Vector2f.add(position, new Vector2f(0f, currentListHeight)));
         }
+    }
+
+    public void clear()
+    {
+        uiComponentList.clear();
     }
 
     @Override
@@ -37,14 +41,5 @@ public class UIVerticalListGroup extends UIComponentGroup
     {
         this.position.set(position);
         orderList();
-    }
-
-    @Override
-    public void draw(Batch2D batch)
-    {
-        for (UIComponent uiComponent : uiComponentList)
-        {
-            uiComponent.draw(batch);
-        }
     }
 }

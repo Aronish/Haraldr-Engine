@@ -2,7 +2,6 @@ package haraldr.ui;
 
 import haraldr.event.Event;
 import haraldr.main.Window;
-import haraldr.math.Vector2f;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -17,13 +16,13 @@ public class UILayerStack implements UIContainer
         uiEventLayers.add(layer);
     }
 
-    public UIComponentBehavior.UIEventResult onEvent(Event event, Window window)
+    public UILayerable.UIEventResult onEvent(Event event, Window window)
     {
         boolean requiresRedraw = false, consumed = false;
         for (Iterator<UIEventLayer> it = uiEventLayers.descendingIterator(); it.hasNext();)
         {
             UIEventLayer uiEventLayer = it.next();
-            UIComponentBehavior.UIEventResult eventResult = uiEventLayer.onEvent(event, window);
+            UILayerable.UIEventResult eventResult = uiEventLayer.onEvent(event, window);
             if (eventResult.requiresRedraw()) requiresRedraw = true;
             if (eventResult.consumed())
             {
@@ -31,9 +30,9 @@ public class UILayerStack implements UIContainer
                 break;
             }
         }
-        return new UIComponentBehavior.UIEventResult(requiresRedraw, consumed);
+        return new UILayerable.UIEventResult(requiresRedraw, consumed);
     }
-
+/*
     public void addPosition(Vector2f difference)
     {
         for (UIEventLayer uiEventLayer : uiEventLayers)
@@ -41,7 +40,7 @@ public class UILayerStack implements UIContainer
             uiEventLayer.addPosition(difference);
         }
     }
-
+*/
     public void refresh()
     {
         for (UIEventLayer uiEventLayer : uiEventLayers)

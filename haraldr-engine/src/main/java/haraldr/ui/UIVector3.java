@@ -110,14 +110,6 @@ public class UIVector3 extends UIComponent
     }
 
     @Override
-    public void onDispose()
-    {
-        x.onDispose();
-        y.onDispose();
-        z.onDispose();
-    }
-
-    @Override
     public float getVerticalSize()
     {
         return x.getVerticalSize();

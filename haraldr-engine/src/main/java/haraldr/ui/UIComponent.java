@@ -5,7 +5,7 @@ import haraldr.math.Vector2f;
 
 import java.util.List;
 
-public abstract class UIComponent implements UIComponentBehavior, UIEventObserver, UIContainer
+public abstract class UIComponent implements UIContainer, UIPositionable, UILayerable
 {
     protected Vector2f position = new Vector2f();
     protected boolean enabled = true;
@@ -22,14 +22,16 @@ public abstract class UIComponent implements UIComponentBehavior, UIEventObserve
         textBatch = layer.getTextBatch();
     }
 
-    public void addPosition(Vector2f difference)
-    {
-        position.add(difference);
-    }
-
+    @Override
     public void setPosition(Vector2f position)
     {
         this.position.set(position);
+    }
+
+    @Override
+    public void addPosition(Vector2f difference)
+    {
+        position.add(difference);
     }
 
     public void setEnabled(boolean enabled)

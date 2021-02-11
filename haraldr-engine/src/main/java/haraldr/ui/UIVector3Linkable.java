@@ -154,10 +154,4 @@ public class UIVector3Linkable extends UIVector3
         linked.draw(batch);
     }
 
-    @Override
-    public void onDispose()
-    {
-        super.onDispose();
-        linked.onDispose();
-    }
 }

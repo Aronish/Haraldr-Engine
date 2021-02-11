@@ -1,6 +1,5 @@
 package haraldr.dockspace;
 
-import haraldr.debug.Logger;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;
@@ -13,11 +12,12 @@ import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
 import haraldr.ui.TextLabel;
+import haraldr.ui.UIComponentGroup;
 import haraldr.ui.UIEventLayer;
 import haraldr.ui.UILayerStack;
 
 @SuppressWarnings("WeakerAccess")
-public class DockablePanel
+public abstract class DockablePanel
 {
     private static final float HEADER_SIZE = 20f;
     protected static final Vector4f HEADER_COLOR = new Vector4f(0.15f, 0.15f, 0.15f, 1f);
@@ -27,14 +27,14 @@ public class DockablePanel
     protected boolean headerPressed, contentPressed, hovered;
     protected TextLabel name;
 
-    protected UILayerStack uiLayers = new UILayerStack();
+    protected UILayerStack uiLayerStack = new UILayerStack();
     protected UIEventLayer mainLayer = new UIEventLayer();
 
     private PanelDimensionChangeAction panelDimensionChangeAction = (position, size) -> {};
 
     public DockablePanel(Vector2f position, Vector2f size, Vector4f color, String name)
     {
-        uiLayers.addLayer(mainLayer);
+        uiLayerStack.addLayer(mainLayer);
 
         this.position = new Vector2f(position);
         headerSize = new Vector2f(size.getX(), HEADER_SIZE);
@@ -92,7 +92,7 @@ public class DockablePanel
 
     public void render()
     {
-        uiLayers.render();
+        uiLayerStack.render();
     }
 
     public void setPanelResizeAction(PanelDimensionChangeAction panelDimensionChangeAction)
@@ -104,7 +104,7 @@ public class DockablePanel
     {
         this.position.add(difference);
         name.addPosition(difference);
-        uiLayers.refresh();
+        uiLayerStack.refresh();
         panelDimensionChangeAction.run(
                 Vector2f.add(this.position, new Vector2f(0f, headerSize.getY())),
                 Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
@@ -116,7 +116,7 @@ public class DockablePanel
     {
         this.position.set(position);
         name.setPosition(position);
-        uiLayers.refresh();
+        uiLayerStack.refresh();
         panelDimensionChangeAction.run(
                 Vector2f.add(this.position, new Vector2f(0f, headerSize.getY())),
                 Vector2f.add(size, new Vector2f(0f, -headerSize.getY()))
@@ -139,7 +139,7 @@ public class DockablePanel
 
     public UILayerStack getLayers()
     {
-        return uiLayers;
+        return uiLayerStack;
     }
 
     public Vector2f getPosition()

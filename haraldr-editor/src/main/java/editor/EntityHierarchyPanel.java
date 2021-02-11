@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Contract;
 
 public class EntityHierarchyPanel extends DockablePanel
 {
-    private UIVerticalList entityList = new UIVerticalList(uiLayers, 0);
+    private UIVerticalList entityList = new UIVerticalList(uiLayerStack, 0);
     private EntitySelectedAction entitySelectedAction;
 
     public EntityHierarchyPanel(Vector2f position, Vector2f size, Vector4f color, String name, EntitySelectedAction entitySelectedAction)
@@ -43,8 +43,8 @@ public class EntityHierarchyPanel extends DockablePanel
     public void refreshEntityList(EntityRegistry entityRegistry)
     {
         entityList.clear();
-        uiLayers.getLayer(0).getTextBatch().clear();
-        uiLayers.getLayer(0).getTextBatch().addTextLabel(name);
+        uiLayerStack.getLayer(0).getTextBatch().clear();
+        uiLayerStack.getLayer(0).getTextBatch().addTextLabel(name);
         entityRegistry.view(TagComponent.class).forEach(((transformComponent, tagComponent) -> addEntity(tagComponent.tag, entityRegistry.getEntityOf(tagComponent))));
     }
 
@@ -52,7 +52,7 @@ public class EntityHierarchyPanel extends DockablePanel
     protected void draw()
     {
         if (entityList == null) return; //TODO: Streamline
-        Batch2D mainBatch = uiLayers.getLayer(0).getBatch();
+        Batch2D mainBatch = uiLayerStack.getLayer(0).getBatch();
         mainBatch.begin();
         mainBatch.drawQuad(position, size, color);
         mainBatch.drawQuad(position, headerSize, HEADER_COLOR);

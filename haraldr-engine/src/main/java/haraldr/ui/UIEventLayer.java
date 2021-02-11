@@ -7,9 +7,13 @@ import haraldr.main.Window;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Should handle event passthrough and handling and ui drawing/rendering. Better to do this here as it contains the UI with a flat list.
+ * UIComponentGroup hierarchy will take care of positioning.
+ */
 public class UIEventLayer
 {
-    private List<UIEventObserver> components = new ArrayList<>();
+    private List<UILayerable> components = new ArrayList<>();
     private Batch2D batch = new Batch2D();
     private TextBatch textBatch = new TextBatch(Font.DEFAULT_FONT);
 
@@ -18,11 +22,11 @@ public class UIEventLayer
         components.add(component);
     }
 
-    public UIComponentBehavior.UIEventResult onEvent(Event event, Window window)
+    public UILayerable.UIEventResult onEvent(Event event, Window window)
     {
-        UIComponentBehavior.UIEventResult componentResult;
+        UILayerable.UIEventResult componentResult;
         boolean requiresRedraw = false, consumed = false;
-        for (UIEventObserver component : components)
+        for (UILayerable component : components)
         {
             if (!component.isEnabled()) continue;
             componentResult = component.onEvent(event, window);
@@ -36,10 +40,10 @@ public class UIEventLayer
                 break;
             }
         }
-        return new UIComponentBehavior.UIEventResult(requiresRedraw, consumed);
+        return new UILayerable.UIEventResult(requiresRedraw, consumed);
     }
 /*
-    public void addPosition(Vector2f difference) //TOdO: Move to UIComponentGroup
+    public void addPosition(Vector2f difference) //TODO: Move to UIComponentGroup things
     {
         for (UIEventObserver component : components)
         {
@@ -54,17 +58,17 @@ public class UIEventLayer
         textBatch.clear();
         textBatch.refreshTextMeshData();
     }
-/*
+
     public void draw()
     {
         batch.begin();
-        for (UIEventObserver component : components)
+        for (UILayerable component : components)
         {
-            if (component.enabled) component.draw(batch);
+            if (component.isEnabled()) component.draw(batch);
         }
         batch.end();
     }
-*/
+
     public void render()
     {
         batch.render();

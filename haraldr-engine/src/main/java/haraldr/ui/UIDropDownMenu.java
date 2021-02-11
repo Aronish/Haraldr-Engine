@@ -88,9 +88,4 @@ public class UIDropDownMenu extends UIComponent
         verticalList.setEnabled(enabled);
     }
 
-    @Override
-    public void onDispose()
-    {
-        verticalList.onDispose();
-    }
 }

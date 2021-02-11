@@ -7,7 +7,7 @@ import java.util.List;
 
 public abstract class UIComponent implements UIContainer, UIPositionable, UILayerable
 {
-    protected Vector2f position = new Vector2f();
+    protected Vector2f position = new Vector2f(), size = new Vector2f();
     protected boolean enabled = true;
     protected UIContainer parent;
     protected Batch2D batch;
@@ -22,6 +22,11 @@ public abstract class UIComponent implements UIContainer, UIPositionable, UILaye
         textBatch = layer.getTextBatch();
     }
 
+    public void setEnabled(boolean enabled)
+    {
+        this.enabled = enabled;
+    }
+
     @Override
     public void setPosition(Vector2f position)
     {
@@ -29,20 +34,21 @@ public abstract class UIComponent implements UIContainer, UIPositionable, UILaye
     }
 
     @Override
-    public void addPosition(Vector2f difference)
+    public void setSize(Vector2f size)
     {
-        position.add(difference);
-    }
-
-    public void setEnabled(boolean enabled)
-    {
-        this.enabled = enabled;
+        this.size.set(size);
     }
 
     @Override
     public boolean isEnabled()
     {
         return enabled;
+    }
+
+    @Override
+    public float getVerticalSize()
+    {
+        return size.getY();
     }
 
     @Override

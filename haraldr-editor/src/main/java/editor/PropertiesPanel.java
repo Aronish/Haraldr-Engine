@@ -18,16 +18,14 @@ import haraldr.ui.UIVerticalListGroup;
 
 public class PropertiesPanel extends DockablePanel
 {
-    private static final float SCROLL_SENSITIVITY = 10f;
-
     private UIEventLayer stencilLayer = new UIEventLayer();
     private UIVerticalListGroup mainContentGroup = new UIVerticalListGroup(uiLayerStack, 0);
 
     public PropertiesPanel(Vector2f position, Vector2f size, Vector4f color, String name)
     {
         super(position, size, color, name);
-        setPosition(position);
-        setSize(size);
+        mainContentGroup.setPosition(Vector2f.add(position, new Vector2f(0f, headerSize.getY())));
+        mainContentGroup.setSize(Vector2f.add(size, new Vector2f(0f, headerSize.getY())));
         draw();
     }
 
@@ -47,6 +45,7 @@ public class PropertiesPanel extends DockablePanel
             }
         }
         mainLayer.getTextBatch().refreshTextMeshData();
+        draw();
     }
 
     public void clear()
@@ -55,45 +54,28 @@ public class PropertiesPanel extends DockablePanel
         uiLayerStack.clear();
         mainLayer.getTextBatch().addTextLabel(name);
     }
-/*
-    private void orderComponentLists(Vector2f position)
+
+    @Override
+    public void setPosition(Vector2f position)
     {
-        float currentHeight = scrollOffset;
-        for (UIComponentList uiComponentList : uiComponentLists)
-        {
-            uiComponentList.setPosition(Vector2f.add(position, new Vector2f(0f, currentHeight + headerSize.getY())));
-            uiComponentList.setWidth(size.getX());
-            currentHeight += uiComponentList.getVerticalSize() + 5f;
-        }
-        listHeight = currentHeight - scrollOffset;
+        mainContentGroup.setPosition(Vector2f.add(position, new Vector2f(0f, headerSize.getY())));
+        super.setPosition(position);
     }
-*/
+
+    @Override
+    public void setSize(Vector2f size)
+    {
+        mainContentGroup.setSize(Vector2f.add(size, new Vector2f(0f, headerSize.getY())));
+        super.setSize(size);
+    }
+
     @Override
     public boolean onEvent(Event event, Window window)
     {
-        boolean requiresRedraw = false, consumeEvent = super.onEvent(event, window);
+        boolean requiresRedraw, consumeEvent = super.onEvent(event, window);
         // UILayer events
         UILayerable.UIEventResult uiEventResult = uiLayerStack.onEvent(event, window);
-        //if (requiresRedraw = uiEventResult.requiresRedraw()) orderComponentLists(position);
-/*
-        //Scroll panel
-        if (hovered && event.eventType == EventType.MOUSE_SCROLLED)
-        {
-            var mouseScrolledEvent = (MouseScrolledEvent) event;
-
-            boolean canScroll = false;
-            if (listHeight > size.getY()) canScroll = true;
-
-            if (canScroll)
-            {
-                scrollOffset += mouseScrolledEvent.yOffset * SCROLL_SENSITIVITY;
-                if (scrollOffset > 0f) scrollOffset = 0f;
-
-                orderComponentLists(position);
-                requiresRedraw = true;
-            }
-        }
-*/
+        if (requiresRedraw = uiEventResult.requiresRedraw()) mainContentGroup.update();
         if (requiresRedraw) draw();
         return consumeEvent;
     }

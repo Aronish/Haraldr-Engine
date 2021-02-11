@@ -69,11 +69,11 @@ public class UIVerticalList extends UIComponent implements Iterable<ListItem>
     }
 
     @Override
-    public void setWidth(float width)
+    public void setSize(Vector2f size)
     {
         for (ListItem listItem : listItems)
         {
-            listItem.setWidth(width);
+            listItem.setWidth(size.getX());
         }
     }
 

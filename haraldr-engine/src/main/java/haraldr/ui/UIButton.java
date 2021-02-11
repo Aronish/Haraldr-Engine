@@ -16,7 +16,6 @@ public class UIButton extends UIComponent
     private static final Vector4f DISABLED_COLOR = new Vector4f(0.4f, 0.4f, 0.4f, 1f);
 
     private boolean clickable = true;
-    private Vector2f buttonSize;
     private Vector4f currentColor = OFF_COLOR;
     private ButtonPressAction buttonPressAction;
 
@@ -28,7 +27,7 @@ public class UIButton extends UIComponent
     public UIButton(UIContainer parent, int layerIndex, ButtonPressAction buttonPressAction)
     {
         super(parent, layerIndex);
-        buttonSize = new Vector2f(20f);
+        setSize(new Vector2f(20f));
         this.buttonPressAction = buttonPressAction;
     }
 
@@ -44,12 +43,6 @@ public class UIButton extends UIComponent
     }
 
     @Override
-    public void setWidth(float width)
-    {
-        buttonSize.setX(width);
-    }
-
-    @Override
     public UIEventResult onEvent(Event event, Window window)
     {
         boolean requiresRedraw = false;
@@ -58,7 +51,7 @@ public class UIButton extends UIComponent
             if (event.eventType == EventType.MOUSE_PRESSED)
             {
                 var mousePressedEvent = (MousePressedEvent) event;
-                if (Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), position, buttonSize))
+                if (Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), position, size))
                 {
                     currentColor = ON_COLOR;
                     buttonPressAction.run();
@@ -77,13 +70,7 @@ public class UIButton extends UIComponent
     @Override
     public void draw(Batch2D batch)
     {
-        batch.drawQuad(position, buttonSize, currentColor);
-    }
-
-    @Override
-    public float getVerticalSize()
-    {
-        return buttonSize.getY();
+        batch.drawQuad(position, size, currentColor);
     }
 
     @FunctionalInterface

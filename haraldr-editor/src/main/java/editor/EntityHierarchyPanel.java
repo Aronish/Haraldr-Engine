@@ -70,7 +70,7 @@ public class EntityHierarchyPanel extends DockablePanel
     @Override
     public void setSize(Vector2f size)
     {
-        entityList.setWidth(size.getX());
+        entityList.setSize(size);
         super.setSize(size);
     }
 

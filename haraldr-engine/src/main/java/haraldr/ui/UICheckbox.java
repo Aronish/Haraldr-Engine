@@ -15,7 +15,6 @@ public class UICheckbox extends UIComponent
 {
     private static final Vector4f OFF_COLOR = new Vector4f(0.8f, 0.2f, 0.3f, 1f), ON_COLOR = new Vector4f(0.3f, 0.8f, 0.2f, 1f);
 
-    private Vector2f size;
     private boolean state;
 
     private CheckboxStateChangeAction checkboxStateChangeAction;
@@ -33,7 +32,7 @@ public class UICheckbox extends UIComponent
     public UICheckbox(UIContainer parent, int layerIndex, boolean initialState, CheckboxStateChangeAction checkboxStateChangeAction)
     {
         super(parent, layerIndex);
-        size = new Vector2f(20f);
+        setSize(new Vector2f(20f));
         state = initialState;
         this.checkboxStateChangeAction = checkboxStateChangeAction;
     }
@@ -41,12 +40,6 @@ public class UICheckbox extends UIComponent
     public void setCheckboxStateChangeAction(CheckboxStateChangeAction checkboxStateChangeAction)
     {
         this.checkboxStateChangeAction = checkboxStateChangeAction;
-    }
-
-    @Override
-    public void setWidth(float width)
-    {
-        size.setX(width);
     }
 
     @Override
@@ -73,12 +66,6 @@ public class UICheckbox extends UIComponent
     public void draw(Batch2D batch)
     {
         batch.drawQuad(position, size, state ? ON_COLOR : OFF_COLOR);
-    }
-
-    @Override
-    public float getVerticalSize()
-    {
-        return size.getY();
     }
 
     public boolean isChecked()

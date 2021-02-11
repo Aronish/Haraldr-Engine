@@ -14,7 +14,6 @@ import haraldr.physics.Physics2D;
 
 public class UISlider extends UIComponent
 {
-    private Vector2f sliderSize;
     private Vector2f handlePosition = new Vector2f(), handleSize;
 
     private float value, min, max;
@@ -49,7 +48,7 @@ public class UISlider extends UIComponent
     public UISlider(UIContainer parent, int layerIndex, float min, float max, float defaultValue, SliderChangeAction sliderChangeAction)
     {
         super(parent, layerIndex);
-        sliderSize = new Vector2f(20f);
+        setSize(new Vector2f(20f));
         handleSize = new Vector2f(20f);
         this.sliderChangeAction = sliderChangeAction;
         this.min = min;
@@ -60,7 +59,7 @@ public class UISlider extends UIComponent
     public void setValue(float value)
     {
         this.value = value;
-        handlePosition.setX(value * (sliderSize.getX() - handleSize.getX()) + position.getX());
+        handlePosition.setX(value * (size.getX() - handleSize.getX()) + position.getX());
         sliderChangeAction.run(value);
     }
 
@@ -72,7 +71,7 @@ public class UISlider extends UIComponent
     private void recalculateHandlePosition()
     {
         float normalizedValue = (value - min) / (max - min);
-        float handlePosition = normalizedValue * (sliderSize.getX() - handleSize.getX()) + position.getX();
+        float handlePosition = normalizedValue * (size.getX() - handleSize.getX()) + position.getX();
         this.handlePosition.set(handlePosition, position.getY());
     }
 
@@ -84,9 +83,9 @@ public class UISlider extends UIComponent
     }
 
     @Override
-    public void setWidth(float width)
+    public void setSize(Vector2f size)
     {
-        sliderSize.setX(width);
+        super.setSize(size);
         recalculateHandlePosition();
     }
 
@@ -113,9 +112,9 @@ public class UISlider extends UIComponent
             {
                 float position = (float) mouseMovedEvent.xPos - handleSize.getX() / 2f;
                 if (position < this.position.getX()) position = this.position.getX();
-                if (position > this.position.getX() + sliderSize.getX() - handleSize.getX()) position = this.position.getX() + sliderSize.getX() - handleSize.getX();
+                if (position > this.position.getX() + size.getX() - handleSize.getX()) position = this.position.getX() + size.getX() - handleSize.getX();
                 handlePosition.setX(position);
-                float normalizedValue = (position - this.position.getX()) / (sliderSize.getX() - handleSize.getX());
+                float normalizedValue = (position - this.position.getX()) / (size.getX() - handleSize.getX());
                 value = min + (max - min) * normalizedValue;
                 sliderChangeAction.run(value);
                 requiresRedraw = true;
@@ -127,14 +126,8 @@ public class UISlider extends UIComponent
     @Override
     public void draw(Batch2D batch)
     {
-        batch.drawQuad(position, sliderSize, new Vector4f(0.5f, 0.5f, 0.5f, 1f));
+        batch.drawQuad(position, size, new Vector4f(0.5f, 0.5f, 0.5f, 1f));
         batch.drawQuad(handlePosition, handleSize, new Vector4f(1f));
-    }
-
-    @Override
-    public float getVerticalSize()
-    {
-        return sliderSize.getY();
     }
 
     public float getValue()

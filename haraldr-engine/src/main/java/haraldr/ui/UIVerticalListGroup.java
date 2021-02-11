@@ -1,5 +1,6 @@
 package haraldr.ui;
 
+import haraldr.debug.Logger;
 import haraldr.math.Vector2f;
 
 import java.util.ArrayList;
@@ -8,7 +9,6 @@ import java.util.List;
 public class UIVerticalListGroup extends UIComponentGroup
 {
     private List<UIPositionable> uiComponentList = new ArrayList<>();
-    private float currentListHeight;
 
     public UIVerticalListGroup(UIContainer parent, int layerIndex)
     {
@@ -26,8 +26,9 @@ public class UIVerticalListGroup extends UIComponentGroup
         float currentListHeight = 0f;
         for (UIPositionable uiComponent : uiComponentList)
         {
-            currentListHeight += uiComponent.getVerticalSize();
             uiComponent.setPosition(Vector2f.add(position, new Vector2f(0f, currentListHeight)));
+            uiComponent.setSize(size);
+            currentListHeight += uiComponent.getVerticalSize();
         }
     }
 
@@ -37,9 +38,26 @@ public class UIVerticalListGroup extends UIComponentGroup
     }
 
     @Override
+    public void update()
+    {
+        orderList();
+    }
+
+    @Override
     public void setPosition(Vector2f position)
     {
-        this.position.set(position);
+        super.setPosition(position);
+        orderList();
+    }
+
+    @Override
+    public void setSize(Vector2f size)
+    {
+        super.setSize(size);
+        for (UIPositionable uiComponent : uiComponentList)
+        {
+            uiComponent.setSize(size);
+        }
         orderList();
     }
 }

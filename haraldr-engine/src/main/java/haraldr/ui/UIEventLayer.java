@@ -42,15 +42,7 @@ public class UIEventLayer
         }
         return new UILayerable.UIEventResult(requiresRedraw, consumed);
     }
-/*
-    public void addPosition(Vector2f difference) //TODO: Move to UIComponentGroup things
-    {
-        for (UIEventObserver component : components)
-        {
-            component.addPosition(difference);
-        }
-    }
-*/
+
     public void clear()
     {
         components.clear();

@@ -22,13 +22,12 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.List;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unused", "WeakerAccess"})
 public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComponent
 {
     private static final Vector4f SELECTED_COLOR = new Vector4f(1f), UNSELECTED_COLOR = new Vector4f(0f, 0f, 0f, 1f);
     private static final float BORDER_WIDTH = 2f;
 
-    private Vector2f borderSize;
     private Vector2f fieldPosition = new Vector2f(), fieldSize;
     private boolean selected, held;
     private float lastMouseX, lastMouseY;
@@ -46,10 +45,11 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
     {
         super(parent, layerIndex);
         fieldSize = new Vector2f(0f, textBatch.getFont().getSize() - 2f * BORDER_WIDTH);
-        borderSize = new Vector2f(0f, textBatch.getFont().getSize());
         value = defaultValue;
         textLabel = textBatch.createTextLabel(value.toString(), fieldPosition, new Vector4f(0f, 0f, 0f, 1f));
         this.inputFieldChangeAction = inputFieldChangeAction;
+
+        setSize(new Vector2f(0f, textBatch.getFont().getSize()));
     }
 
     @Override
@@ -61,10 +61,10 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
     }
 
     @Override
-    public void setWidth(float width)
+    public void setSize(Vector2f size)
     {
-        fieldSize.setX(width - 2f * BORDER_WIDTH);
-        borderSize.setX(width);
+        super.setSize(size);
+        fieldSize.setX(size.getX() - 2f * BORDER_WIDTH);
     }
 
     @Override
@@ -155,14 +155,8 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
     @Override
     public void draw(Batch2D batch)
     {
-        batch.drawQuad(position, borderSize, selected ? SELECTED_COLOR : UNSELECTED_COLOR);
+        batch.drawQuad(position, size, selected ? SELECTED_COLOR : UNSELECTED_COLOR);
         batch.drawQuad(fieldPosition, fieldSize, new Vector4f(0.8f, 0.8f, 0.8f, 1f));
-    }
-
-    @Override
-    public float getVerticalSize()
-    {
-        return borderSize.getY();
     }
 
     public T getValue()

@@ -19,7 +19,7 @@ public class UIComponentList extends UIComponent
     private static final float PADDING = 0f, MARGIN = 0f;
     private final float LINE_HEIGHT;
 
-    private Vector2f size, headerSize;
+    private float headerHeight;
 
     private TextLabel name;
     private Map<TextLabel, UIComponent> components = new LinkedHashMap<>();
@@ -29,11 +29,12 @@ public class UIComponentList extends UIComponent
     public UIComponentList(UIContainer parent, int layerIndex, String name, Vector2f position, Vector2f size)
     {
         super(parent, layerIndex);
-        this.position = Vector2f.add(position, new Vector2f(MARGIN));
-        this.size = Vector2f.add(size, new Vector2f(-2f * MARGIN, 0f));
         LINE_HEIGHT = textBatch.getFont().getSize();
-        headerSize = new Vector2f(size.getX(), LINE_HEIGHT);
+        headerHeight = LINE_HEIGHT;
         this.name = textBatch.createTextLabel(name, position, new Vector4f(1f));
+
+        setPosition(Vector2f.add(position, new Vector2f(MARGIN)));
+        setSize(Vector2f.add(size, new Vector2f(-2f * MARGIN, 0f)));
     }
 
     public void addComponent(String name, UIComponent component)
@@ -49,13 +50,12 @@ public class UIComponentList extends UIComponent
     }
 
     @Override
-    public void setWidth(float width)
+    public void setSize(Vector2f size)
     {
-        size.set(width - 2f * MARGIN, headerSize.getY() + nextListY + PADDING);
-        headerSize.set(width, LINE_HEIGHT);
+        super.setSize(new Vector2f(size.getX() - 2f * MARGIN, headerHeight + nextListY + PADDING));
         for (UIComponent component : components.values())
         {
-            component.setWidth(width - divider - MARGIN * PADDING);
+            component.setSize(new Vector2f(size.getX() - divider - MARGIN * PADDING, 20f));
         }
         textBatch.refreshTextMeshData();
     }
@@ -64,7 +64,7 @@ public class UIComponentList extends UIComponent
     public void setPosition(Vector2f position)
     {
         this.position.set(Vector2f.add(position, MARGIN));
-        float nextY = headerSize.getY() + PADDING + MARGIN;
+        float nextY = headerHeight + PADDING + MARGIN;
 
         name.setPosition(this.position);
         for (Map.Entry<TextLabel, UIComponent> entry : components.entrySet())
@@ -79,14 +79,15 @@ public class UIComponentList extends UIComponent
     @Override
     public UIEventResult onEvent(Event event, Window window)
     {
-        boolean requiresRedraw = false;
+        boolean requiresRedraw = false, consumed = false;
         if (event.eventType == EventType.MOUSE_PRESSED && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
         {
             var mousePressedEvent = (MousePressedEvent) event;
             Vector2f mousePoint = new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos);
-            if (Physics2D.pointInsideAABB(mousePoint, position, headerSize))
+            if (Physics2D.pointInsideAABB(mousePoint, position, new Vector2f(size.getX(), headerHeight)))
             {
                 requiresRedraw = true;
+                consumed = true;
                 collapsed = !collapsed;
                 for (TextLabel textLabel : components.keySet())
                 {
@@ -99,7 +100,7 @@ public class UIComponentList extends UIComponent
                 textBatch.refreshTextMeshData();
             }
         }
-        return new UIEventResult(requiresRedraw, false);
+        return new UIEventResult(requiresRedraw, consumed);
     }
 
     @Override
@@ -110,12 +111,12 @@ public class UIComponentList extends UIComponent
             batch.drawQuad(position, size, new Vector4f(0.3f, 0.3f, 0.3f, 1f));
             components.values().forEach(component -> component.draw(batch));
         }
-        batch.drawQuad(position, headerSize, new Vector4f(0.15f, 0.15f, 0.15f, 1f));
+        batch.drawQuad(position, new Vector2f(size.getX(), headerHeight), new Vector4f(0.15f, 0.15f, 0.15f, 1f));
     }
 
     @Override
     public float getVerticalSize()
     {
-        return collapsed ? headerSize.getY() : size.getY();
+        return collapsed ? headerHeight : size.getY();
     }
 }

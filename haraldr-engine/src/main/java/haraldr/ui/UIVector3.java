@@ -83,12 +83,12 @@ public class UIVector3 extends UIComponent
     }
 
     @Override
-    public void setWidth(float width)
+    public void setSize(Vector2f size)
     {
-        elementWidth = width / 3f - 20f / 3f;
-        x.setWidth(elementWidth);
-        y.setWidth(elementWidth);
-        z.setWidth(elementWidth);
+        elementWidth = size.getX() / 3f - 20f / 3f;
+        x.setSize(new Vector2f(elementWidth, size.getY()));
+        y.setSize(new Vector2f(elementWidth, size.getY()));
+        z.setSize(new Vector2f(elementWidth, size.getY()));
         updatePosition(position);
     }
 

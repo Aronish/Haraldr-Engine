@@ -127,7 +127,7 @@ public class WindowHeader implements UIContainer
                 if (labelWidth > widestEntry) widestEntry = labelWidth;
             }
             actions.setPosition(Vector2f.add(position, new Vector2f(0f, size.getY())));
-            actions.setWidth(widestEntry);
+            actions.setSize(new Vector2f(widestEntry, 0f));
             actions.setVisible(false);
         }
 

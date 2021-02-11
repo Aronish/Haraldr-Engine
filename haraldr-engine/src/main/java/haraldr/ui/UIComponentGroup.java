@@ -6,4 +6,6 @@ public abstract class UIComponentGroup extends UIComponent
     {
         super(parent, layerIndex);
     }
+
+    public abstract void update();
 }

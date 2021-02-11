@@ -13,7 +13,6 @@ import haraldr.physics.Physics2D;
 //TODO: Open menu upwards if no space
 public class UIDropDownMenu extends UIComponent
 {
-    private Vector2f size;
     private boolean menuCloseRequested;
     private UIInfoLabel selected;
     private UIVerticalList verticalList;
@@ -46,10 +45,10 @@ public class UIDropDownMenu extends UIComponent
     }
 
     @Override
-    public void setWidth(float width)
+    public void setSize(Vector2f size)
     {
-        size.setX(width);
-        verticalList.setWidth(width);
+        super.setSize(size);
+        verticalList.setSize(size);
     }
 
     @Override

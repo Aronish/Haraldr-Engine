@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="eo-yaml">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/eo-yaml.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../libraries/sources/eo-yaml-5.1.8/src/main/java" />
+    </SOURCES>
+  </library>
+</component>

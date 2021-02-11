@@ -160,4 +160,9 @@ public class EntityRegistry
     {
         return registeredComponents.keySet();
     }
+
+    public List<Integer> getActiveEntities()
+    {
+        return activeEntities;
+    }
 }

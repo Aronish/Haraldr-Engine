@@ -11,7 +11,7 @@ import haraldr.math.Quaternion;
 import haraldr.math.Vector3f;
 import haraldr.ui.FileDialogs;
 import haraldr.ui.components.UIButton;
-import haraldr.ui.components.UIDropDownMenu;
+import haraldr.ui.components.UIDropDownSelector;
 import haraldr.ui.components.UIInfoLabel;
 import haraldr.ui.components.UIInputField;
 import haraldr.ui.components.UIVector3;
@@ -66,14 +66,14 @@ public class ComponentUIVisitor implements ComponentVisitor
         );
 
         // Material types
-        UIDropDownMenu uiDropDownMenu = new UIDropDownMenu(ecsComponentGroup, 0);
+        UIDropDownSelector uiDropDownSelector = new UIDropDownSelector(ecsComponentGroup, 0);
         JSONArray materialTypes = new JSONObject(IOUtils.readResource("default_models/material_specification.json", IOUtils::resourceToString)).names();
         for (Object materialType : materialTypes.toList())
         {
-            uiDropDownMenu.addMenuItem(((String)materialType).charAt(0) + ((String)materialType).substring(1).toLowerCase(), Logger::info);
+            uiDropDownSelector.addMenuItem(((String)materialType).charAt(0) + ((String)materialType).substring(1).toLowerCase(), Logger::info);
             // TODO: Lambda for selecting and changing type here
         }
-        ecsComponentGroup.getComponentList().addComponent("Material Type: ", uiDropDownMenu);
+        ecsComponentGroup.getComponentList().addComponent("Material Type: ", uiDropDownSelector);
         // TODO: Rework once serialization exists
 
         //uiComponentList.getComponentList().addComponent(

@@ -1,9 +1,15 @@
 package editor;
 
+import com.amihaiemil.eoyaml.Yaml;
+import com.amihaiemil.eoyaml.YamlMapping;
+import com.amihaiemil.eoyaml.YamlMappingBuilder;
+import com.amihaiemil.eoyaml.YamlSequence;
+import com.amihaiemil.eoyaml.YamlSequenceBuilder;
 import haraldr.debug.Logger;
 import haraldr.dockspace.DockPosition;
 import haraldr.dockspace.Dockspace;
 import haraldr.ecs.BoundingSphereComponent;
+import haraldr.ecs.Component;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
 import haraldr.ecs.ModelComponent;
@@ -26,6 +32,7 @@ import haraldr.scene.Camera;
 import haraldr.scene.OrbitalCamera;
 import haraldr.scene.Scene3D;
 import haraldr.ui.WindowHeader;
+import haraldr.ui.components.ListData;
 
 public class EditorApplication extends Application
 {
@@ -91,6 +98,10 @@ public class EditorApplication extends Application
         return selected;
     }
 
+    private void saveScene()
+    {
+    }
+
     @Override
     protected void clientInit(Window window)
     {
@@ -98,9 +109,9 @@ public class EditorApplication extends Application
         windowHeader = new WindowHeader(new Vector2f(), window.getWidth(), new Vector4f(0.4f, 0.4f, 0.4f, 1f));
         windowHeader.addMenuButton(
                 "File",
-                new WindowHeader.ListData("Open", Logger::info),
-                new WindowHeader.ListData("Save", Logger::info),
-                new WindowHeader.ListData("Exit", this::stop)
+                new ListData("Open", Logger::info),
+                new ListData("Save", this::saveScene),
+                new ListData("Exit", this::stop)
         );
 
         // Dockspace

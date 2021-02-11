@@ -20,5 +20,6 @@
     </orderEntry>
     <orderEntry type="library" name="JsonParser" level="project" />
     <orderEntry type="library" name="annotations-19.0.0" level="project" />
+    <orderEntry type="library" name="eo-yaml" level="project" />
   </component>
 </module>

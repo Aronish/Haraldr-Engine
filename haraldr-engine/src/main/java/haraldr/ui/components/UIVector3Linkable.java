@@ -17,7 +17,7 @@ public class UIVector3Linkable extends UIVector3
     {
         super(parent, layerIndex);
         linked = new UICheckbox(parent, layerIndex, initiallyLinked);
-        linked.setSize(new Vector2f(20f));
+        linked.setSize(new Vector2f(18f));
         x = new UIInputField<>(parent, layerIndex, new UIInputField.FloatValue(defaultValues.getX(), dragSensitivity), inputFieldValue ->
         {
             float value = inputFieldValue.getValue();
@@ -76,7 +76,7 @@ public class UIVector3Linkable extends UIVector3
     {
         super(parent, layerIndex);
         linked = new UICheckbox(parent, layerIndex, initiallyLinked);
-        linked.setSize(new Vector2f(20f));
+        linked.setSize(new Vector2f(18f));
         x = new UIInputField<>(parent, layerIndex, new UIInputField.FloatValue(defaultValues.getX(), dragSensitivity), inputFieldValue ->
         {
             float value = inputFieldValue.getValue();
@@ -144,7 +144,7 @@ public class UIVector3Linkable extends UIVector3
     public void setSize(Vector2f size)
     {
         super.setSize(size);
-        linked.setSize(size);
+        linked.setSize(new Vector2f(18f));
     }
 
     @Override
@@ -160,5 +160,4 @@ public class UIVector3Linkable extends UIVector3
         super.draw(batch);
         linked.draw(batch);
     }
-
 }

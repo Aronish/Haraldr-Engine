@@ -60,6 +60,7 @@ public class WindowHeader implements UIContainer
         {
             eventResult = menuButton.onEvent(event, window);
             requiresRedraw |= eventResult.requiresRedraw();
+            if (eventResult.consumed()) break;
         }
         if (event.eventType == EventType.WINDOW_RESIZED)
         {

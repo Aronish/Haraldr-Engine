@@ -31,8 +31,17 @@ import haraldr.physics.Physics3D;
 import haraldr.scene.Camera;
 import haraldr.scene.OrbitalCamera;
 import haraldr.scene.Scene3D;
+import haraldr.ui.FileDialogs;
 import haraldr.ui.WindowHeader;
 import haraldr.ui.components.ListData;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EditorApplication extends Application
 {
@@ -100,6 +109,42 @@ public class EditorApplication extends Application
 
     private void saveScene()
     {
+        Logger.info("SHIT");
+        YamlMappingBuilder scene = Yaml.createYamlMappingBuilder();
+        YamlMappingBuilder entities = Yaml.createYamlMappingBuilder();
+        for (Integer entityId : this.scene.getRegistry().getActiveEntities())
+        {
+            YamlMappingBuilder components = Yaml.createYamlMappingBuilder();
+            for (Class<? extends Component> componentType : this.scene.getRegistry().getRegisteredComponentTypes())
+            {
+                Entity entity = new Entity(entityId);
+                if (this.scene.getRegistry().hasComponent(componentType, entity))
+                {
+                    // Get component data
+                    ComponentSerializer componentSerializer = new ComponentSerializer(Yaml.createYamlMappingBuilder());
+                    Component component = this.scene.getRegistry().getComponent(componentType, entity);
+                    component.acceptVisitor(componentSerializer);
+
+                    components = components.add(componentType.getSimpleName(), componentSerializer.getComponentDataStore().build());
+                }
+            }
+            entities = entities.add(Integer.toString(entityId), components.build());
+        }
+        scene = scene.add("entities", entities.build());
+
+        String savePath = FileDialogs.saveFile("Save scene", ".yml");
+        if (!savePath.isEmpty())
+        {
+            List<String> lines = new ArrayList<>();
+            lines.add(scene.build().toString());
+            try
+            {
+                Files.write(Paths.get(savePath), lines, StandardCharsets.UTF_8);
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -110,7 +155,7 @@ public class EditorApplication extends Application
         windowHeader.addMenuButton(
                 "File",
                 new ListData("Open", Logger::info),
-                new ListData("Save", this::saveScene),
+                new ListData("Save", this::saveScene), // Broken
                 new ListData("Exit", this::stop)
         );
 

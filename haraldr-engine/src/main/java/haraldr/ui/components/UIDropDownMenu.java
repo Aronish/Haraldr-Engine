@@ -62,8 +62,9 @@ public class UIDropDownMenu extends UIComponent
             hovered = Physics2D.pointInsideAABB(new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos), position, size);
             requiresRedraw = previousHoveredState != hovered;
         }
-        requiresRedraw |= actions.onEvent(event, window).requiresRedraw();
-        return new UIEventResult(requiresRedraw, false);
+        UIEventResult eventResult = actions.onEvent(event, window);
+        requiresRedraw |= eventResult.requiresRedraw();
+        return new UIEventResult(requiresRedraw, eventResult.consumed());
     }
 
     @Override

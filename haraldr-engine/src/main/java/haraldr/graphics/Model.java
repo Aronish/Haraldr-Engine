@@ -99,6 +99,11 @@ public class Model
         }
     }
 
+    public String getPath()
+    {
+        return path;
+    }
+
     public JSONObject getModelDefinition()
     {
         return modelDefinition;

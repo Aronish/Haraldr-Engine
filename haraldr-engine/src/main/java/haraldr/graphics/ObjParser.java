@@ -2,7 +2,6 @@ package haraldr.graphics;
 
 import haraldr.debug.Logger;
 import haraldr.main.ArrayUtils;
-import haraldr.main.EntryPoint;
 import haraldr.main.IOUtils;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector3f;
@@ -18,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class ObjParser
 {
@@ -144,15 +144,29 @@ public class ObjParser
         ));
     }
 
-    private static class IndexSet
+    private static record IndexSet(int position, int textureCoordinate, int normal)
     {
-        private final int position, textureCoordinate, normal;
-
         private IndexSet(int position, int textureCoordinate, int normal)
         {
             this.position = position - 1;
             this.textureCoordinate = textureCoordinate - 1;
             this.normal = normal - 1;
+        }
+
+        @Contract(value = "null -> false", pure = true)
+        @Override
+        public boolean equals(Object o)
+        {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            IndexSet indexSet = (IndexSet) o;
+            return position == indexSet.position && textureCoordinate == indexSet.textureCoordinate && normal == indexSet.normal;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(position, textureCoordinate, normal);
         }
     }
 }

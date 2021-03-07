@@ -92,6 +92,7 @@ public class UIVerticalList extends UIComponent implements Iterable<ListItem>
                 {
                     pressedItem = listItem;
                     consumed = true;
+                    break;
                 }
             }
             if (pressedItem != null) pressedItem.getListItemCallback().onPress();

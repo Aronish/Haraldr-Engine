@@ -69,7 +69,6 @@ public class UIDropDownMenu extends UIComponent
     public void draw(Batch2D batch)
     {
         batch.drawQuad(position, size, hovered ? new Vector4f(0.6f, 0.6f, 0.6f, 1f) : new Vector4f(0.4f, 0.4f, 0.4f, 1f));
-        actions.draw(batch);
     }
 
     public TextLabel getName()

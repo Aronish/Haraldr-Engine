@@ -16,7 +16,7 @@ public class ListItem
 {
     private TextLabel tag;
     private Vector2f position, size;
-    private boolean hovered, pressed;
+    private boolean hovered;
     private ListItemCallback listItemCallback;
 
     public ListItem(String name, Vector2f position, TextBatch textBatch, boolean enabled, ListItemCallback listItemCallback)
@@ -27,11 +27,11 @@ public class ListItem
         this.listItemCallback = listItemCallback;
     }
 
-    record ListItemEventResult(boolean requiresRedraw, ListItem pressedItem) {}
+    record ListItemEventResult(boolean requiresRedraw, boolean consumed, ListItem pressedItem) {}
 
     public ListItemEventResult onEvent(Event event)
     {
-        boolean requiresRedraw = false;
+        boolean requiresRedraw = false, pressed = false;
         if (event.eventType == EventType.MOUSE_MOVED)
         {
             var mouseMovedEvent = (MouseMovedEvent) event;
@@ -43,17 +43,14 @@ public class ListItem
         if (event.eventType == EventType.MOUSE_PRESSED && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
         {
             var mousePressedEvent = (MousePressedEvent) event;
-            boolean lastPressed = pressed;
             pressed = Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), position, size);
-            if (pressed) event.setHandled(true);
-            if (lastPressed != pressed) requiresRedraw = true;
+            if (pressed)
+            {
+                event.setHandled(true);
+                requiresRedraw = true;
+            }
         }
-        if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
-        {
-            if (pressed) requiresRedraw = true;
-            pressed = false;
-        }
-        return new ListItemEventResult(requiresRedraw, pressed ? this : null);
+        return new ListItemEventResult(requiresRedraw, hovered || pressed , pressed ? this : null);
     }
 
     public void setPosition(Vector2f position)
@@ -85,11 +82,6 @@ public class ListItem
     public boolean isHovered()
     {
         return hovered;
-    }
-
-    public boolean isPressed()
-    {
-        return pressed;
     }
 
     public ListItemCallback getListItemCallback()

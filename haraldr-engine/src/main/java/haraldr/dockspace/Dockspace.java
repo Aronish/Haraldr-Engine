@@ -12,6 +12,8 @@ import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
+import haraldr.ui.components.UIContainer;
+import haraldr.ui.components.UILayerable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,7 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Dockspace
+public class Dockspace implements UILayerable
 {
     private Vector2f position, size;
 
@@ -28,14 +30,12 @@ public class Dockspace
     private DockablePanel selectedPanel;
     private DockingArea rootArea;
 
-    private Batch2D renderBatch = new Batch2D();
-
-    public Dockspace(Vector2f position, Vector2f size)
+    public Dockspace(UIContainer parent, int layerIndex, Vector2f position, Vector2f size)
     {
+        parent.getLayer(layerIndex).addComponent(this);
         this.position = position;
         this.size = size;
         rootArea = new DockingArea(this.position, this.size);
-        renderToBatch();
     }
 
     public void addPanel(DockablePanel panel)
@@ -61,8 +61,10 @@ public class Dockspace
         }
     }
 
-    public void onEvent(Event event, Window window)
+    @Override
+    public UIEventResult onEvent(Event event, Window window)
     {
+        boolean requiresRedraw = false;
         if (event.eventType == EventType.WINDOW_RESIZED)
         {
             var windowResizedEvent = (WindowResizedEvent) event;
@@ -113,7 +115,7 @@ public class Dockspace
                 dockedPanels.addFirst(selectedPanel);
             }
             selectedPanel = null;
-            renderToBatch();
+            requiresRedraw = true;
         }
 
         if (selectedPanel != null && event.eventType == EventType.MOUSE_MOVED)
@@ -129,23 +131,24 @@ public class Dockspace
                     undockedPanels.addFirst(selectedPanel);
                     selectedPanel.setSize(new Vector2f(300f));
                     selectedPanel = null;
-                    return;
+                    return new UIEventResult(false, false);
                 }
             }
             rootArea.checkHovered(selectedPanel.getPosition());
-            renderToBatch();
+            requiresRedraw = true;
         }
+        return new UIEventResult(requiresRedraw, false);
     }
 
-    private void renderToBatch()
+    @Override
+    public void draw(Batch2D batch)
     {
-        renderBatch.begin();
-        renderBatch.drawQuad(position, size, new Vector4f(0.3f, 0.3f, 0.3f, 1f));
-        if (selectedPanel != null) rootArea.render(renderBatch);
-        renderBatch.end();
+        batch.drawQuad(position, size, new Vector4f(0.3f, 0.3f, 0.3f, 1f));
+        if (selectedPanel != null) rootArea.render(batch);
     }
 
-    public void renderPanels()
+    @Override
+    public void render()
     {
         for (Iterator<DockablePanel> it = dockedPanels.descendingIterator(); it.hasNext();)
         {

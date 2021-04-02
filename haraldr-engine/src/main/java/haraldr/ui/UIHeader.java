@@ -16,9 +16,7 @@ public class UIHeader extends UIComponent
     private static final float MENU_BUTTON_PADDING = 10f;
 
     private Vector4f color;
-
     private float currentButtonPosition;
-    private List<UIDropDownMenu> menuButtons = new ArrayList<>();
 
     public UIHeader(UIContainer parent, int layerIndex, Vector2f position, Vector2f size, Vector4f color)
     {
@@ -33,7 +31,6 @@ public class UIHeader extends UIComponent
     public void addMenuButton(String name, ListData... listDataEntries)
     {
         UIDropDownMenu menuButton = new UIDropDownMenu(parent, 0, name, Vector2f.addX(position, currentButtonPosition), listDataEntries);
-        menuButtons.add(menuButton);
         currentButtonPosition += menuButton.getName().getPixelWidth() + MENU_BUTTON_PADDING;
     }
 

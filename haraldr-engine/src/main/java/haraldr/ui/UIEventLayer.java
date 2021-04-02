@@ -67,6 +67,10 @@ public class UIEventLayer
     {
         batch.render();
         textBatch.render();
+        for (UILayerable component : components)
+        {
+            component.render();
+        }
     }
 
     public Batch2D getBatch()

@@ -88,10 +88,10 @@ public class UIVerticalList extends UIComponent implements Iterable<ListItem>
             {
                 ListItem.ListItemEventResult eventResult = listItem.onEvent(event);
                 if (eventResult.requiresRedraw()) requiresRedraw = true;
+                if (eventResult.consumed()) consumed = true;
                 if (eventResult.pressedItem() != null)
                 {
                     pressedItem = listItem;
-                    consumed = true;
                     break;
                 }
             }

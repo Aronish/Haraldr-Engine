@@ -107,7 +107,6 @@ public class EditorApplication extends Application
 
     private void saveScene()
     {
-        Logger.info("SHIT");
         YamlMappingBuilder scene = Yaml.createYamlMappingBuilder();
         YamlMappingBuilder entities = Yaml.createYamlMappingBuilder();
         for (Integer entityId : this.scene.getRegistry().getActiveEntities())
@@ -131,7 +130,6 @@ public class EditorApplication extends Application
         scene = scene.add("entities", entities.build());
 
         String savePath = FileDialogs.saveFile("Save scene", "yml");
-        Logger.info("FAIL");
 
         if (!savePath.isEmpty())
         {
@@ -159,15 +157,18 @@ public class EditorApplication extends Application
         windowHeader.addMenuButton(
                 "File",
                 new ListData("Open", Logger::info),
-                new ListData("Save", this::saveScene), // Broken
+                new ListData("Save", this::saveScene),
                 new ListData("Exit", this::stop)
         );
 
         // Dockspace
         dockSpace = new Dockspace(
+                mainLayerStack, 0,
                 new Vector2f(0f, windowHeader.getSize().getY()),
                 new Vector2f(window.getWidth(), window.getHeight() - windowHeader.getSize().getY())
         );
+
+        mainLayerStack.draw();
 
         // Scene
         scene = new EditorTestScene();
@@ -198,9 +199,8 @@ public class EditorApplication extends Application
     @Override
     protected void clientEvent(Event event, Window window)
     {
-        //TODO: Fix handled check
         if (mainLayerStack.onEvent(event, window).requiresRedraw()) mainLayerStack.draw();
-        if (!event.isHandled()) dockSpace.onEvent(event, window);
+
         if (!event.isHandled())
         {
             scene.onEvent(event, window);
@@ -244,7 +244,6 @@ public class EditorApplication extends Application
 
         Renderer.disableDepthTest();
         mainLayerStack.render();
-        dockSpace.renderPanels();
     }
 
     @Override

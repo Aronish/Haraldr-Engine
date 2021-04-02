@@ -11,7 +11,7 @@ public class DockGizmo
     private static final Vector4f GIZMO_COLOR = new Vector4f(1f);
 
     private Vector2f parentPosition = new Vector2f(), parentSize = new Vector2f();
-
+//TODO: Reduce floats
     private Vector2f topPosition = new Vector2f(), topSize = new Vector2f();
     private Vector2f bottomPosition = new Vector2f(), bottomSize = new Vector2f();
     private Vector2f leftPosition = new Vector2f(), leftSize = new Vector2f();

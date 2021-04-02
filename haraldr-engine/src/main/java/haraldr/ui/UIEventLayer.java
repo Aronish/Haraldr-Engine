@@ -19,7 +19,7 @@ public class UIEventLayer
     private Batch2D batch = new Batch2D();
     private TextBatch textBatch = new TextBatch(Font.DEFAULT_FONT);
 
-    public void addComponent(UIComponent component)
+    public void addComponent(UILayerable component)
     {
         components.add(component);
     }

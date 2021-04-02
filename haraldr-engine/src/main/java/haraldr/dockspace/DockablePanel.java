@@ -14,6 +14,8 @@ import haraldr.physics.Physics2D;
 import haraldr.ui.TextLabel;
 import haraldr.ui.UIEventLayer;
 import haraldr.ui.UILayerStack;
+import haraldr.ui.components.UIContainer;
+import haraldr.ui.components.UILayerable;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class DockablePanel
@@ -43,8 +45,6 @@ public abstract class DockablePanel
         draw();
     }
 
-    private Vector2f lastHeaderPressedPos = new Vector2f();
-
     public boolean onEvent(Event event, Window window)
     {
         if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
@@ -52,7 +52,6 @@ public abstract class DockablePanel
             var mousePressedEvent = (MousePressedEvent) event;
             Vector2f mousePoint = new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos);
             headerPressed = Physics2D.pointInsideAABB(mousePoint, position, headerSize);
-            if (headerPressed) lastHeaderPressedPos = position;
             contentPressed = Physics2D.pointInsideAABB(mousePoint, Vector2f.addY(position, HEADER_SIZE), Vector2f.addY(size, -HEADER_SIZE));
         }
         if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
@@ -68,14 +67,6 @@ public abstract class DockablePanel
             {
                 setPosition(mousePoint);
             }
-            //if (headerPressed)
-            //{
-            //    Vector2f difference = Vector2f.subtract(mousePoint, lastHeaderPressedPos);
-            //    lastHeaderPressedPos = mousePoint;
-            //    long start = System.nanoTime();
-            //    addPosition(difference);
-            //    Logger.info(System.nanoTime() - start);
-            //}
         }
         return headerPressed || contentPressed;
     }

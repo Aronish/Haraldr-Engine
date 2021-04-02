@@ -1,10 +1,7 @@
 package editor;
 
 import com.amihaiemil.eoyaml.Yaml;
-import com.amihaiemil.eoyaml.YamlMapping;
 import com.amihaiemil.eoyaml.YamlMappingBuilder;
-import com.amihaiemil.eoyaml.YamlSequence;
-import com.amihaiemil.eoyaml.YamlSequenceBuilder;
 import haraldr.debug.Logger;
 import haraldr.dockspace.DockPosition;
 import haraldr.dockspace.Dockspace;
@@ -32,10 +29,10 @@ import haraldr.scene.Camera;
 import haraldr.scene.OrbitalCamera;
 import haraldr.scene.Scene3D;
 import haraldr.ui.FileDialogs;
-import haraldr.ui.WindowHeader;
+import haraldr.ui.UILayerStack;
+import haraldr.ui.UIHeader;
 import haraldr.ui.components.ListData;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -45,7 +42,8 @@ import java.util.List;
 
 public class EditorApplication extends Application
 {
-    private WindowHeader windowHeader;
+    private UILayerStack mainLayerStack = new UILayerStack();
+    private UIHeader windowHeader;
     private Dockspace dockSpace;
 
     // Editor panels
@@ -132,7 +130,9 @@ public class EditorApplication extends Application
         }
         scene = scene.add("entities", entities.build());
 
-        String savePath = FileDialogs.saveFile("Save scene", ".yml");
+        String savePath = FileDialogs.saveFile("Save scene", "yml");
+        Logger.info("FAIL");
+
         if (!savePath.isEmpty())
         {
             List<String> lines = new ArrayList<>();
@@ -151,7 +151,11 @@ public class EditorApplication extends Application
     protected void clientInit(Window window)
     {
         // Window header
-        windowHeader = new WindowHeader(new Vector2f(), window.getWidth(), new Vector4f(0.4f, 0.4f, 0.4f, 1f));
+        windowHeader = new UIHeader(
+                mainLayerStack, 0,
+                new Vector2f(),
+                new Vector2f(window.getWidth(), mainLayerStack.getLayer(0).getTextBatch().getFont().getSize()),
+                new Vector4f(0.4f, 0.4f, 0.4f, 1f));
         windowHeader.addMenuButton(
                 "File",
                 new ListData("Open", Logger::info),
@@ -195,7 +199,7 @@ public class EditorApplication extends Application
     protected void clientEvent(Event event, Window window)
     {
         //TODO: Fix handled check
-        windowHeader.onEvent(event, window);
+        if (mainLayerStack.onEvent(event, window).requiresRedraw()) mainLayerStack.draw();
         if (!event.isHandled()) dockSpace.onEvent(event, window);
         if (!event.isHandled())
         {
@@ -239,8 +243,8 @@ public class EditorApplication extends Application
         Renderer3D.renderSceneToTexture(window, editorCamera, scene, scene3DPanel.getSceneTexture());
 
         Renderer.disableDepthTest();
-        dockSpace.render();
-        windowHeader.render();
+        mainLayerStack.render();
+        dockSpace.renderPanels();
     }
 
     @Override

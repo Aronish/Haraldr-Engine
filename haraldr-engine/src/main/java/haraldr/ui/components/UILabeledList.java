@@ -1,8 +1,6 @@
 package haraldr.ui.components;
 
-import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
-import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.ui.TextLabel;
@@ -37,20 +35,6 @@ public class UILabeledList extends UIComponent
         }
         nextListY += LINE_HEIGHT;
         size.setY(nextListY);
-    }
-
-    @Override
-    public UIEventResult onEvent(Event event, Window window)
-    {
-        boolean requiresRedraw = false, consumed = false;
-        UIEventResult eventResult;
-        for (UIComponent component : components.values())
-        {
-            eventResult = component.onEvent(event, window);
-            requiresRedraw |= eventResult.requiresRedraw();
-            consumed |= eventResult.consumed();
-        }
-        return new UIEventResult(requiresRedraw, consumed);
     }
 
     @Override

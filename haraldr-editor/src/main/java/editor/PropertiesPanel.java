@@ -1,6 +1,7 @@
 package editor;
 
 import haraldr.dockspace.DockablePanel;
+import haraldr.dockspace.Dockspace;
 import haraldr.ecs.Component;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
@@ -11,6 +12,7 @@ import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.ui.UIEventLayer;
+import haraldr.ui.components.UIContainer;
 import haraldr.ui.components.UILayerable;
 import haraldr.ui.components.UIVerticalListGroup;
 

@@ -196,7 +196,7 @@ public class OfflineRendererApplication extends Application
     @Override
     protected void clientRender(Window window)
     {
-        dockspace.render();
+        dockspace.renderPanels();
     }
 
     @Override

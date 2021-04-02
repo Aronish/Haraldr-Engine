@@ -26,6 +26,11 @@ public abstract class UIComponent implements UIContainer, UIPositionable, UILaye
         this.enabled = enabled;
     }
 
+    public Vector2f getSize()
+    {
+        return size;
+    }
+
     @Override
     public void setPosition(Vector2f position)
     {

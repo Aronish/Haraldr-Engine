@@ -15,5 +15,10 @@ public interface UILayerable
 
     default void draw(Batch2D batch) {}
 
-    boolean isEnabled();
+    default void render() {}
+
+    default boolean isEnabled()
+    {
+        return true;
+    }
 }

@@ -8,6 +8,7 @@
       <element id="module-output" name="haraldr-engine" />
       <element id="module-output" name="haraldr-editor" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/annotations-19.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/JsonParser.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/lwjgl-release-3.2.3-custom/lwjgl.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/lwjgl-release-3.2.3-custom/lwjgl-egl.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/lwjgl-release-3.2.3-custom/lwjgl-lz4.jar" path-in-jar="/" />
@@ -154,7 +155,7 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/lwjgl-release-3.2.3-custom/lwjgl-remotery-natives-windows.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/lwjgl-release-3.2.3-custom/lwjgl-rpmalloc-natives-windows.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/lwjgl-release-3.2.3-custom/lwjgl-libdivide-natives-windows.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/lib/JsonParser.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/eo-yaml.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

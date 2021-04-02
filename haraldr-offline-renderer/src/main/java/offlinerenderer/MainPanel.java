@@ -6,12 +6,8 @@ import haraldr.graphics.Batch2D;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
-import haraldr.ui.UILayerStack;
 import haraldr.ui.components.UIComponent;
 import haraldr.ui.components.UILabeledList;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainPanel extends DockablePanel
 {

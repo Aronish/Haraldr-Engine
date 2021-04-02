@@ -28,7 +28,7 @@ public class UIDropDownMenu extends UIComponent
         setPosition(position);
         setSize(new Vector2f(this.name.getPixelWidth() + MENU_BUTTON_PADDING, textBatch.getFont().getSize()));
 
-        actions = new UIVerticalList(this, 0, new Vector4f(0.4f, 0.4f, 0.4f, 1f));
+        actions = new UIVerticalList(this, layerIndex + 1, new Vector4f(0.4f, 0.4f, 0.4f, 1f));
         float widestEntry = 0f;
         for (ListData listDataEntry : listDataEntries)
         {
@@ -62,9 +62,7 @@ public class UIDropDownMenu extends UIComponent
             hovered = Physics2D.pointInsideAABB(new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos), position, size);
             requiresRedraw = previousHoveredState != hovered;
         }
-        UIEventResult eventResult = actions.onEvent(event, window);
-        requiresRedraw |= eventResult.requiresRedraw();
-        return new UIEventResult(requiresRedraw, eventResult.consumed());
+        return new UIEventResult(requiresRedraw, false);
     }
 
     @Override

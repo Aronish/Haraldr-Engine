@@ -1,5 +1,6 @@
 package editor;
 
+import haraldr.debug.Logger;
 import haraldr.dockspace.DockablePanel;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
@@ -10,6 +11,7 @@ import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.ui.components.ListItem;
+import haraldr.ui.components.UIDropDownSelector;
 import haraldr.ui.components.UIVerticalList;
 import org.jetbrains.annotations.Contract;
 
@@ -18,12 +20,17 @@ public class EntityHierarchyPanel extends DockablePanel
     private UIVerticalList entityList = new UIVerticalList(uiLayerStack, 0);
     private EntitySelectedAction entitySelectedAction;
 
+    private UIDropDownSelector test = new UIDropDownSelector(uiLayerStack, 1);
+
     public EntityHierarchyPanel(Vector2f position, Vector2f size, Vector4f color, String name, EntitySelectedAction entitySelectedAction)
     {
         super(position, size, color, name);
         this.entitySelectedAction = entitySelectedAction;
         setPosition(position);
         setSize(size);
+        test.addMenuItem("Test 1", () -> Logger.info("Test 1"));
+        test.addMenuItem("Test 2", () -> Logger.info("Test 2"));
+        test.addMenuItem("Test 3", () -> Logger.info("Test 3"));
         draw();
     }
 
@@ -64,6 +71,7 @@ public class EntityHierarchyPanel extends DockablePanel
     public void setPosition(Vector2f position)
     {
         entityList.setPosition(Vector2f.addY(position, headerSize.getY()));
+        test.setPosition(Vector2f.addY(position, entityList.getSize().getY() + 100f));
         super.setPosition(position);
     }
 
@@ -71,6 +79,7 @@ public class EntityHierarchyPanel extends DockablePanel
     public void setSize(Vector2f size)
     {
         entityList.setSize(size);
+        test.setSize(new Vector2f(size.getX(), 20f));
         super.setSize(size);
     }
 

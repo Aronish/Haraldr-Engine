@@ -8,7 +8,6 @@ public abstract class Event
 {
     public final EventType eventType;
     private int eventCategoryFlags;
-    private boolean isHandled = false;
 
     @Contract(pure = true)
     public Event(EventType eventType, @NotNull EventCategory... eventCategories)
@@ -18,16 +17,6 @@ public abstract class Event
         {
             eventCategoryFlags |= eventCategory.bitFlag;
         }
-    }
-
-    public void setHandled(boolean handled)
-    {
-        isHandled |= handled;
-    }
-
-    public boolean isHandled()
-    {
-        return isHandled;
     }
 
     public boolean isInCategory(@NotNull EventCategory eventCategory)

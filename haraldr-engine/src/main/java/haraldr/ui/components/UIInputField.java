@@ -78,7 +78,7 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
     @Override
     public UIEventResult onEvent(Event event, Window window)
     {
-        boolean requiresRedraw = false;
+        boolean requiresRedraw = false, consumed = false;
         if (event.eventType == EventType.MOUSE_PRESSED)
         {
             if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
@@ -138,13 +138,13 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
             window.setCursorPosition(lastMouseX, lastMouseY);
             updateTextLabel();
             inputFieldChangeAction.run(value);
-            event.setHandled(true);
+            consumed = true;
         }
         if (event.eventType == EventType.PARENT_COLLAPSED)
         {
             textLabel.setEnabled(!((ParentCollapsedEvent) event).collapsed);
         }
-        return new UIEventResult(requiresRedraw, false);
+        return new UIEventResult(requiresRedraw, consumed);
     }
 
     public void updateTextLabel()

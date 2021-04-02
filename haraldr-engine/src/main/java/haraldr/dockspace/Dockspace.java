@@ -64,7 +64,7 @@ public class Dockspace implements UILayerable
     @Override
     public UIEventResult onEvent(Event event, Window window)
     {
-        boolean requiresRedraw = false;
+        boolean requiresRedraw = false, consumed;
         if (event.eventType == EventType.WINDOW_RESIZED)
         {
             var windowResizedEvent = (WindowResizedEvent) event;
@@ -75,21 +75,21 @@ public class Dockspace implements UILayerable
             rootArea.recalculateSplitArea();
         }
 
-        rootArea.onEvent(event, window); //Docking area resizing
+        consumed = rootArea.onEvent(event, window); //Docking area resizing
 
         // Undocked panels are always on top
         boolean undockedPanelsConsumed = false;
         for (DockablePanel undockedPanel : undockedPanels)
         {
-            boolean panelConsumedPress = undockedPanel.onEvent(event, window);
-            if (panelConsumedPress) // The panel consumed the event
+            consumed |= undockedPanel.onEvent(event, window);
+            if (consumed) // The panel consumed the event
             {
                 if (undockedPanel.isHeaderPressed()) selectedPanel = undockedPanel;
                 // Only set panel on top if pressed somewhere
                 undockedPanels.remove(undockedPanel);
                 undockedPanels.addFirst(undockedPanel);
             }
-            if (panelConsumedPress || undockedPanel.isHovered())
+            if (consumed || undockedPanel.isHovered())
             {
                 undockedPanelsConsumed = true;
                 break;
@@ -100,9 +100,8 @@ public class Dockspace implements UILayerable
         {
             for (DockablePanel dockedPanel : dockedPanels)
             {
-                boolean consumedEvent;
-                if (consumedEvent = dockedPanel.onEvent(event, window) && dockedPanel.isHeaderPressed()) selectedPanel = dockedPanel;
-                if (consumedEvent) break;
+                if (consumed |= dockedPanel.onEvent(event, window) && dockedPanel.isHeaderPressed()) selectedPanel = dockedPanel;
+                if (consumed) break;
             }
         }
 
@@ -131,13 +130,13 @@ public class Dockspace implements UILayerable
                     undockedPanels.addFirst(selectedPanel);
                     selectedPanel.setSize(new Vector2f(300f));
                     selectedPanel = null;
-                    return new UIEventResult(false, false);
+                    return new UIEventResult(false, consumed);
                 }
             }
             rootArea.checkHovered(selectedPanel.getPosition());
             requiresRedraw = true;
         }
-        return new UIEventResult(requiresRedraw, false);
+        return new UIEventResult(requiresRedraw, consumed);
     }
 
     @Override
@@ -216,7 +215,7 @@ public class Dockspace implements UILayerable
 
         private List<DockingArea> firstResizingAreas, secondResizingAreas;
 
-        private void onEvent(Event event, Window window)
+        private boolean onEvent(Event event, Window window)
         {
             // Resize at split point if it exists
             if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
@@ -249,10 +248,12 @@ public class Dockspace implements UILayerable
                 }
             }
 
+            boolean childrenResizing = false;
             for (DockingArea dockingArea : children.values())
             {
-                dockingArea.onEvent(event, window);
+                childrenResizing |= dockingArea.onEvent(event, window);
             }
+            return resizing || childrenResizing;
         }
 
         /**

@@ -4,25 +4,22 @@ import haraldr.dockspace.DockPosition;
 import haraldr.dockspace.Dockspace;
 import haraldr.event.Event;
 import haraldr.graphics.Renderer;
+import haraldr.graphics.Wrapper;
 import haraldr.main.Application;
-import haraldr.main.IOUtils;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
+import haraldr.ui.FileDialogs;
+import haraldr.ui.UILayerStack;
 import haraldr.ui.components.UIButton;
 import haraldr.ui.components.UIHorizontalBreak;
 import haraldr.ui.components.UIInfoLabel;
 import haraldr.ui.components.UIInputField;
-import org.lwjgl.PointerBuffer;
-import org.lwjgl.system.MemoryStack;
-import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
-import static org.lwjgl.opengl.GL11.glViewport;
-//TODO: Fix everything
 public class OfflineRendererApplication extends Application
 {
+    private UILayerStack mainLayerStack = new UILayerStack();
     private Dockspace dockspace;
-    private MainPanel mainPanel;
 
     private UIInputField<UIInputField.IntValue> diffuseIrradianceMapSize;
     private UIInputField<UIInputField.IntValue> prefilteredEnvironmentMapSize;
@@ -47,26 +44,19 @@ public class OfflineRendererApplication extends Application
     @Override
     protected void clientInit(Window window)
     {
-        dockspace = new Dockspace(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()));
-        mainPanel = new MainPanel(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Haraldr Offline Renderer");
+        dockspace = new Dockspace(mainLayerStack, 0, new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()));
+        MainPanel mainPanel = new MainPanel(new Vector2f(), new Vector2f(window.getWidth(), window.getHeight()), new Vector4f(0.2f, 0.2f, 0.2f, 1f), "Haraldr Offline Renderer");
 
         //Original environment map
         UIButton loadHdr = new UIButton(mainPanel.getLayers(), 0, () ->
         {
-            String sourcePath;
-            try (MemoryStack stack = MemoryStack.stackPush())
-            {
-                PointerBuffer filterPatterns = stack.mallocPointer(1);
-                filterPatterns.put(IOUtils.stringToByteBuffer("*.hdr"));
-                sourcePath = TinyFileDialogs.tinyfd_openFileDialog("Select .hdr file", "", filterPatterns, "", false);
-                if (sourcePath == null) sourcePath = "";
-            }
+            String sourcePath = FileDialogs.openFile("Select .hdr file", "hdr");
 
             if (!sourcePath.isBlank() && sourcePath.endsWith(".hdr"))
             {
                 environmentMap = CubeMapGenerator.createEnvironmentMap(sourcePath);
                 environmentMapData.setValue(environmentMap.getName() + " | Size: " + environmentMap.getSize());
-                glViewport(0, 0, window.getWidth(), window.getHeight());
+                Wrapper.viewport(0, 0, window.getWidth(), window.getHeight());
             }
         });
         environmentMapData = new UIInfoLabel(mainPanel.getLayers(), 0, "");
@@ -101,7 +91,7 @@ public class OfflineRendererApplication extends Application
             prefilteredEnvironmentMap = CubeMapGenerator.createPrefilteredEnvironmentMap(environmentMap, Integer.parseInt(prefilteredEnvironmentMapSize.getValue().toString()));
             diffuseIrradianceMapData.setValue("Loaded: " + diffuseIrradianceMap.getName() +  " | Size: " + diffuseIrradianceMap.getSize());
             prefilteredEnvironmentMapdata.setValue("Loaded: " + prefilteredEnvironmentMap.getName() + " | Size: " + prefilteredEnvironmentMap.getSize());
-            glViewport(0, 0, window.getWidth(), window.getHeight());
+            Wrapper.viewport(0, 0, window.getWidth(), window.getHeight());
         });
         generateIblMaps.setEnabled(false);
 
@@ -112,13 +102,7 @@ public class OfflineRendererApplication extends Application
 
         UIButton saveDiffuseIrradianceMapAs = new UIButton(mainPanel.getLayers(), 0, () ->
         {
-            try (MemoryStack stack = MemoryStack.stackPush())
-            {
-                PointerBuffer filterPatterns = stack.mallocPointer(1);
-                filterPatterns.put(IOUtils.stringToByteBuffer("*.exr"));
-                String path = TinyFileDialogs.tinyfd_saveFileDialog("Save diffuse irradiance map", "", filterPatterns, "");
-                diffuseIrradianceMapPath.setValue(path == null ? "" : path);
-            }
+            diffuseIrradianceMapPath.setValue(FileDialogs.saveFile("Save diffuse irradiance map", "exr"));
             exportDiffuseIrradianceMap.setEnabled(!diffuseIrradianceMapPath.getValue().isBlank() && diffuseIrradianceMapPath.getValue().endsWith(".exr"));
         });
         diffuseIrradianceMapPath = new UIInfoLabel(mainPanel.getLayers(), 0, "");
@@ -129,13 +113,7 @@ public class OfflineRendererApplication extends Application
 
         UIButton savePrefilteredMap = new UIButton(mainPanel.getLayers(), 0, () ->
         {
-            try (MemoryStack stack = MemoryStack.stackPush())
-            {
-                PointerBuffer filterPatterns = stack.mallocPointer(1);
-                filterPatterns.put(IOUtils.stringToByteBuffer("*.exr"));
-                String path = TinyFileDialogs.tinyfd_saveFileDialog("Save prefiltered environment map", "", filterPatterns, "");
-                prefilteredMapPath.setValue(path == null ? "" : path);
-            }
+            prefilteredMapPath.setValue(FileDialogs.saveFile("Save prefiltered environment map", "exr"));
             exportPrefilteredMap.setEnabled(!prefilteredMapPath.getValue().isBlank() && prefilteredMapPath.getValue().endsWith(".exr"));
         });
         prefilteredMapPath = new UIInfoLabel(mainPanel.getLayers(), 0, "");
@@ -185,7 +163,7 @@ public class OfflineRendererApplication extends Application
     @Override
     protected void clientEvent(Event event, Window window)
     {
-        dockspace.onEvent(event, window);
+        if (mainLayerStack.onEvent(event, window).requiresRedraw()) mainLayerStack.draw();
     }
 
     @Override
@@ -196,7 +174,7 @@ public class OfflineRendererApplication extends Application
     @Override
     protected void clientRender(Window window)
     {
-        dockspace.renderPanels();
+        mainLayerStack.render();
     }
 
     @Override

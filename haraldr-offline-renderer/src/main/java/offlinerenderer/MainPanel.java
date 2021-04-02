@@ -40,8 +40,8 @@ public class MainPanel extends DockablePanel
     @Override
     public boolean onEvent(Event event, Window window)
     {
-        boolean consumePress = super.onEvent(event, window), requireRedraw = uiComponentList.onEvent(event, window).requiresRedraw();
-        if (requireRedraw) draw();
+        boolean consumePress = super.onEvent(event, window);
+        if (uiLayerStack.onEvent(event, window).requiresRedraw()) draw();
         return consumePress;
     }
 

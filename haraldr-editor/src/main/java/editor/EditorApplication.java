@@ -29,9 +29,11 @@ import haraldr.scene.Camera;
 import haraldr.scene.OrbitalCamera;
 import haraldr.scene.Scene3D;
 import haraldr.ui.FileDialogs;
+import haraldr.ui.UIEventLayer;
 import haraldr.ui.UILayerStack;
 import haraldr.ui.UIHeader;
 import haraldr.ui.components.ListData;
+import haraldr.ui.components.UILayerable;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -199,9 +201,10 @@ public class EditorApplication extends Application
     @Override
     protected void clientEvent(Event event, Window window)
     {
-        if (mainLayerStack.onEvent(event, window).requiresRedraw()) mainLayerStack.draw();
+        UILayerable.UIEventResult uiEventResult = mainLayerStack.onEvent(event, window);
+        if (uiEventResult.requiresRedraw()) mainLayerStack.draw();
 
-        if (!event.isHandled())
+        if (!uiEventResult.consumed())
         {
             scene.onEvent(event, window);
             editorCamera.onEvent(event, window, scene3DPanel.isHovered());

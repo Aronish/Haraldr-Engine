@@ -37,7 +37,6 @@ public class ListItem
             var mouseMovedEvent = (MouseMovedEvent) event;
             boolean previousHoveredState = hovered;
             hovered = Physics2D.pointInsideAABB(new Vector2f(mouseMovedEvent.xPos, mouseMovedEvent.yPos), position, size);
-            if (hovered) event.setHandled(true);
             if (previousHoveredState != hovered) requiresRedraw = true;
         }
         if (event.eventType == EventType.MOUSE_PRESSED && Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))
@@ -46,7 +45,6 @@ public class ListItem
             pressed = Physics2D.pointInsideAABB(new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos), position, size);
             if (pressed)
             {
-                event.setHandled(true);
                 requiresRedraw = true;
             }
         }

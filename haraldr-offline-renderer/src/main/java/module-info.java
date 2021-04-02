@@ -8,6 +8,4 @@ module haraldr.offline.renderer
     requires org.lwjgl.stb;
     requires org.lwjgl.tinyexr;
     requires org.lwjgl.tinyexr.natives;
-    requires org.lwjgl.tinyfd;
-    requires org.lwjgl.tinyfd.natives;
 }

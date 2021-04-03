@@ -4,7 +4,7 @@ import haraldr.graphics.UniformBuffer;
 import haraldr.math.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings("unused")
 public class PointLight extends Light
 {
     private float constant, linear, quadratic;
@@ -45,5 +45,20 @@ public class PointLight extends Light
                 color.getX(), color.getY(), color.getZ(),           0f,
                 constant, linear, quadratic
         }, offset);
+    }
+
+    public float getConstant()
+    {
+        return constant;
+    }
+
+    public float getLinear()
+    {
+        return linear;
+    }
+
+    public float getQuadratic()
+    {
+        return quadratic;
     }
 }

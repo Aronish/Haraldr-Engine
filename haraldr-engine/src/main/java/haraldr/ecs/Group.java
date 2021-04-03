@@ -3,7 +3,7 @@ package haraldr.ecs;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Group<A, B>
+public class Group<A extends Component, B extends Component>
 {
     private List<TransformComponent> transforms = new ArrayList<>();
     private List<A> first = new ArrayList<>();
@@ -40,13 +40,13 @@ public class Group<A, B>
     }
 
     @FunctionalInterface
-    public interface TriConsumer<A, B, C>
+    public interface TriConsumer<A extends Component, B extends Component, C extends Component>
     {
         void accept(A a, B b, C c);
     }
 
     @FunctionalInterface
-    public interface TriFunction<A, B, C, R>
+    public interface TriFunction<A extends Component, B extends Component, C extends Component, R>
     {
         R apply(A a, B b, C c);
     }

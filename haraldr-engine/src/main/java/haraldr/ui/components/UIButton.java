@@ -11,8 +11,8 @@ import haraldr.physics.Physics2D;
 
 public class UIButton extends UIComponent
 {
-    private static final Vector4f ON_COLOR = new Vector4f(0.2f, 0.8f, 0.3f, 1f);
-    private static final Vector4f OFF_COLOR = new Vector4f(0.8f, 0.2f, 0.3f, 1f);
+    private static final Vector4f ON_COLOR = new Vector4f(0.2f, 0.5f, 0.3f, 1f);
+    private static final Vector4f OFF_COLOR = new Vector4f(0.4f, 0.4f, 0.3f, 1f);
     private static final Vector4f DISABLED_COLOR = new Vector4f(0.4f, 0.4f, 0.4f, 1f);
 
     private Vector4f currentColor = OFF_COLOR;

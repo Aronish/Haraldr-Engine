@@ -71,7 +71,7 @@ public class RenderTexture
     }
 
     @Contract("_, _ -> new")
-    private static @NotNull float[] createQuadData(@NotNull Vector2f position, @NotNull Vector2f size)
+    private static float[] createQuadData(@NotNull Vector2f position, @NotNull Vector2f size)
     {
         return new float[] {
                 position.getX(),                position.getY() + size.getY(),  0f, 0f,

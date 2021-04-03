@@ -23,12 +23,17 @@ public class UIDropDownMenu extends UIComponent
 
     public UIDropDownMenu(UIContainer parent, int layerIndex, String name, Vector2f position, ListData[] listDataEntries)
     {
+        this(parent, layerIndex, name, position, listDataEntries, false);
+    }
+
+    public UIDropDownMenu(UIContainer parent, int layerIndex, String name, Vector2f position, ListData[] listDataEntries, boolean closeOnPress)
+    {
         super(parent, layerIndex);
         this.name = textBatch.createTextLabel(name, Vector2f.addX(position, MENU_BUTTON_PADDING / 2f), new Vector4f(1f));
         setPosition(position);
         setSize(new Vector2f(this.name.getPixelWidth() + MENU_BUTTON_PADDING, textBatch.getFont().getSize()));
 
-        actions = new UIVerticalList(this, layerIndex + 1, new Vector4f(0.4f, 0.4f, 0.4f, 1f));
+        actions = new UIVerticalList(this, layerIndex + 1, new Vector4f(0.4f, 0.4f, 0.4f, 1f), closeOnPress);
         float widestEntry = 0f;
         for (ListData listDataEntry : listDataEntries)
         {

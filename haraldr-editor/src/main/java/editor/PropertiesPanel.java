@@ -26,6 +26,7 @@ public class PropertiesPanel extends DockablePanel
         super(position, size, color, name);
         mainContentGroup.setPosition(Vector2f.addY(position, headerSize.getY()));
         mainContentGroup.setSize(Vector2f.addY(size, headerSize.getY()));
+        mainLayer.addComponent(new PanelModel());
         draw();
     }
 
@@ -91,7 +92,7 @@ public class PropertiesPanel extends DockablePanel
         stencilBatch.drawQuad(position, headerSize, HEADER_COLOR);
         stencilBatch.end();
         //UI
-        uiLayerStack.draw();
+        super.draw();
     }
 
     @Override

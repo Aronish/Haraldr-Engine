@@ -38,4 +38,14 @@ public class Spotlight extends DirectionalLight
                 (float) Math.cos(Math.toRadians(outerCutOff))
         }, offset);
     }
+
+    public float getInnerCutOff()
+    {
+        return innerCutOff;
+    }
+
+    public float getOuterCutOff()
+    {
+        return outerCutOff;
+    }
 }

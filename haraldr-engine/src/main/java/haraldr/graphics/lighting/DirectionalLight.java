@@ -50,4 +50,9 @@ public class DirectionalLight extends Light
                 color.getX(), color.getY(), color.getZ(),               0f,
         }, offset);
     }
+
+    public Vector3f getDirection()
+    {
+        return direction;
+    }
 }

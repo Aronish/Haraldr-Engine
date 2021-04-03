@@ -64,7 +64,8 @@ public class Dockspace implements UILayerable
     @Override
     public UIEventResult onEvent(Event event, Window window)
     {
-        boolean requiresRedraw = false, consumed;
+        boolean requiresRedraw = false, consumed = false;
+        // Resize dockspace
         if (event.eventType == EventType.WINDOW_RESIZED)
         {
             var windowResizedEvent = (WindowResizedEvent) event;
@@ -75,13 +76,11 @@ public class Dockspace implements UILayerable
             rootArea.recalculateSplitArea();
         }
 
-        consumed = rootArea.onEvent(event, window); //Docking area resizing
-
-        // Undocked panels are always on top
+        // Undocked panels are always on top, check if they consume the event first
         boolean undockedPanelsConsumed = false;
         for (DockablePanel undockedPanel : undockedPanels)
         {
-            consumed |= undockedPanel.onEvent(event, window);
+            consumed = undockedPanel.onEvent(event, window);
             if (consumed) // The panel consumed the event
             {
                 if (undockedPanel.isHeaderPressed()) selectedPanel = undockedPanel;
@@ -95,14 +94,17 @@ public class Dockspace implements UILayerable
                 break;
             }
         }
-        // Then send events to docked panels
+        // If event did propagate below undocked panels, check resizing
         if (!undockedPanelsConsumed)
         {
-            for (DockablePanel dockedPanel : dockedPanels)
-            {
-                if (consumed |= dockedPanel.onEvent(event, window) && dockedPanel.isHeaderPressed()) selectedPanel = dockedPanel;
-                if (consumed) break;
-            }
+            consumed = rootArea.onEvent(event, window); //Docking area resizing
+            if (consumed) return new UIEventResult(false, true);
+        }
+        // Then send events to docked panels
+        for (DockablePanel dockedPanel : dockedPanels)
+        {
+            if (consumed = dockedPanel.onEvent(event, window) && dockedPanel.isHeaderPressed()) selectedPanel = dockedPanel;
+            if (consumed) break;
         }
 
         // Try docking the selected panel
@@ -119,9 +121,8 @@ public class Dockspace implements UILayerable
 
         if (selectedPanel != null && event.eventType == EventType.MOUSE_MOVED)
         {
-            // Undock the selected panel if it is docked and is moved.
             DockingArea dockedArea = rootArea.getDockedArea(selectedPanel);
-            if (dockedArea != null)
+            if (dockedArea != null) // Undock the selected panel if it is docked and is moved.
             {
                 if (dockedArea.parent == null || !dockedArea.parent.resizing)
                 {
@@ -130,11 +131,13 @@ public class Dockspace implements UILayerable
                     undockedPanels.addFirst(selectedPanel);
                     selectedPanel.setSize(new Vector2f(300f));
                     selectedPanel = null;
-                    return new UIEventResult(false, consumed);
                 }
+            } else
+            {
+                rootArea.checkHovered(selectedPanel.getPosition());
             }
-            rootArea.checkHovered(selectedPanel.getPosition());
             requiresRedraw = true;
+            consumed = true;
         }
         return new UIEventResult(requiresRedraw, consumed);
     }
@@ -143,7 +146,7 @@ public class Dockspace implements UILayerable
     public void draw(Batch2D batch)
     {
         batch.drawQuad(position, size, new Vector4f(0.3f, 0.3f, 0.3f, 1f));
-        if (selectedPanel != null) rootArea.render(batch);
+        if (selectedPanel != null) rootArea.draw(batch);
     }
 
     @Override
@@ -760,7 +763,7 @@ public class Dockspace implements UILayerable
             }
         }
 
-        private void render(Batch2D batch)
+        private void draw(Batch2D batch)
         {
             if (dockable)
             {
@@ -770,7 +773,7 @@ public class Dockspace implements UILayerable
             {
                 for (DockingArea dockingArea : children.values())
                 {
-                    dockingArea.render(batch);
+                    dockingArea.draw(batch);
                 }
             }
         }

@@ -67,6 +67,7 @@ import static org.lwjgl.opengl.GL45.glCreateTextures;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Texture
 {
+    private static final VertexArray SCREEN_QUAD = new VertexArray();
     private static final Shader BRDF_CONVOLUTION = Shader.create("internal_shaders/brdf_convolution.glsl");
 
     public static final Texture DEFAULT_WHITE = new Texture(1, 1, new int[] { -1 });
@@ -80,6 +81,19 @@ public class Texture
     {
         ResourceManager.addTexture("DEFAULT_BLACK", DEFAULT_BLACK);
         ResourceManager.addTexture("DEFAULT_WHITE", DEFAULT_WHITE);
+        float[] quadVertexData = {
+                -1f,  1f,   0f, 1f,
+                1f,  1f,   1f, 1f,
+                1f, -1f,   1f, 0f,
+                -1f, -1f,   0f, 0f
+        };
+        VertexBuffer quadVertices = new VertexBuffer(
+                quadVertexData,
+                new VertexBufferLayout(new VertexBufferElement(ShaderDataType.FLOAT2), new VertexBufferElement(ShaderDataType.FLOAT2)),
+                VertexBuffer.Usage.STATIC_DRAW
+        );
+        SCREEN_QUAD.setVertexBuffers(quadVertices);
+        SCREEN_QUAD.setIndexBufferData(new int[] { 0, 3, 2, 0, 2, 1 });
         BRDF_LUT = createBRDFLUT();
     }
 
@@ -246,8 +260,8 @@ public class Texture
         BRDF_CONVOLUTION.bind();
         glClearColor(1f, 1f, 1f, 1f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        Renderer3D.SCREEN_QUAD.bind();
-        Renderer3D.SCREEN_QUAD.drawElements();
+        SCREEN_QUAD.bind();
+        SCREEN_QUAD.drawElements();
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glDeleteFramebuffers(mappingFrameBuffer);
@@ -273,6 +287,11 @@ public class Texture
     public void delete()
     {
         glDeleteTextures(textureHandle);
+    }
+
+    public static void dispose()
+    {
+        SCREEN_QUAD.delete();
     }
 
     @Contract(value = "null -> false", pure = true)

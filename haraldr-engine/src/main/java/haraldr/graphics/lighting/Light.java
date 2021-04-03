@@ -6,6 +6,7 @@ import haraldr.graphics.Texture;
 import haraldr.graphics.UniformBuffer;
 import haraldr.math.Matrix4f;
 import haraldr.math.Vector3f;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
@@ -19,6 +20,7 @@ public abstract class Light
     protected UniformBuffer sceneLightsBuffer;
     protected int bufferOffset;
 
+    @Contract(pure = true)
     public Light(Vector3f position, Vector3f color)
     {
         this.position = position;

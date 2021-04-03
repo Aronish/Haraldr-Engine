@@ -68,16 +68,13 @@ public abstract class DockablePanel
                 setPosition(mousePoint);
             }
         }
+        if (uiLayerStack.onEvent(event, window).requiresRedraw()) draw();
         return headerPressed || contentPressed;
     }
 
     protected void draw()
     {
-        Batch2D mainBatch = mainLayer.getBatch();
-        mainBatch.begin();
-        mainBatch.drawQuad(position, size, color);
-        mainBatch.drawQuad(position, headerSize, HEADER_COLOR);
-        mainBatch.end();
+        uiLayerStack.draw();
     }
 
     public void render()
@@ -85,7 +82,7 @@ public abstract class DockablePanel
         uiLayerStack.render();
     }
 
-    public void setPanelResizeAction(PanelDimensionChangeAction panelDimensionChangeAction)
+    public void setPanelDimensionChangeAction(PanelDimensionChangeAction panelDimensionChangeAction)
     {
         this.panelDimensionChangeAction = panelDimensionChangeAction;
     }
@@ -165,5 +162,15 @@ public abstract class DockablePanel
     public interface PanelDimensionChangeAction
     {
         void run(Vector2f position, Vector2f size);
+    }
+
+    public class PanelModel implements UILayerable
+    {
+        @Override
+        public void draw(Batch2D batch)
+        {
+            batch.drawQuad(position, size, color);
+            batch.drawQuad(position, headerSize, HEADER_COLOR);
+        }
     }
 }

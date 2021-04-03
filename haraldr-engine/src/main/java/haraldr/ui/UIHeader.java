@@ -1,15 +1,16 @@
 package haraldr.ui;
 
+import haraldr.event.Event;
+import haraldr.event.EventType;
+import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Batch2D;
+import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.ui.components.ListData;
 import haraldr.ui.components.UIComponent;
 import haraldr.ui.components.UIContainer;
 import haraldr.ui.components.UIDropDownMenu;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class UIHeader extends UIComponent
 {
@@ -30,8 +31,20 @@ public class UIHeader extends UIComponent
 
     public void addMenuButton(String name, ListData... listDataEntries)
     {
-        UIDropDownMenu menuButton = new UIDropDownMenu(parent, 0, name, Vector2f.addX(position, currentButtonPosition), listDataEntries);
+        UIDropDownMenu menuButton = new UIDropDownMenu(parent, 0, name, Vector2f.addX(position, currentButtonPosition), listDataEntries, true);
         currentButtonPosition += menuButton.getName().getPixelWidth() + MENU_BUTTON_PADDING;
+    }
+
+    @Override
+    public UIEventResult onEvent(Event event, Window window)
+    {
+        boolean requiresRedraw = false;
+        if (event.eventType == EventType.WINDOW_RESIZED)
+        {
+            setSize(new Vector2f(((WindowResizedEvent)event).width, size.getY()));
+            requiresRedraw = true;
+        }
+        return new UIEventResult(requiresRedraw, false);
     }
 
     @Override

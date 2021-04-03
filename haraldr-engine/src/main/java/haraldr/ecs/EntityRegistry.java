@@ -4,7 +4,6 @@ import haraldr.debug.Logger;
 import haraldr.math.Vector3f;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,18 +12,51 @@ import java.util.Set;
 @SuppressWarnings("WeakerAccess")
 public class EntityRegistry
 {
-    private static int entityCount;
+    public static final List<Class<? extends Component>> registeredComponents = new ArrayList<>();
 
-    private Map<Class<? extends Component>, ComponentStorage<?>> registeredComponents = new HashMap<>();
+    private Map<Class<? extends Component>, ComponentStorage<? extends Component>> activeComponents = new HashMap<>();
     private List<Integer> activeEntities = new ArrayList<>();
     private List<Integer> freeIds = new ArrayList<>();
+    private int entityCount;
+
+    static
+    {
+        registeredComponents.add(TagComponent.class);
+        registeredComponents.add(ModelComponent.class);
+        registeredComponents.add(TransformComponent.class);
+        registeredComponents.add(BoundingSphereComponent.class);
+    }
+
+    public static Class<? extends Component> getRegisteredComponentByName(String simpleName)
+    {
+        for (Class<? extends Component> registeredComponent : registeredComponents)
+        {
+            if (registeredComponent.getSimpleName().equals(simpleName)) return registeredComponent;
+        }
+        return null;
+    }
 
     public EntityRegistry()
     {
-        registerComponent(TagComponent.class);
-        registerComponent(ModelComponent.class);
-        registerComponent(TransformComponent.class);
-        registerComponent(BoundingSphereComponent.class);
+        for (Class<? extends Component> registeredComponent : registeredComponents)
+        {
+            activeComponents.putIfAbsent(registeredComponent, new ComponentStorage<>());
+        }
+    }
+
+    public void addEntity(Entity entity)
+    {
+        if (activeEntities.contains(entity.id))
+        {
+            Logger.error("Duplicated entity ids!");
+        } else
+        {
+            if (freeIds.contains(entity.id))
+            {
+                freeIds.remove(entity.id);
+            }
+            activeEntities.add(entity.id);
+        }
     }
 
     public Entity createEntity(Vector3f position, Vector3f scale, Vector3f rotation)
@@ -45,22 +77,17 @@ public class EntityRegistry
     public void destroyEntity(Entity entity)
     {
         activeEntities.remove(entity.id);
-        for (ComponentStorage<?> storage : registeredComponents.values())
+        for (ComponentStorage<?> storage : activeComponents.values())
         {
             storage.remove(entity);
         }
         freeIds.add(entity.id);
     }
 
-    public void registerComponent(Class<? extends Component> componentType)
-    {
-        registeredComponents.putIfAbsent(componentType, new ComponentStorage<>());
-    }
-
     @SuppressWarnings("unchecked")
-    public <T> void addComponent(T component, Entity entity)
+    public <T extends Component> void addComponent(T component, Entity entity)
     {
-        ComponentStorage<T> storage = (ComponentStorage<T>) registeredComponents.get(component.getClass());
+        ComponentStorage<T> storage = (ComponentStorage<T>) activeComponents.get(component.getClass());
         if (storage == null)
         {
             Logger.error("Component of type " + component.getClass().getName() + " has not been registered!");
@@ -70,9 +97,9 @@ public class EntityRegistry
     }
 
     @SuppressWarnings("unchecked")
-    public <T> boolean hasComponent(Class<T> componentType, Entity entity)
+    public <T extends Component> boolean hasComponent(Class<T> componentType, Entity entity)
     {
-        ComponentStorage<T> storage = (ComponentStorage<T>) registeredComponents.get(componentType);
+        ComponentStorage<T> storage = (ComponentStorage<T>) activeComponents.get(componentType);
         if (storage == null)
         {
             Logger.error("Component of type " + componentType.getName() + " has not been registered!");
@@ -82,9 +109,9 @@ public class EntityRegistry
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getComponent(Class<T> componentType, Entity entity)
+    public <T extends Component> T getComponent(Class<T> componentType, Entity entity)
     {
-        ComponentStorage<T> storage = (ComponentStorage<T>) registeredComponents.get(componentType);
+        ComponentStorage<T> storage = (ComponentStorage<T>) activeComponents.get(componentType);
         if (storage == null)
         {
             Logger.error("Component of type " + componentType.getName() + " has not been registered!");
@@ -94,9 +121,9 @@ public class EntityRegistry
     }
 
     @SuppressWarnings("unchecked")
-    public <T> ComponentStorage<T> getStorage(Class<T> componentType)
+    public <T extends Component> ComponentStorage<T> getStorage(Class<T> componentType)
     {
-        ComponentStorage<T> storage = (ComponentStorage<T>) registeredComponents.get(componentType);
+        ComponentStorage<T> storage = (ComponentStorage<T>) activeComponents.get(componentType);
         if (storage == null)
         {
             Logger.error("Component of type " + componentType.getName() + " has not been registered!");
@@ -106,9 +133,9 @@ public class EntityRegistry
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Entity getEntityOf(T component)
+    public <T extends Component> Entity getEntityOf(T component)
     {
-        ComponentStorage<T> storage = (ComponentStorage<T>) registeredComponents.get(component.getClass());
+        ComponentStorage<T> storage = (ComponentStorage<T>) activeComponents.get(component.getClass());
         if (storage == null)
         {
             Logger.error("Component of type " + component.getClass().getName() + " has not been registered!");
@@ -119,10 +146,10 @@ public class EntityRegistry
     }
 
     @SuppressWarnings("unchecked")
-    public <T> View<T> view(Class<T> componentType)
+    public <T extends Component> View<T> view(Class<T> componentType)
     {
-        ComponentStorage<T> storage = (ComponentStorage<T>) registeredComponents.get(componentType);
-        ComponentStorage<TransformComponent> transforms = (ComponentStorage<TransformComponent>) registeredComponents.get(TransformComponent.class);
+        ComponentStorage<T> storage = (ComponentStorage<T>) activeComponents.get(componentType);
+        ComponentStorage<TransformComponent> transforms = (ComponentStorage<TransformComponent>) activeComponents.get(TransformComponent.class);
         if (storage == null)
         {
             Logger.error("Component of type " + componentType.getName() + " has not been registered!");
@@ -132,11 +159,11 @@ public class EntityRegistry
     }
 
     @SuppressWarnings("unchecked")
-    public <A, B> Group<A, B> group(Class<A> firstType, Class<B> secondType)
+    public <A extends Component, B extends Component> Group<A, B> group(Class<A> firstType, Class<B> secondType)
     {
-        ComponentStorage<A> firstStorage = (ComponentStorage<A>) registeredComponents.get(firstType);
-        ComponentStorage<B> secondStorage = (ComponentStorage<B>) registeredComponents.get(secondType);
-        ComponentStorage<TransformComponent> transforms = (ComponentStorage<TransformComponent>) registeredComponents.get(TransformComponent.class);
+        ComponentStorage<A> firstStorage = (ComponentStorage<A>) activeComponents.get(firstType);
+        ComponentStorage<B> secondStorage = (ComponentStorage<B>) activeComponents.get(secondType);
+        ComponentStorage<TransformComponent> transforms = (ComponentStorage<TransformComponent>) activeComponents.get(TransformComponent.class);
         if (firstStorage == null || secondStorage == null)
         {
             Logger.error("Component of type " + firstType.getName() + " or " + secondType.getName() + " has not been registered!");
@@ -158,7 +185,7 @@ public class EntityRegistry
 
     public Set<Class<? extends Component>> getRegisteredComponentTypes()
     {
-        return registeredComponents.keySet();
+        return activeComponents.keySet();
     }
 
     public List<Integer> getActiveEntities()

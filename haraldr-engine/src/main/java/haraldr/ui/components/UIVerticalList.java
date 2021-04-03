@@ -16,16 +16,23 @@ public class UIVerticalList extends UIComponent implements Iterable<ListItem>
     private List<ListItem> listItems = new ArrayList<>();
     private float listHeight;
     private Vector4f backgroundColor;
+    private boolean closeOnPress;
 
     public UIVerticalList(UIContainer parent, int layerIndex)
     {
-        this(parent, layerIndex, new Vector4f());
+        this(parent, layerIndex, new Vector4f(), false);
     }
 
     public UIVerticalList(UIContainer parent, int layerIndex, Vector4f backgroundColor)
     {
+        this(parent, layerIndex, backgroundColor, false);
+    }
+
+    public UIVerticalList(UIContainer parent, int layerIndex, Vector4f backgroundColor, boolean closeOnPress)
+    {
         super(parent, layerIndex);
         this.backgroundColor = backgroundColor;
+        this.closeOnPress = closeOnPress;
     }
 
     public void addItem(String name, ListItem.ListItemCallback listItemCallback)
@@ -92,6 +99,7 @@ public class UIVerticalList extends UIComponent implements Iterable<ListItem>
                 if (eventResult.pressedItem() != null)
                 {
                     pressedItem = listItem;
+                    if (closeOnPress) setEnabled(false);
                     break;
                 }
             }

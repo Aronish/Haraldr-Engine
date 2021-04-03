@@ -71,4 +71,19 @@ public class SceneLights
     {
         lightSetupBuffer.delete();
     }
+
+    public List<DirectionalLight> getDirectionalLights()
+    {
+        return directionalLights;
+    }
+
+    public List<PointLight> getPointLights()
+    {
+        return pointLights;
+    }
+
+    public List<Spotlight> getSpotlights()
+    {
+        return spotlights;
+    }
 }

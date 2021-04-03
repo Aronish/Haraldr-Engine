@@ -79,11 +79,13 @@ public class CubeMap
     private static final Shader SKYBOX      = Shader.create("internal_shaders/skybox.glsl");
 
     private int cubeMapId;
+    private String path;
 
     @Contract(pure = true)
-    private CubeMap(int cubeMapId)
+    private CubeMap(int cubeMapId, String path)
     {
         this.cubeMapId = cubeMapId;
+        this.path = path;
     }
 
     public void bind(int unit)
@@ -203,7 +205,7 @@ public class CubeMap
 
             glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
-            CubeMap environmentMap = new CubeMap(cubeMap);
+            CubeMap environmentMap = new CubeMap(cubeMap, path);
             ResourceManager.addCubeMap(path, environmentMap);
             Logger.info("Generated environment map from " + path);
             return environmentMap;
@@ -246,7 +248,7 @@ public class CubeMap
                 glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
                 glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-                return new CubeMap(cubeMap);
+                return new CubeMap(cubeMap, path);
             }));
             ResourceManager.addCubeMap(path, diffuseIrradianceMap);
             Logger.info("Loaded diffuse irradiance map " + path);
@@ -313,7 +315,7 @@ public class CubeMap
                 glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
                 glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-                return new CubeMap(cubeMap);
+                return new CubeMap(cubeMap, path);
             }));
 
             ResourceManager.addCubeMap(path, prefilteredEnvironmentMap);
@@ -385,6 +387,11 @@ public class CubeMap
     public void delete()
     {
         glDeleteTextures(cubeMapId);
+    }
+
+    public String getPath()
+    {
+        return path;
     }
 
     private static class EXRData

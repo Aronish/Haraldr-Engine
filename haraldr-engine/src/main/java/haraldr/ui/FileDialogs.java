@@ -26,7 +26,19 @@ public class FileDialogs
             filterPatterns.put(stack.UTF8("*." + fileType));
             filterPatterns.flip();
             String path = TinyFileDialogs.tinyfd_saveFileDialog(prompt, "", filterPatterns, "");
-            return path == null ? "" : path;
+            if (path == null)
+            {
+                return "";
+            } else
+            {
+                return !path.endsWith("." + fileType) ? path + "." + fileType : path;
+            }
         }
+    }
+
+    public static String selectFolder(String prompt)
+    {
+        String path = TinyFileDialogs.tinyfd_selectFolderDialog(prompt, "");
+        return path == null ? "" : path;
     }
 }

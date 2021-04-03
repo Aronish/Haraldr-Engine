@@ -103,7 +103,7 @@ public class Shader
         programHandle = createProgram(ArrayUtils.toPrimitiveArrayI(internalShaderIds));
     }
 
-    private int createProgram(@NotNull int... shaders)
+    private int createProgram(int... shaders)
     {
         int shaderProgram = glCreateProgram();
         for (int shader : shaders)
@@ -140,7 +140,7 @@ public class Shader
         List<Integer> internalShaderIds = internalShaders.stream().map(InternalShader::getShaderId).collect(Collectors.toList());
         programHandle = createProgram(ArrayUtils.toPrimitiveArrayI(internalShaderIds));
     }
-
+//TODO: Cache uniforms beforehand
     public void setBoolean(String name, boolean value)
     {
         if (!uniformLocations.containsKey(name))

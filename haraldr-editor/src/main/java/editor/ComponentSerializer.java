@@ -8,11 +8,13 @@ import haraldr.ecs.ComponentVisitor;
 import haraldr.ecs.ModelComponent;
 import haraldr.ecs.TagComponent;
 import haraldr.ecs.TransformComponent;
+import org.jetbrains.annotations.Contract;
 
 public class ComponentSerializer implements ComponentVisitor
 {
     private YamlMappingBuilder componentDataStore;
 
+    @Contract(pure = true)
     public ComponentSerializer(YamlMappingBuilder componentDataStore)
     {
         this.componentDataStore = componentDataStore;
@@ -49,18 +51,18 @@ public class ComponentSerializer implements ComponentVisitor
                 .add(Float.toString(transformComponent.position.getY()))
                 .add(Float.toString(transformComponent.position.getZ()))
         .build();
-        YamlSequence rotation = Yaml.createYamlSequenceBuilder()
-                .add(Float.toString(transformComponent.rotation.getX()))
-                .add(Float.toString(transformComponent.rotation.getY()))
-                .add(Float.toString(transformComponent.rotation.getZ()))
-        .build();
         YamlSequence scale = Yaml.createYamlSequenceBuilder()
                 .add(Float.toString(transformComponent.scale.getX()))
                 .add(Float.toString(transformComponent.scale.getY()))
                 .add(Float.toString(transformComponent.scale.getZ()))
         .build();
+        YamlSequence rotation = Yaml.createYamlSequenceBuilder()
+                .add(Float.toString(transformComponent.rotation.getX()))
+                .add(Float.toString(transformComponent.rotation.getY()))
+                .add(Float.toString(transformComponent.rotation.getZ()))
+                .build();
         componentDataStore = componentDataStore.add("position", position);
-        componentDataStore = componentDataStore.add("rotation", rotation);
         componentDataStore = componentDataStore.add("scale", scale);
+        componentDataStore = componentDataStore.add("rotation", rotation);
     }
 }

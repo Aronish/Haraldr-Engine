@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-public class View<T>
+public class View<T extends Component>
 {
     private List<TransformComponent> transforms;
     private List<T> components;

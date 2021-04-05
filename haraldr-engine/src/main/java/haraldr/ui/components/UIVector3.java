@@ -11,7 +11,7 @@ public class UIVector3 extends UIComponent
 
     protected UIVector3(UIContainer parent, int layerIndex)
     {
-        this(parent, layerIndex, new Vector3f(), 0.02f, (x, y, z) -> {});
+        super(parent, layerIndex);
     }
 
     public UIVector3(UIContainer parent, int layerIndex, Vector3f defaultValues, Vector3ChangeAction vector3ChangeAction)

@@ -53,7 +53,7 @@ public class ProjectManagerPanel extends DockablePanel
 
         setPosition(position);
         setSize(size);
-        mainLayer.addComponent(new PanelModel());
+        uiLayerStack.getLayer(0).addComponent(new PanelModel());
         draw();
     }
 

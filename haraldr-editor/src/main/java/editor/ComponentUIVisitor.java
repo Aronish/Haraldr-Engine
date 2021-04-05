@@ -44,7 +44,6 @@ public class ComponentUIVisitor implements ComponentVisitor
     @Override
     public void visit(ModelComponent modelComponent)
     {
-        //TODO: When UIDropDownList becomes available, fix material property editing
         JSONObject updatedModelDefinition = modelComponent.model.getModelDefinition();
         JSONObject materialProperties = updatedModelDefinition.getJSONObject("material").getJSONObject("properties");
 

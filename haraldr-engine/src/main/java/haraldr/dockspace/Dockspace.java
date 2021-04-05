@@ -103,8 +103,12 @@ public class Dockspace implements UILayerable
         // Then send events to docked panels
         for (DockablePanel dockedPanel : dockedPanels)
         {
-            if (consumed = dockedPanel.onEvent(event, window) && dockedPanel.isHeaderPressed()) selectedPanel = dockedPanel;
-            if (consumed) break;
+            consumed = dockedPanel.onEvent(event, window);
+            if (consumed)
+            {
+                selectedPanel = dockedPanel;
+                break;
+            }
         }
 
         // Try docking the selected panel
@@ -119,7 +123,7 @@ public class Dockspace implements UILayerable
             requiresRedraw = true;
         }
 
-        if (selectedPanel != null && event.eventType == EventType.MOUSE_MOVED)
+        if (selectedPanel != null && selectedPanel.isHeaderPressed() && event.eventType == EventType.MOUSE_MOVED)
         {
             DockingArea dockedArea = rootArea.getDockedArea(selectedPanel);
             if (dockedArea != null) // Undock the selected panel if it is docked and is moved.
@@ -136,8 +140,7 @@ public class Dockspace implements UILayerable
             {
                 rootArea.checkHovered(selectedPanel.getPosition());
             }
-            requiresRedraw = true;
-            consumed = true;
+            consumed = requiresRedraw = true;
         }
         return new UIEventResult(requiresRedraw, consumed);
     }

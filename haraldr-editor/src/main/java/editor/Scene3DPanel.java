@@ -24,7 +24,7 @@ public class Scene3DPanel extends DockablePanel
                 Vector2f.addY(position, headerSize.getY()),
                 Vector2f.addY(size, -headerSize.getY())
         );
-        mainLayer.addComponent(new PanelModel());
+        uiLayerStack.getLayer(0).addComponent(new PanelModel());
         draw();
     }
 

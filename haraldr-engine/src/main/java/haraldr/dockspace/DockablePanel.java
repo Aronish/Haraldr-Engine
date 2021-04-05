@@ -14,7 +14,6 @@ import haraldr.physics.Physics2D;
 import haraldr.ui.TextLabel;
 import haraldr.ui.UIEventLayer;
 import haraldr.ui.UILayerStack;
-import haraldr.ui.components.UIContainer;
 import haraldr.ui.components.UILayerable;
 
 @SuppressWarnings("WeakerAccess")
@@ -29,19 +28,16 @@ public abstract class DockablePanel
     protected TextLabel name;
 
     protected UILayerStack uiLayerStack = new UILayerStack();
-    protected UIEventLayer mainLayer = new UIEventLayer();
 
     private PanelDimensionChangeAction panelDimensionChangeAction = (position, size) -> {};
 
     public DockablePanel(Vector2f position, Vector2f size, Vector4f color, String name)
     {
-        uiLayerStack.addLayer(mainLayer);
-
         this.position = new Vector2f(position);
         headerSize = new Vector2f(size.getX(), HEADER_SIZE);
         this.size = size;
         this.color = color;
-        this.name = mainLayer.getTextBatch().createTextLabel(name, position, new Vector4f(1f));
+        this.name = uiLayerStack.getLayer(0).getTextBatch().createTextLabel(name, position, new Vector4f(1f));
         draw();
     }
 
@@ -68,8 +64,9 @@ public abstract class DockablePanel
                 setPosition(mousePoint);
             }
         }
-        if (uiLayerStack.onEvent(event, window).requiresRedraw()) draw();
-        return headerPressed || contentPressed;
+        UILayerable.UIEventResult eventResult = uiLayerStack.onEvent(event, window);
+        if (eventResult.requiresRedraw()) draw();
+        return headerPressed || contentPressed || eventResult.consumed();
     }
 
     protected void draw()

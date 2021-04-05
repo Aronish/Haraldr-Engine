@@ -26,7 +26,7 @@ public class PropertiesPanel extends DockablePanel
         super(position, size, color, name);
         mainContentGroup.setPosition(Vector2f.addY(position, headerSize.getY()));
         mainContentGroup.setSize(Vector2f.addY(size, headerSize.getY()));
-        mainLayer.addComponent(new PanelModel());
+        uiLayerStack.getLayer(0).addComponent(0, new PanelModel());
         draw();
     }
 
@@ -45,7 +45,7 @@ public class PropertiesPanel extends DockablePanel
                 mainContentGroup.addComponent(ecsComponentGroup);
             }
         }
-        mainLayer.getTextBatch().refreshTextMeshData();
+        uiLayerStack.getLayer(0).getTextBatch().refreshTextMeshData();
         draw();
     }
 
@@ -53,7 +53,8 @@ public class PropertiesPanel extends DockablePanel
     {
         mainContentGroup.clear();
         uiLayerStack.clear();
-        mainLayer.getTextBatch().addTextLabel(name);
+        uiLayerStack.getLayer(0).addComponent(0, new PanelModel());
+        uiLayerStack.getLayer(0).getTextBatch().addTextLabel(name);
     }
 
     @Override
@@ -68,17 +69,6 @@ public class PropertiesPanel extends DockablePanel
     {
         mainContentGroup.setSize(Vector2f.addY(size, headerSize.getY()));
         super.setSize(size);
-    }
-
-    @Override
-    public boolean onEvent(Event event, Window window)
-    {
-        boolean requiresRedraw, consumeEvent = super.onEvent(event, window);
-        // UILayer events
-        UILayerable.UIEventResult uiEventResult = uiLayerStack.onEvent(event, window);
-        if (requiresRedraw = uiEventResult.requiresRedraw()) mainContentGroup.update();
-        if (requiresRedraw) draw();
-        return consumeEvent;
     }
 
     @Override

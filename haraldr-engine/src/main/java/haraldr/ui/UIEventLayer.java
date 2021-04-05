@@ -24,6 +24,11 @@ public class UIEventLayer
         components.add(component);
     }
 
+    public void addComponent(int insertIndex, UILayerable component)
+    {
+        components.add(insertIndex, component);
+    }
+
     public UILayerable.UIEventResult onEvent(Event event, Window window)
     {
         UILayerable.UIEventResult componentResult;

@@ -47,6 +47,7 @@ public class DynamicScene
         skyBox.renderSkyBox();
         var renderables = entityRegistry.view(ModelComponent.class);
         renderables.forEach((transform, model) -> model.model.render(transform));
+        sceneLights.renderLights();
     }
 
     public void dispose()

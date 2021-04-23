@@ -51,10 +51,14 @@ public class ProjectManagerPanel extends DockablePanel
 
         projectControls.addComponent(controlsList);
 
-        setPosition(position);
-        setSize(size);
-        uiLayerStack.getLayer(0).addComponent(new PanelModel());
+        //uiLayerStack.getLayer(0).addComponent(new PanelModel());
         draw();
+    }
+
+    @Override
+    protected void initializeUIPositioning()
+    {
+
     }
 
     @Override

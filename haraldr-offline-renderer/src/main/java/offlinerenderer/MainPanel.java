@@ -36,25 +36,4 @@ public class MainPanel extends DockablePanel
         uiComponentList.setSize(size);
         super.setSize(size);
     }
-
-    @Override
-    public boolean onEvent(Event event, Window window)
-    {
-        boolean consumePress = super.onEvent(event, window);
-        if (uiLayerStack.onEvent(event, window).requiresRedraw()) draw();
-        return consumePress;
-    }
-
-    @Override
-    protected void draw()
-    {
-        if (uiComponentList == null) return;
-        Batch2D mainBatch = mainLayer.getBatch();
-        mainBatch.begin();
-        mainBatch.drawQuad(position, size, color);
-        mainBatch.drawQuad(position, headerSize, HEADER_COLOR);
-
-        uiComponentList.draw(mainBatch);
-        mainBatch.end();
-    }
 }

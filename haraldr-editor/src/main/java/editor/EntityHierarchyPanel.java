@@ -19,10 +19,6 @@ public class EntityHierarchyPanel extends DockablePanel
     {
         super(position, size, color, name);
         this.entitySelectedAction = entitySelectedAction;
-        setPosition(position);
-        setSize(size);
-        uiLayerStack.getLayer(0).addComponent(0, new PanelModel());
-        draw();
     }
 
     private void addEntity(String name, Entity entity)
@@ -33,10 +29,7 @@ public class EntityHierarchyPanel extends DockablePanel
 
     public void refreshEntityList(EntityRegistry entityRegistry)
     {
-        uiLayerStack.clear();
-        uiLayerStack.getLayer(0).addComponent(0, new PanelModel());
-        uiLayerStack.getLayer(0).getTextBatch().addTextLabel(name);
-
+        clear();
         entityList.clear();
         uiLayerStack.getLayer(0).addComponent(entityList);
         entityRegistry.view(TagComponent.class).forEach(((transformComponent, tagComponent) -> addEntity(tagComponent.tag, entityRegistry.getEntityOf(tagComponent))));

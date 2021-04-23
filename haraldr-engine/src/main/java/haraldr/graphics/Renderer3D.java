@@ -28,7 +28,7 @@ public abstract class Renderer3D
         Renderer.clear(Renderer.ClearMask.COLOR_DEPTH_STENCIL);
     }
 
-    public static void renderSceneToTexture(Window window, Camera camera, DynamicScene scene, RenderTexture renderTexture)
+    public static void renderSceneToTexture(Window window, Camera camera, Scene3D scene, RenderTexture renderTexture)
     {
         begin(window, camera, renderTexture.getFramebuffer());
         Renderer.setViewPort(0, 0, (int)renderTexture.getSize().getX(), (int)renderTexture.getSize().getY());

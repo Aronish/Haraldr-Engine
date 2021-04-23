@@ -176,6 +176,7 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
         default void onMouseDragged(float xOffset) {}
         void onCharacterTyped(char enteredCharacter);
         void setValue(UnderlyingType value);
+        void setStringValue(String value);
         void setDefaultValue();
         void clear();
         String toString();
@@ -233,6 +234,12 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
         public void setValue(Integer value)
         {
             intValue = Integer.toString(value);
+        }
+
+        @Override
+        public void setStringValue(String value)
+        {
+            intValue = value;
         }
 
         @Override
@@ -314,6 +321,12 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
         }
 
         @Override
+        public void setStringValue(String value)
+        {
+            floatValue = value;
+        }
+
+        @Override
         public void setDefaultValue()
         {
             floatValue = "0.0";
@@ -363,6 +376,12 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
 
         @Override
         public void setValue(String value)
+        {
+            stringValue = value;
+        }
+
+        @Override
+        public void setStringValue(String value)
         {
             stringValue = value;
         }

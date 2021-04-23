@@ -12,9 +12,9 @@ import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
 import haraldr.ui.TextLabel;
-import haraldr.ui.UIEventLayer;
 import haraldr.ui.UILayerStack;
 import haraldr.ui.components.UILayerable;
+import org.jetbrains.annotations.Contract;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class DockablePanel
@@ -33,12 +33,27 @@ public abstract class DockablePanel
 
     public DockablePanel(Vector2f position, Vector2f size, Vector4f color, String name)
     {
-        this.position = new Vector2f(position);
-        headerSize = new Vector2f(size.getX(), HEADER_SIZE);
-        this.size = size;
-        this.color = color;
         this.name = uiLayerStack.getLayer(0).getTextBatch().createTextLabel(name, position, new Vector4f(1f));
+        this.color = color;
+        this.size = new Vector2f(size);
+        headerSize = new Vector2f(size.getX(), HEADER_SIZE);
+        this.position = new Vector2f(position);
+        this.name.setPosition(position);
+        uiLayerStack.refresh();
+        panelDimensionChangeAction.run(
+                Vector2f.addY(position, headerSize.getY()),
+                Vector2f.addY(size, -headerSize.getY())
+        );
+        uiLayerStack.getLayer(0).addComponent(setupPanelModel());
+        initializeUIPositioning();
         draw();
+    }
+
+    protected void initializeUIPositioning() {}
+
+    protected PanelModel setupPanelModel()
+    {
+        return new PanelModel(this);
     }
 
     public boolean onEvent(Event event, Window window)
@@ -67,6 +82,13 @@ public abstract class DockablePanel
         UILayerable.UIEventResult eventResult = uiLayerStack.onEvent(event, window);
         if (eventResult.requiresRedraw()) draw();
         return headerPressed || contentPressed || eventResult.consumed();
+    }
+
+    protected void clear()
+    {
+        uiLayerStack.clear();
+        uiLayerStack.getLayer(0).addComponent(0, new PanelModel(this));
+        uiLayerStack.getLayer(0).getTextBatch().addTextLabel(name);
     }
 
     protected void draw()
@@ -136,9 +158,14 @@ public abstract class DockablePanel
         return size;
     }
 
-    public float getHeaderHeight()
+    public Vector2f getHeaderSize()
     {
-        return headerSize.getY();
+        return headerSize;
+    }
+
+    public Vector4f getColor()
+    {
+        return color;
     }
 
     public boolean isHeaderPressed()
@@ -161,13 +188,21 @@ public abstract class DockablePanel
         void run(Vector2f position, Vector2f size);
     }
 
-    public class PanelModel implements UILayerable
+    public static class PanelModel implements UILayerable
     {
+        protected DockablePanel panel;
+
+        @Contract(pure = true)
+        protected PanelModel(DockablePanel panel)
+        {
+            this.panel = panel;
+        }
+
         @Override
         public void draw(Batch2D batch)
         {
-            batch.drawQuad(position, size, color);
-            batch.drawQuad(position, headerSize, HEADER_COLOR);
+            batch.drawQuad(panel.position, panel.size, panel.color);
+            batch.drawQuad(panel.position, panel.headerSize, HEADER_COLOR);
         }
     }
 }

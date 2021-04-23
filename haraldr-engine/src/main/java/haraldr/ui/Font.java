@@ -42,11 +42,12 @@ import static org.lwjgl.stb.STBTruetype.stbtt_PackSetOversampling;
 import static org.lwjgl.stb.STBTruetype.stbtt_ScaleForPixelHeight;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Font
 {
-    public static final Font DEFAULT_FONT = new Font("default_fonts/Roboto-Regular.ttf", 18, 1);
+    public static final Font DEFAULT_FONT = new Font("default_fonts/segoeui.ttf", 16, 1);
 
-    public static final int WIDTH = 512, HEIGHT = 512;
+    public static final int WIDTH = 1024, HEIGHT = 1024;
     private static final float SIZE_COMPENSATION = 2f;
 
     private float scaleFactor;
@@ -139,7 +140,7 @@ public class Font
                 float codePointX = x.get(0);
                 stbtt_GetPackedQuad(packedchars, WIDTH, HEIGHT, codePoint - 32, x, y, quad, true);
                 x.put(0, scale(codePointX, x.get(0), factorX));
-                ///// Kerning /////////////////
+                /// Kerning /////////////////
                 if (i < to)
                 {
                     getCodePoint(text, to, i, pCodePoint);

@@ -11,73 +11,26 @@ import haraldr.main.Window;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public abstract class Scene3D
 {
-    private CubeMap skyBox;
+    protected CubeMap skyBox;
+    protected SceneLights sceneLights = new SceneLights();
+    protected EntityRegistry entityRegistry = new EntityRegistry();
 
-    protected SceneLights sceneLights;
-    protected EntityRegistry registry = new EntityRegistry();
-
-    public void setSkyBox(CubeMap skyBox)
+    public EntityRegistry getEntityRegistry()
     {
-        this.skyBox = skyBox;
+        return entityRegistry;
     }
 
-    public void setSceneLights(SceneLights sceneLights)
-    {
-        this.sceneLights = sceneLights;
-    }
-
-    public void setSceneLights(Light... lights)
-    {
-        sceneLights = new SceneLights();
-        for (Light light : lights)
-        {
-            sceneLights.addLight(light);
-        }
-    }
-
-    public EntityRegistry getRegistry()
-    {
-        return registry;
-    }
-
-    protected abstract void onClientActivate();
-    
-    public final void onActivate()
-    {
-        onClientActivate();
-    }
-
-    protected abstract void onClientEvent(Event event, Window window);
-
-    public final void onEvent(Event event, Window window)
-    {
-        onClientEvent(event, window);
-    }
-
-    protected abstract void onClientUpdate(float deltaTime, Window window);
-
-    public final void onUpdate(float deltaTime, Window window)
-    {
-        onClientUpdate(deltaTime, window);
-    }
-
-    protected abstract void onClientRender();
-
-    public final void onRender()
+    public void render()
     {
         sceneLights.bind();
         skyBox.renderSkyBox();
-        var renderables = registry.view(ModelComponent.class);
+        var renderables = entityRegistry.view(ModelComponent.class);
         renderables.forEach((transform, model) -> model.model.render(transform));
-        onClientRender();
+        sceneLights.renderLights();
     }
 
-    protected abstract void onClientDispose();
-
-    public final void onDispose()
+    public void dispose()
     {
-        onClientDispose();
         sceneLights.dispose();
-        skyBox.delete();
     }
 }

@@ -1,5 +1,6 @@
 package haraldr.graphics.lighting;
 
+import haraldr.debug.Logger;
 import haraldr.graphics.UniformBuffer;
 
 import java.util.ArrayList;

@@ -81,6 +81,8 @@ public class MaterialParser
         for (String variantToken : variants.keySet())
         {
             JSONObject variant = variants.getJSONObject(variantToken);
+            //if (!materialProperties.has(variant.getString("required"))) continue; // Maybe necessary idk
+
             String[] dependants = JSONArrayToStringArray(variant.getJSONArray("dependants"));
             // Count hits in material file
             for (String dependant : dependants)

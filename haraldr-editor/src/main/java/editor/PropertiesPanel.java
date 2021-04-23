@@ -19,15 +19,11 @@ import haraldr.ui.components.UIVerticalListGroup;
 public class PropertiesPanel extends DockablePanel
 {
     private UIEventLayer stencilLayer = new UIEventLayer();
-    private UIVerticalListGroup mainContentGroup = new UIVerticalListGroup(uiLayerStack, 0);
+    private UIVerticalListGroup mainContentGroup;
 
     public PropertiesPanel(Vector2f position, Vector2f size, Vector4f color, String name)
     {
         super(position, size, color, name);
-        mainContentGroup.setPosition(Vector2f.addY(position, headerSize.getY()));
-        mainContentGroup.setSize(Vector2f.addY(size, headerSize.getY()));
-        uiLayerStack.getLayer(0).addComponent(0, new PanelModel());
-        draw();
     }
 
     public void populateWithEntity(Entity selected, EntityRegistry registry)
@@ -49,12 +45,19 @@ public class PropertiesPanel extends DockablePanel
         draw();
     }
 
+    @Override
+    protected void initializeUIPositioning()
+    {
+        mainContentGroup = new UIVerticalListGroup(uiLayerStack, 0);
+        mainContentGroup.setPosition(Vector2f.addY(position, headerSize.getY()));
+        mainContentGroup.setSize(Vector2f.addY(size, headerSize.getY()));
+    }
+
+    @Override
     public void clear()
     {
+        super.clear();
         mainContentGroup.clear();
-        uiLayerStack.clear();
-        uiLayerStack.getLayer(0).addComponent(0, new PanelModel());
-        uiLayerStack.getLayer(0).getTextBatch().addTextLabel(name);
     }
 
     @Override

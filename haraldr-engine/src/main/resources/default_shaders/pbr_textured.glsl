@@ -85,17 +85,33 @@ layout (binding = 1) uniform samplerCube c_PrefilteredMap;
 layout (binding = 2) uniform sampler2D BRDFLUT;
 
 layout (binding = 3) uniform sampler2D map_Albedo;
+
+#ifdef NORMAL_MAP
 layout (binding = 4) uniform sampler2D map_Normal;
+#endif
+
+#ifdef METALNESS_MAP
 layout (binding = 5) uniform sampler2D map_Metalness;
+#else
+uniform float u_Metalness = 0.0f;
+#endif
+
+#ifdef ROUGHNESS_MAP
 layout (binding = 6) uniform sampler2D map_Roughness;
+#else
+uniform float u_Roughness = 0.0f;
+#endif
+
 #ifdef PARALLAX_MAP
 layout (binding = 7) uniform sampler2D map_Displacement;
 #endif
+
 #ifdef AO_MAP
 layout (binding = 8) uniform sampler2D map_Ambient_Occlusion;
 #endif
 
 uniform float u_Opacity = 1.0f;
+uniform float u_Tiling_Factor = 1.0f;
 
 out vec4 o_Color;
 
@@ -136,26 +152,41 @@ vec2 ParallaxMapping(vec2 textureCoordinate, vec3 viewDirection)
 
 void main()
 {
-    float tilingFactor = 1.0f; //TODO: Make uniform
     vec3 V = normalize(v_ViewPosition_T - v_WorldPosition_T);
 
 #ifdef PARALLAX_MAP
-    vec2 textureCoordinate = ParallaxMapping(v_TextureCoordinate * tilingFactor, V);
-    if(textureCoordinate.x > tilingFactor || textureCoordinate.y > tilingFactor || textureCoordinate.x < 0.0f || textureCoordinate.y < 0.0f) discard;
+    vec2 textureCoordinate = ParallaxMapping(v_TextureCoordinate * u_Tiling_Factor, V);
+    if(textureCoordinate.x > u_Tiling_Factor || textureCoordinate.y > u_Tiling_Factor || textureCoordinate.x < 0.0f || textureCoordinate.y < 0.0f) discard;
 #else
-    vec2 textureCoordinate = v_TextureCoordinate * tilingFactor;
+    vec2 textureCoordinate = v_TextureCoordinate * u_Tiling_Factor;
 #endif
 
-    vec3 albedo = texture(map_Albedo, textureCoordinate).rgb;
+    vec3 color = texture(map_Albedo, textureCoordinate).rgb;
+
+#ifdef NORMAL_MAP
     vec3 normal_T = normalize(texture(map_Normal, textureCoordinate).rgb * 2.0f - 1.0f);
-    float metallic = texture(map_Metalness, textureCoordinate).r;
+#else
+    vec3 normal_T = v_Normal_T;
+#endif
+
+#ifdef METALNESS_MAP
+    float metalness = texture(map_Metalness, textureCoordinate).r;
+#else
+    float metalness = u_Metalness;
+#endif
+
+#ifdef ROUGHNESS_MAP
     float roughness = texture(map_Roughness, textureCoordinate).r;
+#else
+    float roughness = u_Roughness;
+#endif
+
 #ifdef AO_MAP
     float ambientOcclusion = texture(map_Ambient_Occlusion, textureCoordinate).r;
 #endif
 
     vec3 F0 = vec3(0.04f);
-    F0 = mix(F0, albedo, metallic);
+    F0 = mix(F0, color, metalness);
 
     vec3 Lo = vec3(0.0f);
     //////////Direct lighting////////////////
@@ -176,10 +207,10 @@ void main()
         vec3 specular = numerator / max(denominator, 0.001f);
         /////Diffuse-Specular Fraction/////
         vec3 kD = vec3(1.0f) - F; //(F = kS)
-        kD *= 1.0f - metallic;
+        kD *= 1.0f - metalness;
 
         float NdotL = max(dot(normal_T, L), 0.0f);
-        Lo += (kD * albedo / PI + specular) * radiance * NdotL;
+        Lo += (kD * color / PI + specular) * radiance * NdotL;
     }
     //////////Indirect Lighting//////////////////////////////////////////////////
     /////IBL Ambient/////////////////////////////////////////////////////////////
@@ -188,9 +219,9 @@ void main()
     vec3 V_World = normalize(viewPosition_W - v_WorldPosition_W);
 
     vec3 kS = fresnelSchlickRoughness(max(dot(sampleVector, V_World), 0.0f), F0, roughness);
-    vec3 kD = (1.0f - kS) * (1.0f - metallic);
+    vec3 kD = (1.0f - kS) * (1.0f - metalness);
     vec3 irradiance = texture(c_DiffuseIrradianceMap, sampleVector).rgb;
-    vec3 diffuse = irradiance * albedo;
+    vec3 diffuse = irradiance * color;
     /////IBL Specular/////////////////////
     const float MAX_REFLECTION_LOD = 4.0f;
     vec3 R = reflect(-V_World, sampleVector);

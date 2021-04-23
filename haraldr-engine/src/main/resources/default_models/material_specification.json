@@ -3,6 +3,22 @@
   {
     "variants":
     {
+      "textured":
+      {
+        "dependants": [ "albedo_map", "normal_map", "metalness_map", "roughness_map", "displacement_map", "ambient_occlusion_map" ],
+        "shader": "default_shaders/pbr_textured.glsl",
+        "optional": [ "opacity", "tiling_factor" ],
+        "samplers":
+        {
+          "environment_map": { "extended": true, "unit": 0 },
+          "albedo_map": { "color_data": true, "unit": 3 },
+          "normal_map": { "color_data": false, "unit": 4, "optional_switch": "NORMAL_MAP" },
+          "metalness_map": { "color_data": false, "unit": 5, "optional_switch": "METALNESS_MAP" },
+          "roughness_map": { "color_data": false, "unit": 6, "optional_switch": "ROUGHNESS_MAP" },
+          "displacement_map": { "color_data": false, "unit": 7, "optional_switch": "PARALLAX_MAP" },
+          "ambient_occlusion_map": { "color_data": false, "unit": 8, "optional_switch": "AO_MAP" }
+        }
+      },
       "untextured":
       {
         "dependants": [ "color" ],
@@ -11,22 +27,6 @@
         "samplers":
         {
           "environment_map": { "extended": true, "unit": 0 }
-        }
-      },
-      "textured":
-      {
-        "dependants": [ "albedo" ],
-        "shader": "default_shaders/pbr_textured.glsl",
-        "optional": [ "opacity" ],
-        "samplers":
-        {
-          "environment_map": { "extended": true, "unit": 0 },
-          "albedo": { "color_data": true, "unit": 3 },
-          "normal": { "color_data": false, "unit": 4 },
-          "metalness": { "color_data": false, "unit": 5 },
-          "roughness": { "color_data": false, "unit": 6 },
-          "displacement": { "color_data": false, "unit": 7, "optional_switch": "PARALLAX_MAP" },
-          "ambient_occlusion": { "color_data": false, "unit": 8, "optional_switch": "AO_MAP" }
         }
       }
     }

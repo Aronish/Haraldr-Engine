@@ -4,6 +4,7 @@ import haraldr.debug.Logger;
 import haraldr.event.Event;
 import haraldr.event.EventDispatcher;
 import haraldr.event.EventType;
+import haraldr.event.FrameInfoUpdatedEvent;
 import haraldr.event.WindowResizedEvent;
 import haraldr.graphics.Renderer;
 import haraldr.graphics.Renderer2D;
@@ -159,7 +160,8 @@ public abstract class Application
                 if (timer >= 1d)
                 {
                     int fps = (int) (frames / timer), ups = (int) (updates / timer);
-                    window.setTitle(String.format("FPS: %d UPS: %d Frametime: %f ms", fps, ups, frameTime * 1000d));
+                    double frameTimeMillis = frameTime * 1000d;
+                    EventDispatcher.dispatch(new FrameInfoUpdatedEvent(fps, ups, frameTimeMillis), window);
                     timer = 0.0d;
                     frames = 0;
                     updates = 0;

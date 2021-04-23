@@ -1,4 +1,4 @@
-package editor;
+package haraldr.ecs;
 
 import com.amihaiemil.eoyaml.Yaml;
 import com.amihaiemil.eoyaml.YamlMappingBuilder;

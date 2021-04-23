@@ -4,6 +4,7 @@ import haraldr.graphics.Batch2D;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector3f;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class UIVector3Linkable extends UIVector3
 {
     private UICheckbox linked;
@@ -80,15 +81,16 @@ public class UIVector3Linkable extends UIVector3
         x = new UIInputField<>(parent, layerIndex, new UIInputField.FloatValue(defaultValues.getX(), dragSensitivity), inputFieldValue ->
         {
             float value = inputFieldValue.getValue();
-            if (value < min.getX()) value = min.getX();
-            if (value > max.getX()) value = max.getX();
-            inputFieldValue.setValue(value);
+            String value1 = inputFieldValue.toString();
+            if (value < min.getX()) value1 = Float.toString(min.getX());
+            if (value > max.getX()) value1 = Float.toString(max.getX());
+            inputFieldValue.setStringValue(value1);
             if (linked.isChecked())
             {
                 vector3ChangeAction.run(value, value, value);
-                y.getValue().setValue(value);
+                y.getValue().setStringValue(value1);
                 y.updateTextLabel();
-                z.getValue().setValue(value);
+                z.getValue().setStringValue(value1);
                 z.updateTextLabel();
             } else
             {
@@ -100,13 +102,13 @@ public class UIVector3Linkable extends UIVector3
             float value = inputFieldValue.getValue();
             if (value < min.getY()) value = min.getY();
             if (value > max.getY()) value = max.getY();
-            inputFieldValue.setValue(value);
+            inputFieldValue.setStringValue(inputFieldValue.toString());
             if (linked.isChecked())
             {
                 vector3ChangeAction.run(value, value, value);
-                x.getValue().setValue(value);
+                x.getValue().setStringValue(inputFieldValue.toString());
                 x.updateTextLabel();
-                z.getValue().setValue(value);
+                z.getValue().setStringValue(inputFieldValue.toString());
                 z.updateTextLabel();
             } else
             {
@@ -118,13 +120,13 @@ public class UIVector3Linkable extends UIVector3
             float value = inputFieldValue.getValue();
             if (value < min.getZ()) value = min.getZ();
             if (value > max.getZ()) value = max.getZ();
-            inputFieldValue.setValue(value);
+            inputFieldValue.setStringValue(inputFieldValue.toString());
             if (linked.isChecked())
             {
                 vector3ChangeAction.run(value, value, value);
-                x.getValue().setValue(value);
+                x.getValue().setStringValue(inputFieldValue.toString());
                 x.updateTextLabel();
-                y.getValue().setValue(value);
+                y.getValue().setStringValue(inputFieldValue.toString());
                 y.updateTextLabel();
             } else
             {

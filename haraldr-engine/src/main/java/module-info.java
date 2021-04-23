@@ -32,6 +32,7 @@ module haraldr
     requires org.lwjgl.tinyfd.natives;
 
     requires JsonParser;
+    requires eo.yaml;
     ///// EXPORTS ////////
     exports haraldr.debug;
     exports haraldr.dockspace;

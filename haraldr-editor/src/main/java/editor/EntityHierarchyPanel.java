@@ -12,13 +12,31 @@ import org.jetbrains.annotations.Contract;
 
 public class EntityHierarchyPanel extends DockablePanel
 {
-    private UIVerticalList entityList = new UIVerticalList(uiLayerStack, 0);
+    private UIVerticalList entityList;
     private EntitySelectedAction entitySelectedAction;
 
     public EntityHierarchyPanel(Vector2f position, Vector2f size, Vector4f color, String name, EntitySelectedAction entitySelectedAction)
     {
         super(position, size, color, name);
         this.entitySelectedAction = entitySelectedAction;
+    }
+
+    @Override
+    protected void initializeUI()
+    {
+        entityList = new UIVerticalList(uiLayerStack, 1);
+    }
+
+    @Override
+    public void setUIPosition(Vector2f position)
+    {
+        entityList.setPosition(position);
+    }
+
+    @Override
+    public void setUISize(Vector2f size)
+    {
+        entityList.setSize(size);
     }
 
     private void addEntity(String name, Entity entity)
@@ -34,20 +52,6 @@ public class EntityHierarchyPanel extends DockablePanel
         uiLayerStack.getLayer(0).addComponent(entityList);
         entityRegistry.view(TagComponent.class).forEach(((transformComponent, tagComponent) -> addEntity(tagComponent.tag, entityRegistry.getEntityOf(tagComponent))));
         draw();
-    }
-
-    @Override
-    public void setPosition(Vector2f position)
-    {
-        entityList.setPosition(Vector2f.addY(position, headerSize.getY()));
-        super.setPosition(position);
-    }
-
-    @Override
-    public void setSize(Vector2f size)
-    {
-        entityList.setSize(size);
-        super.setSize(size);
     }
 
     public interface EntitySelectedAction

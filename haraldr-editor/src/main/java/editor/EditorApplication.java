@@ -33,6 +33,7 @@ import haraldr.ui.components.UILayerable;
     Docking with many panels is broken
     Relativize asset paths in scene and model files
     Project abstraction
+    UI Needs centralization for configuring fonts and styles etc.
  */
 public class EditorApplication extends Application
 {
@@ -48,7 +49,7 @@ public class EditorApplication extends Application
 
     // Scene
     private Camera editorCamera;
-    private EditorScene scene;
+    private EditorScene scene; // TODO: Put in EditorProject
     private Entity selected = Entity.INVALID;
 
     public EditorApplication()
@@ -178,7 +179,7 @@ public class EditorApplication extends Application
             editorCamera.onEvent(event, window, scene3DPanel.isHovered());
         }
 
-        if (scene3DPanel.isHovered() && scene3DPanel.isContentPressed() && !scene3DPanel.isHeaderPressed())
+        if (!uiEventResult.consumed())
         {
             // Select an entity
             if (Input.wasMousePressed(event, MouseButton.MOUSE_BUTTON_1))

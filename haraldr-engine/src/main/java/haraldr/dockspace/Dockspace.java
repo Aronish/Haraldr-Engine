@@ -94,20 +94,21 @@ public class Dockspace implements UILayerable
                 break;
             }
         }
-        // If event did propagate below undocked panels, check resizing
+        // If event did propagate below undocked panels
         if (!undockedPanelsConsumed)
         {
-            consumed = rootArea.onEvent(event, window); //Docking area resizing
+            // Check docking area resizing
+            consumed = rootArea.onEvent(event, window);
             if (consumed) return new UIEventResult(false, true);
-        }
-        // Then send events to docked panels
-        for (DockablePanel dockedPanel : dockedPanels)
-        {
-            consumed = dockedPanel.onEvent(event, window);
-            if (consumed)
+            // Then send events to docked panels
+            for (DockablePanel dockedPanel : dockedPanels)
             {
-                selectedPanel = dockedPanel;
-                break;
+                consumed = dockedPanel.onEvent(event, window);
+                if (consumed)
+                {
+                    selectedPanel = dockedPanel;
+                    break;
+                }
             }
         }
 

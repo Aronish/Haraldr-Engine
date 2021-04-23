@@ -56,22 +56,14 @@ public class ProjectManagerPanel extends DockablePanel
     }
 
     @Override
-    protected void initializeUIPositioning()
+    public void setUIPosition(Vector2f position)
     {
-
+        projectControls.setPosition(position);
     }
 
     @Override
-    public void setPosition(Vector2f position)
+    public void setUISize(Vector2f size)
     {
-        projectControls.setPosition(Vector2f.addY(position, headerSize.getY()));
-        super.setPosition(position);
-    }
-
-    @Override
-    public void setSize(Vector2f size)
-    {
-        projectControls.setSize(new Vector2f(size.getX(), 20f));
-        super.setSize(size);
+        projectControls.setSize(size);
     }
 }

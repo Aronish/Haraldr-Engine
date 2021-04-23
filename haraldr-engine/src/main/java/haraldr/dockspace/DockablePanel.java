@@ -11,6 +11,7 @@ import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
+import haraldr.ui.Font;
 import haraldr.ui.TextLabel;
 import haraldr.ui.UILayerStack;
 import haraldr.ui.components.UILayerable;
@@ -19,7 +20,6 @@ import org.jetbrains.annotations.Contract;
 @SuppressWarnings("WeakerAccess")
 public abstract class DockablePanel
 {
-    private static final float HEADER_SIZE = 20f;
     protected static final Vector4f HEADER_COLOR = new Vector4f(0.15f, 0.15f, 0.15f, 1f);
 
     protected Vector2f position, size, headerSize;
@@ -36,7 +36,7 @@ public abstract class DockablePanel
         this.name = uiLayerStack.getLayer(0).getTextBatch().createTextLabel(name, position, new Vector4f(1f));
         this.color = color;
         this.size = new Vector2f(size);
-        headerSize = new Vector2f(size.getX(), HEADER_SIZE);
+        headerSize = new Vector2f(size.getX(), Font.DEFAULT_FONT.getSize());
         this.position = new Vector2f(position);
         this.name.setPosition(position);
         uiLayerStack.refresh();
@@ -45,16 +45,24 @@ public abstract class DockablePanel
                 Vector2f.addY(size, -headerSize.getY())
         );
         uiLayerStack.getLayer(0).addComponent(setupPanelModel());
-        initializeUIPositioning();
+
+        initializeUI();
+        setPosition(position);
+        setSize(size);
         draw();
     }
 
-    protected void initializeUIPositioning() {}
+    public void setPanelDimensionChangeAction(PanelDimensionChangeAction panelDimensionChangeAction)
+    {
+        this.panelDimensionChangeAction = panelDimensionChangeAction;
+    }
 
     protected PanelModel setupPanelModel()
     {
         return new PanelModel(this);
     }
+
+    protected void initializeUI() {}
 
     public boolean onEvent(Event event, Window window)
     {
@@ -63,7 +71,7 @@ public abstract class DockablePanel
             var mousePressedEvent = (MousePressedEvent) event;
             Vector2f mousePoint = new Vector2f(mousePressedEvent.xPos, mousePressedEvent.yPos);
             headerPressed = Physics2D.pointInsideAABB(mousePoint, position, headerSize);
-            contentPressed = Physics2D.pointInsideAABB(mousePoint, Vector2f.addY(position, HEADER_SIZE), Vector2f.addY(size, -HEADER_SIZE));
+            contentPressed = Physics2D.pointInsideAABB(mousePoint, Vector2f.addY(position, headerSize.getY()), Vector2f.addY(size, -headerSize.getY()));
         }
         if (Input.wasMouseReleased(event, MouseButton.MOUSE_BUTTON_1))
         {
@@ -101,11 +109,6 @@ public abstract class DockablePanel
         uiLayerStack.render();
     }
 
-    public void setPanelDimensionChangeAction(PanelDimensionChangeAction panelDimensionChangeAction)
-    {
-        this.panelDimensionChangeAction = panelDimensionChangeAction;
-    }
-
     public void addPosition(Vector2f difference)
     {
         this.position.add(difference);
@@ -120,6 +123,7 @@ public abstract class DockablePanel
 
     public void setPosition(Vector2f position)
     {
+        setUIPosition(Vector2f.addY(position, headerSize.getY()));
         this.position.set(position);
         name.setPosition(position);
         uiLayerStack.refresh();
@@ -130,8 +134,11 @@ public abstract class DockablePanel
         draw();
     }
 
+    protected void setUIPosition(Vector2f position) {}
+
     public void setSize(Vector2f size)
     {
+        setUISize(Vector2f.addY(size, -headerSize.getY()));
         this.size.set(size);
         headerSize.setX(size.getX());
         panelDimensionChangeAction.run(
@@ -140,6 +147,8 @@ public abstract class DockablePanel
         );
         draw();
     }
+
+    protected void setUISize(Vector2f size) {}
 
     public void dispose() {}
 

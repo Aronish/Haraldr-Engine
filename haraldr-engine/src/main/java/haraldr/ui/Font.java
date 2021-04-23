@@ -45,7 +45,7 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class Font
 {
-    public static final Font DEFAULT_FONT = new Font("default_fonts/segoeui.ttf", 16, 1);
+    public static final Font DEFAULT_FONT = new Font("default_fonts/segoeui.ttf", 17, 1);
 
     public static final int WIDTH = 1024, HEIGHT = 1024;
     private static final float SIZE_COMPENSATION = 2f;

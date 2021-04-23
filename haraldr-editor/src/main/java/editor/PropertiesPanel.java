@@ -1,19 +1,14 @@
 package editor;
 
 import haraldr.dockspace.DockablePanel;
-import haraldr.dockspace.Dockspace;
 import haraldr.ecs.Component;
 import haraldr.ecs.Entity;
 import haraldr.ecs.EntityRegistry;
-import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
 import haraldr.graphics.Renderer;
-import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.ui.UIEventLayer;
-import haraldr.ui.components.UIContainer;
-import haraldr.ui.components.UILayerable;
 import haraldr.ui.components.UIVerticalListGroup;
 
 public class PropertiesPanel extends DockablePanel
@@ -24,6 +19,24 @@ public class PropertiesPanel extends DockablePanel
     public PropertiesPanel(Vector2f position, Vector2f size, Vector4f color, String name)
     {
         super(position, size, color, name);
+    }
+
+    @Override
+    protected void initializeUI()
+    {
+        mainContentGroup = new UIVerticalListGroup(uiLayerStack, 0);
+    }
+
+    @Override
+    protected void setUIPosition(Vector2f position)
+    {
+        mainContentGroup.setPosition(position);
+    }
+
+    @Override
+    protected void setUISize(Vector2f size)
+    {
+        mainContentGroup.setSize(size);
     }
 
     public void populateWithEntity(Entity selected, EntityRegistry registry)
@@ -46,32 +59,10 @@ public class PropertiesPanel extends DockablePanel
     }
 
     @Override
-    protected void initializeUIPositioning()
-    {
-        mainContentGroup = new UIVerticalListGroup(uiLayerStack, 0);
-        mainContentGroup.setPosition(Vector2f.addY(position, headerSize.getY()));
-        mainContentGroup.setSize(Vector2f.addY(size, headerSize.getY()));
-    }
-
-    @Override
     public void clear()
     {
         super.clear();
         mainContentGroup.clear();
-    }
-
-    @Override
-    public void setPosition(Vector2f position)
-    {
-        mainContentGroup.setPosition(Vector2f.addY(position, headerSize.getY()));
-        super.setPosition(position);
-    }
-
-    @Override
-    public void setSize(Vector2f size)
-    {
-        mainContentGroup.setSize(Vector2f.addY(size, headerSize.getY()));
-        super.setSize(size);
     }
 
     @Override

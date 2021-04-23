@@ -40,7 +40,7 @@ public class Scene3DPanel extends DockablePanel
     public boolean onEvent(Event event, Window window)
     {
         super.onEvent(event, window);
-        return headerPressed; // Don't block camera movement if hovered.
+        return headerPressed; // Don't block camera movement if content is hovered or pressed.
     }
 
     @Override

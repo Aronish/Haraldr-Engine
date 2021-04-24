@@ -9,8 +9,10 @@ import haraldr.graphics.Renderer2D;
 import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
+import haraldr.ui.groups.UIComponentGroup;
+import haraldr.ui.groups.UIVerticalListGroup;
 
-public class Scene3DPanel extends DockablePanel
+public class Scene3DPanel extends DockablePanel<UIVerticalListGroup>
 {
     private HDRGammaCorrectionPass hdrGammaCorrectionPass = new HDRGammaCorrectionPass(0.5f);
     private RenderTexture sceneTexture = new RenderTexture(

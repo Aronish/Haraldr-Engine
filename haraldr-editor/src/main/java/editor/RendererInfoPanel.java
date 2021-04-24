@@ -5,11 +5,11 @@ import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.ui.components.UIInfoLabel;
 import haraldr.ui.components.UILabeledList;
-import haraldr.ui.components.UIVerticalListGroup;
+import haraldr.ui.groups.UIVerticalListGroup;
+import haraldr.ui.groups.VerticalListInsertData;
 
-public class RendererInfoPanel extends DockablePanel
+public class RendererInfoPanel extends DockablePanel<UIVerticalListGroup>
 {
-    private UIVerticalListGroup uiVerticalListGroup;
     private UIInfoLabel fpsLabel;
 
     public RendererInfoPanel(Vector2f position, Vector2f size, Vector4f color, String name)
@@ -20,23 +20,11 @@ public class RendererInfoPanel extends DockablePanel
     @Override
     protected void initializeUI()
     {
-        uiVerticalListGroup = new UIVerticalListGroup(uiLayerStack, 1);
+        uiRoot = new UIVerticalListGroup();
         UILabeledList uiLabeledList = new UILabeledList(uiLayerStack, 1, Vector2f.addY(position, headerSize.getY()), size);
         fpsLabel = new UIInfoLabel(uiLayerStack, 1, "");
         uiLabeledList.addComponent("Frame Info: ", fpsLabel);
-        uiVerticalListGroup.addComponent(uiLabeledList);
-    }
-
-    @Override
-    public void setUIPosition(Vector2f position)
-    {
-        uiVerticalListGroup.setPosition(position);
-    }
-
-    @Override
-    public void setUISize(Vector2f size)
-    {
-        uiVerticalListGroup.setSize(size);
+        uiRoot.addComponent(new VerticalListInsertData(uiLabeledList));
     }
 
     public void setFrameRateInfo(int fps, int ups, double frameTime)

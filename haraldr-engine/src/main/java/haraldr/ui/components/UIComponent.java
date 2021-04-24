@@ -26,11 +26,6 @@ public abstract class UIComponent implements UIContainer, UIPositionable, UILaye
         this.enabled = enabled;
     }
 
-    public Vector2f getSize()
-    {
-        return size;
-    }
-
     @Override
     public void setPosition(Vector2f position)
     {
@@ -44,15 +39,27 @@ public abstract class UIComponent implements UIContainer, UIPositionable, UILaye
     }
 
     @Override
-    public boolean isEnabled()
+    public Vector2f getPosition()
     {
-        return enabled;
+        return position;
+    }
+
+    @Override
+    public Vector2f getSize()
+    {
+        return size;
     }
 
     @Override
     public float getVerticalSize()
     {
         return size.getY();
+    }
+
+    @Override
+    public boolean isEnabled()
+    {
+        return enabled;
     }
 
     @Override

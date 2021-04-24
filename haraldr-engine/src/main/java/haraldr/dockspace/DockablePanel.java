@@ -14,11 +14,13 @@ import haraldr.physics.Physics2D;
 import haraldr.ui.Font;
 import haraldr.ui.TextLabel;
 import haraldr.ui.UILayerStack;
+import haraldr.ui.groups.UIComponentGroup;
 import haraldr.ui.components.UILayerable;
+import haraldr.ui.components.UIPositionable;
 import org.jetbrains.annotations.Contract;
 
-@SuppressWarnings("WeakerAccess")
-public abstract class DockablePanel
+@SuppressWarnings({"WeakerAccess", "rawtypes"})
+public abstract class DockablePanel<UIRootGroupType extends UIComponentGroup>
 {
     protected static final Vector4f HEADER_COLOR = new Vector4f(0.15f, 0.15f, 0.15f, 1f);
 
@@ -28,6 +30,7 @@ public abstract class DockablePanel
     protected TextLabel name;
 
     protected UILayerStack uiLayerStack = new UILayerStack();
+    protected UIRootGroupType uiRoot;
 
     private PanelDimensionChangeAction panelDimensionChangeAction = (position, size) -> {};
 
@@ -123,7 +126,6 @@ public abstract class DockablePanel
 
     public void setPosition(Vector2f position)
     {
-        setUIPosition(Vector2f.addY(position, headerSize.getY()));
         this.position.set(position);
         name.setPosition(position);
         uiLayerStack.refresh();
@@ -131,24 +133,21 @@ public abstract class DockablePanel
                 Vector2f.addY(this.position, headerSize.getY()),
                 Vector2f.addY(size, -headerSize.getY())
         );
+        if (uiRoot != null) uiRoot.setPosition(Vector2f.addY(position, headerSize.getY()));
         draw();
     }
 
-    protected void setUIPosition(Vector2f position) {}
-
     public void setSize(Vector2f size)
     {
-        setUISize(Vector2f.addY(size, -headerSize.getY()));
         this.size.set(size);
         headerSize.setX(size.getX());
         panelDimensionChangeAction.run(
                 Vector2f.addY(position, headerSize.getY()),
                 Vector2f.addY(size, -headerSize.getY())
         );
+        if (uiRoot != null) uiRoot.setSize(Vector2f.addY(size, -headerSize.getY()));
         draw();
     }
-
-    protected void setUISize(Vector2f size) {}
 
     public void dispose() {}
 

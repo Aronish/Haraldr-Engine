@@ -1,22 +1,18 @@
-package haraldr.ui.components;
+package haraldr.ui.groups;
 
 import haraldr.math.Vector2f;
+import haraldr.ui.components.UIPositionable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UIVerticalListGroup extends UIComponentGroup
+public class UIVerticalListGroup extends UIComponentGroup<VerticalListInsertData>
 {
     private List<UIPositionable> uiComponentList = new ArrayList<>();
 
-    public UIVerticalListGroup(UIContainer parent, int layerIndex)
+    public void addComponent(VerticalListInsertData verticalListInsertData)
     {
-        super(parent, layerIndex);
-    }
-
-    public void addComponent(UIPositionable uiComponent)
-    {
-        uiComponentList.add(uiComponent);
+        uiComponentList.add(verticalListInsertData.component());
         orderList();
     }
 
@@ -26,7 +22,6 @@ public class UIVerticalListGroup extends UIComponentGroup
         for (UIPositionable uiComponent : uiComponentList)
         {
             uiComponent.setPosition(Vector2f.addY(position, currentListHeight));
-            uiComponent.setSize(size);
             currentListHeight += uiComponent.getVerticalSize();
         }
     }
@@ -37,26 +32,20 @@ public class UIVerticalListGroup extends UIComponentGroup
     }
 
     @Override
-    public void update()
-    {
-        orderList();
-    }
-
-    @Override
     public void setPosition(Vector2f position)
     {
         super.setPosition(position);
         orderList();
     }
 
-    @Override
-    public void setSize(Vector2f size)
-    {
-        super.setSize(size);
-        for (UIPositionable uiComponent : uiComponentList)
-        {
-            uiComponent.setSize(size);
-        }
-        orderList();
-    }
+    //@Override
+    //public void setSize(Vector2f size)
+    //{
+    //    super.setSize(size);
+    //    for (UIPositionable uiComponent : uiComponentList)
+    //    {
+    //        uiComponent.setSize(size);
+    //    }
+    //    orderList();
+    //}
 }

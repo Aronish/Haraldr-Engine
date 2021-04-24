@@ -1,5 +1,6 @@
 package editor;
 
+import haraldr.debug.Logger;
 import haraldr.dockspace.DockablePanel;
 import haraldr.ecs.Component;
 import haraldr.ecs.Entity;
@@ -9,12 +10,21 @@ import haraldr.graphics.Renderer;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.ui.UIEventLayer;
-import haraldr.ui.components.UIVerticalListGroup;
+import haraldr.ui.components.UIButton;
+import haraldr.ui.groups.ConstraintInsertData;
+import haraldr.ui.groups.UIConstraintGroup;
+import haraldr.ui.groups.UIOffset;
+import haraldr.ui.groups.UIRelativePosition;
+import haraldr.ui.groups.UIRelativeWidth;
+import haraldr.ui.groups.UISide;
+import haraldr.ui.groups.UIVerticalListGroup;
+import haraldr.ui.groups.VerticalListInsertData;
 
-public class PropertiesPanel extends DockablePanel
+public class PropertiesPanel extends DockablePanel<UIConstraintGroup>
 {
     private UIEventLayer stencilLayer = new UIEventLayer();
-    private UIVerticalListGroup mainContentGroup;
+    private UIVerticalListGroup propertiesList;
+    private UIButton addComponent;
 
     public PropertiesPanel(Vector2f position, Vector2f size, Vector4f color, String name)
     {
@@ -24,23 +34,28 @@ public class PropertiesPanel extends DockablePanel
     @Override
     protected void initializeUI()
     {
-        mainContentGroup = new UIVerticalListGroup(uiLayerStack, 0);
-    }
+        uiRoot = new UIConstraintGroup();
+        propertiesList = new UIVerticalListGroup();
+        addComponent = new UIButton(uiLayerStack, 0, () -> Logger.info("ADD COMPONENT"));
+        addComponent.setSize(new Vector2f(0f, 20f));
+        addComponent.setEnabled(false);
 
-    @Override
-    protected void setUIPosition(Vector2f position)
-    {
-        mainContentGroup.setPosition(position);
-    }
-
-    @Override
-    protected void setUISize(Vector2f size)
-    {
-        mainContentGroup.setSize(size);
+        uiRoot.addComponent(new ConstraintInsertData(
+                addComponent,
+                new UIOffset(addComponent, uiRoot, new Vector2f(0f, 5f)),
+                new UIRelativeWidth(addComponent, uiRoot, 1f)
+        ));
+        uiRoot.addComponent(new ConstraintInsertData(
+                propertiesList,
+                new UIRelativePosition(propertiesList, addComponent, UISide.BOTTOM, 5f),
+                new UIRelativeWidth(propertiesList, uiRoot, 1f)
+        ));
     }
 
     public void populateWithEntity(Entity selected, EntityRegistry registry)
     {
+        uiLayerStack.getLayer(0).addComponent(addComponent);
+        addComponent.setEnabled(true);
         ComponentUIVisitor componentUIVisitor = new ComponentUIVisitor();
         for (Class<? extends Component> componentType : registry.getRegisteredComponentTypes())
         {
@@ -51,7 +66,7 @@ public class PropertiesPanel extends DockablePanel
                 componentUIVisitor.setComponentPropertyList(ecsComponentGroup);
                 component.acceptVisitor(componentUIVisitor);
 
-                mainContentGroup.addComponent(ecsComponentGroup);
+                propertiesList.addComponent(new VerticalListInsertData(ecsComponentGroup));
             }
         }
         uiLayerStack.getLayer(0).getTextBatch().refreshTextMeshData();
@@ -62,7 +77,8 @@ public class PropertiesPanel extends DockablePanel
     public void clear()
     {
         super.clear();
-        mainContentGroup.clear();
+        propertiesList.clear();
+        addComponent.setEnabled(false);
     }
 
     @Override

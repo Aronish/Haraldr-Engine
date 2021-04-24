@@ -53,4 +53,5 @@ module haraldr
     opens default_textures;
     opens default_models;
     opens default_meshes;
+    exports haraldr.ui.groups;
 }

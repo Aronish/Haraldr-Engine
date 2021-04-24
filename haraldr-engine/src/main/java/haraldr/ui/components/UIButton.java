@@ -26,7 +26,6 @@ public class UIButton extends UIComponent
     public UIButton(UIContainer parent, int layerIndex, ButtonPressAction buttonPressAction)
     {
         super(parent, layerIndex);
-        setSize(new Vector2f(20f));
         this.buttonPressAction = buttonPressAction;
     }
 

@@ -9,13 +9,14 @@ import haraldr.ui.components.UIButton;
 import haraldr.ui.components.UIInfoLabel;
 import haraldr.ui.components.UIInputField;
 import haraldr.ui.components.UILabeledList;
-import haraldr.ui.components.UIVerticalListGroup;
+import haraldr.ui.groups.UIVerticalListGroup;
+import haraldr.ui.groups.VerticalListInsertData;
 
 import java.io.File;
 
-public class ProjectManagerPanel extends DockablePanel
+public class ProjectManagerPanel extends DockablePanel<UIVerticalListGroup>
 {
-    private UIVerticalListGroup projectControls = new UIVerticalListGroup(uiLayerStack, 1);
+    private UIVerticalListGroup projectControls = new UIVerticalListGroup();
     private String selectedFolder = "C:\\";
     private UIInfoLabel selectedPath = new UIInfoLabel(uiLayerStack, 1, selectedFolder);
 
@@ -49,21 +50,9 @@ public class ProjectManagerPanel extends DockablePanel
         });
         controlsList.addComponent("Create project ", createProject);
 
-        projectControls.addComponent(controlsList);
+        projectControls.addComponent(new VerticalListInsertData(controlsList));
 
         //uiLayerStack.getLayer(0).addComponent(new PanelModel());
         draw();
-    }
-
-    @Override
-    public void setUIPosition(Vector2f position)
-    {
-        projectControls.setPosition(position);
-    }
-
-    @Override
-    public void setUISize(Vector2f size)
-    {
-        projectControls.setSize(size);
     }
 }

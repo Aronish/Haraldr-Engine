@@ -1,4 +1,4 @@
-package haraldr.ui.components;
+package haraldr.ui.groups;
 
 public enum UISide
 {

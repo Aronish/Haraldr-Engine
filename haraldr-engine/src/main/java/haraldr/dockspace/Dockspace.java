@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("rawtypes")
 public class Dockspace implements UILayerable
 {
     private Vector2f position, size;

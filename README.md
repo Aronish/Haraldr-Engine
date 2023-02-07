@@ -1,8 +1,8 @@
 # Haraldr Engine
 <p>
 A simple engine made in OpenGL with the sole purpose of teaching me how graphics and game programming works.
-Some files used by IntelliJ IDEA are gitignored but it should be fairly straight forward to clone and build the project if you know what you're doing. I can't give any advice if you're using some other IDE than IntelliJ IDEA, that's up to you.
-Java JDK is not included, but LWJGL is.
+Some files used by IntelliJ IDEA are gitignored but it should be fairly straight forward to clone and build the project if you know what you're doing.
+LWJGL is included.
 
 To run a client, it has to subclass EntryPoint and that subclass has to be set as Main class when running.
 The subclass should give an instance of Application to EntryPoint#application through a static initializer. 
@@ -11,6 +11,9 @@ The subclass should give an instance of Application to EntryPoint#application th
 
 ![Preview](preview.png?raw=true)
 <p>Preview of the 3D renderer using <a href="http://artisaverb.info/PBT.html">Andrew Maximov's gun model</a> with a PBR material.</p>
+
+![Editor](haraldr-editor.png?raw=true)
+<p>Editor application client built with Haraldr-Engine as a base library. Very unfinished.</p>
 <hr/>
 <h3>Known Bugs:</h3>
 <ul>
@@ -52,7 +55,7 @@ The subclass should give an instance of Application to EntryPoint#application th
     </li>
 </ul>
 <h3>Libraries:</h3>
-<b>Java:</b> JDK 14.0.1 (recommended, required)
+<b>Java:</b> At least JDK 14.0.1
 <br/>
 <b><a href="https://www.lwjgl.org/">LWJGL:</a></b> 3.2.3_12
 <br/>

@@ -1,5 +1,6 @@
 package editor;
 
+import haraldr.debug.Logger;
 import haraldr.dockspace.DockPosition;
 import haraldr.dockspace.Dockspace;
 import haraldr.ecs.BoundingSphereComponent;
@@ -57,7 +58,7 @@ public class EditorApplication extends Application
         super(new Window.WindowProperties(
                 "Haraldr Editor", 1280, 720,
                 ProgramArguments.getIntOrDefault("MSAA", 0),
-                true, false, true, false)
+                true, false, true, true)
         );
     }
 
@@ -171,6 +172,7 @@ public class EditorApplication extends Application
     @Override
     protected void clientEvent(Event event, Window window)
     {
+        if (event.eventType == EventType.WINDOW_RESIZED) Logger.info("SWHIT");
         UILayerable.UIEventResult uiEventResult = mainLayerStack.onEvent(event, window);
         if (uiEventResult.requiresRedraw()) mainLayerStack.draw();
 

@@ -25,7 +25,7 @@ public class ProjectManagerPanel extends DockablePanel<UIVerticalListGroup>
         super(position, size, color, name);
         UILabeledList controlsList = new UILabeledList(uiLayerStack, 1, new Vector2f(0f, headerSize.getY()), size);
         controlsList.addComponent("New project path ", selectedPath);
-        UIButton findProjectFolder = new UIButton(uiLayerStack, 1, () ->
+        UIButton findProjectFolder = new UIButton(uiLayerStack, 1, "Browse", () ->
         {
             String path = FileDialogs.selectFolder("Create Project Folder");
             selectedPath.setValue(selectedFolder = path.isEmpty() ? "C:\\" : path);
@@ -37,7 +37,7 @@ public class ProjectManagerPanel extends DockablePanel<UIVerticalListGroup>
             selectedPath.setValue(currentPath);
         });
         controlsList.addComponent("Project name ", projectNameInput);
-        UIButton createProject = new UIButton(uiLayerStack, 1, () ->
+        UIButton createProject = new UIButton(uiLayerStack, 1, "Create Project", () ->
         {
             File projectFolder = new File(selectedPath.getValue());
             if (!projectFolder.exists())

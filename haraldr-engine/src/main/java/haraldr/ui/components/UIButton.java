@@ -8,6 +8,7 @@ import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
+import haraldr.ui.TextLabel;
 
 public class UIButton extends UIComponent
 {
@@ -16,22 +17,18 @@ public class UIButton extends UIComponent
     private static final Vector4f DISABLED_COLOR = new Vector4f(0.4f, 0.4f, 0.4f, 1f);
 
     private Vector4f currentColor = OFF_COLOR;
+    private TextLabel prompt;
     private ButtonPressAction buttonPressAction;
 
-    public UIButton(int layerIndex)
-    {
-        this(null, layerIndex, () -> {});
-    }
-
-    public UIButton(UIContainer parent, int layerIndex, ButtonPressAction buttonPressAction)
+    public UIButton(UIContainer parent, int layerIndex, String prompt, ButtonPressAction buttonPressAction)
     {
         super(parent, layerIndex);
+        this.prompt = textBatch.createTextLabel(
+                prompt,
+                Vector2f.add(position, new Vector2f((size.getX() - textBatch.getFont().getPixelWidth(prompt)) / 2f,  (size.getY() - textBatch.getFont().getSize()) / 2f)),
+                new Vector4f(1f)
+        );
         this.buttonPressAction = buttonPressAction;
-    }
-
-    public void setPressAction(ButtonPressAction action)
-    {
-        this.buttonPressAction = action;
     }
 
     @Override
@@ -39,6 +36,16 @@ public class UIButton extends UIComponent
     {
         super.setEnabled(enabled);
         currentColor = enabled ? OFF_COLOR : DISABLED_COLOR;
+        prompt.setEnabled(enabled);
+    }
+
+    @Override
+    public void setPosition(Vector2f position)
+    {
+        super.setPosition(position);
+        Vector2f pos = Vector2f.add(position, new Vector2f((size.getX() - textBatch.getFont().getPixelWidth(prompt.getText())) / 2f,  (size.getY() - textBatch.getFont().getSize()) / 2f));
+        pos.print();
+        prompt.setPosition(pos);
     }
 
     @Override

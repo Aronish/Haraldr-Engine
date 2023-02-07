@@ -22,6 +22,7 @@ public class UIVerticalListGroup extends UIComponentGroup<VerticalListInsertData
         for (UIPositionable uiComponent : uiComponentList)
         {
             uiComponent.setPosition(Vector2f.addY(position, currentListHeight));
+            uiComponent.setSize(new Vector2f(size.getX(), uiComponent.getSize().getY()));
             currentListHeight += uiComponent.getVerticalSize();
         }
     }
@@ -38,14 +39,14 @@ public class UIVerticalListGroup extends UIComponentGroup<VerticalListInsertData
         orderList();
     }
 
-    //@Override
-    //public void setSize(Vector2f size)
-    //{
-    //    super.setSize(size);
-    //    for (UIPositionable uiComponent : uiComponentList)
-    //    {
-    //        uiComponent.setSize(size);
-    //    }
-    //    orderList();
-    //}
+    @Override
+    public void setSize(Vector2f size)
+    {
+        super.setSize(size);
+        for (UIPositionable uiComponent : uiComponentList)
+        {
+            uiComponent.setSize(new Vector2f(size.getX(), uiComponent.getVerticalSize()));
+        }
+        orderList();
+    }
 }

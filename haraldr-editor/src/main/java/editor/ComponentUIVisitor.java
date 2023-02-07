@@ -51,7 +51,7 @@ public class ComponentUIVisitor implements ComponentVisitor
         ecsComponentGroup.getComponentList().addComponent("Mesh: ", meshPathLabel);
         ecsComponentGroup.getComponentList().addComponent(
                 "Load Mesh: ",
-                new UIButton(ecsComponentGroup, 0, () ->
+                new UIButton(ecsComponentGroup, 0, "Select Mesh", () ->
                 {
                     String meshPath = FileDialogs.openFile("Select mesh", "obj");
 

@@ -14,7 +14,7 @@ import haraldr.ui.groups.UIVerticalListGroup;
 import haraldr.ui.groups.VerticalListInsertData;
 import org.jetbrains.annotations.Contract;
 
-public class EntityHierarchyPanel extends DockablePanel<UIVerticalListGroup> // Only ever constraint group??
+public class EntityHierarchyPanel extends DockablePanel<UIVerticalListGroup>
 {
     private UIVerticalList entityList;
     private UIButton addEntity;
@@ -31,8 +31,7 @@ public class EntityHierarchyPanel extends DockablePanel<UIVerticalListGroup> // 
     {
         uiRoot = new UIVerticalListGroup();
         entityList = new UIVerticalList(uiLayerStack, 1);
-        addEntity = new UIButton(uiLayerStack, 1, () -> Logger.info("ADD ENTITY"));
-        addEntity.setSize(new Vector2f(200f, 20f));
+        addEntity = new UIButton(uiLayerStack, 1, "Add Entity", () -> Logger.info("ADD ENTITY"));
         uiRoot.addComponent(new VerticalListInsertData(addEntity));
         uiRoot.addComponent(new VerticalListInsertData(entityList));
     }
@@ -40,15 +39,14 @@ public class EntityHierarchyPanel extends DockablePanel<UIVerticalListGroup> // 
     private void addEntity(String name, Entity entity)
     {
         entityList.addItem(name, size.getX(), new EntityListItem(entity));
-        draw();
     }
 
     public void refreshEntityList(EntityRegistry entityRegistry)
     {
         clear();
         entityList.clear();
-        uiLayerStack.getLayer(0).addComponent(addEntity);
-        uiLayerStack.getLayer(0).addComponent(entityList);
+        uiLayerStack.getLayer(1).addComponent(addEntity);
+        uiLayerStack.getLayer(1).addComponent(entityList);
         entityRegistry.view(TagComponent.class).forEach(((transformComponent, tagComponent) -> addEntity(tagComponent.tag, entityRegistry.getEntityOf(tagComponent))));
         draw();
     }

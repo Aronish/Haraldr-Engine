@@ -35,9 +35,10 @@ public class PropertiesPanel extends DockablePanel<UIConstraintGroup>
     protected void initializeUI()
     {
         uiRoot = new UIConstraintGroup();
+        uiRoot.setSize(size);
         propertiesList = new UIVerticalListGroup();
-        addComponent = new UIButton(uiLayerStack, 0, () -> Logger.info("ADD COMPONENT"));
-        addComponent.setSize(new Vector2f(0f, 20f));
+        addComponent = new UIButton(uiLayerStack, 0, "Add Component", () -> Logger.info("ADD COMPONENT"));
+        addComponent.setSize(new Vector2f(100f, 20f));
         addComponent.setEnabled(false);
 
         uiRoot.addComponent(new ConstraintInsertData(
@@ -78,6 +79,7 @@ public class PropertiesPanel extends DockablePanel<UIConstraintGroup>
     {
         super.clear();
         propertiesList.clear();
+        uiLayerStack.getLayer(0).addComponent(addComponent);
         addComponent.setEnabled(false);
     }
 

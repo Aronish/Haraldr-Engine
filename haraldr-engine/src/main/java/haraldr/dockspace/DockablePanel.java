@@ -1,5 +1,6 @@
 package haraldr.dockspace;
 
+import haraldr.debug.Logger;
 import haraldr.event.Event;
 import haraldr.event.EventType;
 import haraldr.event.MouseMovedEvent;

@@ -10,19 +10,19 @@ import java.util.Map;
 
 public class UIConstraintGroup extends UIComponentGroup<ConstraintInsertData>
 {
-    private Map<UIPositionable, List<UIConstraint>> uiComponents = new HashMap<>(); // TODO: Separate position and size constraints
+    private Map<UIPositionable, List<UIConstraint>> children = new HashMap<>();
 
     @Override
     public void addComponent(ConstraintInsertData constraintInsertData)
     {
-        uiComponents.put(constraintInsertData.component(), Arrays.stream(constraintInsertData.constraint()).toList());
+        children.put(constraintInsertData.component(), Arrays.stream(constraintInsertData.constraint()).toList());
     }
 
     @Override
     public void setPosition(Vector2f position)
     {
         super.setPosition(position);
-        for (List<UIConstraint> constraints : uiComponents.values())
+        for (List<UIConstraint> constraints : children.values())
         {
             for (UIConstraint constraint : constraints)
             {
@@ -35,7 +35,7 @@ public class UIConstraintGroup extends UIComponentGroup<ConstraintInsertData>
     public void setSize(Vector2f size)
     {
         super.setSize(size);
-        for (List<UIConstraint> constraints : uiComponents.values())
+        for (List<UIConstraint> constraints : children.values())
         {
             for (UIConstraint constraint : constraints)
             {

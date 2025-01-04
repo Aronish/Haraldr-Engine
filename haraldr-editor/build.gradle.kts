@@ -16,3 +16,15 @@ dependencies {
 application {
     mainClass.set("editor.EditorEntryPoint")
 }
+
+tasks.withType<Jar> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes["Main-Class"] = "editor.EditorEntryPoint"
+    }
+    from({
+        // Include all runtime dependencies in the JAR
+        configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }
+    })
+}

@@ -3,6 +3,7 @@ Legacy/
 out/
 .idea/
 *.cap
+*.iml
 # Ignore Gradle project-specific cache directory
 .gradle
 

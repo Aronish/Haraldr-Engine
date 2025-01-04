@@ -20,3 +20,15 @@ dependencies {
 application {
     mainClass.set("offlinerenderer.OfflineRendererEntryPoint")
 }
+
+tasks.withType<Jar> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes["Main-Class"] = "offlinerenderer.OfflineRendererEntryPoint"
+    }
+    from({
+        // Include all runtime dependencies in the JAR
+        configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }
+    })
+}

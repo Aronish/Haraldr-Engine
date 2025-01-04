@@ -5,9 +5,8 @@ A simple engine made in OpenGL with the sole purpose of teaching me computer gra
 
 The repository consists of a core library called ```haraldr-engine```. This contains all base functionality for creating an application using the engine. Two client applications have been provided: the editor and the offline renderer. The editor is the user interface used for editing scenes and assets. The offline renderer can be used to generate proprietary file formats for the cubemaps used in the PBR renderer.
 
-A kind of special procedure is required to create an application, since even the ```main``` method is taken care of by the engine.
+A kind of special procedure is required to create an application, since even the ```main``` method is taken care of by the engine. The ```main``` method is located in ```haraldr.main.EntryPoint```. This class also has a member of type ```haraldr.main.Application```, which represents the client application.
 
-The ```main``` method is located in ```haraldr.main.EntryPoint```. It also has a member of type ````haraldr.main.Application```, which represents the client application.
 ```java
 // haraldr.main.EntryPoint
 

@@ -1,21 +1,64 @@
 # Haraldr Engine
-<p>
-A simple engine made in OpenGL with the sole purpose of teaching me how graphics and game programming works.
-Some files used by IntelliJ IDEA are gitignored but it should be fairly straight forward to clone and build the project if you know what you're doing.
-LWJGL is included.
+A simple engine made in OpenGL with the sole purpose of teaching me computer graphics, game engine programming and large-scale application design.
 
-To run a client, it has to subclass EntryPoint and that subclass has to be set as Main class when running.
-The subclass should give an instance of Application to EntryPoint#application through a static initializer. 
-</p>
-<hr/>
+## Structure
+
+The repository consists of a core library called ```haraldr-engine```. This contains all base functionality for creating an application using the engine.
+A kind of special procedure is required to create an application, since even the ```main``` method is taken care of by the engine.
+
+The ```main``` method is located in ```haraldr.main.EntryPoint```. It also has a member of type ````haraldr.main.Application```, which represents the client application.
+```java
+// haraldr.main.EntryPoint
+
+public abstract class EntryPoint
+{
+    public static Application application;
+    ...
+    public static void main(String[] args) {...}
+}
+```
+A client has to create a subclass of ```EntryPoint``` and supply a class of supertype ```haraldr.main.Application``` through a static initializer, e.g:
+
+```java
+import haraldr.main.EntryPoint;
+
+public class EditorEntryPoint extends EntryPoint
+{
+    static
+    {
+        application = new EditorApplication(...);
+    }
+}
+```
+This subclass has to be set as the main class to run the application.
+
+## Building
+The project ships with Gradle, meaning you only have to clone it and run a single command to start an application.
+
+```bash
+git clone https://github.com/Aronish/Haraldr-Engine.git
+```
+In the root directory of the repository, either of these commands may be run directly:
+```bash
+./gradlew :haraldr-editor:run
+./gradlew :haraldr-offline-renderer:run
+```
+It is also possible to generate jar files using
+```bash
+./gradlew :<module-name>:jar
+```
+The artifact will appear in ```./<module-name>/build/libs/<module-name>.jar```.
+
+## In-Engine Imagery
+Preview of the 3D renderer using <a href="http://artisaverb.info/PBT.html">Andrew Maximov's gun model</a> with a PBR material:
 
 ![Preview](preview.png?raw=true)
-<p>Preview of the 3D renderer using <a href="http://artisaverb.info/PBT.html">Andrew Maximov's gun model</a> with a PBR material.</p>
+
+Editor application client built with Haraldr-Engine as a base library. Very unfinished.
 
 ![Editor](haraldr-editor.png?raw=true)
-<p>Editor application client built with Haraldr-Engine as a base library. Very unfinished.</p>
-<hr/>
-<h3>Known Bugs:</h3>
+
+## Known Bugs:
 <ul>
     <li>NVIDIA Game Ready Driver version 452.06 running on a Gigabyte 750 Ti
     is confirmed to freeze the computer indefinitely when generating high resolution cubemaps.
@@ -54,12 +97,14 @@ The subclass should give an instance of Application to EntryPoint#application th
     Restart your computer after editing the registry.
     </li>
 </ul>
-<h3>Libraries:</h3>
+
+## Libraries
 <b>Java:</b> At least JDK 14.0.1
 <br/>
 <b><a href="https://www.lwjgl.org/">LWJGL:</a></b> 3.2.3_12
 <br/>
-<b><a href="https://github.com/stleary/JSON-java">JSON-java by Sean Leary: </a></b>
+<b><a href="https://github.com/stleary/JSON-java">JSON-java by Sean Leary: </a></b><br/>
+<b><a href="https://github.com/decorators-squad/eo-yaml">eo-yaml</a></b>
 <br/>
 <b>(Jetbrains Annotations)</b>
 

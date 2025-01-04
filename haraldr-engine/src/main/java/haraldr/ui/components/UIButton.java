@@ -20,6 +20,11 @@ public class UIButton extends UIComponent
     private TextLabel prompt;
     private ButtonPressAction buttonPressAction;
 
+    public UIButton(UIContainer parent, int layerIndex, ButtonPressAction buttonPressAction)
+    {
+        this(parent, layerIndex, "", buttonPressAction);
+    }
+
     public UIButton(UIContainer parent, int layerIndex, String prompt, ButtonPressAction buttonPressAction)
     {
         super(parent, layerIndex);

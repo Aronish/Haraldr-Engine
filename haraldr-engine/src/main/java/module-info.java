@@ -32,7 +32,7 @@ module haraldr
     requires org.lwjgl.tinyfd.natives;
 
     requires JsonParser;
-    requires eo.yaml;
+    requires com.amihaiemil.eoyaml;
     ///// EXPORTS ////////
     exports haraldr.debug;
     exports haraldr.dockspace;
@@ -47,11 +47,11 @@ module haraldr
     exports haraldr.scene;
     exports haraldr.ui;
     exports haraldr.ui.components;
+    exports haraldr.ui.groups;
 
     ///// RESOURCES //////
     opens default_shaders;
     opens default_textures;
     opens default_models;
     opens default_meshes;
-    exports haraldr.ui.groups;
 }

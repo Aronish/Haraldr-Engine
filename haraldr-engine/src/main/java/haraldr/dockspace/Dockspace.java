@@ -12,8 +12,9 @@ import haraldr.main.Window;
 import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
-import haraldr.ui.components.UIContainer;
+import haraldr.ui.components.UIHierarchical;
 import haraldr.ui.components.UILayerable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,7 +32,7 @@ public class Dockspace implements UILayerable
     private DockablePanel selectedPanel;
     private DockingArea rootArea;
 
-    public Dockspace(UIContainer parent, int layerIndex, Vector2f position, Vector2f size)
+    public Dockspace(@NotNull UIHierarchical parent, int layerIndex, Vector2f position, Vector2f size)
     {
         parent.getLayer(layerIndex).addComponent(this);
         this.position = position;
@@ -443,7 +444,7 @@ public class Dockspace implements UILayerable
             return docked;
         }
 
-        private boolean dockPanelToPosition(DockablePanel panel, DockPosition dockPosition)
+        private boolean dockPanelToPosition(DockablePanel panel, @NotNull DockPosition dockPosition)
         {
             return switch (dockPosition)
             {

@@ -16,7 +16,7 @@ public class UILabeledList extends UIComponent
     private Map<TextLabel, UIComponent> components = new LinkedHashMap<>();
     private float divider, nextListY;
 
-    public UILabeledList(UIContainer parent, int layerIndex, Vector2f position, Vector2f size)
+    public UILabeledList(UIHierarchical parent, int layerIndex, Vector2f position, Vector2f size)
     {
         super(parent, layerIndex);
         LINE_HEIGHT = textBatch.getFont().getSize();

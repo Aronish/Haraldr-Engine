@@ -6,14 +6,14 @@ import haraldr.ui.UIEventLayer;
 
 import java.util.List;
 
-public abstract class UIComponent implements UIContainer, UIPositionable, UILayerable
+public abstract class UIComponent implements UIHierarchical, UIPositionable, UILayerable
 {
     protected Vector2f position = new Vector2f(), size = new Vector2f();
     protected boolean enabled = true;
-    protected UIContainer parent;
+    protected UIHierarchical parent;
     protected TextBatch textBatch;
 
-    protected UIComponent(UIContainer parent, int layerIndex)
+    protected UIComponent(UIHierarchical parent, int layerIndex)
     {
         this.parent = parent;
         UIEventLayer layer = parent.getLayer(layerIndex);

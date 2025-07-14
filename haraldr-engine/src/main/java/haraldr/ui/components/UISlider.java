@@ -25,27 +25,27 @@ public class UISlider extends UIComponent
         this(null, layerIndex, 0f, 1f, 0f, value -> {});
     }
 
-    public UISlider(UIContainer parent, int layerIndex)
+    public UISlider(UIHierarchical parent, int layerIndex)
     {
         this(parent, layerIndex, 0f, 1f, 0f, value -> {});
     }
 
-    public UISlider(UIContainer parent, int layerIndex, SliderChangeAction sliderChangeAction)
+    public UISlider(UIHierarchical parent, int layerIndex, SliderChangeAction sliderChangeAction)
     {
         this(parent, layerIndex, 0f, 1f, 0f, sliderChangeAction);
     }
 
-    public UISlider(UIContainer parent, int layerIndex, float defaultValue, SliderChangeAction sliderChangeAction)
+    public UISlider(UIHierarchical parent, int layerIndex, float defaultValue, SliderChangeAction sliderChangeAction)
     {
         this(parent, layerIndex, 0f, 1f, defaultValue, sliderChangeAction);
     }
 
-    public UISlider(UIContainer parent, int layerIndex, float min, float max, SliderChangeAction sliderChangeAction)
+    public UISlider(UIHierarchical parent, int layerIndex, float min, float max, SliderChangeAction sliderChangeAction)
     {
         this(parent, layerIndex, min, max, 0f, sliderChangeAction);
     }
 
-    public UISlider(UIContainer parent, int layerIndex, float min, float max, float defaultValue, SliderChangeAction sliderChangeAction)
+    public UISlider(UIHierarchical parent, int layerIndex, float min, float max, float defaultValue, SliderChangeAction sliderChangeAction)
     {
         super(parent, layerIndex);
         setSize(new Vector2f(20f));

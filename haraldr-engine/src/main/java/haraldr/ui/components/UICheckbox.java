@@ -19,17 +19,17 @@ public class UICheckbox extends UIComponent
 
     private CheckboxStateChangeAction checkboxStateChangeAction;
 
-    public UICheckbox(UIContainer parent, int layerIndex)
+    public UICheckbox(UIHierarchical parent, int layerIndex)
     {
         this(parent, layerIndex, false, state -> {});
     }
 
-    public UICheckbox(UIContainer parent, int layerIndex, boolean initialState)
+    public UICheckbox(UIHierarchical parent, int layerIndex, boolean initialState)
     {
         this(parent, layerIndex, initialState, state -> {});
     }
 
-    public UICheckbox(UIContainer parent, int layerIndex, boolean initialState, CheckboxStateChangeAction checkboxStateChangeAction)
+    public UICheckbox(UIHierarchical parent, int layerIndex, boolean initialState, CheckboxStateChangeAction checkboxStateChangeAction)
     {
         super(parent, layerIndex);
         setSize(new Vector2f(20f));

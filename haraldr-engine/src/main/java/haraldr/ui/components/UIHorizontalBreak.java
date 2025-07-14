@@ -4,7 +4,7 @@ public class UIHorizontalBreak extends UIComponent // Quite useless as a whole c
 {
     private int height;
 
-    public UIHorizontalBreak(UIContainer parent, int layerIndex, int height)
+    public UIHorizontalBreak(UIHierarchical parent, int layerIndex, int height)
     {
         super(parent, layerIndex);
         this.height = height;

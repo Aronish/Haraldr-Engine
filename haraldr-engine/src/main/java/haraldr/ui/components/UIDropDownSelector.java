@@ -17,7 +17,7 @@ public class UIDropDownSelector extends UIComponent
     private UIInfoLabel selected;
     private UIVerticalList verticalList;
 
-    public UIDropDownSelector(UIContainer parent, int layerIndex)
+    public UIDropDownSelector(UIHierarchical parent, int layerIndex)
     {
         super(parent, layerIndex);
         size = new Vector2f(20f);

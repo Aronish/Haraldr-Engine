@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class Light
 {
     protected static final Shader LIGHT_SHADER = Shader.create("default_shaders/unlit.glsl");
+    private static float angle = 0.0f;
 
     protected Vector3f position;
     protected Vector3f color;
@@ -61,9 +62,10 @@ public abstract class Light
 
     public void render()
     {
+        angle += 1.0f;
         Texture.DEFAULT_WHITE.bind(0);
         LIGHT_SHADER.bind();
-        LIGHT_SHADER.setMatrix4f("model", Matrix4f.identity().translate(position).scale(new Vector3f(0.02f)));
+        LIGHT_SHADER.setMatrix4f("model", Matrix4f.identity().translate(position).rotate(new Vector3f(1.0f, 1.0f, 1.0f), angle).scale(new Vector3f(0.2f)));
         LIGHT_SHADER.setVector3f("u_Color", color);
         DefaultModels.CUBE.bind();
         DefaultModels.CUBE.drawElements();

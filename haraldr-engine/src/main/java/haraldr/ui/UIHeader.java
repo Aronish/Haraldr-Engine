@@ -9,7 +9,7 @@ import haraldr.math.Vector2f;
 import haraldr.math.Vector4f;
 import haraldr.ui.components.ListData;
 import haraldr.ui.components.UIComponent;
-import haraldr.ui.components.UIContainer;
+import haraldr.ui.components.UIHierarchical;
 import haraldr.ui.components.UIDropDownMenu;
 
 public class UIHeader extends UIComponent
@@ -19,7 +19,7 @@ public class UIHeader extends UIComponent
     private Vector4f color;
     private float currentButtonPosition;
 
-    public UIHeader(UIContainer parent, int layerIndex, Vector2f position, Vector2f size, Vector4f color)
+    public UIHeader(UIHierarchical parent, int layerIndex, Vector2f position, Vector2f size, Vector4f color)
     {
         super(parent, layerIndex);
 

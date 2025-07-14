@@ -9,12 +9,12 @@ public class UIVector3Linkable extends UIVector3
 {
     private UICheckbox linked;
 
-    public UIVector3Linkable(UIContainer parent, int layerIndex, Vector3f defaultValues, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3Linkable(UIHierarchical parent, int layerIndex, Vector3f defaultValues, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
     {
         this(parent, layerIndex, defaultValues, 0.02f, initiallyLinked, vector3ChangeAction);
     }
 
-    public UIVector3Linkable(UIContainer parent, int layerIndex, Vector3f defaultValues, float dragSensitivity, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3Linkable(UIHierarchical parent, int layerIndex, Vector3f defaultValues, float dragSensitivity, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
     {
         super(parent, layerIndex);
         linked = new UICheckbox(parent, layerIndex, initiallyLinked);
@@ -68,12 +68,12 @@ public class UIVector3Linkable extends UIVector3
 
     // Max and min
 
-    public UIVector3Linkable(UIContainer parent, int layerIndex, Vector3f min, Vector3f max, Vector3f defaultValues, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3Linkable(UIHierarchical parent, int layerIndex, Vector3f min, Vector3f max, Vector3f defaultValues, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
     {
         this(parent, layerIndex, min, max, defaultValues, 0.02f, initiallyLinked, vector3ChangeAction);
     }
 
-    public UIVector3Linkable(UIContainer parent, int layerIndex, Vector3f min, Vector3f max, Vector3f defaultValues, float dragSensitivity, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
+    public UIVector3Linkable(UIHierarchical parent, int layerIndex, Vector3f min, Vector3f max, Vector3f defaultValues, float dragSensitivity, boolean initiallyLinked, Vector3ChangeAction vector3ChangeAction)
     {
         super(parent, layerIndex);
         linked = new UICheckbox(parent, layerIndex, initiallyLinked);

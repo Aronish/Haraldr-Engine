@@ -9,7 +9,7 @@ public class UIInfoLabel extends UIComponent
     private String value;
     private TextLabel valueLabel;
 
-    public UIInfoLabel(UIContainer parent, int layerIndex, String value)
+    public UIInfoLabel(UIHierarchical parent, int layerIndex, String value)
     {
         super(parent, layerIndex);
         this.value = value;

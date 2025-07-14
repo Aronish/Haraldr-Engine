@@ -143,11 +143,9 @@ public class Window
         ///// CALLBACKS /////////////////////////////////////////////////////////
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) ->
         {
-            if (action == GLFW_PRESS || action == GLFW_REPEAT)
-            {
+            if (action == GLFW_PRESS || action == GLFW_REPEAT) {
                 EventDispatcher.dispatch(new KeyPressedEvent(key), this);
-            } else if (action == GLFW_RELEASE)
-            {
+            } else if (action == GLFW_RELEASE) {
                 EventDispatcher.dispatch(new KeyReleasedEvent(key), this);
             }
         });

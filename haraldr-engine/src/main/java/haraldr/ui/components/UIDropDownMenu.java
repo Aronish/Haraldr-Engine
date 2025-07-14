@@ -21,12 +21,12 @@ public class UIDropDownMenu extends UIComponent
     private boolean hovered;
     private UIVerticalList actions;
 
-    public UIDropDownMenu(UIContainer parent, int layerIndex, String name, Vector2f position, ListData[] listDataEntries)
+    public UIDropDownMenu(UIHierarchical parent, int layerIndex, String name, Vector2f position, ListData[] listDataEntries)
     {
         this(parent, layerIndex, name, position, listDataEntries, false);
     }
 
-    public UIDropDownMenu(UIContainer parent, int layerIndex, String name, Vector2f position, ListData[] listDataEntries, boolean closeOnPress)
+    public UIDropDownMenu(UIHierarchical parent, int layerIndex, String name, Vector2f position, ListData[] listDataEntries, boolean closeOnPress)
     {
         super(parent, layerIndex);
         this.name = textBatch.createTextLabel(name, Vector2f.addX(position, MENU_BUTTON_PADDING / 2f), new Vector4f(1f));

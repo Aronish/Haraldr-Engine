@@ -37,12 +37,12 @@ public class UIInputField<T extends UIInputField.InputFieldValue> extends UIComp
     private TextLabel textLabel;
     private InputFieldChangeAction<T> inputFieldChangeAction;
 
-    public UIInputField(UIContainer parent, int layerIndex, T defaultValue)
+    public UIInputField(UIHierarchical parent, int layerIndex, T defaultValue)
     {
         this(parent, layerIndex, defaultValue, value -> {});
     }
 
-    public UIInputField(UIContainer parent, int layerIndex, T defaultValue, InputFieldChangeAction<T> inputFieldChangeAction)
+    public UIInputField(UIHierarchical parent, int layerIndex, T defaultValue, InputFieldChangeAction<T> inputFieldChangeAction)
     {
         super(parent, layerIndex);
         fieldSize = new Vector2f(0f, textBatch.getFont().getSize() - 2f * BORDER_WIDTH);

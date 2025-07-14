@@ -4,8 +4,6 @@
       <root url="jar://$PROJECT_DIR$/lib/JsonParser.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="file://$PROJECT_DIR$/../libraries/sources/JsonParser/JsonParser" />
-    </SOURCES>
+    <SOURCES />
   </library>
 </component>

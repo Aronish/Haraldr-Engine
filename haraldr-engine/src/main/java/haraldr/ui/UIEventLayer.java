@@ -3,7 +3,6 @@ package haraldr.ui;
 import haraldr.event.Event;
 import haraldr.graphics.Batch2D;
 import haraldr.main.Window;
-import haraldr.ui.components.UIComponent;
 import haraldr.ui.components.UILayerable;
 
 import java.util.ArrayList;
@@ -37,15 +36,8 @@ public class UIEventLayer
         {
             if (!component.isEnabled()) continue;
             componentResult = component.onEvent(event, window);
-            if (componentResult.requiresRedraw())
-            {
-                requiresRedraw = true;
-            }
-            if (componentResult.consumed())
-            {
-                consumed = true;
-                break;
-            }
+            requiresRedraw |= componentResult.requiresRedraw();
+            if (consumed |= componentResult.consumed()) break;
         }
         return new UILayerable.UIEventResult(requiresRedraw, consumed);
     }

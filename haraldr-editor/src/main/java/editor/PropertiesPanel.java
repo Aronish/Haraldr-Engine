@@ -66,11 +66,11 @@ public class PropertiesPanel extends DockablePanel<UIConstraintGroup>
                 ECSComponentGroup ecsComponentGroup = new ECSComponentGroup(uiLayerStack, 0, componentType.getSimpleName().replace("Component", ""), position, size);
                 componentUIVisitor.setComponentPropertyList(ecsComponentGroup);
                 component.acceptVisitor(componentUIVisitor);
-
                 propertiesList.addComponent(new VerticalListInsertData(ecsComponentGroup));
             }
         }
         uiLayerStack.getLayer(0).getTextBatch().refreshTextMeshData();
+        setSize(size);
         draw();
     }
 

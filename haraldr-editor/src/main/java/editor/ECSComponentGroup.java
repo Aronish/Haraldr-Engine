@@ -12,7 +12,7 @@ import haraldr.math.Vector4f;
 import haraldr.physics.Physics2D;
 import haraldr.ui.TextLabel;
 import haraldr.ui.components.UIComponent;
-import haraldr.ui.components.UIContainer;
+import haraldr.ui.components.UIHierarchical;
 import haraldr.ui.components.UILabeledList;
 
 public class ECSComponentGroup extends UIComponent
@@ -22,7 +22,7 @@ public class ECSComponentGroup extends UIComponent
     private float headerHeight;
     private UILabeledList componentList;
 
-    public ECSComponentGroup(UIContainer parent, int layerIndex, String name, Vector2f position, Vector2f size)
+    public ECSComponentGroup(UIHierarchical parent, int layerIndex, String name, Vector2f position, Vector2f size)
     {
         super(parent, layerIndex);
         headerHeight = textBatch.getFont().getSize();
